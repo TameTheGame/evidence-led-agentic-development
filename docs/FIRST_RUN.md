@@ -18,7 +18,7 @@ present. Authority still comes from you and the target project's own rules.
 
 ## Give this instruction to your coding agent
 
-You can start in ordinary language by giving an agent this instruction:
+Give an agent this instruction:
 
 ```text
 Use ELAD's docs/FIRST_RUN.md as your procedure for one small task in a project I own.
