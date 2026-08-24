@@ -16,20 +16,21 @@ The role split is intentionally small:
 ELAD does not give the agent authority merely because this repository or walkthrough is
 present. Authority still comes from you and the target project's own rules.
 
-## Give this instruction to your coding agent
+## Start with one small task
 
-Give an agent this instruction:
+Copy this to your coding agent:
 
 ```text
-Use ELAD's docs/FIRST_RUN.md as your procedure for one small task in a project I own.
-Treat me as the project owner. You should perform the procedural and terminal steps.
-Before editing the target project, show me a compact light-task proposal containing the
-outcome, allowed scope, prohibited effects, authority, evidence, and stopping condition.
-Do not introduce the formal assured packet chain unless a concrete risk requires it.
+Follow this first-run guide for one small task in a project I own.
+Before changing anything, briefly tell me:
+- what you plan to change;
+- what you will leave alone; and
+- how you will check your work.
+Wait for my approval. Then do only that work and report back.
 ```
 
-The remaining steps explain what the agent should do and where your decisions cannot be
-delegated.
+That is enough to begin. The rest of this page explains what the agent will do and when it
+will come back to you for a decision.
 
 ## 1. Agent instructions: validate the ELAD reference repository
 

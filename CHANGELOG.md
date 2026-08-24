@@ -4,6 +4,8 @@
 
 - Clarified the first-run voice by speaking directly to the project owner while prefixing
   every coding-agent procedure with `Agent instructions:`.
+- Replaced the first copyable prompt's protocol vocabulary with a plain-language request
+  to state the intended change, boundaries, and verification before seeking approval.
 
 ## 0.3.0 — 2026-08-23
 
