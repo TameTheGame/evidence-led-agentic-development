@@ -12,7 +12,7 @@
 | `docs/EMPIRICAL_STATUS.md` | Demonstrated, bounded, and untested claims |
 | `STATUS.md` | Current candidate state, completed surfaces, and absent authority |
 | `AGENTS.md` | Repository rules and adaptive change lifecycle |
-| `docs/ADAPTIVE_RIGOR.md` | Normative human explanation of rigor selection |
+| `docs/ADAPTIVE_RIGOR.md` | Practical guide to choosing the lightest defensible rigor |
 | `blueprint.json` | Machine-readable identity, default-deny state, registries, and explicit release inventory |
 
 ## Root governance and provenance
@@ -40,7 +40,7 @@
 | `docs/MATURITY_MODEL.md` | Proven capability levels, independent of per-task rigor |
 | `docs/MODEL_QUALIFICATION.md` | Exact cloud/local model+harness qualification and routing |
 | `docs/OPERATIONS_AND_LEARNING.md` | Observability, error analysis, efficacy, drift, and simplification |
-| `docs/HUMAN_DECISION_BOUNDARY.md` | Retained human judgment and concise evidence cards |
+| `docs/HUMAN_DECISION_BOUNDARY.md` | Decisions retained by the project owner and concise review cards |
 | `docs/PATH_IDENTITY.md` | One portable repository-path grammar |
 | `docs/THREAT_MODEL.md` | Trust boundaries and failure modes |
 | `docs/RESEARCH_BASIS.md` | Andrew Ng source identities and methodology translation |

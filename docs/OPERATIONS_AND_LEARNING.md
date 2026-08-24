@@ -1,133 +1,96 @@
 # Operations and Learning
 
-## Observe what can change a decision
+Operational records should answer a few useful questions:
 
-Observability should make failures diagnosable and efficacy measurable without flooding
-orchestrator context. Record only dimensions material to the selected task rigor and
-effect surface.
+- What happened?
+- What evidence supports that conclusion?
+- If it failed, where did the first causal failure occur?
+- What should change next?
+- Is the process still worth its recurring cost?
 
-A `light` task may need the exact command, result, changed paths, and diff. A repeated
-autonomous or assured episode may additionally record:
+Record only information that can change a decision. A light task may need the command,
+result, changed paths, and inspected diff. Repeated autonomous or assured work may also
+need exact model, harness, candidate, evaluator, target, budget, cost, authority, and
+drift identities. Leave unknown measurements unknown and say why.
 
-- project, packet, candidate, model, harness, adapter, tool, evaluator, and target
-  identities;
-- selected context and evidence references;
-- configured, measured-safe, requested, and observed budgets;
-- tool/delegation/attempt counts, wall time, cloud cost, and local resource use;
-- first causal failure and terminal state;
-- evaluator calibration and task-specific negative coverage;
-- exact runtime/data/process ownership;
-- human operations and retained decisions;
-- scope, refusal, security, privacy, cleanup, promotion, and publication events;
-- drift and invalidation state.
+## Keep agent context compact
 
-Unknown measurements are reported as unknown with a reason. Do not estimate them to make
-a record look complete.
+Raw traces, transcripts, screenshots, and runtime logs should stay file-backed. A worker
+normally returns:
 
-## Keep context compact
-
-Raw traces, model transcripts, screenshots, and runtime logs stay file-backed. The
-worker returns:
-
-- the outcome;
-- exact changed subject;
+- the outcome and exact changed subject;
 - focused checks and verdicts;
-- first causal failure or limitations;
-- selected evidence paths/digests when persistence matters;
-- requested next action.
+- the first causal failure or important limitation;
+- evidence locations when they must persist; and
+- the requested next action.
 
-The orchestrator retrieves raw evidence only when a causal question requires it. Compact
-receipts are an operational context-control mechanism, not a mandate to create a formal
-receipt for every edit.
+Bring raw evidence into the orchestrator's context only when it answers a causal question.
+A compact result is a context-control tool, not a requirement to create a formal receipt
+for every edit.
 
-The harness adapter is responsible for extracting the compact semantic return from its
-native result structure. Orchestration consumes that return, not the raw token and tool
-stream. Persist the stream only as file-backed diagnostic evidence when a causal question
-requires it.
+## Measure whether autonomy is helping
 
-## Efficacy measures
+The central question is:
 
-Primary question:
+> Does this workflow increase evidence-backed useful outcomes while reducing unnecessary
+> supervision, context, latency, cost, and risk?
 
-> Does this workflow increase evidence-backed useful closure while reducing unnecessary
-> human operation, orchestrator context, latency, cost, and risk?
+Useful measures include accepted outcomes, manual operations, review time, orchestrator
+context, retries, escalations, false greens, candidate-to-acceptance yield, latency, cost,
+resource use, and scope or target-integrity events. Compare similar task classes and keep
+security, privacy, authority, and evidence quality as boundaries rather than values that
+can be traded away inside one score.
 
-Useful measures include:
+Separate one-time experiment or integration setup from steady-state cost. An early harness
+trial can be expensive without showing what repeated, already-integrated delegation will
+cost.
 
-- human operations and review time per accepted change;
-- orchestrator context and direct tool consumption;
-- retry and escalation rate;
-- evaluator false-positive/false-negative rate;
-- candidate-to-acceptance or promotion yield;
-- scope, refusal, security, privacy, and target-integrity events;
-- time/cost/resource use by task family and rigor profile;
-- local/cloud routing efficiency;
-- qualification/calibration invalidation frequency;
-- recurring scaffolding time compared with implementation time.
-
-Separate one-time experiment and integration setup from steady-state delegation cost.
-Initial harness discovery may dominate an early slice without describing the economics
-of repeated, already-integrated work.
-
-Do not collapse these into one score that can trade away safety or evidence quality.
-Compare like-for-like task classes and preserve relevant guardrails.
-
-## Adaptive failure loop
+## Learn from the first causal failure
 
 ```text
-observe failure
-  -> identify first causal layer
-  -> choose the smallest discriminating next experiment
-  -> change only the responsible layer
-  -> rerun focused evidence
-  -> repeat, stop, or escalate rigor
+observe the failure
+  → identify the first responsible layer
+  → choose the smallest discriminating experiment
+  → change only that layer
+  → rerun focused evidence
+  → continue, stop, or escalate
 ```
 
-No blind retries. Each attempt states its causal hypothesis and changed layer.
+Do not retry blindly. Each attempt should name what it is testing and what changed.
 
-If a numeric threshold passes while a designed discriminator still exposes a classified
-correctness defect, one cheap causal fix and one focused rerun may be the right stopping
-move. Do not declare victory over the discriminator, and do not turn the exception into
-an open-ended demand for perfect scores.
+Ambiguous authority, privacy, persistence, native-state, or shared-target failures usually
+stop immediately. Two materially different attempts are a useful ordinary default. Cheap,
+reversible experiments can receive more attempts when each one teaches something and the
+task sets a clear limit.
 
-The retry budget is task-specific:
+If an aggregate score passes while a case designed to catch a real defect still fails,
+make one cheap causal correction and rerun that evidence. Do not hide the failure inside
+the score or chase perfection indefinitely.
 
-- ambiguous native, persistence, privacy, authority, or shared-state failures usually
-  stop immediately;
-- two materially different attempts is a sensible default;
-- cheap reversible deterministic experiments may receive more attempts when each is
-  informative and the packet sets a maximum useful experiment.
+## Preserve only reusable lessons
 
-## Durable failure memory
+Create a durable failure record when the lesson is novel, recurring, high impact, or
+changes a reusable evaluator, route, qualification, or policy. Reference the raw evidence
+instead of copying full transcripts into shared context.
 
-Create a reviewed failure record only when the lesson is novel, recurring, high-impact,
-or changes reusable evaluators, routing, qualification, or policy. Stable fingerprints
-prevent duplicate records. Reference raw evidence rather than copying transcripts into
-shared context.
+An ordinary typo or one-off failed test does not need incident ceremony. A reusable lesson
+becomes active only after its causal explanation and affected check are reviewed. Workers
+cannot change their own authority, qualification, or routing policy.
 
-An ordinary typo or one-off failed test does not need permanent incident ceremony.
+Reuse current evaluator and route qualifications until a named invalidation trigger fires.
+After drift, rerun the affected slice. Reserve broad fresh-environment suites for first
+proof, material runtime or schema changes, suspected cache dependence, release, or a
+failure that calls earlier proof into question.
 
-A reusable learning becomes active only after its causal explanation and affected
-regression/evaluator are reviewed. Workers cannot change their own certificates,
-authority, or routing policy.
-
-## Evaluator and capability maintenance
-
-Reuse current evaluator-calibration receipts and capability certificates until a named
-invalidation trigger fires. Rerun the affected slice—not the entire universe—after drift.
-Use broader cold/fresh-environment suites for first proof, material tool/runtime/schema
-changes, suspected cache dependence, promotion/release, or a failure that calls the
-previous calibration into question.
-
-## Simplification is a valid outcome
+## Simplification counts as progress
 
 Periodically ask:
 
 - Which artifacts are actually used to make decisions?
-- Which checks caught realistic failures?
-- Which steps are now cheap automation?
-- Which recurring fields can be inherited or compiled?
-- Which reviews or gates can be removed without reducing evidence or authority clarity?
+- Which checks catch realistic failures?
+- Which steps can now be automated cheaply?
+- Which fields can be inherited or generated?
+- Which reviews can be removed without weakening evidence or authority?
 
-The correct operational decision may be `advance`, `hold`, `rollback`, or
-`simplify`. A methodology that only grows has stopped evaluating itself.
+The right operational decision may be to advance, hold, roll back, or simplify. A method
+that only grows has stopped evaluating itself.

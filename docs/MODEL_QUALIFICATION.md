@@ -1,145 +1,97 @@
 # Model and Harness Qualification
 
-## When formal qualification is worth it
+Formal qualification answers a practical routing question:
 
-Formal qualification is an amortized investment for:
+> What work can this exact agent setup complete reliably, within what limits and effects?
 
-- repeated autonomous delegation;
-- candidate, target, runtime, data, or promotion effects;
-- machine evidence acceptance;
-- constrained workers whose safe context/tool/resource horizon matters;
-- expensive or consequential tasks where routing mistakes recur.
+It is worth the setup cost for repeated autonomous delegation, constrained local workers,
+broader candidate or runtime effects, machine evidence acceptance, or recurring tasks
+where a routing mistake would be expensive. A one-off supervised light task can stay
+owner-bounded and independently checked without earning a reusable certificate.
 
-A one-off supervised `light` task can be explicitly owner-bounded without a transferable
-certificate. It gains no inherited authority and its result is verified like any other
-task. Do not build a certification campaign whose cost exceeds the work it protects.
+## Qualify the complete setup
 
-## Qualification subject
+Capability does not belong to a model name alone. Bind the result to the material parts
+of the execution route:
 
-A capability certificate belongs to one exact execution subject:
-
-- provider/model revision, or local model artifact/quant bytes and digest;
-- backend/runtime and material hardware/configuration;
+- exact provider/model revision or local artifact and quantization;
+- backend, runtime, and material hardware configuration;
 - harness and adapter versions;
-- system/task template, context compiler, and tool-schema identities;
-- configured context, output, retrieval, sequential/total tool, attempt, spawn, time,
-  cost, and material resource envelopes;
-- eligible roles, task families, rigor profiles, risk/data classes, artifact lanes,
-  effects, mutation ceilings, and evidence classes;
-- evaluator/calibration/holdout pack identities;
+- system prompt, task template, context compiler, and tool schemas;
+- configured context, output, tool, attempt, time, cost, and resource limits;
+- eligible task classes, data/risk classes, effects, and evidence roles;
+- evaluator and held-out-case identities; and
 - expiry and invalidation triggers.
 
-The same local model in two different worker harnesses is two subjects. A cloud alias and an immutable
-deployment revision are not interchangeable. Changing a material dimension invalidates
-or narrows only the affected proof.
+The same model in two harnesses is two qualification subjects. A coding-agent harness and
+a product inference API are also different subjects even when they load the same weights.
+For stochastic product behavior, bind material request settings such as temperature,
+thinking mode, and output-token limit.
 
-A coding-agent harness and a product inference interface are also different subjects,
-even when they load the same weights. For example, a worker coding route is not the default
-qualification for a product feature using Chat Completions. Bind the product inference
-subject to its own adapter, request parameters, prompt, context selection, tool surface,
-and task class. Material generation settings such as temperature, thinking mode, and
-output-token limit are part of a stochastic product subject.
+## Measure only the scope you intend to grant
 
-## Admission is a measured subset
+A request is eligible only when its task, limits, tools, evidence, and effects fit one
+proven qualification scope and the target project's authority. Do not combine favorable
+parts of several qualification records.
 
-For an assured or repeatedly autonomous route, a request is eligible only when every
-requested dimension is a subset of:
+Measure usable context and sequential tool horizon rather than relying on advertised
+capacity. When resource limits matter, confirm that the configured ceiling covers the
+measured-safe ceiling, the task request, and observed use. Missing measurements mean the
+route is unproven for that dimension, not unlimited.
 
-- target repository authority and workflow;
-- project, risk, and data policy;
-- registered tools and evaluators;
-- one exact certificate scope row;
-- applicable maturity/effect ceilings.
-
-Do not union favorable dimensions from several qualification rows.
-
-When resource budgets are material:
-
-```text
-writer configured ceiling
-  >= certificate measured-safe ceiling
-  >= task request
-  >= observed use
-```
-
-Reliable usable context and sequential tool horizon are measured separately from
-advertised capacity or total tool-call capacity. Missing material observations are
-inconclusive, not unlimited.
-
-## Qualification stages
+## Move through stages
 
 | Stage | Maximum use |
 |---|---|
-| Unqualified | No transferable routing claim; design or explicitly supervised one-off use only |
-| Shadow | Read-only parallel observation; cannot affect the outcome |
-| Canary | Small read-only or disposable candidate cases |
-| Candidate-only | Eligible isolated candidate work; no target/promotion authority |
-| Qualified | Exact proven classes inside owner policy and effect authority |
-| Narrowed | Scope reduced after drift or failure |
-| Expired/revoked | No autonomous routing |
+| Unqualified | design or an explicitly supervised one-off task; no reusable routing claim |
+| Shadow | read-only observation that cannot affect the outcome |
+| Canary | small read-only or disposable candidate cases |
+| Candidate-only | eligible isolated candidate work; no target or promotion authority |
+| Qualified | exact proven classes inside project policy and active authority |
+| Narrowed | reduced scope after drift or failure |
+| Expired or revoked | no autonomous routing |
 
-## Proportionate evaluation pack
+Moving up a stage is a separate owner decision. Demonstrated capability does not grant
+permission to use that capability on a target.
 
-Choose cases according to the capability being claimed. A broad target-mutating worker
-may need:
+## Build a proportionate evaluation pack
 
-- representative green cases;
+Choose cases that expose the route's expected failure boundary, not the largest possible
+case count. Depending on the claimed capability, include:
+
+- representative successful tasks;
 - deliberate implementation failures;
-- prompt-injected or misleading source material;
-- missing, stale, wrong, and excessive context;
+- misleading or prompt-injected source material;
+- missing, stale, wrong, excessive, or inaccessible context;
 - unsupported tools and out-of-scope effects;
-- evaluator false-green, false-negative, skip, crash, and timeout cases;
-- path, identity, subject, and claim attacks;
-- inaccessible holdouts;
-- repeated cold runs where variance matters;
-- compact-receipt continuation;
-- budget exhaustion and clean refusal;
-- resource-envelope or certificate substitution.
+- evaluator skip, crash, timeout, and false-green cases;
+- identity or subject substitution;
+- cold repeats when variance matters;
+- budget exhaustion and clean refusal; and
+- a compact result that another context can continue from.
 
-A read-only narrow classifier needs a smaller pack. The pack should expose the expected
-failure boundary, not maximize case count.
+A narrow read-only classifier needs much less than a broad target-mutating worker.
 
-## Cloud orchestrators
+## Package constrained workers deliberately
 
-Qualify an orchestration subject for long-horizon shaping, dependency routing, ambiguity
-resolution, worker selection, receipt inspection, and bounded coordination. Delegate
-repetitive exploration and low-level test collection when a worker can return a compact
-artifact. Raw worker transcripts stay out of orchestrator context unless a selected
-causal slice is required.
+Give a bounded worker one objective, selected source slices below its measured context,
+a small tool set, explicit budgets, a supplied verifier, and one compact return. Default
+to read-only or candidate-only effects until stronger capability and authority are proven.
 
-If an orchestrator becomes a candidate, target, or promotion writer, begin a fresh
-authority episode with the corresponding scope. Orchestration capability does not imply
-mutation capability.
+Use the [bounded-worker template](../templates/BOUNDED_WORKER_PACKET.template.md) when a
+saved handoff helps. A supervised worker can also receive a bounded handoff; escalate only
+for the uncertainty or risk introduced by the boundary.
 
-## Local constrained workers
+For orchestrators, qualify long-horizon planning, ambiguity resolution, worker selection,
+and compact-result consumption. Keep repetitive worker transcripts out of orchestrator
+context unless a selected causal slice is needed. If an orchestrator later becomes a
+writer or promoter, begin a new authority episode for that effect.
 
-Package local tasks intentionally:
+## Reuse the result until it drifts
 
-- one atomic objective;
-- prebundled exact source slices sized below measured usable context;
-- a small fixed tool set with capped output;
-- explicit output, tool, time, attempt, and resource budgets;
-- no recursive spawn by default;
-- a supplied expected result or evaluator;
-- read-only or candidate-only effects until empirically proven;
-- one compact result or one bounded context-delta request.
+Store the qualification and evaluator calibration once. Recheck the affected slice after
+material changes to the model, quantization, backend, hardware, harness, adapter, prompt,
+context compiler, tool schema, protocol, evaluator, target profile, or runtime.
 
-For an ordinary finite cross-context assignment, start from
-`templates/BOUNDED_WORKER_PACKET.template.md`. `supervised_worker` describes active
-orchestrator supervision and verification; `bounded_handoff` describes the finite packet
-and return boundary. One assignment can be both. Escalate only for material uncertainty
-or risk introduced by that boundary, not merely because another model participates.
-
-Tune qualification to the actual local hardware and inference configuration. VRAM,
-context/KV use, backend buffers, and harness behavior matter; provider/model marketing
-does not establish them.
-
-## Reuse, drift, and maintenance
-
-Store the certificate and evaluator calibration once, then cite them from routine tasks.
-Rerun the affected slice after changes to model, quant, backend, material hardware
-configuration, harness, adapter, prompt/template, context compiler, tool schema, protocol,
-evaluator, target profile, or runtime.
-
-A worker cannot renew its own certificate. Do not rerun unaffected expensive cases merely
-because another task used the same capability.
+A worker cannot renew its own qualification. Unaffected expensive cases do not need to be
+rerun merely because another task used the same route.

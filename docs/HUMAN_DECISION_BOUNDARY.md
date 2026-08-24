@@ -1,59 +1,56 @@
-# Human Decision Boundary
+# Decisions You Keep
 
-The objective is not “no humans.” It is minimal routine human operation and concentrated
-human judgment.
+ELAD aims to reduce routine operation, not remove your judgment. Agents should arrive at
+decision points with the objective work already checked and summarized.
 
-An LLM judge applying a frozen rubric is calibrated model evidence, not external-human
-acceptance. It cannot create an external human receipt or substitute for a claim whose
-accepted owner is a person.
+A model judge applying a rubric is model evidence. It is not your acceptance and cannot
+substitute for a decision that belongs to the project owner.
 
-## Normally retained by the product owner
+## Usually yours to decide
 
-- product purpose, priority, and acceptable tradeoffs;
-- materially unsettled architecture, authority, privacy, persistence, security, rights,
-  and trust decisions;
-- subjective experience, usability, visual/audio quality, tone, feel, and product fit;
-- adoption of a new model/harness/tool/evidence class;
-- acceptance of residual risk or evaluator limitations;
-- promotion boundaries and publication/release decisions.
+- product purpose, priorities, and meaningful tradeoffs;
+- unsettled architecture, authority, privacy, persistence, security, rights, and trust;
+- usability, visual or audio quality, tone, feel, and product fit;
+- adoption of a new model, harness, tool, or kind of evaluator;
+- acceptance of residual risk or evaluator limitations; and
+- promotion, publication, and release boundaries.
 
-## Normally automated after proof
+## Usually safe to automate after proof
 
-- repository/source identity and scope checks;
-- deterministic transforms, formatting, schemas, graphs, hashes, and manifests;
-- candidate setup and ordinary low-risk implementation;
-- compile, unit, integration, headless, and registered target cases;
-- evidence capture, correlation, retention, and compact receipts;
-- evaluator calibration and drift checks at adoption/invalidation boundaries, with
-  routine tasks reusing current calibration;
-- process/data cleanup and exact failure classification;
-- routine documentation of changed durable facts.
+- repository identity, path, and scope checks;
+- deterministic transforms, formatting, schemas, hashes, and manifests;
+- isolated candidate setup and ordinary low-risk implementation;
+- compile, unit, integration, headless, and registered target checks;
+- evidence capture, cleanup, and exact failure classification; and
+- routine documentation of facts established by the work.
 
-## Human card standard
+Reusable evaluators and agent routes should be calibrated or qualified at adoption and
+after relevant drift. Routine tasks can then reuse that proof instead of asking you to
+repeat objective checks.
 
-Ask for human action only after eligible objective checks are green. A card includes:
+## Ask for a decision only when it is ready
 
-1. exact subject/candidate/build/run identity;
-2. numbered actions;
-3. visible pass/fail criteria;
+Before asking you to review something, the agent should complete the eligible objective
+checks and provide a short, stable card containing:
+
+1. the exact candidate, build, or run;
+2. the few actions you need to take;
+3. visible pass and fail criteria;
 4. stop conditions;
-5. evidence to return;
-6. limitations; and
-7. a short reply format.
+5. what result to return; and
+6. any important limitation.
 
-The human should not have to calculate hashes, discover paths, schedule cases, interpret
-logs, reconstruct agent history, or repeat accepted evidence.
+You should not have to calculate hashes, find hidden paths, interpret logs, reconstruct
+agent history, or repeat evidence that has already been accepted.
 
-The system seals the exact candidate, evidence, and presentation payloads into a review
-bundle before presenting the card. The resulting external human receipt binds that bundle,
-the exact resolved subject, claim/evidence class, eligible reviewer/evaluator, decision,
-limitations, time, and supersession. If the bundle changes, the prior decision does not
-transfer.
+For higher-consequence work, the system may seal the exact candidate and presentation
+into a review bundle so your decision cannot be silently transferred to a changed
+subject. The formal protocol calls the resulting record an external-human receipt. That
+machinery is optional unless exact auditable acceptance is required.
 
-## Delegating objective claims
+## Delegating objective claims later
 
-A project owner may later delegate exact objective claim classes to calibrated machine
-evaluators. The decision names the profile, evaluator pack, thresholds, expiry, drift
-triggers, and retained human claims. It is never a blanket transfer of product authority.
-Operational machine closure also requires the owner repository's active authority to set
-`evidenceAcceptance` and its active evidence policy to delegate that exact claim class.
+You may delegate a narrow, objective claim class to a proven machine evaluator. That
+decision should name the evaluator, supported task class, thresholds, expiry, drift
+triggers, and any decisions you retain. It is never a blanket transfer of product
+authority, and the target project must explicitly allow the delegated evidence.

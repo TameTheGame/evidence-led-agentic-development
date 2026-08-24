@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Reworked the reader-facing process guides around progressive disclosure: start with one
+  small task, add evaluation for uncertain claims, and introduce qualification or formal
+  assurance only when repeated autonomy or consequential effects justify them.
+- Added a prominent `Why ELAD` section explaining how right-sized scaffolding and
+  evidence-backed stopping rules make autonomous agentic development practical without
+  overstating the bounded empirical record.
+- Simplified process language, shortened repeated protocol explanations, and routed
+  implementation detail to the technical references while preserving authority,
+  claim-specific evidence, evaluator calibration, and explicit stopping boundaries.
 - Clarified the first-run voice by speaking directly to the project owner while prefixing
   every coding-agent procedure with `Agent instructions:`.
 - Replaced the first copyable prompt's protocol vocabulary with a plain-language request

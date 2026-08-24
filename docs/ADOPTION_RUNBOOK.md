@@ -1,120 +1,50 @@
 # Adoption Runbook
 
-## Goal
-
-Adopt the smallest ELAD layer that materially improves a project's delivery. The method
-is progressive: a project can begin with one page and existing tests, then add reusable
-assurance infrastructure only when repeated work or consequential effects justify it.
-
-Project maturity, task rigor, and effect authority are separate. Adopting sophisticated
-infrastructure does not force every task through it, and selecting an assured review
-does not grant mutation authority.
+Adopt the smallest part of ELAD that improves the work in front of you. A project can
+begin with one small task and its existing tests. Add reusable evaluators, worker
+qualification, or formal assurance only when repeated work or consequential effects make
+them worthwhile.
 
 > Scope and authority are mandatory; ceremony is proportional.
 
-An adopter begins by locating actual owner authority. If it is unknown or contradictory,
-stop and ask the owner; ELAD never supplies the missing permission. After the task's
-claim, uncertainty, and rigor are clear, stop reading when a deeper protocol layer would
-not change the decision.
+Begin with the target project's actual rules. If authority is missing or contradictory,
+stop and ask the owner. ELAD never supplies permission that the project has not granted.
 
-## Phase 0 — Decide whether ELAD helps
+## 1. Start with one light task
 
-A lightweight adoption is useful almost anywhere. The formal protocol becomes valuable
-when the project has one or more of these conditions:
-
-- cloud and local models with different context, tool, privacy, or resource limits;
-- repeated autonomous delegation or expensive cross-context handoffs;
-- runtime, native-artifact, data, security, or human-acceptance boundaries;
-- multiple repositories or scarce mutation surfaces;
-- evidence that must bind to an exact candidate or runtime subject;
-- recurring evaluator false-green risk;
-- a need to reduce human operation without delegating product judgment.
-
-Do not add formal machinery merely to make a small project look mature.
-
-## Phase 1 — Establish the light path
-
-For a confined, reversible, low-consequence task with a trustworthy deterministic check,
-the entire recurring contract may be:
+Choose a confined, reversible, low-consequence change with a trustworthy exact check:
 
 ```text
 observable outcome and allowed scope
-  -> implementation
-  -> named deterministic check and expected result
-  -> diff inspection
-  -> completion or escalation
+  → implementation
+  → named check and expected result
+  → diff inspection
+  → completion or escalation
 ```
 
-An existing issue or prompt plus a test command can satisfy this. Use the optional
-`templates/LIGHT_TASK.template.md` only when a small written artifact improves the
-handoff. Do not require JSON records, capability certificates, manifests, independent
-agents, or human acceptance when they add no discriminating evidence.
+An existing request plus a test command may be enough. The optional
+[light-task template](../templates/LIGHT_TASK.template.md) is available when saving the
+task card would help. Do not create JSON records, manifests, certificates, independent
+reviews, or formal receipts unless they add evidence the task actually needs.
 
-## Phase 2 — Inventory the target and freeze a baseline
+If this works, you have adopted the core method. You can stop here.
 
-Before broader autonomy, inspect the target read-only:
+## 2. Establish a project baseline before broader autonomy
 
-- product and repository authority;
-- branches, worktrees, finalization, promotion, and publication rules;
-- source, generated, native, data, evidence, secret, and deployment zones;
-- existing tests, runtime probes, observability, and known false-green cases;
-- project/risk/data classes and retained human decisions;
-- exact target serializers or executors;
-- cloud/local model privacy, context, tool, latency, cost, and resource constraints;
-- current human operations, orchestration context cost, failure rate, and delivery time.
+When an agent will work repeatedly or across a wider surface, first inspect the project
+read-only. Find:
 
-Record enough of the current workflow to tell whether adoption improves it. Unknown
-values remain unknown; do not invent precision.
+- the owner, repository instructions, allowed paths, and prohibited effects;
+- existing tests, runtime checks, and known false-green cases;
+- source, generated, secret, data, deployment, and publication boundaries;
+- branch, worktree, review, promotion, and rollback rules; and
+- the current amount of manual operation, retries, context, time, and cost.
 
-If the project will consume a formal ELAD release, pin its exact version, commit, and
-protocol-bundle digest. Never give a floating sibling checkout authority over a product.
+Record only what is needed to make future decisions. Unknown values should remain unknown.
+If the project consumes a formal ELAD release, pin its exact version and protocol bundle;
+do not give a floating checkout authority over the project.
 
-## Phase 3 — Select task rigor
-
-For each material step, answer the seven questions in
-[ADAPTIVE_RIGOR.md](ADAPTIVE_RIGOR.md) and choose:
-
-- `light` for exact, low-consequence, reversible work with an existing oracle;
-- `bounded` for moderate coupling, regression risk, or a cross-context handoff;
-- `evaluated` for stochastic, semantic, experiential, runtime-dependent, or otherwise
-  behaviorally uncertain product claims;
-- `assured` for foundational, security/privacy-sensitive, irreversible, target-native,
-  production, promotion, or other high-consequence work.
-
-Start at the cheapest supported profile. Escalate when evidence exposes greater
-uncertainty; simplify when a mechanism repeatedly has no decision value.
-
-Rigor follows the claim, not the mechanics around it. Executing a CLI or calling a local
-inference endpoint does not automatically make an exact schema, exit-code, fixture, or
-failure-isolation claim operational. Likewise, an AI coding worker can implement
-deterministic code without making the product claim stochastic.
-
-## Phase 4 — Reuse and calibrate evaluators
-
-Inventory existing compilers, linters, tests, fixtures, runtime probes, traces, and human
-acceptance methods before building anything new.
-
-Classify evaluator maturity per claim. A new exact regression with independently defined
-expected behavior is `exact_deterministic` and does not require a semantic calibration
-suite. A fallible rubric or model judge is calibrated for the semantic claim it scores;
-that calibration does not spread to neighboring deterministic claims.
-
-For a reusable evaluator, record:
-
-- exact evaluator/tool/schema/environment identity;
-- supported claim classes;
-- representative known-good and known-bad cases;
-- stale/wrong-subject, empty-discovery, skip, crash, and timeout behavior as applicable;
-- false-positive/false-negative or variance limits where measurable;
-- invalidation triggers.
-
-Routine tasks cite the current calibration and run focused task cases. Rerun the affected
-calibration slice when the evaluator or relevant environment changes, or when the task
-introduces a new failure mode whose false green would matter.
-
-## Phase 5 — Add a minimum owner-local overlay
-
-Only create files that the target actually needs. A small overlay might be:
+A small owner-local overlay might contain only:
 
 ```text
 AGENTS.md
@@ -122,123 +52,103 @@ STATUS.md
 WORKFLOW.md
 ```
 
-A project moving toward formal autonomous handoffs may additionally need:
+The target project owns these files. Shared ELAD templates can help start them, but they
+do not replace local authority.
 
-```text
-automation/
-  core.lock.json
-  active-authority.json
-  profiles/
-  policies/
-  registries/
-  gates/
-```
+If one-context tasks and existing checks remain sufficient, stop here.
 
-The target owns these artifacts. A shared risk or data policy may narrow multiple
-repositories, but each repository owns its own authority, evidence acceptance, adapters,
-gates, and promotion. Templates are optional starting points, not mandatory paperwork.
+## 3. Add evaluation when exact tests cannot settle quality
 
-## Phase 6 — Add bounded candidate delivery
+Use [Adaptive Rigor](ADAPTIVE_RIGOR.md) to choose the lightest defensible profile. Keep
+each claim with its own evidence:
 
-When work crosses contexts or needs isolation:
+- exact behavior stays with deterministic checks;
+- semantic or stochastic behavior uses representative cases and a calibrated evaluator;
+- live operational behavior uses evidence from the relevant runtime; and
+- product meaning or experience stays with the owner when automation cannot decide it.
 
-1. compile a compact human-facing brief;
-2. inherit stable repository/profile/policy defaults automatically;
-3. generate any full normalized packet deterministically;
-4. give the worker one outcome, selected context, allowed tools/effects, budgets, and
-   stop states;
-5. keep candidate work separate from target/promotion state;
-6. return a concise result plus exact evidence references;
-7. verify only the claims and evidence layers selected by task rigor.
+Reuse existing evaluators. For a new fallible evaluator, establish known-good and
+known-bad cases, failure behavior, identity, and invalidation triggers. Routine tasks can
+then cite that calibration and run only the focused cases they need.
 
-A human or agent should not spend more time manually populating a packet than doing the
-work. Use `templates/BOUNDED_WORKER_PACKET.template.md` for an ordinary bounded handoff.
-Full JSON records are generated assurance artifacts for workflows that actually need
-them.
+Do not escalate an entire task merely because one neighboring claim is uncertain. See
+[Evaluation and Evidence](EVALUATION_AND_EVIDENCE.md) for mixed-claim examples.
 
-## Phase 7 — Qualify repeated model and harness routes
+If evaluation now gives the agent a reliable stopping rule, stop here.
 
-Formal qualification is for repeated autonomous delegation, broader effects, or machine
-evidence authority—not every supervised light edit.
+## 4. Add bounded delegation when work crosses contexts
 
-For each exact model/runtime/harness/adapter combination:
+When another worker or context will implement a task, give it:
 
-1. define candidate task classes, context/tool/resource budgets, and prohibited effects;
-2. run representative positives, proportionate negatives, inaccessible holdouts, and
-   cold repeats where variance matters;
-3. measure reliable context and sequential tool horizon, not advertised capacity;
-4. begin shadow/read-only, then canary/candidate-only;
-5. record expiry and invalidation triggers.
+- one observable outcome;
+- only the relevant context;
+- allowed paths, tools, and effects;
+- a supplied verifier or expected result;
+- practical output, attempt, time, and resource limits; and
+- explicit completion and escalation states.
 
-A local model in worker harness A and the same model in worker harness B are separate
-subjects. A coding-agent
-harness and a product inference API are also separate subjects even when both load the
-same weights. Qualification includes exact model artifact/build or quantization,
-runtime/backend, harness/adapter, tool surface, prompt/context compiler, configured
-resource envelope, and task class. A cloud
-orchestrator should delegate repetitive tool traces rather than absorb them into its
-long-horizon context.
+Keep candidate work separate from target or promotion state, and have the worker return a
+compact result with focused evidence rather than a full transcript. Start from the
+[bounded-worker template](../templates/BOUNDED_WORKER_PACKET.template.md) when a saved
+packet is useful.
 
-## Phase 8 — Add target-owned operations only when needed
+Another model's participation does not make an exact product claim stochastic. Escalate
+only for the uncertainty or risk the handoff actually adds.
 
-The target implements narrow logical tools for its own artifact and runtime surfaces. A
-neutral controller may validate and dispatch an admitted high-level plan; it does not
-become an arbitrary filesystem, console, process, package, deployment, or native-format
-mutator.
+If assignments are supervised, finite, and independently checked, stop here.
 
-For opaque artifacts:
+## 5. Qualify routes used for repeated autonomy
 
-```text
-reviewable input -> authoritative serializer -> save/reload
-  -> logical identity and complete-resource verification -> idempotent reapply
-```
+Formal model-and-harness qualification is useful when the same route will repeatedly act
+without close supervision, when its safe context or tool horizon matters, or when it will
+receive broader effects or machine-evidence authority.
 
-## Phase 9 — Fence scarce or overlapping effects
+Qualify the exact model, runtime, harness, adapter, prompt/context compiler, tool surface,
+resource envelope, and task class. Test representative successes, proportionate failures,
+inaccessible holdouts, and cold repeats when variance matters. Begin read-only or in
+shadow, then move to disposable candidate work before granting a wider route.
 
-Lease/fencing infrastructure is justified for overlapping writers, target-native state,
-runtime persistence, data stores, promotion, or stale-completion risk. It is not required
-for a read-only check or a single isolated light edit.
+Store the result once and reuse it until a named drift trigger fires. A worker cannot
+renew its own qualification. See [Model and Harness Qualification](MODEL_QUALIFICATION.md).
 
-Before activation, test contention, atomic acquisition, monotonic fencing, stale/replayed
-completion, disconnect after target completion, process loss, uncertain ownership,
-expiry/reconciliation, and exact cleanup.
+If the route remains candidate-only and the target owner performs final verification,
+stop here.
 
-## Phase 10 — Prove one proportionate golden path
+## 6. Add target controls only for consequential effects
 
-Run a production-shaped example at the highest effect level being adopted. Use full
-assured packets, independent verification, recovery, and malicious cases only if that
-level's consequences justify them. Preserve compact continuation and retain human
-judgment where objective evaluators cannot prove the claim.
+Use stronger controls when work can affect shared runtime state, opaque native artifacts,
+durable data, production, promotion, or publication.
 
-Activation, candidate finalization, promotion, and publication remain separate
-owner-local decisions.
+- Let the target project own narrow tools for its own artifact and runtime surfaces.
+- Use the target system's authoritative serializer for opaque formats, then save, reload,
+  and verify the result.
+- Add ownership leases or fencing only where overlapping writers or stale completion are
+  realistic risks.
+- Separate candidate finalization, target execution, acceptance, promotion, and
+  publication when their consequences require separate decisions.
+- Test recovery, uncertain ownership, stale/replayed completion, and cleanup before
+  activating the effect.
 
-## Gate-admission rule
+Full assured packets and formal receipts belong here when exact identity and auditable
+closure matter. Their implementation is described in the [protocol conformance
+reference](PROTOCOL_030_CONFORMANCE.md).
 
-Create a durable gate only for:
+## 7. Measure whether the method is helping
 
-- a reusable capability;
-- an evaluator or harness qualification;
-- a high-consequence policy or authority transition;
-- a cross-surface adoption boundary; or
-- a difficult-to-reverse platform decision.
+Compare the new workflow with the prior one using measures that can change a decision:
 
-Ordinary features close through their task evidence. Do not create a permanent gate for
-every implementation. Reuse a passed gate receipt until an explicit invalidation trigger
-applies.
-
-## Measure and simplify
-
-Compare the candidate workflow with its baseline:
-
-- human operations and review time;
-- orchestrator context/tool consumption;
-- successful evidence-backed closure;
+- accepted evidence-backed outcomes;
+- manual operations and review time;
+- orchestrator context and tool use;
 - retries, escalations, and false greens;
-- latency, cost, and local resource use;
+- latency, cost, and local resource use; and
 - security, privacy, scope, or target-integrity events.
 
-Advance only when the relevant guardrails hold and the workflow materially improves
-delivery. Hold when evidence is missing. Roll back for authority, security, privacy,
+Separate one-time setup from steady-state cost. Advance when the evidence supports the
+next capability. Hold when proof is missing. Roll back for authority, security, privacy,
 false-green, or target-integrity failures. Simplify when recurring scaffolding costs more
 than the uncertainty it resolves.
+
+Create durable gates for reusable capabilities or consequential transitions, not for
+every ordinary feature. A project that never needs the later stages can remain a valid,
+useful ELAD adopter at the light path.

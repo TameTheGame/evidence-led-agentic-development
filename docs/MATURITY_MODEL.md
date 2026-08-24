@@ -1,119 +1,89 @@
 # Maturity Model
 
-Maturity describes the highest operational capability and effect boundary a project has
-actually proven. It is not a task checklist and not a measure of process volume.
+Maturity describes the highest operational capability a project has actually proven. It
+is not a checklist, a score, or a reason to give every task more process.
 
-Task rigor is selected independently. A Level 5 project may use a `light` path for a
-confined deterministic edit. A Level 1 project may use `assured` analysis for a
-high-consequence read-only decision while still having no mutation authority.
+A mature project can still use a `light` path for a confined edit. A young project can
+use `assured` review for a high-consequence read-only decision without gaining any write
+authority. Advance only when the next capability is useful and its required proof exists.
 
-A project may use Level 0 principles without adopting machine contracts. It may not
-claim a higher level while required proof for that capability is missing.
+## Level 0 — Use the method
 
-## Level 0 — Blueprint or lightweight practice
+The project uses ELAD's evidence loop, adaptive rigor, and owner-defined authority with
+ordinary documentation and tests. It may also use inert templates and synthetic examples.
 
-Allowed:
+This is a valid stopping point. Formal machine contracts are optional.
 
-- documentation and ordinary project workflow;
-- adaptive-rigor selection;
-- inert templates and synthetic examples;
-- deny-all reference policies;
-- read-only self-conformance.
+This ELAD reference repository is Level 0: its validator proves internal schemas,
+templates, synthetic fixtures, path rules, lifecycle behavior, and default-deny state. It
+does not run a model or prove a real target, runtime, reviewer, or platform integration.
 
-A lightweight project can stop here and still use the build/observe/evaluate/error-
-analysis loop. Formal assurance schemas are optional reference artifacts.
+## Level 1 — Contract read-only work
 
-For this repository, Level 0 proof includes coherent owner-local authority boundaries,
-schema/template integrity, path and lifecycle conformance, default-deny state, synthetic
-byte-chain verification, protocol-security/adoption/adaptive-rigor vectors, and no live
-operation. These fixtures make no claim about a real model, target, runtime, reviewer, or
-platform matrix.
+The project can create identity-bound manifests, read-only packets and receipts, gate
+calculations, and compact continuation records without changing the target.
 
-## Level 1 — Contracted read-only
+Use this level when read-only work needs auditable cross-context identity, replay refusal,
+budget checks, or calibrated evaluators. It does not replace the light path.
 
-Allowed:
+## Level 2 — Isolate candidate changes
 
-- canonical hashing and manifest construction;
-- semantic admission;
-- read-only packets and receipts;
-- gate graph calculation;
-- read-only reporting and fresh-context reconstruction.
+The project can write and verify an isolated candidate without mutating the target or
+promoting the result.
 
-Required proof for the formal read-only route includes cross-document ownership and
-identity reconciliation, stale/replay refusal, exact digest framing, path conformance,
-budget/capability subset checks where applicable, independently rooted continuation, and
-calibrated evaluators.
+Proof covers base and worktree identity, path confinement, preservation of unrelated
+work, candidate identity, relevant evaluation, compact handoff, and candidate-only
+finalization. A formal receipt is needed only when the task's rigor requires one.
 
-This machinery applies to read-only episodes that need auditable cross-context assurance.
-It does not replace the project's light path.
+## Level 3 — Route repeated autonomous work
 
-## Level 2 — Candidate-safe
+Exact model-and-harness profiles can receive the task classes and effects they have
+empirically demonstrated.
 
-Allowed: isolated candidate writes and deterministic verification; no target mutation or
-promotion.
+Proof uses representative successes, proportionate failure and held-out cases, measured
+usable context and tool horizon, evaluator calibration, known limits, resource
+observations, and expiry or drift rules. Store this qualification and reuse it until an
+invalidation trigger fires.
 
-Required proof: exact base/worktree/path confinement, preservation of unrelated work,
-candidate identity, selected evaluator evidence, compact handoff, and enforced
-candidate-only finalization. Use a full receipt only when the selected task rigor needs
-one.
+## Level 4 — Execute fenced target operations
 
-## Level 3 — Capability-routed
+The project can run narrow target-owned mutation or runtime plans on proven surfaces.
 
-Allowed: exact empirically qualified cloud/local profiles receive eligible repeated
-read-only or candidate task classes.
+Proof covers exact target identity, ownership where overlap matters, stale and replayed
+completion, crash or disconnect recovery, cleanup, and target-specific serializer or
+runtime evidence. Do not add leases to read-only or isolated work that has no scarce
+surface.
 
-Required proof: representative positive cases, proportionate malicious/holdout/cold-run
-cases, measured usable context and sequential tool horizon, evaluator calibration,
-known-failure boundary, cost/latency/resource observations, and expiry/drift rules.
+## Level 5 — Deliver an operational path
 
-Formal qualification is reusable infrastructure. It is not rerun for each routine task
-unless an invalidation trigger fires.
+The project has proven an owner-local, production-shaped path from intent through
+candidate delivery and separately authorized promotion.
 
-## Level 4 — Fenced target execution
+Proof includes compact continuation, appropriate independent verification, target-owner
+activation, focused owner acceptance where needed, rollback, and separation between
+candidate completion, promotion, and publication.
 
-Allowed: narrow target-owned mutation/runtime plans on proven surfaces.
+## Level 6 — Maintain several projects through drift
 
-Required proof: exact target identity, atomic ownership where overlap matters, monotonic
-fencing, stale/replay refusal, crash/disconnect reconciliation, owned process/data
-cleanup, target-specific serializer/runtime evidence, and absence of generic mutation
-gateways.
+Several projects share a versioned neutral protocol while retaining their own authority,
+routing, evaluators, adapters, and qualification records.
 
-Fencing is scoped to scarce or consequential surfaces; read-only and isolated work does
-not acquire leases for ceremony's sake.
+Proof includes compatibility releases, focused requalification after drift, evaluator
+maintenance, efficacy and cost observations, supply-chain provenance, and evidence that
+the process is being simplified or improved rather than merely growing.
 
-## Level 5 — Operational delivery
+## Advancing a level
 
-Allowed: owner-local end-to-end production-shaped candidate delivery, calibrated machine
-evidence delegation, retained human claims, and separately authorized promotion.
+A capability transition is foundational work and normally uses `assured` rigor:
 
-Required proof: one operational golden path from fresh intent through compact
-continuation, appropriate independent verification, target-owner activation, bounded
-external-human acceptance, rollback, and promotion separation. Publication remains a
-separate owner decision.
-
-## Level 6 — Continuously calibrated
-
-Allowed: multiple projects share a versioned neutral protocol while target-specific
-routing, evaluators, adapters, and certificates are maintained through measured drift
-and reviewed learning.
-
-Required proof: compatibility releases, invalidation-triggered requalification,
-regression and evaluator-calibration maintenance, efficacy/cost/latency observability,
-supply-chain provenance, owner-local delegations, and evidence that the process itself
-continues to improve rather than merely grow.
-
-## Advancement rule
-
-A capability transition is foundational work, so it normally uses `assured` rigor:
-
-1. freeze the capability contract and acceptance matrix;
+1. freeze the capability and its acceptance cases;
 2. implement only the next bounded surface;
-3. run relevant positives, deliberate negatives, recovery, and adversarial cases;
+3. test realistic success, failure, recovery, and adversarial cases;
 4. independently verify the exact implementation and evidence;
 5. retain owner-controlled decisions;
-6. activate through an owner-local durable record;
-7. preserve a tested rollback and invalidation triggers.
+6. activate through an owner-local record; and
+7. preserve rollback and invalidation triggers.
 
-Do not create a maturity or capability gate for each ordinary feature. Gates represent
-reusable capabilities, high-consequence policy transitions, cross-surface adoption
-boundaries, or difficult-to-reverse platform decisions.
+Create maturity gates for reusable capabilities or consequential transitions, not for
+ordinary features. The exact machine requirements live in the [protocol conformance
+reference](PROTOCOL_030_CONFORMANCE.md).
