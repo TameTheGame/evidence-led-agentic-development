@@ -30,8 +30,8 @@ receipt, or independent reviewer unless the task gives those things a real job.
 - **Assured:** consequential work that warrants isolation, independent expectations,
   recovery evidence, or separate review.
 
-Start with `light`. Escalate when evidence reveals more uncertainty, consequence, or
-coupling than expected. Simplify when a reusable check has made the work predictable.
+The agent will start with `light` & escalate when evidence reveals more uncertainty, consequence, or
+coupling than expected. It will simplify when a reusable check has made the work predictable.
 
 These profiles describe evidence effort, not permission. Scope and authority come from
 you and the project being changed.
