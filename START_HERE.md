@@ -20,7 +20,7 @@ For each step:
 That loop can fit inside one prompt and one test. It does not require a protocol packet,
 receipt, or independent reviewer unless the task gives those things a real job.
 
-## Choose the smallest useful path
+## The agent chooses the smallest useful path
 
 - **Light:** a confined change with a trustworthy deterministic check.
 - **Bounded:** a task with moderate coupling or a handoff that needs a short written
