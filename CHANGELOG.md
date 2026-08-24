@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Clarified that the first-run procedure is executed by a coding agent while the human
+  owner supplies intent, authority, material decisions, and acceptance.
+
 ## 0.3.0 — 2026-08-23
 
 - Released a clean public source tree under Apache-2.0, with verified primary-source

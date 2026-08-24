@@ -1,14 +1,46 @@
-# First Run
+# First Run: Human Owner and Coding Agent
 
-This path is for a new adopter who wants to understand ELAD before deciding whether any
-formal protocol machinery is useful.
+## Read this first
 
-You need Python 3.10 or newer. The local validation path installs no packages, contacts no
-provider, and changes no repository outside this checkout.
+This walkthrough is for a **human project owner adopting ELAD with a coding agent**. It is
+not a terminal tutorial or a list of protocol records that the human must personally
+execute.
 
-## 1. Validate the reference repository
+Unless a step is labeled **Human decision**, its procedural instructions are meant for the
+**coding agent**. A technically experienced human may run the commands, but that is
+optional.
 
-From the repository root:
+The role split is intentionally small:
+
+- **Human owner:** chooses the project and desired outcome, sets or approves authority and
+  prohibited effects, answers material product questions, and accepts or rejects the
+  result.
+- **Coding agent:** reads the repository instructions, inspects the target, proposes the
+  smallest adequate task contract, runs commands, makes authorized changes, collects
+  evidence, reports limitations, and stops at the declared boundary.
+
+ELAD does not give the agent authority merely because this repository or walkthrough is
+present. Authority still comes from the human owner and the target project's own rules.
+
+## Give this instruction to your coding agent
+
+A human adopter can start in ordinary language by giving an agent this instruction:
+
+```text
+Use ELAD's docs/FIRST_RUN.md as your procedure for one small task in a project I own.
+Treat me as the human owner. You should perform the procedural and terminal steps.
+Before editing the target project, show me a compact light-task proposal containing the
+outcome, allowed scope, prohibited effects, authority, evidence, and stopping condition.
+Do not introduce the formal assured packet chain unless a concrete risk requires it.
+```
+
+The remaining steps explain what the agent should do and where the human makes the few
+decisions that cannot be delegated.
+
+## 1. Agent action: validate the ELAD reference repository
+
+The coding agent should use Python 3.10 or newer and run this from the ELAD repository
+root:
 
 ```text
 python tools/validate_all.py
@@ -18,16 +50,28 @@ On Windows, `py -3 tools/validate_all.py` is also supported when the Python laun
 installed. The final line must say that every Level-0 validation slice passed and that no
 authority was granted.
 
-This checks ELAD's schemas, templates, synthetic fixtures, malicious vectors, path rules,
-adaptive-rigor selector, receipt lifecycle, and authenticated artifact inventory. It does
-not run a model or prove that ELAD works in your project.
+The command installs no packages, contacts no provider, and changes no repository outside
+the ELAD checkout. It checks ELAD's schemas, templates, synthetic fixtures, malicious
+vectors, path rules, adaptive-rigor selector, receipt lifecycle, and authenticated
+artifact inventory. It does not run a model or prove that ELAD works in the human's
+project.
 
-## 2. Try the smallest ELAD task
+The agent should summarize the result for the human. The human does not need to interpret
+the validator's internal counts.
 
-Choose one confined, reversible change in a project you own. A documentation correction
-with an existing link check or a small code fix with an existing unit test is ideal.
+## 2. Human decision: choose one small outcome
 
-Write down only:
+The human should name one confined, reversible change in a project they own. Ordinary
+language is enough. A documentation correction with an existing link check or a small
+code fix with an existing unit test is ideal.
+
+The human does not need to select an ELAD rigor label or fill out a schema. The agent
+should infer the lightest defensible path and explain any reason to escalate.
+
+## 3. Agent action: propose and execute a light task
+
+Before editing, the agent should compile the human's request and the target project's
+rules into this compact proposal:
 
 ```text
 Outcome: <what should observably be true>
@@ -38,39 +82,51 @@ Evidence: <existing exact check plus diff inspection>
 Stop: <the passing result or condition that ends the task>
 ```
 
-Then make the change, run the named check, inspect the diff, and stop. That is a complete
-`light` ELAD task. You do not need to copy a JSON schema or create a receipt. The optional
-[`LIGHT_TASK` template](../templates/LIGHT_TASK.template.md) is available when a saved card
-would help.
+The human only needs to correct the proposal if it misunderstands the intended outcome,
+scope, authority, or tradeoff. Once authorized, the agent makes the change, runs the named
+check, inspects the diff, reports the result, and stops.
 
-## 3. Try a bounded handoff only if you need one
+That is a complete `light` ELAD task. Neither the human nor the agent needs to copy a JSON
+schema or create a formal receipt. The optional
+[`LIGHT_TASK` template](../templates/LIGHT_TASK.template.md) is available when saving the
+card would help future work.
 
-When another worker or context will implement the task, add the information that prevents
-scope drift: the minimal context, output contract, verifier ownership, budget, and explicit
-stop/escalation conditions. Use the compact
-[`BOUNDED_WORKER_PACKET` template](../templates/BOUNDED_WORKER_PACKET.template.md).
+## 4. Agent action: use a bounded handoff only when needed
 
-Do not use the assured JSON packet merely because an AI worker is involved. A supervised
-worker can still receive a bounded handoff, and delegation raises rigor only for the risk
-or uncertainty it actually adds.
+If another worker or context will implement the task, the agent should add only the
+information that prevents scope drift: minimal context, output contract, verifier
+ownership, budget, and explicit stop or escalation conditions. The compact
+[`BOUNDED_WORKER_PACKET` template](../templates/BOUNDED_WORKER_PACKET.template.md) is the
+starting point.
 
-## 4. Split mixed claims before adding evaluation
+The agent should not use the assured JSON packet merely because another AI worker is
+involved. A supervised worker can still receive a bounded handoff, and delegation raises
+rigor only for the risk or uncertainty it actually adds. Any request for broader authority
+returns to the human owner.
+
+## 5. Agent action: split mixed claims before adding evaluation
 
 Suppose a feature both adds an exact CLI flag and generates a semantic description. The
 flag, schema, failure behavior, and no-call default may be deterministic claims; the
-description's grounding and usefulness are fallible semantic claims. Route them
-separately.
+description's grounding and usefulness are fallible semantic claims. The agent should
+route them separately.
 
 The [`mixed-claim semantic example`](../examples/mixed-claim-semantic-feature/README.md)
-shows this split without requiring a model. Use `evaluated` rigor for the fallible claim,
-not automatically for every neighboring exact check.
+shows this split without requiring a live model. The agent should use `evaluated` rigor
+for the fallible claim, not automatically for every neighboring exact check. The human
+retains any product judgment that the selected evaluator cannot credibly settle.
 
-## 5. Stop reading when the next layer will not change the decision
+## 6. Human decision: accept, redirect, or stop
 
-Move to the [Adoption Runbook](ADOPTION_RUNBOOK.md) when you need recurring delegation,
-shared evaluator calibration, durable authority, candidate isolation, or stricter evidence
-identity. Read the formal schemas only when you are implementing or evaluating those
-contracts.
+The agent's final report should say what changed, what evidence passed, what remains
+untested, and whether it stopped within scope. The human then accepts the outcome,
+redirects the task, or declines further work.
 
-ELAD is useful when it helps choose the next discriminating action. If another template or
-gate would not change the evidence, authority, or decision, do not add it.
+The agent should move to the [Adoption Runbook](ADOPTION_RUNBOOK.md) only when the project
+actually needs recurring delegation, shared evaluator calibration, durable authority,
+candidate isolation, or stricter evidence identity. It should read the formal schemas only
+when implementing or evaluating those contracts.
+
+ELAD is useful when it helps the human and agent choose the next discriminating action. If
+another template or gate would not change the evidence, authority, or decision, the agent
+should not add it.

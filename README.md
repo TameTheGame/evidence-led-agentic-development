@@ -20,7 +20,9 @@ benchmark, safety certification, or replacement for target-owned tests and decis
 
 ## Start here
 
-- New adopter: follow the [short first-run walkthrough](docs/FIRST_RUN.md).
+- Human adopter working with a coding agent: use the
+  [short human-and-agent first-run walkthrough](docs/FIRST_RUN.md). Its procedural steps
+  are for the agent; the human supplies intent, authority, and acceptance.
 - Project owner: read [Start Here](START_HERE.md) and the
   [Adoption Runbook](docs/ADOPTION_RUNBOOK.md).
 - Evaluator or researcher: read the candid [Empirical Status](docs/EMPIRICAL_STATUS.md)
@@ -229,6 +231,9 @@ See the [first run](docs/FIRST_RUN.md), [Start Here](START_HERE.md), and the
 ## Validate the repository
 
 Python 3.10 or newer is required; no third-party packages are installed.
+
+These commands are normally run by a coding agent or CI. A human adopter does not need to
+execute them personally.
 
 ```text
 python tools/validate_all.py
