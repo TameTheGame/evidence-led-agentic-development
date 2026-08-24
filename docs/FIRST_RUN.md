@@ -5,10 +5,6 @@
 This walkthrough helps you adopt ELAD with a coding agent. It is not a terminal tutorial
 or a list of protocol records that you must personally execute.
 
-Sections prefixed **Agent instructions:** are meant for the coding agent. Everything else
-speaks directly to you as the project owner. You may run the commands yourself if you
-want to, but that is optional.
-
 The role split is intentionally small:
 
 - **Your role:** choose the project and desired outcome, set or approve authority and
