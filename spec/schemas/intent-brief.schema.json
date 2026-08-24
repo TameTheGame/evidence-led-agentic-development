@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:intent-brief:0.3.0",
+  "title": "Intent Brief",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "intentId",
+    "state",
+    "outcome",
+    "purpose",
+    "nonGoals",
+    "riskClass",
+    "dataClass",
+    "claims",
+    "humanOnlyDecisions",
+    "budgets",
+    "stopStates"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "intentId": { "type": "string", "pattern": "^intent:[a-z0-9][a-z0-9._-]*$" },
+    "state": { "enum": ["template_inert", "draft", "accepted", "superseded"] },
+    "outcome": { "type": "string", "minLength": 1 },
+    "purpose": { "type": "string", "minLength": 1 },
+    "nonGoals": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "riskClass": { "enum": ["low", "normal", "high", "critical"] },
+    "dataClass": { "enum": ["public", "internal", "private_local", "restricted"] },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claimId", "claimClass", "description", "acceptanceOwner", "evidenceClass", "subject"],
+        "properties": {
+          "claimId": { "type": "string", "pattern": "^claim:[a-z0-9][a-z0-9._-]*$" },
+          "claimClass": { "type": "string", "pattern": "^claim-class:[a-z0-9][a-z0-9._-]*$" },
+          "description": { "type": "string", "minLength": 1 },
+          "acceptanceOwner": { "enum": ["machine", "external_human"] },
+          "evidenceClass": { "type": "string", "minLength": 1 },
+          "subject": { "$ref": "#/$defs/subjectSelector" }
+        }
+      }
+    },
+    "humanOnlyDecisions": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attempts", "toolCalls", "retrievals", "spawns"],
+      "properties": {
+        "attempts": { "type": "integer", "minimum": 0 },
+        "toolCalls": { "type": "integer", "minimum": 0 },
+        "retrievals": { "type": "integer", "minimum": 0 },
+        "spawns": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "stopStates": { "type": "array", "items": { "enum": ["NEED_CONTEXT", "EVIDENCE_FAILED", "OUT_OF_SCOPE", "ESCALATE"] }, "uniqueItems": true }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[A-F0-9]{64}$" },
+    "subjectSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "selector", "repositoryId", "id", "baseHead", "sha256"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "selector": { "type": "string", "pattern": "^[a-z][a-z0-9._-]*$" },
+        "repositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
+        "id": { "type": "string", "minLength": 1 },
+        "baseHead": { "type": "string", "pattern": "^[a-f0-9]{40,64}$" },
+        "sha256": { "type": ["string", "null"], "pattern": "^[A-F0-9]{64}$" }
+      }
+    }
+  }
+}

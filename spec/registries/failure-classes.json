@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "0.3.0",
+  "registryId": "vocabulary:elad_failure_classes_0.3.0",
+  "status": "reference_only",
+  "failureClasses": [
+    "grounding",
+    "specification",
+    "routing",
+    "context_exhaustion",
+    "tool_or_adapter",
+    "implementation",
+    "target_runtime_or_api",
+    "harness_process_or_evidence",
+    "evaluator_false_positive",
+    "evaluator_false_negative",
+    "evaluator_crash",
+    "nondeterminism",
+    "budget",
+    "authority_refusal",
+    "product_disagreement"
+  ]
+}

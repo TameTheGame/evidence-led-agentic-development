@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "0.3.0",
+  "vectorSetId": "adoption-vectors:qualification_resource_efficacy_v030",
+  "state": "template_inert",
+  "authority": {
+    "grantsAuthority": false,
+    "grantsMutation": false,
+    "grantsPromotion": false,
+    "grantsPublication": false
+  },
+  "vectors": [
+    { "caseId": "vector:qualification_valid_single_scope", "category": "qualification", "scenario": "qualified_worker_a", "mutation": "none", "expected": "valid", "expectedCode": "OK", "expectedDecision": null },
+    { "caseId": "vector:qualification_scope_union", "category": "qualification", "scenario": "qualified_worker_a", "mutation": "union_tool_and_claim_across_scopes", "expected": "reject", "expectedCode": "QUAL_SCOPE_UNION", "expectedDecision": null },
+    { "caseId": "vector:qualification_harness_separation", "category": "qualification", "scenario": "qualified_worker_a", "mutation": "substitute_worker_b_subject", "expected": "reject", "expectedCode": "QUAL_SUBJECT_MISMATCH", "expectedDecision": null },
+    { "caseId": "vector:qualification_unrun", "category": "qualification", "scenario": "qualified_worker_a", "mutation": "mark_unrun", "expected": "reject", "expectedCode": "QUAL_UNRUN", "expectedDecision": null },
+    { "caseId": "vector:qualification_count_only", "category": "qualification", "scenario": "qualified_worker_a", "mutation": "remove_runs_keep_counts", "expected": "reject", "expectedCode": "QUAL_COUNT_ONLY", "expectedDecision": null },
+    { "caseId": "vector:qualification_count_mismatch", "category": "qualification", "scenario": "qualified_worker_a", "mutation": "inflate_passed_count", "expected": "reject", "expectedCode": "QUAL_COUNT_MISMATCH", "expectedDecision": null },
+
+    { "caseId": "vector:resource_valid_lineage", "category": "resource", "scenario": "local_task_lineage", "mutation": "none", "expected": "valid", "expectedCode": "OK", "expectedDecision": null },
+    { "caseId": "vector:resource_parent_hash_mismatch", "category": "resource", "scenario": "local_task_lineage", "mutation": "break_parent_hash", "expected": "reject", "expectedCode": "RESOURCE_PARENT_MISMATCH", "expectedDecision": null },
+    { "caseId": "vector:resource_budget_expansion", "category": "resource", "scenario": "local_task_lineage", "mutation": "expand_requested_context", "expected": "reject", "expectedCode": "RESOURCE_BUDGET_EXPANSION", "expectedDecision": null },
+    { "caseId": "vector:resource_subject_drift", "category": "resource", "scenario": "local_task_lineage", "mutation": "change_subject", "expected": "reject", "expectedCode": "RESOURCE_SUBJECT_DRIFT", "expectedDecision": null },
+    { "caseId": "vector:resource_backend_config_drift", "category": "resource", "scenario": "local_task_lineage", "mutation": "change_effective_config", "expected": "reject", "expectedCode": "RESOURCE_CONFIG_DRIFT", "expectedDecision": null },
+    { "caseId": "vector:resource_observed_overrun", "category": "resource", "scenario": "local_task_lineage", "mutation": "exceed_peak_vram", "expected": "reject", "expectedCode": "RESOURCE_OBSERVED_OVERFLOW", "expectedDecision": null },
+    { "caseId": "vector:resource_vram_floor", "category": "resource", "scenario": "local_task_lineage", "mutation": "insufficient_preflight_vram", "expected": "reject", "expectedCode": "RESOURCE_VRAM_FLOOR", "expectedDecision": null },
+
+    { "caseId": "vector:efficacy_advance_truth", "category": "efficacy", "scenario": "advance", "mutation": "none", "expected": "valid", "expectedCode": "OK", "expectedDecision": "advance" },
+    { "caseId": "vector:efficacy_baseline_posthoc", "category": "efficacy", "scenario": "advance", "mutation": "freeze_after_candidate_start", "expected": "reject", "expectedCode": "EFFICACY_BASELINE_POSTHOC", "expectedDecision": null },
+    { "caseId": "vector:efficacy_sample_incomplete", "category": "efficacy", "scenario": "advance", "mutation": "remove_candidate_observation", "expected": "reject", "expectedCode": "EFFICACY_SAMPLE_INCOMPLETE", "expectedDecision": null },
+    { "caseId": "vector:efficacy_missing_human_burden", "category": "efficacy", "scenario": "advance", "mutation": "null_human_operations", "expected": "reject", "expectedCode": "EFFICACY_HUMAN_BURDEN_MISSING", "expectedDecision": null },
+    { "caseId": "vector:efficacy_rollback_truth", "category": "efficacy", "scenario": "rollback", "mutation": "none", "expected": "valid", "expectedCode": "OK", "expectedDecision": "rollback" },
+    { "caseId": "vector:efficacy_guardrail_false_advance", "category": "efficacy", "scenario": "rollback", "mutation": "claim_advance", "expected": "reject", "expectedCode": "EFFICACY_DECISION_MISMATCH", "expectedDecision": null },
+    { "caseId": "vector:efficacy_simplify_truth", "category": "efficacy", "scenario": "simplify", "mutation": "none", "expected": "valid", "expectedCode": "OK", "expectedDecision": "simplify" },
+    { "caseId": "vector:efficacy_human_burden_false_advance", "category": "efficacy", "scenario": "simplify", "mutation": "claim_advance", "expected": "reject", "expectedCode": "EFFICACY_DECISION_MISMATCH", "expectedDecision": null },
+    { "caseId": "vector:efficacy_hold_truth", "category": "efficacy", "scenario": "hold", "mutation": "none", "expected": "valid", "expectedCode": "OK", "expectedDecision": "hold" },
+    { "caseId": "vector:efficacy_quality_false_advance", "category": "efficacy", "scenario": "hold", "mutation": "claim_advance", "expected": "reject", "expectedCode": "EFFICACY_DECISION_MISMATCH", "expectedDecision": null }
+  ]
+}

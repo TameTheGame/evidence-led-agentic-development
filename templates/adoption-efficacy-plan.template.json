@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "0.3.0",
+  "planId": "efficacy-plan:template_unmeasured",
+  "state": "template_inert",
+  "ownerRepositoryId": "repo:template_target",
+  "authority": {
+    "grantsAuthority": false,
+    "grantsMutation": false,
+    "grantsPromotion": false,
+    "grantsPublication": false
+  },
+  "projectProfile": { "id": "project:template_target", "path": "templates/project-profile.template.json", "sha256": "1111111111111111111111111111111111111111111111111111111111111111", "schemaVersion": "0.3.0" },
+  "protocolBundle": { "id": "protocol:elad_0.3.0", "path": "blueprint.json", "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "schemaVersion": "0.3.0" },
+  "transition": {
+    "fromMaturityLevel": 0,
+    "toMaturityLevel": 1
+  },
+  "baseline": {
+    "workflowIdentity": "template-unmeasured-current-workflow",
+    "startAt": null,
+    "endAt": null,
+    "observations": []
+  },
+  "candidateWindow": {
+    "earliestStartAt": null,
+    "maximumEndAt": null,
+    "minimumTasks": 1,
+    "minimumAcceptedClosures": 1,
+    "requiredStrata": [],
+    "fixedStratumWeights": []
+  },
+  "metricDefinitions": [],
+  "thresholds": [],
+  "hardGuardrails": [],
+  "exclusionRules": [],
+  "missingDataPolicy": "inconclusive",
+  "decisionPolicy": {
+    "advanceRequiresAllRequiredMetrics": true,
+    "advanceRequiresAllGuardrails": true,
+    "advanceRequiresImprovement": true,
+    "unknownResult": "hold",
+    "humanBurdenFailure": "simplify",
+    "hardGuardrailFailure": "rollback"
+  },
+  "rollbackTarget": null,
+  "simplificationTargets": [],
+  "frozenAt": null,
+  "approvedByOwner": null,
+  "supersedes": null
+}

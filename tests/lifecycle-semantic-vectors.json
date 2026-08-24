@@ -1,0 +1,291 @@
+{
+  "schemaVersion": "0.3.0",
+  "vectorSetId": "elad-lifecycle-semantics-v1",
+  "description": "External examples for claim aggregation and lifecycle admission. Shape rows state representative allowed behavior; mutation rows change exactly one field of an allowed shape and must fail closed.",
+  "claimAggregateVectors": [
+    {
+      "id": "aggregate-n-all-open",
+      "claims": [
+        { "acceptanceOwner": "machine", "result": "not_evaluated" },
+        { "acceptanceOwner": "external_human", "result": "not_evaluated" }
+      ],
+      "expected": { "outcome": "aggregate", "aggregate": "N" }
+    },
+    {
+      "id": "aggregate-u-machine-open",
+      "claims": [
+        { "acceptanceOwner": "machine", "result": "not_evaluated" },
+        { "acceptanceOwner": "external_human", "result": "passed" }
+      ],
+      "expected": { "outcome": "aggregate", "aggregate": "U" }
+    },
+    {
+      "id": "aggregate-u-mixed-machine-open",
+      "claims": [
+        { "acceptanceOwner": "machine", "result": "passed" },
+        { "acceptanceOwner": "machine", "result": "not_evaluated" },
+        { "acceptanceOwner": "external_human", "result": "passed" }
+      ],
+      "expected": { "outcome": "aggregate", "aggregate": "U" }
+    },
+    {
+      "id": "aggregate-m-human-open",
+      "claims": [
+        { "acceptanceOwner": "machine", "result": "passed" },
+        { "acceptanceOwner": "external_human", "result": "not_evaluated" }
+      ],
+      "expected": { "outcome": "aggregate", "aggregate": "M" }
+    },
+    {
+      "id": "aggregate-p-all-passed",
+      "claims": [
+        { "acceptanceOwner": "machine", "result": "passed" },
+        { "acceptanceOwner": "external_human", "result": "passed" }
+      ],
+      "expected": { "outcome": "aggregate", "aggregate": "P" }
+    },
+    {
+      "id": "aggregate-p-machine-only",
+      "claims": [
+        { "acceptanceOwner": "machine", "result": "passed" }
+      ],
+      "expected": { "outcome": "aggregate", "aggregate": "P" }
+    },
+    {
+      "id": "aggregate-xf-machine-failed",
+      "claims": [
+        { "acceptanceOwner": "machine", "result": "failed" },
+        { "acceptanceOwner": "external_human", "result": "passed" }
+      ],
+      "expected": { "outcome": "aggregate", "aggregate": "XF" }
+    },
+    {
+      "id": "aggregate-xh-human-rejected",
+      "claims": [
+        { "acceptanceOwner": "machine", "result": "passed" },
+        { "acceptanceOwner": "external_human", "result": "failed" }
+      ],
+      "expected": { "outcome": "aggregate", "aggregate": "XH" }
+    },
+    {
+      "id": "aggregate-i-machine-inconclusive",
+      "claims": [
+        { "acceptanceOwner": "machine", "result": "inconclusive" },
+        { "acceptanceOwner": "external_human", "result": "passed" }
+      ],
+      "expected": { "outcome": "aggregate", "aggregate": "I" }
+    },
+    {
+      "id": "aggregate-i-human-inconclusive",
+      "claims": [
+        { "acceptanceOwner": "machine", "result": "passed" },
+        { "acceptanceOwner": "external_human", "result": "inconclusive" }
+      ],
+      "expected": { "outcome": "aggregate", "aggregate": "I" }
+    },
+    {
+      "id": "aggregate-i-precedes-open",
+      "claims": [
+        { "acceptanceOwner": "machine", "result": "not_evaluated" },
+        { "acceptanceOwner": "external_human", "result": "inconclusive" }
+      ],
+      "expected": { "outcome": "aggregate", "aggregate": "I" }
+    },
+    {
+      "id": "aggregate-reject-dual-failure",
+      "claims": [
+        { "acceptanceOwner": "machine", "result": "failed" },
+        { "acceptanceOwner": "external_human", "result": "failed" }
+      ],
+      "expected": { "outcome": "reject" }
+    }
+  ],
+  "lifecycleVectors": [
+    {
+      "id": "allow-need-context",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "read_only", "terminalStatus": "NEED_CONTEXT", "finalizationState": "not_started", "candidateState": "unchanged", "claimAggregate": "N", "manifestState": "sealed", "nextAction": "supply_context" }
+    },
+    {
+      "id": "allow-out-of-scope",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "read_only", "terminalStatus": "OUT_OF_SCOPE", "finalizationState": "not_started", "candidateState": "unchanged", "claimAggregate": "N", "manifestState": "sealed", "nextAction": "owner_decision" }
+    },
+    {
+      "id": "allow-escalate-not-evaluated",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "read_only", "terminalStatus": "ESCALATE", "finalizationState": "not_started", "candidateState": "unchanged", "claimAggregate": "N", "manifestState": "sealed", "nextAction": "owner_decision" }
+    },
+    {
+      "id": "allow-escalate-inconclusive",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "read_only", "terminalStatus": "ESCALATE", "finalizationState": "not_started", "candidateState": "unchanged", "claimAggregate": "I", "manifestState": "sealed", "nextAction": "owner_decision" }
+    },
+    {
+      "id": "allow-machine-failure-before-checkpoint",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "read_only", "terminalStatus": "EVIDENCE_FAILED", "finalizationState": "not_started", "candidateState": "unchanged", "claimAggregate": "XF", "manifestState": "sealed", "nextAction": "fix_causal_layer" }
+    },
+    {
+      "id": "allow-human-rejection-before-checkpoint",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "read_only", "terminalStatus": "EVIDENCE_FAILED", "finalizationState": "not_started", "candidateState": "unchanged", "claimAggregate": "XH", "manifestState": "sealed", "nextAction": "owner_decision" }
+    },
+    {
+      "id": "allow-checkpoint-unverified",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "candidate_checkpoint", "terminalStatus": "COMPLETE", "finalizationState": "candidate_checkpoint", "candidateState": "checkpointed", "claimAggregate": "U", "manifestState": "sealed", "nextAction": "independent_verification" }
+    },
+    {
+      "id": "allow-checkpoint-machine-failure",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "candidate_checkpoint", "terminalStatus": "EVIDENCE_FAILED", "finalizationState": "candidate_checkpoint", "candidateState": "checkpointed", "claimAggregate": "XF", "manifestState": "sealed", "nextAction": "fix_causal_layer" }
+    },
+    {
+      "id": "allow-checkpoint-human-rejection",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "candidate_checkpoint", "terminalStatus": "EVIDENCE_FAILED", "finalizationState": "candidate_checkpoint", "candidateState": "checkpointed", "claimAggregate": "XH", "manifestState": "sealed", "nextAction": "owner_decision" }
+    },
+    {
+      "id": "allow-checkpoint-inconclusive",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "candidate_checkpoint", "terminalStatus": "ESCALATE", "finalizationState": "candidate_checkpoint", "candidateState": "checkpointed", "claimAggregate": "I", "manifestState": "sealed", "nextAction": "owner_decision" }
+    },
+    {
+      "id": "allow-read-only-technical-green",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "read_only", "terminalStatus": "COMPLETE", "finalizationState": "technical_evidence_green", "candidateState": "unchanged", "claimAggregate": "P", "manifestState": "sealed", "nextAction": "none" }
+    },
+    {
+      "id": "allow-checkpoint-technical-green",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "candidate_checkpoint", "terminalStatus": "COMPLETE", "finalizationState": "technical_evidence_green", "candidateState": "checkpointed", "claimAggregate": "P", "manifestState": "sealed", "nextAction": "none" }
+    },
+    {
+      "id": "allow-read-only-await-human",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "read_only", "terminalStatus": "COMPLETE", "finalizationState": "await_external_human_receipt", "candidateState": "unchanged", "claimAggregate": "M", "manifestState": "sealed", "nextAction": "external_human_review" }
+    },
+    {
+      "id": "allow-checkpoint-await-human",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "candidate_checkpoint", "terminalStatus": "COMPLETE", "finalizationState": "await_external_human_receipt", "candidateState": "checkpointed", "claimAggregate": "M", "manifestState": "sealed", "nextAction": "external_human_review" }
+    },
+    {
+      "id": "allow-finalized",
+      "kind": "shape",
+      "admitted": true,
+      "tuple": { "finalizationCeiling": "finalized_on_candidate", "terminalStatus": "COMPLETE", "finalizationState": "finalized_on_candidate", "candidateState": "finalized", "claimAggregate": "P", "manifestState": "sealed", "nextAction": "prepare_promotion" }
+    },
+    {
+      "id": "deny-finalized-under-checkpoint-ceiling",
+      "kind": "single_field_mutation",
+      "baseVectorId": "allow-finalized",
+      "mutatedField": "finalizationCeiling",
+      "admitted": false,
+      "tuple": { "finalizationCeiling": "candidate_checkpoint", "terminalStatus": "COMPLETE", "finalizationState": "finalized_on_candidate", "candidateState": "finalized", "claimAggregate": "P", "manifestState": "sealed", "nextAction": "prepare_promotion" }
+    },
+    {
+      "id": "deny-finalized-as-evidence-failed",
+      "kind": "single_field_mutation",
+      "baseVectorId": "allow-finalized",
+      "mutatedField": "terminalStatus",
+      "admitted": false,
+      "tuple": { "finalizationCeiling": "finalized_on_candidate", "terminalStatus": "EVIDENCE_FAILED", "finalizationState": "finalized_on_candidate", "candidateState": "finalized", "claimAggregate": "P", "manifestState": "sealed", "nextAction": "prepare_promotion" }
+    },
+    {
+      "id": "deny-finalized-with-technical-green-state",
+      "kind": "single_field_mutation",
+      "baseVectorId": "allow-finalized",
+      "mutatedField": "finalizationState",
+      "admitted": false,
+      "tuple": { "finalizationCeiling": "finalized_on_candidate", "terminalStatus": "COMPLETE", "finalizationState": "technical_evidence_green", "candidateState": "finalized", "claimAggregate": "P", "manifestState": "sealed", "nextAction": "prepare_promotion" }
+    },
+    {
+      "id": "deny-finalized-with-checkpointed-candidate",
+      "kind": "single_field_mutation",
+      "baseVectorId": "allow-finalized",
+      "mutatedField": "candidateState",
+      "admitted": false,
+      "tuple": { "finalizationCeiling": "finalized_on_candidate", "terminalStatus": "COMPLETE", "finalizationState": "finalized_on_candidate", "candidateState": "checkpointed", "claimAggregate": "P", "manifestState": "sealed", "nextAction": "prepare_promotion" }
+    },
+    {
+      "id": "deny-finalized-with-human-open",
+      "kind": "single_field_mutation",
+      "baseVectorId": "allow-finalized",
+      "mutatedField": "claimAggregate",
+      "admitted": false,
+      "tuple": { "finalizationCeiling": "finalized_on_candidate", "terminalStatus": "COMPLETE", "finalizationState": "finalized_on_candidate", "candidateState": "finalized", "claimAggregate": "M", "manifestState": "sealed", "nextAction": "prepare_promotion" }
+    },
+    {
+      "id": "deny-finalized-with-draft-manifest",
+      "kind": "single_field_mutation",
+      "baseVectorId": "allow-finalized",
+      "mutatedField": "manifestState",
+      "admitted": false,
+      "tuple": { "finalizationCeiling": "finalized_on_candidate", "terminalStatus": "COMPLETE", "finalizationState": "finalized_on_candidate", "candidateState": "finalized", "claimAggregate": "P", "manifestState": "draft", "nextAction": "prepare_promotion" }
+    },
+    {
+      "id": "deny-finalized-without-promotion-action",
+      "kind": "single_field_mutation",
+      "baseVectorId": "allow-finalized",
+      "mutatedField": "nextAction",
+      "admitted": false,
+      "tuple": { "finalizationCeiling": "finalized_on_candidate", "terminalStatus": "COMPLETE", "finalizationState": "finalized_on_candidate", "candidateState": "finalized", "claimAggregate": "P", "manifestState": "sealed", "nextAction": "none" }
+    },
+    {
+      "id": "deny-need-context-after-checkpoint",
+      "kind": "single_field_mutation",
+      "baseVectorId": "allow-checkpoint-unverified",
+      "mutatedField": "terminalStatus",
+      "admitted": false,
+      "tuple": { "finalizationCeiling": "candidate_checkpoint", "terminalStatus": "NEED_CONTEXT", "finalizationState": "candidate_checkpoint", "candidateState": "checkpointed", "claimAggregate": "U", "manifestState": "sealed", "nextAction": "independent_verification" }
+    },
+    {
+      "id": "deny-machine-failure-owner-decision",
+      "kind": "single_field_mutation",
+      "baseVectorId": "allow-machine-failure-before-checkpoint",
+      "mutatedField": "nextAction",
+      "admitted": false,
+      "tuple": { "finalizationCeiling": "read_only", "terminalStatus": "EVIDENCE_FAILED", "finalizationState": "not_started", "candidateState": "unchanged", "claimAggregate": "XF", "manifestState": "sealed", "nextAction": "owner_decision" }
+    },
+    {
+      "id": "deny-human-rejection-machine-fix",
+      "kind": "single_field_mutation",
+      "baseVectorId": "allow-human-rejection-before-checkpoint",
+      "mutatedField": "nextAction",
+      "admitted": false,
+      "tuple": { "finalizationCeiling": "read_only", "terminalStatus": "EVIDENCE_FAILED", "finalizationState": "not_started", "candidateState": "unchanged", "claimAggregate": "XH", "manifestState": "sealed", "nextAction": "fix_causal_layer" }
+    },
+    {
+      "id": "deny-read-only-checkpointed-candidate",
+      "kind": "single_field_mutation",
+      "baseVectorId": "allow-read-only-technical-green",
+      "mutatedField": "candidateState",
+      "admitted": false,
+      "tuple": { "finalizationCeiling": "read_only", "terminalStatus": "COMPLETE", "finalizationState": "technical_evidence_green", "candidateState": "checkpointed", "claimAggregate": "P", "manifestState": "sealed", "nextAction": "none" }
+    },
+    {
+      "id": "deny-await-human-as-all-passed",
+      "kind": "single_field_mutation",
+      "baseVectorId": "allow-checkpoint-await-human",
+      "mutatedField": "claimAggregate",
+      "admitted": false,
+      "tuple": { "finalizationCeiling": "candidate_checkpoint", "terminalStatus": "COMPLETE", "finalizationState": "await_external_human_receipt", "candidateState": "checkpointed", "claimAggregate": "P", "manifestState": "sealed", "nextAction": "external_human_review" }
+    }
+  ]
+}

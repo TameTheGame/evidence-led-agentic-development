@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "0.3.0",
+  "registryId": "vocabulary:elad_terminal_statuses_0.3.0",
+  "status": "reference_only",
+  "terminalStatuses": [
+    "COMPLETE",
+    "NEED_CONTEXT",
+    "EVIDENCE_FAILED",
+    "OUT_OF_SCOPE",
+    "ESCALATE"
+  ],
+  "rule": "Terminal status summarizes the episode and does not imply promotion or publication."
+}

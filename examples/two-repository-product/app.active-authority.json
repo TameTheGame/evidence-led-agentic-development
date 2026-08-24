@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "0.3.0",
+  "authorityId": "authority:synthetic_simulation_app",
+  "state": "held",
+  "owner": "human:synthetic_owner",
+  "ownerRepositoryId": "repo:synthetic_simulation_app",
+  "maturityLevel": 0,
+  "authorizations": {
+    "candidateMutation": false,
+    "targetMutation": false,
+    "evidenceAcceptance": false,
+    "promotion": false,
+    "publication": false
+  },
+  "supersedes": null,
+  "notes": "Synthetic simulation-app example only; no operational authority."
+}

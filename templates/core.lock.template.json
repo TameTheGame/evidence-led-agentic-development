@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "0.3.0",
+  "lockId": "core-lock:example_project",
+  "state": "template_inert",
+  "ownerRepositoryId": "repo:example_project",
+  "blueprint": {
+    "name": "Evidence-Led Agentic Development",
+    "version": "0.3.0",
+    "protocolId": "protocol:elad_0.3.0",
+    "distributionIdentity": "replace-with-approved-private-or-public-source",
+    "sourceCommit": "0000000000000000000000000000000000000000",
+    "distributionSha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "protocolBundle": {
+    "id": "protocol-bundle:elad_0.3.0",
+    "path": "automation/protocol/protocol-bundle.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "schemaVersion": "0.3.0"
+  },
+  "targetCompatibility": "not_evaluated",
+  "approvedBy": null,
+  "approvedAt": null,
+  "supersedes": null
+}

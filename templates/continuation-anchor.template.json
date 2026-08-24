@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "0.3.0",
+  "anchorId": "continuation-anchor:example_read_only_review",
+  "state": "template_inert",
+  "ownerRepositoryId": "repo:example_project",
+  "receipt": {
+    "id": "receipt:example_read_only_review",
+    "path": "templates/worker-receipt.template.json",
+    "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+    "schemaVersion": "0.3.0"
+  },
+  "createdAt": null,
+  "supersedes": null,
+  "notes": "Template only. This placeholder receipt reference is not trusted and grants no continuation authority."
+}

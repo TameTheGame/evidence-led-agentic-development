@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:gate-set:0.3.0",
+  "title": "Gate Set",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "gateSetId",
+    "ownerRepositoryId",
+    "planningSummaryOnly",
+    "canonicalForExecution",
+    "transitionCardsImplemented",
+    "gates"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "gateSetId": { "type": "string", "pattern": "^gates:[a-z0-9][a-z0-9._-]*$" },
+    "ownerRepositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
+    "planningSummaryOnly": { "type": "boolean" },
+    "canonicalForExecution": { "type": "boolean" },
+    "transitionCardsImplemented": { "type": "boolean" },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["gateId", "ownerRepositoryId", "state", "prerequisites", "evaluatorId", "negativeControlId"],
+        "properties": {
+          "gateId": { "type": "string", "pattern": "^gate:[a-z0-9][a-z0-9._-]*$" },
+          "ownerRepositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
+          "state": { "enum": ["unrun", "running", "passed", "failed", "invalidated", "superseded"] },
+          "prerequisites": { "type": "array", "items": { "type": "string", "pattern": "^gate:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true },
+          "evaluatorId": { "type": "string", "pattern": "^evaluator:[a-z0-9][a-z0-9._-]*$" },
+          "negativeControlId": { "type": "string", "pattern": "^case:[a-z0-9][a-z0-9._-]*$" }
+        }
+      }
+    }
+  }
+}

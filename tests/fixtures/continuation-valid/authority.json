@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "0.3.0",
+  "authorityId": "authority:continuation_fixture",
+  "state": "active",
+  "owner": "human:continuation_fixture_owner",
+  "ownerRepositoryId": "repo:continuation_fixture",
+  "maturityLevel": 1,
+  "authorizations": {
+    "candidateMutation": false,
+    "targetMutation": false,
+    "evidenceAcceptance": true,
+    "promotion": false,
+    "publication": false
+  },
+  "supersedes": null,
+  "notes": "Synthetic validator fixture only. It grants no authority over any real repository, model, target, promotion, or publication surface."
+}

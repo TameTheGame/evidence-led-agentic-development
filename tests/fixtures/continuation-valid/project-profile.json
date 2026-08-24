@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "0.3.0",
+  "profileId": "project:continuation_fixture",
+  "state": "active",
+  "repositoryId": "repo:continuation_fixture",
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "FC49D794CAAE67445BC708B6219DD463352C3561A9E8F1DD7CE5CD1CA6707873",
+    "schemaVersion": "0.3.0"
+  },
+  "authority": {
+    "id": "authority:continuation_fixture",
+    "path": "tests/fixtures/continuation-valid/authority.json",
+    "sha256": "DD9C7080AC12D31CBF8D10996DA6BE74B95439E5339D0B01956452C807ECE537",
+    "schemaVersion": "0.3.0"
+  },
+  "policyBindings": {
+    "risk": {
+      "id": "risk-policy:continuation_fixture",
+      "path": "tests/fixtures/continuation-valid/risk-policy.json",
+      "sha256": "30056E651848A91CA7E6ED04669861015A8B8E8262B241621C060DFA634BFF17",
+      "schemaVersion": "0.3.0"
+    },
+    "data": {
+      "id": "data-policy:continuation_fixture",
+      "path": "tests/fixtures/continuation-valid/data-policy.json",
+      "sha256": "68E5508A3932AA1871E14772DC867D1F4256B9D41D119BEA4E57CE707CE37E57",
+      "schemaVersion": "0.3.0"
+    },
+    "evidence": {
+      "id": "evidence-policy:continuation_fixture",
+      "path": "tests/fixtures/continuation-valid/evidence-policy.json",
+      "sha256": "C9F7A473A88B58B020759BC258BF4A996938EEF4723EF4FA2A7E121537D29901",
+      "schemaVersion": "0.3.0"
+    },
+    "toolRegistry": {
+      "id": "tool-registry:continuation_fixture",
+      "path": "tests/fixtures/continuation-valid/tool-registry.json",
+      "sha256": "C1AFCC8BE8595DB6586FB38BFE36B4CA6DC97847AA1E6C5B9DFC1706C5B0884B",
+      "schemaVersion": "0.3.0"
+    },
+    "evaluatorRegistry": {
+      "id": "evaluator-registry:continuation_fixture",
+      "path": "tests/fixtures/continuation-valid/evaluator-registry.json",
+      "sha256": "4E7D7DD95264144FD62F74C70A17FB17F5E1FE7216DBF45A88E979A5D7B1C604",
+      "schemaVersion": "0.3.0"
+    }
+  },
+  "artifactLanes": [
+    "ordinary_source",
+    "external_human"
+  ],
+  "allowedRoots": [
+    "tests/fixtures/continuation-valid"
+  ],
+  "humanOnlyDecisions": [
+    "Accept the synthetic subjective claim."
+  ],
+  "targetOperations": [
+    {
+      "operationId": "operation:continuation_fixture_read_bundle",
+      "state": "active",
+      "effects": [
+        "read"
+      ]
+    }
+  ]
+}

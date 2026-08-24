@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "0.3.0",
+  "intentId": "intent:synthetic_application_review",
+  "state": "draft",
+  "outcome": "Inspect whether a fictional application candidate stays within its declared read-only review scope.",
+  "purpose": "Demonstrate a bound claim subject and a fail-closed refusal when the selected writer is unqualified and repository authority is held.",
+  "nonGoals": [
+    "execute a model",
+    "mutate either fictional repository",
+    "accept evidence",
+    "promote or publish a candidate"
+  ],
+  "riskClass": "low",
+  "dataClass": "internal",
+  "claims": [
+    {
+      "claimId": "claim:synthetic_scope_matches",
+      "claimClass": "claim-class:deterministic_scope_identity",
+      "description": "The fictional candidate changes only the declared scope.",
+      "acceptanceOwner": "machine",
+      "evidenceClass": "deterministic",
+      "subject": {
+        "kind": "candidate",
+        "selector": "receipt_candidate",
+        "repositoryId": "repo:synthetic_simulation_app",
+        "id": "candidate:synthetic_application_review",
+        "baseHead": "cccccccccccccccccccccccccccccccccccccccc",
+        "sha256": null
+      }
+    }
+  ],
+  "humanOnlyDecisions": [
+    "activate repository authority",
+    "qualify the exact writer and harness",
+    "accept evidence delegation",
+    "promote or publish a candidate"
+  ],
+  "budgets": {
+    "attempts": 1,
+    "toolCalls": 2,
+    "retrievals": 0,
+    "spawns": 0
+  },
+  "stopStates": [
+    "NEED_CONTEXT",
+    "EVIDENCE_FAILED",
+    "OUT_OF_SCOPE",
+    "ESCALATE"
+  ]
+}

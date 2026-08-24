@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "0.3.0",
+  "manifestId": "retrieval-manifest:continuation_fixture_review",
+  "state": "frozen",
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "FC49D794CAAE67445BC708B6219DD463352C3561A9E8F1DD7CE5CD1CA6707873",
+    "schemaVersion": "0.3.0"
+  },
+  "subject": {
+    "repositoryId": "repo:continuation_fixture",
+    "baseRef": "synthetic-fixture",
+    "baseHead": "ffffffffffffffffffffffffffffffffffffffff",
+    "projectProfile": {
+      "id": "project:continuation_fixture",
+      "path": "tests/fixtures/continuation-valid/project-profile.json",
+      "sha256": "69A4A0375AF2B74B74601F5A133D422A2E7B5FAD9E428B85001C9EAC249AA1B7",
+      "schemaVersion": "0.3.0"
+    },
+    "authority": {
+      "id": "authority:continuation_fixture",
+      "path": "tests/fixtures/continuation-valid/authority.json",
+      "sha256": "DD9C7080AC12D31CBF8D10996DA6BE74B95439E5339D0B01956452C807ECE537",
+      "schemaVersion": "0.3.0"
+    }
+  },
+  "framing": "elad-canonical-json-outer-sha256-v1",
+  "entries": [
+    {
+      "repositoryId": "repo:continuation_fixture",
+      "path": "tests/fixtures/continuation-valid/retrieval/subject.txt",
+      "bytes": 136,
+      "sha256": "2153CD946EC5547A825EF7BE28302D3D384A6A32A58D21F24A61949585E2C640",
+      "role": "frozen_review_subject",
+      "slice": null,
+      "freshness": "current_at_base",
+      "workerAccess": "prebundled"
+    }
+  ],
+  "createdAt": "2026-08-22T12:01:00Z",
+  "supersedes": null
+}

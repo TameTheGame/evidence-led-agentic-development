@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:failure-record:0.3.0",
+  "title": "Reviewed Failure Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "failureId",
+    "state",
+    "fingerprint",
+    "taskClass",
+    "subjectSha256",
+    "failureClass",
+    "symptom",
+    "firstCausalLayer",
+    "attempts",
+    "evidenceRefs",
+    "resolution",
+    "regressionImpact",
+    "certificateImpact",
+    "reviewedBy"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "failureId": { "type": "string", "pattern": "^failure:[a-z0-9][a-z0-9._-]*$" },
+    "state": { "enum": ["template_inert", "open", "resolved", "superseded"] },
+    "fingerprint": { "type": "string", "minLength": 1 },
+    "taskClass": { "type": "string", "minLength": 1 },
+    "subjectSha256": { "type": "string", "pattern": "^[A-F0-9]{64}$" },
+    "failureClass": { "type": "string", "minLength": 1 },
+    "symptom": { "type": "string", "minLength": 1 },
+    "firstCausalLayer": { "type": "string", "minLength": 1 },
+    "attempts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["attempt", "causalDifference", "result"],
+        "properties": {
+          "attempt": { "type": "integer", "minimum": 1 },
+          "causalDifference": { "type": "string", "minLength": 1 },
+          "result": { "type": "string", "minLength": 1 }
+        }
+      },
+      "maxItems": 2
+    },
+    "evidenceRefs": { "type": "array", "items": { "type": "string", "pattern": "^evidence:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true },
+    "resolution": { "type": ["string", "null"] },
+    "regressionImpact": { "type": "string", "minLength": 1 },
+    "certificateImpact": { "type": "string", "minLength": 1 },
+    "reviewedBy": { "type": ["string", "null"] }
+  }
+}

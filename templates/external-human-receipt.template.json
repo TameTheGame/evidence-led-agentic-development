@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "0.3.0",
+  "receiptId": "human-receipt:example_summary_review",
+  "state": "template_inert",
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+    "schemaVersion": "0.3.0"
+  },
+  "packet": {
+    "id": "packet:example_read_only_review",
+    "path": "templates/task-packet.template.json",
+    "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "schemaVersion": "0.3.0"
+  },
+  "claimId": "claim:summary_is_useful",
+  "claimClass": "claim-class:subjective_product_quality",
+  "evidenceClass": "external_human",
+  "candidate": {
+    "candidateState": "unchanged",
+    "candidateId": "candidate:example_read_only_review",
+    "candidateSha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "baseHead": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "head": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "resolvedSubject": {
+    "kind": "candidate",
+    "repositoryId": "repo:example_project",
+    "id": "candidate:example_read_only_review",
+    "baseHead": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+  },
+  "reviewBundle": {
+    "id": "review-bundle:example_summary_review",
+    "path": "templates/review-bundle.template.json",
+    "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+    "schemaVersion": "0.3.0"
+  },
+  "reviewer": {
+    "reviewerId": "human:example_owner",
+    "evaluatorId": "evaluator:external_human_review"
+  },
+  "decision": "inconclusive",
+  "limitations": [
+    "Template only; no review occurred."
+  ],
+  "recordedAt": null,
+  "supersedes": null
+}

@@ -1,0 +1,153 @@
+{
+  "schemaVersion": "0.3.0",
+  "packetId": "packet:synthetic_application_review",
+  "state": "draft",
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+    "schemaVersion": "0.3.0"
+  },
+  "intent": {
+    "id": "intent:synthetic_application_review",
+    "path": "examples/two-repository-product/application-review.intent.json",
+    "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "schemaVersion": "0.3.0"
+  },
+  "projectProfile": {
+    "id": "project:synthetic_simulation_app",
+    "path": "examples/two-repository-product/simulation-app.profile.json",
+    "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "schemaVersion": "0.3.0"
+  },
+  "authority": {
+    "id": "authority:synthetic_simulation_app",
+    "path": "examples/two-repository-product/app.active-authority.json",
+    "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "schemaVersion": "0.3.0"
+  },
+  "policyBindings": {
+    "risk": {
+      "id": "risk-policy:synthetic_product",
+      "path": "examples/two-repository-product/risk-policy.json",
+      "sha256": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "schemaVersion": "0.3.0"
+    },
+    "data": {
+      "id": "data-policy:synthetic_product",
+      "path": "examples/two-repository-product/data-policy.json",
+      "sha256": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+      "schemaVersion": "0.3.0"
+    },
+    "evidence": {
+      "id": "evidence-policy:synthetic_simulation_app",
+      "path": "examples/two-repository-product/app.evidence-policy.json",
+      "sha256": "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+      "schemaVersion": "0.3.0"
+    }
+  },
+  "riskClass": "low",
+  "dataClass": "internal",
+  "taskFamily": "read_only_contract_review",
+  "artifactLane": "ordinary_source",
+  "requestedEffects": [
+    "read"
+  ],
+  "repository": {
+    "repositoryId": "repo:synthetic_simulation_app",
+    "baseRef": "main",
+    "baseHead": "cccccccccccccccccccccccccccccccccccccccc",
+    "candidateId": "candidate:synthetic_application_review",
+    "dirtyInputSha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  },
+  "writer": {
+    "profile": {
+      "id": "writer:synthetic_read_only_reviewer",
+      "path": "examples/two-repository-product/application-review.writer-profile.json",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "schemaVersion": "0.3.0"
+    },
+    "certificate": {
+      "id": "certificate:synthetic_unqualified",
+      "path": "examples/two-repository-product/application-review.capability-certificate.json",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "schemaVersion": "0.3.0"
+    },
+    "roleId": "role:independent_verifier"
+  },
+  "paths": {
+    "allowedExisting": [
+      "src/example.cs",
+      "tests/example-tests.cs"
+    ],
+    "allowedNew": [],
+    "prohibited": [
+      "production-data",
+      "secrets"
+    ]
+  },
+  "toolRegistry": {
+    "id": "tool-registry:synthetic_simulation_app",
+    "path": "examples/two-repository-product/app.tool-registry.json",
+    "sha256": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+    "schemaVersion": "0.3.0"
+  },
+  "evaluatorRegistry": {
+    "id": "evaluator-registry:synthetic_simulation_app",
+    "path": "examples/two-repository-product/app.evaluator-registry.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "schemaVersion": "0.3.0"
+  },
+  "tools": [
+    {
+      "toolId": "tool:synthetic_read_source",
+      "registryEntrySha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "effect": "read",
+      "inputSha256": "8888888888888888888888888888888888888888888888888888888888888888"
+    }
+  ],
+  "retrievalManifest": {
+    "id": "retrieval-manifest:synthetic_application_review",
+    "path": "examples/two-repository-product/application-review.retrieval-manifest.json",
+    "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+    "schemaVersion": "0.3.0"
+  },
+  "claims": [
+    {
+      "claimId": "claim:synthetic_scope_matches",
+      "claimClass": "claim-class:deterministic_scope_identity",
+      "description": "The fictional candidate changes only the declared scope.",
+      "acceptanceOwner": "machine",
+      "evidenceClass": "deterministic",
+      "subject": {
+        "kind": "candidate",
+        "selector": "receipt_candidate",
+        "repositoryId": "repo:synthetic_simulation_app",
+        "id": "candidate:synthetic_application_review",
+        "baseHead": "cccccccccccccccccccccccccccccccccccccccc",
+        "sha256": null
+      },
+      "evaluatorId": "evaluator:synthetic_scope_check",
+      "negativeControlId": "case:synthetic_extra_path"
+    }
+  ],
+  "budgets": {
+    "contextTokens": 4096,
+    "outputTokens": 1024,
+    "retrievals": 0,
+    "sequentialToolCalls": 2,
+    "totalToolCalls": 2,
+    "attempts": 1,
+    "spawns": 0,
+    "wallSeconds": 120,
+    "maxCostUsd": null,
+    "resourceEnvelope": "resource-envelope:synthetic_read_only_reviewer"
+  },
+  "stopStates": [
+    "NEED_CONTEXT",
+    "EVIDENCE_FAILED",
+    "OUT_OF_SCOPE",
+    "ESCALATE"
+  ],
+  "finalizationCeiling": "read_only"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "0.3.0",
+  "gateSetId": "gates:example_project",
+  "ownerRepositoryId": "repo:example_project",
+  "planningSummaryOnly": true,
+  "canonicalForExecution": false,
+  "transitionCardsImplemented": false,
+  "gates": [
+    {
+      "gateId": "gate:example_read_only_contract",
+      "ownerRepositoryId": "repo:example_project",
+      "state": "unrun",
+      "prerequisites": [],
+      "evaluatorId": "evaluator:example_contract_check",
+      "negativeControlId": "case:example_writer_mismatch"
+    },
+    {
+      "gateId": "gate:example_candidate_isolation",
+      "ownerRepositoryId": "repo:example_project",
+      "state": "unrun",
+      "prerequisites": [
+        "gate:example_read_only_contract"
+      ],
+      "evaluatorId": "evaluator:example_candidate_check",
+      "negativeControlId": "case:example_scope_escape"
+    }
+  ]
+}

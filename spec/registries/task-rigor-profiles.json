@@ -1,0 +1,248 @@
+{
+  "schemaVersion": "0.3.0",
+  "registryId": "vocabulary:elad_task_rigor_profiles_0.3.0",
+  "status": "reference_only",
+  "authorityEffect": "none",
+  "description": "Advisory claim-neutral evidence bases plus closed per-claim evaluator, claim-domain, and task-effect modules. They can constrain evidence expectations but can never grant mutation, evidence-acceptance, promotion, publication, or other target authority.",
+  "profileOrder": [
+    "light",
+    "bounded",
+    "evaluated",
+    "assured"
+  ],
+  "selectionDimensions": {
+    "uncertainty": {
+      "low": "light",
+      "moderate": "bounded",
+      "high": "evaluated"
+    },
+    "complexity": {
+      "low": "light",
+      "moderate": "bounded",
+      "high": "evaluated"
+    },
+    "reversibility": {
+      "easy": "light",
+      "managed": "bounded",
+      "difficult": "evaluated",
+      "irreversible": "assured"
+    },
+    "consequence": {
+      "low": "light",
+      "moderate": "bounded",
+      "high": "assured",
+      "critical": "assured"
+    },
+    "delegationDistance": {
+      "same_episode": "light",
+      "supervised_worker": "light",
+      "bounded_handoff": "bounded",
+      "autonomous_cross_context": "evaluated",
+      "external_target": "evaluated"
+    }
+  },
+  "compoundEscalations": [
+    {
+      "ruleId": "rigor-rule:difficult_and_uncertain",
+      "all": {
+        "reversibility": ["difficult", "irreversible"],
+        "uncertainty": ["high"]
+      },
+      "minimumProfile": "assured"
+    },
+    {
+      "ruleId": "rigor-rule:difficult_and_complex",
+      "all": {
+        "reversibility": ["difficult", "irreversible"],
+        "complexity": ["high"]
+      },
+      "minimumProfile": "assured"
+    },
+    {
+      "ruleId": "rigor-rule:external_and_difficult",
+      "all": {
+        "delegationDistance": ["external_target"],
+        "reversibility": ["difficult", "irreversible"]
+      },
+      "minimumProfile": "assured"
+    }
+  ],
+  "evidenceKindOrder": [
+    "bounded_contract",
+    "deterministic_check",
+    "result_inspection",
+    "targeted_regression",
+    "failure_stop",
+    "baseline_or_eval_set",
+    "runtime_or_trace",
+    "error_analysis",
+    "evaluator_check",
+    "iteration_decision",
+    "independent_expected_behavior",
+    "bound_evidence_identity",
+    "independent_verification",
+    "adversarial_or_recovery",
+    "rollback_proof"
+  ],
+  "evidenceModules": {
+    "claimDomains": {
+      "static_deterministic": {
+        "description": "The claim can be decided by exact comparison, compilation, calculation, or another deterministic oracle, even when establishing it executes a program or uses a mock integration boundary.",
+        "minimumProfile": "light",
+        "requiredEvidenceKinds": [
+          "deterministic_check"
+        ]
+      },
+      "semantic_or_stochastic": {
+        "description": "The product output, trajectory, or meaning cannot be decided completely by exact comparison. Agent-written deterministic code is not in this domain merely because an AI performed the development.",
+        "minimumProfile": "evaluated",
+        "requiredEvidenceKinds": [
+          "baseline_or_eval_set",
+          "evaluator_check"
+        ]
+      },
+      "runtime_or_operational": {
+        "description": "The claim depends materially on live state, timing, distributed behavior, traces, persistence, native effects, or another operational property that exact comparison cannot establish. Executing a CLI or reaching a local service is not sufficient by itself.",
+        "minimumProfile": "evaluated",
+        "requiredEvidenceKinds": [
+          "runtime_or_trace"
+        ]
+      }
+    },
+    "taskEffects": {
+      "read_only": {
+        "description": "No artifact or target state is changed.",
+        "minimumProfile": "light",
+        "requiredEvidenceKinds": []
+      },
+      "reversible_artifact_change": {
+        "description": "Only ordinary versioned or otherwise directly reversible artifacts change.",
+        "minimumProfile": "light",
+        "requiredEvidenceKinds": []
+      },
+      "stateful_reversible_change": {
+        "description": "State outside an ordinary artifact edit changes and requires a managed rollback.",
+        "minimumProfile": "bounded",
+        "requiredEvidenceKinds": [
+          "rollback_proof"
+        ]
+      },
+      "irreversible_or_durable_external_effect": {
+        "description": "The task can create a difficult-to-reverse, externally durable, or irreversible effect.",
+        "minimumProfile": "assured",
+        "requiredEvidenceKinds": [
+          "adversarial_or_recovery"
+        ]
+      }
+    },
+    "evaluatorMaturity": {
+      "not_applicable": {
+        "minimumProfile": "light",
+        "requiredEvidenceKinds": []
+      },
+      "proven": {
+        "minimumProfile": "light",
+        "requiredEvidenceKinds": []
+      },
+      "partial": {
+        "minimumProfile": "bounded",
+        "requiredEvidenceKinds": [
+          "evaluator_check"
+        ]
+      },
+      "unproven": {
+        "minimumProfile": "evaluated",
+        "requiredEvidenceKinds": [
+          "baseline_or_eval_set",
+          "evaluator_check"
+        ]
+      },
+      "none": {
+        "minimumProfile": "evaluated",
+        "requiredEvidenceKinds": [
+          "baseline_or_eval_set",
+          "evaluator_check"
+        ]
+      }
+    }
+  },
+  "profiles": [
+    {
+      "profileId": "rigor:light",
+      "name": "light",
+      "rank": 0,
+      "purpose": "Confined deterministic work with low consequence, easy reversal, and a proven evaluator.",
+      "baseEvidenceKinds": [
+        "bounded_contract",
+        "result_inspection"
+      ],
+      "requiresIndependentVerification": false,
+      "requiresMachineReadableDecision": false
+    },
+    {
+      "profileId": "rigor:bounded",
+      "name": "bounded",
+      "rank": 1,
+      "purpose": "Ordinary engineering uncertainty involving moderate coupling, managed rollback, a new regression, or a bounded handoff.",
+      "baseEvidenceKinds": [
+        "bounded_contract",
+        "result_inspection",
+        "failure_stop"
+      ],
+      "requiresIndependentVerification": false,
+      "requiresMachineReadableDecision": false
+    },
+    {
+      "profileId": "rigor:evaluated",
+      "name": "evaluated",
+      "rank": 2,
+      "purpose": "Behaviorally uncertain, semantic, stochastic, runtime-dependent, or fallibly evaluated product claims.",
+      "baseEvidenceKinds": [
+        "bounded_contract",
+        "result_inspection",
+        "error_analysis",
+        "iteration_decision"
+      ],
+      "requiresIndependentVerification": false,
+      "requiresMachineReadableDecision": false
+    },
+    {
+      "profileId": "rigor:assured",
+      "name": "assured",
+      "rank": 3,
+      "purpose": "Foundational, high-consequence, security/privacy-sensitive, difficult-to-reverse, externally mutating, or durable-authority work.",
+      "baseEvidenceKinds": [
+        "bounded_contract",
+        "result_inspection",
+        "error_analysis",
+        "iteration_decision",
+        "independent_expected_behavior",
+        "bound_evidence_identity",
+        "independent_verification",
+        "adversarial_or_recovery"
+      ],
+      "requiresIndependentVerification": true,
+      "requiresMachineReadableDecision": true
+    }
+  ],
+  "escalationTriggers": [
+    "unexpected_nondeterminism",
+    "oracle_cannot_discriminate",
+    "scope_or_coupling_expands",
+    "reversibility_worsens",
+    "consequence_increases",
+    "evaluator_false_green_or_drift",
+    "handoff_or_autonomy_expands",
+    "external_or_native_effect_appears",
+    "human_judgment_remains",
+    "security_privacy_rights_or_authority_issue"
+  ],
+  "simplificationTriggers": [
+    "uncertainty_becomes_deterministic",
+    "reusable_evaluator_is_proven",
+    "scope_or_effects_shrink",
+    "delegation_becomes_shorter",
+    "proven_capability_can_be_reused",
+    "extra_layer_adds_no_discrimination"
+  ]
+}

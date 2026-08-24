@@ -1,0 +1,286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:evaluation-pack:0.3.0",
+  "title": "Evaluation Pack",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "packId",
+    "state",
+    "ownerRepositoryId",
+    "authority",
+    "protocolBundle",
+    "qualificationSubjectSha256",
+    "qualificationSubject",
+    "toolRegistry",
+    "evaluatorRegistry",
+    "candidateScopes",
+    "cases",
+    "thresholdSets",
+    "holdoutPolicy",
+    "frozenAt",
+    "supersedes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "packId": { "type": "string", "pattern": "^evaluation-pack:[a-z0-9][a-z0-9._-]*$" },
+    "state": { "enum": ["template_inert", "draft", "frozen", "superseded"] },
+    "ownerRepositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
+    "authority": { "$ref": "#/$defs/nonAuthority" },
+    "protocolBundle": { "$ref": "#/$defs/immutableReference" },
+    "qualificationSubjectSha256": { "$ref": "#/$defs/sha256" },
+    "qualificationSubject": { "$ref": "#/$defs/qualificationSubject" },
+    "toolRegistry": { "$ref": "#/$defs/immutableReference" },
+    "evaluatorRegistry": { "$ref": "#/$defs/immutableReference" },
+    "candidateScopes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/qualificationScope" },
+      "uniqueItems": true
+    },
+    "cases": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evaluationCase" },
+      "uniqueItems": true
+    },
+    "thresholdSets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/thresholdSet" },
+      "uniqueItems": true
+    },
+    "holdoutPolicy": { "$ref": "#/$defs/holdoutPolicy" },
+    "frozenAt": { "type": ["string", "null"], "format": "date-time" },
+    "supersedes": { "$ref": "#/$defs/optionalImmutableReference" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[A-F0-9]{64}$" },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*:)(?!.*[. ](?:/|$))(?!.*(?:^|/)(?:[Cc][Oo][Nn]|[Pp][Rr][Nn]|[Aa][Uu][Xx]|[Nn][Uu][Ll]|[Cc][Ll][Oo][Cc][Kk]\\$|[Cc][Oo][Nn][Ii][Nn]\\$|[Cc][Oo][Nn][Oo][Uu][Tt]\\$|[Cc][Oo][Mm][1-9¹²³]|[Ll][Pp][Tt][1-9¹²³])(?:\\.[^/]*)?(?:/|$))[^/\\x00-\\x1F<>\"|?*]+(?:/[^/\\x00-\\x1F<>\"|?*]+)*$"
+    },
+    "nonAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grantsAuthority", "grantsMutation", "grantsPromotion", "grantsPublication"],
+      "properties": {
+        "grantsAuthority": { "const": false },
+        "grantsMutation": { "const": false },
+        "grantsPromotion": { "const": false },
+        "grantsPublication": { "const": false }
+      }
+    },
+    "immutableReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "schemaVersion"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" },
+        "path": { "$ref": "#/$defs/repositoryPath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    },
+    "optionalImmutableReference": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "schemaVersion"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" },
+        "path": { "$ref": "#/$defs/repositoryPath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    },
+    "artifactIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifactId", "role", "sourceRepository", "sourceRevision", "filename", "bytes", "sha256", "format"],
+      "properties": {
+        "artifactId": { "type": "string", "pattern": "^artifact:[a-z0-9][a-z0-9._-]*$" },
+        "role": { "enum": ["target", "draft", "projector", "adapter"] },
+        "sourceRepository": { "type": "string", "minLength": 1 },
+        "sourceRevision": { "type": "string", "minLength": 1 },
+        "filename": { "type": "string", "minLength": 1 },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "format": { "type": "string", "minLength": 1 }
+      }
+    },
+    "cloudDeployment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["providerId", "modelId", "deploymentId", "modelRevision", "apiVersion", "endpointClass", "region", "identityStrength", "providerSnapshot"],
+      "properties": {
+        "providerId": { "type": "string", "minLength": 1 },
+        "modelId": { "type": "string", "minLength": 1 },
+        "deploymentId": { "type": "string", "minLength": 1 },
+        "modelRevision": { "type": "string", "minLength": 1 },
+        "apiVersion": { "type": "string", "minLength": 1 },
+        "endpointClass": { "type": "string", "minLength": 1 },
+        "region": { "type": "string", "minLength": 1 },
+        "identityStrength": { "enum": ["immutable_revision", "observed_provider_alias"] },
+        "providerSnapshot": { "$ref": "#/$defs/immutableReference" }
+      }
+    },
+    "modelSubject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "revision", "artifacts", "cloudDeployment"],
+      "properties": {
+        "kind": { "enum": ["local_artifacts", "cloud_deployment"] },
+        "id": { "type": "string", "minLength": 1 },
+        "revision": { "type": "string", "minLength": 1 },
+        "artifacts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/artifactIdentity" },
+          "uniqueItems": true
+        },
+        "cloudDeployment": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["providerId", "modelId", "deploymentId", "modelRevision", "apiVersion", "endpointClass", "region", "identityStrength", "providerSnapshot"],
+          "properties": {
+            "providerId": { "type": "string", "minLength": 1 },
+            "modelId": { "type": "string", "minLength": 1 },
+            "deploymentId": { "type": "string", "minLength": 1 },
+            "modelRevision": { "type": "string", "minLength": 1 },
+            "apiVersion": { "type": "string", "minLength": 1 },
+            "endpointClass": { "type": "string", "minLength": 1 },
+            "region": { "type": "string", "minLength": 1 },
+            "identityStrength": { "enum": ["immutable_revision", "observed_provider_alias"] },
+            "providerSnapshot": { "$ref": "#/$defs/immutableReference" }
+          }
+        }
+      }
+    },
+    "qualificationSubject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subjectId", "model", "executionLocation", "runtime", "harness", "adapter", "promptTemplate", "contextCompiler", "toolSchema", "configuredResourceEnvelope"],
+      "properties": {
+        "subjectId": { "type": "string", "pattern": "^qualification-subject:[a-z0-9][a-z0-9._-]*$" },
+        "model": { "$ref": "#/$defs/modelSubject" },
+        "executionLocation": { "enum": ["cloud", "local", "isolated_local"] },
+        "runtime": { "$ref": "#/$defs/immutableReference" },
+        "harness": { "$ref": "#/$defs/immutableReference" },
+        "adapter": { "$ref": "#/$defs/immutableReference" },
+        "promptTemplate": { "$ref": "#/$defs/immutableReference" },
+        "contextCompiler": { "$ref": "#/$defs/immutableReference" },
+        "toolSchema": { "$ref": "#/$defs/immutableReference" },
+        "configuredResourceEnvelope": { "$ref": "#/$defs/immutableReference" }
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contextTokens", "outputTokens", "retrievals", "sequentialToolCalls", "totalToolCalls", "attempts", "spawns", "wallSeconds", "maxCostUsd", "concurrency"],
+      "properties": {
+        "contextTokens": { "type": "integer", "minimum": 1 },
+        "outputTokens": { "type": "integer", "minimum": 1 },
+        "retrievals": { "type": "integer", "minimum": 0 },
+        "sequentialToolCalls": { "type": "integer", "minimum": 0 },
+        "totalToolCalls": { "type": "integer", "minimum": 0 },
+        "attempts": { "type": "integer", "minimum": 0 },
+        "spawns": { "type": "integer", "minimum": 0 },
+        "wallSeconds": { "type": "integer", "minimum": 1 },
+        "maxCostUsd": { "type": ["number", "null"], "minimum": 0 },
+        "concurrency": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "toolBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["toolId", "registryEntrySha256", "effect"],
+      "properties": {
+        "toolId": { "type": "string", "pattern": "^tool:[a-z0-9][a-z0-9._-]*$" },
+        "registryEntrySha256": { "$ref": "#/$defs/sha256" },
+        "effect": { "enum": ["read", "candidate_write", "target_native_write", "runtime_process", "data_write"] }
+      }
+    },
+    "claimBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claimClass", "evidenceClass", "evaluatorId", "evaluatorEntrySha256", "negativeControlId"],
+      "properties": {
+        "claimClass": { "type": "string", "pattern": "^claim-class:[a-z0-9][a-z0-9._-]*$" },
+        "evidenceClass": { "type": "string", "minLength": 1 },
+        "evaluatorId": { "type": "string", "pattern": "^evaluator:[a-z0-9][a-z0-9._-]*$" },
+        "evaluatorEntrySha256": { "$ref": "#/$defs/sha256" },
+        "negativeControlId": { "type": "string", "pattern": "^case:[a-z0-9][a-z0-9._-]*$" }
+      }
+    },
+    "qualificationScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scopeId", "roleId", "taskFamily", "riskClass", "dataClass", "artifactLane", "mutationCeiling", "toolBindings", "claimBindings", "thresholdSetId", "supportCaseIds", "budgetCeiling"],
+      "properties": {
+        "scopeId": { "type": "string", "pattern": "^qualification-scope:[a-z0-9][a-z0-9._-]*$" },
+        "roleId": { "type": "string", "pattern": "^role:[a-z0-9][a-z0-9._-]*$" },
+        "taskFamily": { "type": "string", "minLength": 1 },
+        "riskClass": { "enum": ["low", "normal", "high", "critical"] },
+        "dataClass": { "enum": ["public", "internal", "private_local", "restricted"] },
+        "artifactLane": { "enum": ["ordinary_source", "target_native", "runtime", "external_human"] },
+        "mutationCeiling": { "enum": ["read_only", "candidate_only", "target_operation"] },
+        "toolBindings": { "type": "array", "items": { "$ref": "#/$defs/toolBinding" }, "uniqueItems": true },
+        "claimBindings": { "type": "array", "items": { "$ref": "#/$defs/claimBinding" }, "uniqueItems": true },
+        "thresholdSetId": { "type": "string", "pattern": "^threshold-set:[a-z0-9][a-z0-9._-]*$" },
+        "supportCaseIds": { "type": "array", "items": { "type": "string", "pattern": "^case:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true },
+        "budgetCeiling": { "$ref": "#/$defs/budgets" }
+      }
+    },
+    "evaluationCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["caseId", "kind", "scopeId", "inputFixture", "workerVisibleInputs", "verifierOnlyInputs", "expectedOutcome", "expectedToolBindings", "expectedClaimBindings", "negativeControlIds", "minimumRuns", "minimumColdRuns", "coldStartRequired"],
+      "properties": {
+        "caseId": { "type": "string", "pattern": "^case:[a-z0-9][a-z0-9._-]*$" },
+        "kind": { "enum": ["positive", "negative", "holdout"] },
+        "scopeId": { "type": "string", "pattern": "^qualification-scope:[a-z0-9][a-z0-9._-]*$" },
+        "inputFixture": { "$ref": "#/$defs/immutableReference" },
+        "workerVisibleInputs": { "type": "array", "items": { "$ref": "#/$defs/immutableReference" }, "uniqueItems": true },
+        "verifierOnlyInputs": { "type": "array", "items": { "$ref": "#/$defs/immutableReference" }, "uniqueItems": true },
+        "expectedOutcome": { "enum": ["complete", "refuse", "detect_failure"] },
+        "expectedToolBindings": { "type": "array", "items": { "$ref": "#/$defs/toolBinding" }, "uniqueItems": true },
+        "expectedClaimBindings": { "type": "array", "items": { "$ref": "#/$defs/claimBinding" }, "uniqueItems": true },
+        "negativeControlIds": { "type": "array", "items": { "type": "string", "pattern": "^case:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true },
+        "minimumRuns": { "type": "integer", "minimum": 1 },
+        "minimumColdRuns": { "type": "integer", "minimum": 0 },
+        "coldStartRequired": { "type": "boolean" }
+      }
+    },
+    "thresholdSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["thresholdSetId", "minimumPositivePassRate", "minimumNegativePassRate", "minimumHoldoutPassRate", "maximumFalseGreenCount", "maximumEvaluatorCrashCount", "maximumAuthorityViolationCount", "maximumScopeViolationCount", "minimumColdRunsPerCase", "maximumInvalidToolCalls", "maximumRepeatedToolCalls", "maximumRetries", "maximumMedianWallSeconds", "requiredCaseIds", "requiredNegativeControlIds", "zeroToleranceCaseIds"],
+      "properties": {
+        "thresholdSetId": { "type": "string", "pattern": "^threshold-set:[a-z0-9][a-z0-9._-]*$" },
+        "minimumPositivePassRate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "minimumNegativePassRate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "minimumHoldoutPassRate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "maximumFalseGreenCount": { "type": "integer", "minimum": 0 },
+        "maximumEvaluatorCrashCount": { "type": "integer", "minimum": 0 },
+        "maximumAuthorityViolationCount": { "type": "integer", "minimum": 0 },
+        "maximumScopeViolationCount": { "type": "integer", "minimum": 0 },
+        "minimumColdRunsPerCase": { "type": "integer", "minimum": 0 },
+        "maximumInvalidToolCalls": { "type": "integer", "minimum": 0 },
+        "maximumRepeatedToolCalls": { "type": "integer", "minimum": 0 },
+        "maximumRetries": { "type": "integer", "minimum": 0 },
+        "maximumMedianWallSeconds": { "type": ["number", "null"], "minimum": 0 },
+        "requiredCaseIds": { "type": "array", "items": { "type": "string", "pattern": "^case:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true },
+        "requiredNegativeControlIds": { "type": "array", "items": { "type": "string", "pattern": "^case:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true },
+        "zeroToleranceCaseIds": { "type": "array", "items": { "type": "string", "pattern": "^case:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true }
+      }
+    },
+    "holdoutPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hiddenFromWorker", "verifierOnlyExpectedOutcomes", "leakDecision"],
+      "properties": {
+        "hiddenFromWorker": { "const": true },
+        "verifierOnlyExpectedOutcomes": { "const": true },
+        "leakDecision": { "const": "reject" }
+      }
+    }
+  }
+}

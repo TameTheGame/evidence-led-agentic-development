@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "0.3.0",
+  "policyId": "evidence-policy:continuation_fixture",
+  "state": "active",
+  "owner": "human:continuation_fixture_owner",
+  "ownerRepositoryId": "repo:continuation_fixture",
+  "rules": [
+    {
+      "claimClass": "claim-class:deterministic_document_identity",
+      "evidenceClass": "deterministic",
+      "acceptanceOwner": "machine",
+      "machineDelegation": true,
+      "eligibleWriterProfiles": [
+        "writer:continuation_fixture_worker"
+      ],
+      "eligibleReviewerIds": [],
+      "evaluatorId": "evaluator:continuation_fixture_contract_check"
+    },
+    {
+      "claimClass": "claim-class:subjective_product_quality",
+      "evidenceClass": "external_human",
+      "acceptanceOwner": "external_human",
+      "machineDelegation": false,
+      "eligibleWriterProfiles": [],
+      "eligibleReviewerIds": [
+        "human:fixture-owner"
+      ],
+      "evaluatorId": "evaluator:continuation_fixture_human_review"
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "0.3.0",
+  "envelopeId": "resource-envelope:template_configured",
+  "state": "template_inert",
+  "ownerRepositoryId": "repo:template_target",
+  "authority": {
+    "grantsAuthority": false,
+    "grantsMutation": false,
+    "grantsPromotion": false,
+    "grantsPublication": false
+  },
+  "stage": "configured",
+  "purpose": "qualification",
+  "lineageId": "resource-lineage:template_unqualified",
+  "parentEnvelope": null,
+  "protocolBundle": { "id": "protocol:elad_0.3.0", "path": "blueprint.json", "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "schemaVersion": "0.3.0" },
+  "writerProfile": { "id": "writer:template_unqualified", "path": "templates/writer-profile.template.json", "sha256": "1111111111111111111111111111111111111111111111111111111111111111", "schemaVersion": "0.3.0" },
+  "qualificationSubjectSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "subjectBindings": {
+    "modelIdentitySha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "runtime": { "id": "runtime:template_unqualified", "path": "reference/README.md", "sha256": "2222222222222222222222222222222222222222222222222222222222222222", "schemaVersion": "0.3.0" },
+    "harness": { "id": "harness:template_unqualified", "path": "adapters/README.md", "sha256": "3333333333333333333333333333333333333333333333333333333333333333", "schemaVersion": "0.3.0" },
+    "adapter": { "id": "adapter:template_unqualified", "path": "adapters/README.md", "sha256": "4444444444444444444444444444444444444444444444444444444444444444", "schemaVersion": "0.3.0" },
+    "promptTemplate": { "id": "template:task_brief_unqualified", "path": "templates/TASK_BRIEF.template.md", "sha256": "5555555555555555555555555555555555555555555555555555555555555555", "schemaVersion": "0.3.0" },
+    "contextCompiler": { "id": "context-compiler:template_unqualified", "path": "reference/README.md", "sha256": "6666666666666666666666666666666666666666666666666666666666666666", "schemaVersion": "0.3.0" },
+    "toolSchema": { "id": "schema:task_packet_unqualified", "path": "spec/schemas/task-packet.schema.json", "sha256": "7777777777777777777777777777777777777777777777777777777777777777", "schemaVersion": "0.3.0" }
+  },
+  "execution": {
+    "kind": "local",
+    "local": {
+      "hostClassId": "host-class:template_unqualified",
+      "acceleratorDevices": [],
+      "driver": { "vendor": "template", "version": "unqualified" },
+      "backendArtifact": {
+        "artifactId": "artifact:template_backend",
+        "role": "backend",
+        "sourceRepository": "template-only",
+        "sourceRevision": "unqualified",
+        "filename": "template-backend",
+        "bytes": 0,
+        "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+        "format": "template"
+      },
+      "modelArtifacts": [],
+      "endpointPolicy": {
+        "transport": "none",
+        "bindAddress": "127.0.0.1",
+        "portClass": "unassigned",
+        "networkMode": "none",
+        "cloudFallback": false
+      }
+    },
+    "cloud": null
+  },
+  "limits": {
+    "budgets": {
+      "contextTokens": 1,
+      "outputTokens": 1,
+      "retrievals": 0,
+      "sequentialToolCalls": 0,
+      "totalToolCalls": 0,
+      "attempts": 0,
+      "spawns": 0,
+      "wallSeconds": 1,
+      "maxCostUsd": null,
+      "concurrency": 1
+    },
+    "resourceCaps": {
+      "maximumPeakVramBytes": null,
+      "maximumPeakHostRamBytes": null,
+      "maximumScratchBytes": null
+    },
+    "admissionFloors": {
+      "minimumFreeVramBeforeLoadBytes": null,
+      "minimumFreeHostRamBeforeLoadBytes": null,
+      "minimumScratchDiskFreeBytes": null
+    }
+  },
+  "effectiveConfiguration": {
+    "contextWindowTokens": 1,
+    "outputReserveTokens": 1,
+    "gpuLayerMode": "not_applicable",
+    "gpuLayerCount": null,
+    "tensorSplit": [],
+    "kvCacheTypeK": null,
+    "kvCacheTypeV": null,
+    "parallelSlots": 1,
+    "batchSize": null,
+    "microBatchSize": null,
+    "speculativeMode": "disabled",
+    "draftArtifactId": null,
+    "maximumDraftTokens": null,
+    "visionProjectorEnabled": false,
+    "projectorArtifactId": null,
+    "reasoningMode": "unqualified",
+    "promptMode": "unqualified",
+    "toolCallFormat": "unqualified",
+    "contextCompilerMode": "unqualified",
+    "effectiveCommandOrConfig": { "id": "config:template_unqualified", "path": "reference/README.md", "sha256": "9999999999999999999999999999999999999999999999999999999999999999", "schemaVersion": "0.3.0" },
+    "controlSources": {
+      "contextWindow": "observed_only",
+      "kvCacheTypes": "observed_only",
+      "gpuOffload": "not_applicable",
+      "parallelism": "observed_only",
+      "speculativeMode": "observed_only"
+    }
+  },
+  "derivation": null,
+  "observations": null,
+  "recordedAt": null,
+  "expiresAt": null,
+  "invalidationTriggers": [
+    "model_or_artifact_change",
+    "runtime_harness_adapter_or_context_compiler_change",
+    "backend_binary_or_material_configuration_change",
+    "hardware_or_provider_identity_change"
+  ],
+  "supersedes": null
+}

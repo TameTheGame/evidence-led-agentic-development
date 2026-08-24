@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:active-authority:0.3.0",
+  "title": "Active Authority",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "authorityId",
+    "state",
+    "owner",
+    "ownerRepositoryId",
+    "maturityLevel",
+    "authorizations",
+    "supersedes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "authorityId": { "type": "string", "pattern": "^authority:[a-z0-9][a-z0-9._-]*$" },
+    "state": { "enum": ["template_inert", "held", "inactive", "active", "superseded"] },
+    "owner": { "type": "string", "minLength": 1 },
+    "ownerRepositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
+    "maturityLevel": { "type": "integer", "minimum": 0, "maximum": 6 },
+    "authorizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidateMutation", "targetMutation", "evidenceAcceptance", "promotion", "publication"],
+      "properties": {
+        "candidateMutation": { "type": "boolean" },
+        "targetMutation": { "type": "boolean" },
+        "evidenceAcceptance": { "type": "boolean" },
+        "promotion": { "type": "boolean" },
+        "publication": { "type": "boolean" }
+      }
+    },
+    "supersedes": { "type": ["string", "null"] },
+    "notes": { "type": "string" }
+  }
+}

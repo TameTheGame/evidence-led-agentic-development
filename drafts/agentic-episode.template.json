@@ -1,0 +1,159 @@
+{
+  "draftStatus": "non_normative_interrupted_no_semantic_composition_validator",
+  "schemaVersion": "0.3.0",
+  "episodeId": "episode:example_inert",
+  "state": "template_inert",
+  "authority": "none",
+  "protocolBundle": {
+    "kind": "protocol_bundle",
+    "id": "protocol-bundle:elad_0.3.0",
+    "path": "automation/protocol/protocol-bundle.json",
+    "bytes": 0,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "schemaVersion": "0.3.0",
+    "digestMode": "canonical_json"
+  },
+  "coreLock": {
+    "kind": "core_lock",
+    "id": "core-lock:example_project",
+    "path": "automation/core.lock.json",
+    "bytes": 0,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "schemaVersion": "0.3.0",
+    "digestMode": "canonical_json"
+  },
+  "intent": {
+    "intentId": "intent:example_inert",
+    "state": "template_inert",
+    "outcome": "Replace with one observable outcome.",
+    "nonGoals": ["Do not treat this inert template as authority."],
+    "acceptance": { "acceptedBy": null, "acceptedAt": null },
+    "humanOnlyDecisions": [
+      {
+        "decisionId": "human-decision:example_boundary",
+        "decisionClass": "human-decision-class:architecture_choice",
+        "question": "Replace with one target-owned decision when needed.",
+        "eligibleResolverIds": ["human:replace_with_owner"],
+        "resolution": { "state": "open", "executionDisposition": null, "selectedValue": null, "rationale": null, "resolvedBy": null, "resolvedAt": null }
+      }
+    ],
+    "maximumUsefulExperiment": { "experimentId": "experiment:example_inert", "description": "One bounded discriminating attempt.", "claimIds": ["claim:example"], "attemptCeiling": 1, "stopWhen": "first_discriminating_result" },
+    "contextDeltaPolicy": { "maxRequests": 0, "maxEntries": 0, "maxAdditionalBytes": 0, "maxAdditionalTokens": 0, "allowedPaths": [] },
+    "fallbackPlan": [
+      { "fallbackId": "fallback:need_context", "triggerState": "NEED_CONTEXT", "requestedNextAction": "supply_context", "ownerRoleId": "role:orchestrator", "description": "Stop and request one bounded context delta.", "requiresFreshPacket": true },
+      { "fallbackId": "fallback:evidence_failed", "triggerState": "EVIDENCE_FAILED", "requestedNextAction": "repair_evidence", "ownerRoleId": "role:independent_verifier", "description": "Stop and repair evidence in a fresh episode.", "requiresFreshPacket": true },
+      { "fallbackId": "fallback:out_of_scope", "triggerState": "OUT_OF_SCOPE", "requestedNextAction": "owner_decision", "ownerRoleId": "role:orchestrator", "description": "Stop outside the accepted scope.", "requiresFreshPacket": true },
+      { "fallbackId": "fallback:escalate", "triggerState": "ESCALATE", "requestedNextAction": "escalate", "ownerRoleId": "role:orchestrator", "description": "Return control without expanding authority.", "requiresFreshPacket": true }
+    ],
+    "budgets": { "contextWindowTokens": 2, "contextTokens": 1, "outputTokens": 1, "contextBytes": 1, "retrievalBytes": 0, "retrievals": 0, "sequentialToolCalls": 0, "totalToolCalls": 0, "attempts": 1, "spawns": 0, "wallSeconds": 1, "maxCostUsd": null }
+  },
+  "activeAuthority": {
+    "owner": "human:replace_with_owner",
+    "state": "template_inert",
+    "maturityLevel": 0,
+    "authorizations": { "candidateMutation": false, "targetMutation": false, "machineEvidenceAcceptance": false, "promotion": false, "publication": false }
+  },
+  "qualificationScope": {
+    "certificate": { "kind": "capability_certificate", "id": "certificate:example_unqualified", "path": "automation/certificates/example.json", "bytes": 0, "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "schemaVersion": "0.3.0", "digestMode": "canonical_json" },
+    "evaluationResult": { "kind": "evaluation_result_manifest", "id": "evaluation-result:example_unrun", "path": "automation/evaluations/example.json", "bytes": 0, "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "schemaVersion": "0.3.0", "digestMode": "canonical_json" },
+    "measuredSafeResourceEnvelope": { "kind": "resource_envelope", "id": "resource-envelope:example_unmeasured", "path": "automation/resources/example.json", "bytes": 0, "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "schemaVersion": "0.3.0", "digestMode": "canonical_json" },
+    "scopeId": "scope:example_unqualified",
+    "state": "unqualified",
+    "roleId": "role:candidate_worker",
+    "taskFamily": "example",
+    "riskClass": "low",
+    "dataClass": "internal",
+    "artifactLane": "ordinary_source",
+    "mutationCeiling": "read_only",
+    "toolBindings": [],
+    "claimBindings": [],
+    "budgetCeiling": { "contextWindowTokens": 2, "contextTokens": 1, "outputTokens": 1, "contextBytes": 1, "retrievalBytes": 0, "retrievals": 0, "sequentialToolCalls": 0, "totalToolCalls": 0, "attempts": 1, "spawns": 0, "wallSeconds": 1, "maxCostUsd": null }
+  },
+  "packet": {
+    "packetId": "packet:example_inert",
+    "state": "template_inert",
+    "repositoryId": "repo:example_project",
+    "candidateId": "candidate:example",
+    "baseHead": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "roleId": "role:candidate_worker",
+    "taskFamily": "example",
+    "riskClass": "low",
+    "dataClass": "internal",
+    "artifactLane": "ordinary_source",
+    "requestedEffects": [],
+    "finalizationCeiling": "read_only",
+    "allowedPaths": [],
+    "qualificationScopeId": "scope:example_unqualified",
+    "requestedResourceEnvelope": { "kind": "resource_envelope", "id": "resource-envelope:example_unrequested", "path": "automation/resources/requested.json", "bytes": 0, "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "schemaVersion": "0.3.0", "digestMode": "canonical_json" },
+    "toolBindings": [],
+    "claims": [
+      {
+        "claimId": "claim:example",
+        "claimClass": "claim-class:deterministic_document_identity",
+        "acceptanceOwner": "machine",
+        "evidenceClass": "deterministic",
+        "subject": { "kind": "candidate", "selector": "receipt_candidate", "repositoryId": "repo:example_project", "id": "candidate:example", "baseHead": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "sha256": null },
+        "evaluatorId": "evaluator:example",
+        "negativeControlId": "case:example_negative",
+        "reviewRequirements": null
+      }
+    ],
+    "humanOnlyDecisions": [
+      {
+        "decisionId": "human-decision:example_boundary",
+        "decisionClass": "human-decision-class:architecture_choice",
+        "question": "Replace with one target-owned decision when needed.",
+        "eligibleResolverIds": ["human:replace_with_owner"],
+        "resolution": { "state": "open", "executionDisposition": null, "selectedValue": null, "rationale": null, "resolvedBy": null, "resolvedAt": null }
+      }
+    ],
+    "maximumUsefulExperiment": { "experimentId": "experiment:example_inert", "description": "One bounded discriminating attempt.", "claimIds": ["claim:example"], "attemptCeiling": 1, "stopWhen": "first_discriminating_result" },
+    "contextDeltaPolicy": { "maxRequests": 0, "maxEntries": 0, "maxAdditionalBytes": 0, "maxAdditionalTokens": 0, "allowedPaths": [] },
+    "fallbackPlan": [
+      { "fallbackId": "fallback:need_context", "triggerState": "NEED_CONTEXT", "requestedNextAction": "supply_context", "ownerRoleId": "role:orchestrator", "description": "Stop and request one bounded context delta.", "requiresFreshPacket": true },
+      { "fallbackId": "fallback:evidence_failed", "triggerState": "EVIDENCE_FAILED", "requestedNextAction": "repair_evidence", "ownerRoleId": "role:independent_verifier", "description": "Stop and repair evidence in a fresh episode.", "requiresFreshPacket": true },
+      { "fallbackId": "fallback:out_of_scope", "triggerState": "OUT_OF_SCOPE", "requestedNextAction": "owner_decision", "ownerRoleId": "role:orchestrator", "description": "Stop outside the accepted scope.", "requiresFreshPacket": true },
+      { "fallbackId": "fallback:escalate", "triggerState": "ESCALATE", "requestedNextAction": "escalate", "ownerRoleId": "role:orchestrator", "description": "Return control without expanding authority.", "requiresFreshPacket": true }
+    ],
+    "budgets": { "contextWindowTokens": 2, "contextTokens": 1, "outputTokens": 1, "contextBytes": 1, "retrievalBytes": 0, "retrievals": 0, "sequentialToolCalls": 0, "totalToolCalls": 0, "attempts": 1, "spawns": 0, "wallSeconds": 1, "maxCostUsd": null }
+  },
+  "contextDelivery": { "kind": "context_delivery", "id": "context-delivery:example_inert", "path": "automation/context/example.json", "bytes": 0, "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "schemaVersion": "0.3.0", "digestMode": "canonical_json" },
+  "receipt": {
+    "receiptId": "receipt:example_inert",
+    "state": "template_inert",
+    "terminalStatus": "OUT_OF_SCOPE",
+    "packet": { "kind": "task_packet", "id": "packet:example_inert", "path": "automation/packets/example.json", "bytes": 0, "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "schemaVersion": "0.3.0", "digestMode": "canonical_json" },
+    "contextDelivery": { "kind": "context_delivery", "id": "context-delivery:example_inert", "path": "automation/context/example.json", "bytes": 0, "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "schemaVersion": "0.3.0", "digestMode": "canonical_json" },
+    "observedResourceEnvelope": { "kind": "resource_envelope", "id": "resource-envelope:example_unobserved", "path": "automation/resources/observed.json", "bytes": 0, "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "schemaVersion": "0.3.0", "digestMode": "canonical_json" },
+    "evidenceManifest": { "kind": "evidence_manifest", "id": "evidence-manifest:example_empty", "path": "automation/evidence/example.json", "bytes": 0, "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "schemaVersion": "0.3.0", "digestMode": "canonical_json" },
+    "resolvedSubject": { "kind": "candidate", "repositoryId": "repo:example_project", "id": "candidate:example", "baseHead": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" },
+    "claimResults": [
+      {
+        "claimId": "claim:example",
+        "acceptanceOwner": "machine",
+        "disposition": "not_evaluated",
+        "evaluatorId": "evaluator:example",
+        "reviewBundle": null,
+        "externalHumanReceipt": null
+      }
+    ],
+    "humanOnlyDecisions": [
+      {
+        "decisionId": "human-decision:example_boundary",
+        "decisionClass": "human-decision-class:architecture_choice",
+        "question": "Replace with one target-owned decision when needed.",
+        "eligibleResolverIds": ["human:replace_with_owner"],
+        "resolution": { "state": "open", "executionDisposition": null, "selectedValue": null, "rationale": null, "resolvedBy": null, "resolvedAt": null }
+      }
+    ],
+    "fallbackPlan": [
+      { "fallbackId": "fallback:need_context", "triggerState": "NEED_CONTEXT", "requestedNextAction": "supply_context", "ownerRoleId": "role:orchestrator", "description": "Stop and request one bounded context delta.", "requiresFreshPacket": true },
+      { "fallbackId": "fallback:evidence_failed", "triggerState": "EVIDENCE_FAILED", "requestedNextAction": "repair_evidence", "ownerRoleId": "role:independent_verifier", "description": "Stop and repair evidence in a fresh episode.", "requiresFreshPacket": true },
+      { "fallbackId": "fallback:out_of_scope", "triggerState": "OUT_OF_SCOPE", "requestedNextAction": "owner_decision", "ownerRoleId": "role:orchestrator", "description": "Stop outside the accepted scope.", "requiresFreshPacket": true },
+      { "fallbackId": "fallback:escalate", "triggerState": "ESCALATE", "requestedNextAction": "escalate", "ownerRoleId": "role:orchestrator", "description": "Return control without expanding authority.", "requiresFreshPacket": true }
+    ],
+    "fallbackDisposition": null,
+    "contextDeltaRequest": null,
+    "actualUsage": { "contextTokens": 0, "outputTokens": 0, "contextBytes": 0, "retrievalBytes": 0, "retrievals": 0, "sequentialToolCalls": 0, "totalToolCalls": 0, "attempts": 0, "spawns": 0, "wallSeconds": 0, "actualCostUsd": null }
+  }
+}

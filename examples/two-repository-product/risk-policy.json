@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "0.3.0",
+  "policyId": "risk-policy:synthetic_product",
+  "state": "inactive",
+  "owner": "human:synthetic_owner",
+  "classes": [
+    {
+      "riskClass": "low",
+      "allowedEffects": [
+        "read"
+      ],
+      "requiresHumanDecision": true
+    },
+    {
+      "riskClass": "normal",
+      "allowedEffects": [
+        "read"
+      ],
+      "requiresHumanDecision": true
+    },
+    {
+      "riskClass": "high",
+      "allowedEffects": [],
+      "requiresHumanDecision": true
+    },
+    {
+      "riskClass": "critical",
+      "allowedEffects": [],
+      "requiresHumanDecision": true
+    }
+  ]
+}

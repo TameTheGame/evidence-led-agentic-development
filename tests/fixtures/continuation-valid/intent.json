@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "0.3.0",
+  "intentId": "intent:continuation_fixture_review",
+  "state": "accepted",
+  "outcome": "Verify one synthetic read-only candidate and preserve a transcript-free human closure.",
+  "purpose": "Exercise the exact-byte continuation contract without granting authority over a real project.",
+  "nonGoals": [
+    "Do not run a model or target.",
+    "Do not mutate, promote, publish, or grant real authority."
+  ],
+  "riskClass": "low",
+  "dataClass": "internal",
+  "claims": [
+    {
+      "claimId": "claim:continuation_fixture_contract_matches",
+      "claimClass": "claim-class:deterministic_document_identity",
+      "description": "The synthetic candidate matches its frozen contract.",
+      "acceptanceOwner": "machine",
+      "evidenceClass": "deterministic",
+      "subject": {
+        "kind": "candidate",
+        "selector": "receipt_candidate",
+        "repositoryId": "repo:continuation_fixture",
+        "id": "candidate:continuation_fixture_review",
+        "baseHead": "ffffffffffffffffffffffffffffffffffffffff",
+        "sha256": null
+      }
+    },
+    {
+      "claimId": "claim:continuation_fixture_is_useful",
+      "claimClass": "claim-class:subjective_product_quality",
+      "description": "The synthetic candidate is useful to the fixture owner.",
+      "acceptanceOwner": "external_human",
+      "evidenceClass": "external_human",
+      "subject": {
+        "kind": "candidate",
+        "selector": "receipt_candidate",
+        "repositoryId": "repo:continuation_fixture",
+        "id": "candidate:continuation_fixture_review",
+        "baseHead": "ffffffffffffffffffffffffffffffffffffffff",
+        "sha256": null
+      }
+    }
+  ],
+  "humanOnlyDecisions": [
+    "Accept the synthetic usefulness claim."
+  ],
+  "budgets": {
+    "attempts": 1,
+    "toolCalls": 4,
+    "retrievals": 1,
+    "spawns": 0
+  },
+  "stopStates": [
+    "NEED_CONTEXT",
+    "EVIDENCE_FAILED",
+    "OUT_OF_SCOPE",
+    "ESCALATE"
+  ]
+}

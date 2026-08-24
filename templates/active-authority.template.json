@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "0.3.0",
+  "authorityId": "authority:example_project",
+  "state": "template_inert",
+  "owner": "replace-with-project-owner",
+  "ownerRepositoryId": "repo:example_project",
+  "maturityLevel": 0,
+  "authorizations": {
+    "candidateMutation": false,
+    "targetMutation": false,
+    "evidenceAcceptance": false,
+    "promotion": false,
+    "publication": false
+  },
+  "supersedes": null,
+  "notes": "Copy into a target repository, customize, review, and keep held until an owner-local decision activates an empirically proven level."
+}

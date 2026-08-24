@@ -1,0 +1,317 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:agentic-episode:0.3.0",
+  "title": "Agentic Episode",
+  "description": "Interrupted structural draft of a possible integrated protocol 0.3 intent, admission, context, and receipt envelope. It is non-normative, has no semantic composition validator, and grants no authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "episodeId", "state", "authority", "protocolBundle", "coreLock", "intent", "activeAuthority", "qualificationScope", "packet", "contextDelivery", "receipt"],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "episodeId": { "type": "string", "pattern": "^episode:[a-z0-9][a-z0-9._-]*$" },
+    "state": { "enum": ["template_inert", "draft", "admitted", "sealed", "superseded"] },
+    "authority": { "const": "none" },
+    "protocolBundle": { "$ref": "#/$defs/typedReference" },
+    "coreLock": { "$ref": "#/$defs/typedReference" },
+    "intent": { "$ref": "#/$defs/intent" },
+    "activeAuthority": { "$ref": "#/$defs/activeAuthority" },
+    "qualificationScope": { "$ref": "#/$defs/qualificationScope" },
+    "packet": { "$ref": "#/$defs/packet" },
+    "contextDelivery": { "$ref": "#/$defs/typedReference" },
+    "receipt": { "$ref": "#/$defs/receipt" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[A-F0-9]{64}$" },
+    "repositoryPath": { "type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*:)(?!.*[. ](?:/|$))(?!.*(?:^|/)(?:[Cc][Oo][Nn]|[Pp][Rr][Nn]|[Aa][Uu][Xx]|[Nn][Uu][Ll]|[Cc][Ll][Oo][Cc][Kk]\\$|[Cc][Oo][Nn][Ii][Nn]\\$|[Cc][Oo][Nn][Oo][Uu][Tt]\\$|[Cc][Oo][Mm][1-9¹²³]|[Ll][Pp][Tt][1-9¹²³])(?:\\.[^/]*)?(?:/|$))[^/\\x00-\\x1F<>\"|?*]+(?:/[^/\\x00-\\x1F<>\"|?*]+)*$" },
+    "typedReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "path", "bytes", "sha256", "schemaVersion", "digestMode"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" },
+        "path": { "$ref": "#/$defs/repositoryPath" },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "schemaVersion": { "const": "0.3.0" },
+        "digestMode": { "enum": ["canonical_json", "raw_bytes"] }
+      }
+    },
+    "optionalTypedReference": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["kind", "id", "path", "bytes", "sha256", "schemaVersion", "digestMode"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" },
+        "path": { "$ref": "#/$defs/repositoryPath" },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "schemaVersion": { "const": "0.3.0" },
+        "digestMode": { "enum": ["canonical_json", "raw_bytes"] }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decisionId", "decisionClass", "question", "eligibleResolverIds", "resolution"],
+      "properties": {
+        "decisionId": { "type": "string", "pattern": "^human-decision:[a-z0-9][a-z0-9._-]*$" },
+        "decisionClass": { "type": "string", "pattern": "^human-decision-class:[a-z0-9][a-z0-9._-]*$" },
+        "question": { "type": "string", "minLength": 1 },
+        "eligibleResolverIds": { "type": "array", "items": { "type": "string", "pattern": "^human:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true, "minItems": 1 },
+        "resolution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["state", "executionDisposition", "selectedValue", "rationale", "resolvedBy", "resolvedAt"],
+          "properties": {
+            "state": { "enum": ["open", "recorded"] },
+            "executionDisposition": { "type": ["string", "null"], "enum": ["permit", "deny", "not_applicable", null] },
+            "selectedValue": { "type": ["string", "null"] },
+            "rationale": { "type": ["string", "null"] },
+            "resolvedBy": { "type": ["string", "null"] },
+            "resolvedAt": { "type": ["string", "null"], "format": "date-time" }
+          }
+        }
+      }
+    },
+    "fallback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fallbackId", "triggerState", "requestedNextAction", "ownerRoleId", "description", "requiresFreshPacket"],
+      "properties": {
+        "fallbackId": { "type": "string", "pattern": "^fallback:[a-z0-9][a-z0-9._-]*$" },
+        "triggerState": { "enum": ["NEED_CONTEXT", "EVIDENCE_FAILED", "OUT_OF_SCOPE", "ESCALATE"] },
+        "requestedNextAction": { "enum": ["supply_context", "repair_evidence", "owner_decision", "escalate"] },
+        "ownerRoleId": { "type": "string", "pattern": "^role:[a-z0-9][a-z0-9._-]*$" },
+        "description": { "type": "string", "minLength": 1 },
+        "requiresFreshPacket": { "const": true }
+      }
+    },
+    "maximumUsefulExperiment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["experimentId", "description", "claimIds", "attemptCeiling", "stopWhen"],
+      "properties": {
+        "experimentId": { "type": "string", "pattern": "^experiment:[a-z0-9][a-z0-9._-]*$" },
+        "description": { "type": "string", "minLength": 1 },
+        "claimIds": { "type": "array", "items": { "type": "string", "pattern": "^claim:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true, "minItems": 1 },
+        "attemptCeiling": { "type": "integer", "minimum": 1 },
+        "stopWhen": { "enum": ["first_discriminating_result", "all_listed_claims_resolved"] }
+      }
+    },
+    "contextDeltaPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxRequests", "maxEntries", "maxAdditionalBytes", "maxAdditionalTokens", "allowedPaths"],
+      "properties": {
+        "maxRequests": { "type": "integer", "minimum": 0, "maximum": 1 },
+        "maxEntries": { "type": "integer", "minimum": 0 },
+        "maxAdditionalBytes": { "type": "integer", "minimum": 0 },
+        "maxAdditionalTokens": { "type": "integer", "minimum": 0 },
+        "allowedPaths": { "type": "array", "items": { "$ref": "#/$defs/repositoryPath" }, "uniqueItems": true }
+      }
+    },
+    "fallbackDisposition": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["fallbackId", "triggerState", "requestedNextAction", "ownerRoleId", "requiresFreshPacket"],
+      "properties": {
+        "fallbackId": { "type": "string", "pattern": "^fallback:[a-z0-9][a-z0-9._-]*$" },
+        "triggerState": { "enum": ["NEED_CONTEXT", "EVIDENCE_FAILED", "OUT_OF_SCOPE", "ESCALATE"] },
+        "requestedNextAction": { "enum": ["supply_context", "repair_evidence", "owner_decision", "escalate"] },
+        "ownerRoleId": { "type": "string", "pattern": "^role:[a-z0-9][a-z0-9._-]*$" },
+        "requiresFreshPacket": { "const": true }
+      }
+    },
+    "contextDeltaRequest": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["requestId", "requestOrdinal", "reason", "requestedPaths", "additionalBytes", "additionalTokens"],
+      "properties": {
+        "requestId": { "type": "string", "pattern": "^context-delta:[a-z0-9][a-z0-9._-]*$" },
+        "requestOrdinal": { "const": 1 },
+        "reason": { "type": "string", "minLength": 1 },
+        "requestedPaths": { "type": "array", "items": { "$ref": "#/$defs/repositoryPath" }, "uniqueItems": true, "minItems": 1 },
+        "additionalBytes": { "type": "integer", "minimum": 1 },
+        "additionalTokens": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contextWindowTokens", "contextTokens", "outputTokens", "contextBytes", "retrievalBytes", "retrievals", "sequentialToolCalls", "totalToolCalls", "attempts", "spawns", "wallSeconds", "maxCostUsd"],
+      "properties": {
+        "contextWindowTokens": { "type": "integer", "minimum": 1 },
+        "contextTokens": { "type": "integer", "minimum": 1 },
+        "outputTokens": { "type": "integer", "minimum": 1 },
+        "contextBytes": { "type": "integer", "minimum": 1 },
+        "retrievalBytes": { "type": "integer", "minimum": 0 },
+        "retrievals": { "type": "integer", "minimum": 0 },
+        "sequentialToolCalls": { "type": "integer", "minimum": 0 },
+        "totalToolCalls": { "type": "integer", "minimum": 0 },
+        "attempts": { "type": "integer", "minimum": 0 },
+        "spawns": { "type": "integer", "minimum": 0 },
+        "wallSeconds": { "type": "integer", "minimum": 1 },
+        "maxCostUsd": { "type": ["number", "null"], "minimum": 0 }
+      }
+    },
+    "actualUsage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contextTokens", "outputTokens", "contextBytes", "retrievalBytes", "retrievals", "sequentialToolCalls", "totalToolCalls", "attempts", "spawns", "wallSeconds", "actualCostUsd"],
+      "properties": {
+        "contextTokens": { "type": "integer", "minimum": 0 },
+        "outputTokens": { "type": "integer", "minimum": 0 },
+        "contextBytes": { "type": "integer", "minimum": 0 },
+        "retrievalBytes": { "type": "integer", "minimum": 0 },
+        "retrievals": { "type": "integer", "minimum": 0 },
+        "sequentialToolCalls": { "type": "integer", "minimum": 0 },
+        "totalToolCalls": { "type": "integer", "minimum": 0 },
+        "attempts": { "type": "integer", "minimum": 0 },
+        "spawns": { "type": "integer", "minimum": 0 },
+        "wallSeconds": { "type": "integer", "minimum": 0 },
+        "actualCostUsd": { "type": ["number", "null"], "minimum": 0 }
+      }
+    },
+    "subjectSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "selector", "repositoryId", "id", "baseHead", "sha256"],
+      "properties": {
+        "kind": { "const": "candidate" },
+        "selector": { "const": "receipt_candidate" },
+        "repositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
+        "id": { "type": "string", "pattern": "^candidate:[a-z0-9][a-z0-9._-]*$" },
+        "baseHead": { "type": "string", "pattern": "^[a-f0-9]{40,64}$" },
+        "sha256": { "const": null }
+      }
+    },
+    "resolvedSubject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "repositoryId", "id", "baseHead", "sha256"],
+      "properties": {
+        "kind": { "const": "candidate" },
+        "repositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
+        "id": { "type": "string", "pattern": "^candidate:[a-z0-9][a-z0-9._-]*$" },
+        "baseHead": { "type": "string", "pattern": "^[a-f0-9]{40,64}$" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "reviewRequirements": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["candidatePayload", "requiredEvidenceClaimIds", "evidenceCoverage", "requiredPresentationRoles"],
+      "properties": {
+        "candidatePayload": { "const": "required" },
+        "requiredEvidenceClaimIds": { "type": "array", "items": { "type": "string", "pattern": "^claim:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true, "minItems": 1 },
+        "evidenceCoverage": { "const": "all_sealed_entries_for_required_claims" },
+        "requiredPresentationRoles": { "type": "array", "items": { "enum": ["reviewer_card", "presentation_payload"] }, "uniqueItems": true, "minItems": 1 }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claimId", "claimClass", "acceptanceOwner", "evidenceClass", "subject", "evaluatorId", "negativeControlId", "reviewRequirements"],
+      "properties": {
+        "claimId": { "type": "string", "pattern": "^claim:[a-z0-9][a-z0-9._-]*$" },
+        "claimClass": { "type": "string", "pattern": "^claim-class:[a-z0-9][a-z0-9._-]*$" },
+        "acceptanceOwner": { "enum": ["machine", "external_human"] },
+        "evidenceClass": { "type": "string", "minLength": 1 },
+        "subject": { "$ref": "#/$defs/subjectSelector" },
+        "evaluatorId": { "type": "string", "pattern": "^evaluator:[a-z0-9][a-z0-9._-]*$" },
+        "negativeControlId": { "type": "string", "pattern": "^case:[a-z0-9][a-z0-9._-]*$" },
+        "reviewRequirements": { "$ref": "#/$defs/reviewRequirements" }
+      }
+    },
+    "claimResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claimId", "acceptanceOwner", "disposition", "evaluatorId", "reviewBundle", "externalHumanReceipt"],
+      "properties": {
+        "claimId": { "type": "string", "pattern": "^claim:[a-z0-9][a-z0-9._-]*$" },
+        "acceptanceOwner": { "enum": ["machine", "external_human"] },
+        "disposition": { "enum": ["accepted", "rejected", "not_evaluated"] },
+        "evaluatorId": { "type": "string", "pattern": "^evaluator:[a-z0-9][a-z0-9._-]*$" },
+        "reviewBundle": { "$ref": "#/$defs/optionalTypedReference" },
+        "externalHumanReceipt": { "$ref": "#/$defs/optionalTypedReference" }
+      }
+    },
+    "intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intentId", "state", "outcome", "nonGoals", "acceptance", "humanOnlyDecisions", "maximumUsefulExperiment", "contextDeltaPolicy", "fallbackPlan", "budgets"],
+      "properties": {
+        "intentId": { "type": "string", "pattern": "^intent:[a-z0-9][a-z0-9._-]*$" },
+        "state": { "enum": ["template_inert", "draft", "accepted", "superseded"] },
+        "outcome": { "type": "string", "minLength": 1 },
+        "nonGoals": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "acceptance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["acceptedBy", "acceptedAt"],
+          "properties": { "acceptedBy": { "type": ["string", "null"] }, "acceptedAt": { "type": ["string", "null"], "format": "date-time" } }
+        },
+        "humanOnlyDecisions": { "type": "array", "items": { "$ref": "#/$defs/decision" }, "uniqueItems": true },
+        "maximumUsefulExperiment": { "$ref": "#/$defs/maximumUsefulExperiment" },
+        "contextDeltaPolicy": { "$ref": "#/$defs/contextDeltaPolicy" },
+        "fallbackPlan": { "type": "array", "items": { "$ref": "#/$defs/fallback" }, "minItems": 4, "maxItems": 4 },
+        "budgets": { "$ref": "#/$defs/budgets" }
+      }
+    },
+    "activeAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "state", "maturityLevel", "authorizations"],
+      "properties": {
+        "owner": { "type": "string", "minLength": 1 },
+        "state": { "enum": ["template_inert", "held", "active", "superseded"] },
+        "maturityLevel": { "type": "integer", "minimum": 0, "maximum": 6 },
+        "authorizations": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["candidateMutation", "targetMutation", "machineEvidenceAcceptance", "promotion", "publication"],
+          "properties": {
+            "candidateMutation": { "type": "boolean" }, "targetMutation": { "type": "boolean" }, "machineEvidenceAcceptance": { "type": "boolean" }, "promotion": { "const": false }, "publication": { "const": false }
+          }
+        }
+      }
+    },
+    "toolBinding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["toolId", "contract", "effect"],
+      "properties": { "toolId": { "type": "string", "pattern": "^tool:[a-z0-9][a-z0-9._-]*$" }, "contract": { "$ref": "#/$defs/typedReference" }, "effect": { "enum": ["read", "candidate_write", "target_native_write", "runtime_process", "data_write"] } }
+    },
+    "claimBinding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["claimClass", "evidenceClass", "evaluatorId", "evaluatorContract", "negativeControlId"],
+      "properties": { "claimClass": { "type": "string" }, "evidenceClass": { "type": "string" }, "evaluatorId": { "type": "string" }, "evaluatorContract": { "$ref": "#/$defs/typedReference" }, "negativeControlId": { "type": "string" } }
+    },
+    "qualificationScope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["certificate", "evaluationResult", "measuredSafeResourceEnvelope", "scopeId", "state", "roleId", "taskFamily", "riskClass", "dataClass", "artifactLane", "mutationCeiling", "toolBindings", "claimBindings", "budgetCeiling"],
+      "properties": {
+        "certificate": { "$ref": "#/$defs/typedReference" }, "evaluationResult": { "$ref": "#/$defs/typedReference" }, "measuredSafeResourceEnvelope": { "$ref": "#/$defs/typedReference" },
+        "scopeId": { "type": "string", "pattern": "^scope:[a-z0-9][a-z0-9._-]*$" }, "state": { "enum": ["unqualified", "shadow", "candidate_only", "qualified", "expired", "revoked"] },
+        "roleId": { "type": "string" }, "taskFamily": { "type": "string" }, "riskClass": { "enum": ["low", "normal", "high", "critical"] }, "dataClass": { "enum": ["public", "internal", "private_local", "restricted"] }, "artifactLane": { "enum": ["ordinary_source", "target_native", "runtime", "external_human"] },
+        "mutationCeiling": { "enum": ["read_only", "candidate_only", "target_operation"] }, "toolBindings": { "type": "array", "items": { "$ref": "#/$defs/toolBinding" }, "uniqueItems": true }, "claimBindings": { "type": "array", "items": { "$ref": "#/$defs/claimBinding" }, "uniqueItems": true }, "budgetCeiling": { "$ref": "#/$defs/budgets" }
+      }
+    },
+    "packet": {
+      "type": "object", "additionalProperties": false,
+      "required": ["packetId", "state", "repositoryId", "candidateId", "baseHead", "roleId", "taskFamily", "riskClass", "dataClass", "artifactLane", "requestedEffects", "finalizationCeiling", "allowedPaths", "qualificationScopeId", "requestedResourceEnvelope", "toolBindings", "claims", "humanOnlyDecisions", "maximumUsefulExperiment", "contextDeltaPolicy", "fallbackPlan", "budgets"],
+      "properties": {
+        "packetId": { "type": "string", "pattern": "^packet:[a-z0-9][a-z0-9._-]*$" }, "state": { "enum": ["template_inert", "draft", "admitted", "superseded"] }, "repositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" }, "candidateId": { "type": "string", "pattern": "^candidate:[a-z0-9][a-z0-9._-]*$" }, "baseHead": { "type": "string", "pattern": "^[a-f0-9]{40,64}$" }, "roleId": { "type": "string", "pattern": "^role:[a-z0-9][a-z0-9._-]*$" }, "taskFamily": { "type": "string", "minLength": 1 }, "riskClass": { "enum": ["low", "normal", "high", "critical"] }, "dataClass": { "enum": ["public", "internal", "private_local", "restricted"] }, "artifactLane": { "enum": ["ordinary_source", "target_native", "runtime", "external_human"] },
+        "requestedEffects": { "type": "array", "items": { "enum": ["read", "candidate_write", "target_native_write", "runtime_process", "data_write"] }, "uniqueItems": true }, "finalizationCeiling": { "enum": ["read_only", "candidate_checkpoint", "finalized_on_candidate"] }, "allowedPaths": { "type": "array", "items": { "$ref": "#/$defs/repositoryPath" }, "uniqueItems": true }, "qualificationScopeId": { "type": "string", "pattern": "^scope:[a-z0-9][a-z0-9._-]*$" }, "requestedResourceEnvelope": { "$ref": "#/$defs/typedReference" }, "toolBindings": { "type": "array", "items": { "$ref": "#/$defs/toolBinding" }, "uniqueItems": true }, "claims": { "type": "array", "items": { "$ref": "#/$defs/claim" }, "minItems": 1 }, "humanOnlyDecisions": { "type": "array", "items": { "$ref": "#/$defs/decision" }, "uniqueItems": true }, "maximumUsefulExperiment": { "$ref": "#/$defs/maximumUsefulExperiment" }, "contextDeltaPolicy": { "$ref": "#/$defs/contextDeltaPolicy" }, "fallbackPlan": { "type": "array", "items": { "$ref": "#/$defs/fallback" }, "minItems": 4, "maxItems": 4 }, "budgets": { "$ref": "#/$defs/budgets" }
+      }
+    },
+    "receipt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["receiptId", "state", "terminalStatus", "packet", "contextDelivery", "observedResourceEnvelope", "evidenceManifest", "resolvedSubject", "claimResults", "humanOnlyDecisions", "fallbackPlan", "fallbackDisposition", "contextDeltaRequest", "actualUsage"],
+      "properties": {
+        "receiptId": { "type": "string", "pattern": "^receipt:[a-z0-9][a-z0-9._-]*$" }, "state": { "enum": ["template_inert", "sealed"] }, "terminalStatus": { "enum": ["COMPLETE", "NEED_CONTEXT", "EVIDENCE_FAILED", "OUT_OF_SCOPE", "ESCALATE"] }, "packet": { "$ref": "#/$defs/typedReference" }, "contextDelivery": { "$ref": "#/$defs/typedReference" }, "observedResourceEnvelope": { "$ref": "#/$defs/typedReference" }, "evidenceManifest": { "$ref": "#/$defs/typedReference" }, "resolvedSubject": { "$ref": "#/$defs/resolvedSubject" }, "claimResults": { "type": "array", "items": { "$ref": "#/$defs/claimResult" }, "minItems": 1, "uniqueItems": true }, "humanOnlyDecisions": { "type": "array", "items": { "$ref": "#/$defs/decision" }, "uniqueItems": true }, "fallbackPlan": { "type": "array", "items": { "$ref": "#/$defs/fallback" }, "minItems": 4, "maxItems": 4 }, "fallbackDisposition": { "$ref": "#/$defs/fallbackDisposition" }, "contextDeltaRequest": { "$ref": "#/$defs/contextDeltaRequest" }, "actualUsage": { "$ref": "#/$defs/actualUsage" }
+      }
+    }
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:adoption-efficacy-plan:0.3.0",
+  "title": "Adoption Efficacy Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "planId", "state", "ownerRepositoryId", "authority", "projectProfile", "protocolBundle", "transition", "baseline", "candidateWindow", "metricDefinitions", "thresholds", "hardGuardrails", "exclusionRules", "missingDataPolicy", "decisionPolicy", "rollbackTarget", "simplificationTargets", "frozenAt", "approvedByOwner", "supersedes"],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "planId": { "type": "string", "pattern": "^efficacy-plan:[a-z0-9][a-z0-9._-]*$" },
+    "state": { "enum": ["template_inert", "draft", "frozen", "superseded"] },
+    "ownerRepositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
+    "authority": { "$ref": "#/$defs/nonAuthority" },
+    "projectProfile": { "$ref": "#/$defs/immutableReference" },
+    "protocolBundle": { "$ref": "#/$defs/immutableReference" },
+    "transition": { "$ref": "#/$defs/transition" },
+    "baseline": { "$ref": "#/$defs/baseline" },
+    "candidateWindow": { "$ref": "#/$defs/candidateWindow" },
+    "metricDefinitions": { "type": "array", "items": { "$ref": "#/$defs/metricDefinition" }, "uniqueItems": true },
+    "thresholds": { "type": "array", "items": { "$ref": "#/$defs/threshold" }, "uniqueItems": true },
+    "hardGuardrails": { "type": "array", "items": { "$ref": "#/$defs/hardGuardrail" }, "uniqueItems": true },
+    "exclusionRules": { "type": "array", "items": { "$ref": "#/$defs/exclusionRule" }, "uniqueItems": true },
+    "missingDataPolicy": { "const": "inconclusive" },
+    "decisionPolicy": { "$ref": "#/$defs/decisionPolicy" },
+    "rollbackTarget": { "$ref": "#/$defs/optionalImmutableReference" },
+    "simplificationTargets": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "frozenAt": { "type": ["string", "null"], "format": "date-time" },
+    "approvedByOwner": { "$ref": "#/$defs/optionalImmutableReference" },
+    "supersedes": { "$ref": "#/$defs/optionalImmutableReference" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[A-F0-9]{64}$" },
+    "repositoryPath": { "type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*:)(?!.*[. ](?:/|$))(?!.*(?:^|/)(?:[Cc][Oo][Nn]|[Pp][Rr][Nn]|[Aa][Uu][Xx]|[Nn][Uu][Ll]|[Cc][Ll][Oo][Cc][Kk]\\$|[Cc][Oo][Nn][Ii][Nn]\\$|[Cc][Oo][Nn][Oo][Uu][Tt]\\$|[Cc][Oo][Mm][1-9¹²³]|[Ll][Pp][Tt][1-9¹²³])(?:\\.[^/]*)?(?:/|$))[^/\\x00-\\x1F<>\"|?*]+(?:/[^/\\x00-\\x1F<>\"|?*]+)*$" },
+    "nonAuthority": {
+      "type": "object", "additionalProperties": false,
+      "required": ["grantsAuthority", "grantsMutation", "grantsPromotion", "grantsPublication"],
+      "properties": { "grantsAuthority": { "const": false }, "grantsMutation": { "const": false }, "grantsPromotion": { "const": false }, "grantsPublication": { "const": false } }
+    },
+    "immutableReference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "path", "sha256", "schemaVersion"],
+      "properties": { "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" }, "path": { "$ref": "#/$defs/repositoryPath" }, "sha256": { "$ref": "#/$defs/sha256" }, "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" } }
+    },
+    "optionalImmutableReference": {
+      "type": ["object", "null"], "additionalProperties": false,
+      "required": ["id", "path", "sha256", "schemaVersion"],
+      "properties": { "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" }, "path": { "$ref": "#/$defs/repositoryPath" }, "sha256": { "$ref": "#/$defs/sha256" }, "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" } }
+    },
+    "transition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fromMaturityLevel", "toMaturityLevel"],
+      "properties": { "fromMaturityLevel": { "type": "integer", "minimum": 0, "maximum": 6 }, "toMaturityLevel": { "type": "integer", "minimum": 0, "maximum": 6 } }
+    },
+    "humanOperations": {
+      "type": "object", "additionalProperties": false,
+      "required": ["intent", "subjectiveOrRuntimeException", "promotionOrPublication", "unresolvedTrust", "routineProtocol", "otherException"],
+      "properties": {
+        "intent": { "type": ["integer", "null"], "minimum": 0 },
+        "subjectiveOrRuntimeException": { "type": ["integer", "null"], "minimum": 0 },
+        "promotionOrPublication": { "type": ["integer", "null"], "minimum": 0 },
+        "unresolvedTrust": { "type": ["integer", "null"], "minimum": 0 },
+        "routineProtocol": { "type": ["integer", "null"], "minimum": 0 },
+        "otherException": { "type": ["integer", "null"], "minimum": 0 }
+      }
+    },
+    "qualityEvents": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evidenceDefects", "evaluatorFalseGreens", "authorityViolations", "scopeViolations", "securityOrPrivacyEvents", "rollbackEvents"],
+      "properties": {
+        "evidenceDefects": { "type": "integer", "minimum": 0 },
+        "evaluatorFalseGreens": { "type": "integer", "minimum": 0 },
+        "authorityViolations": { "type": "integer", "minimum": 0 },
+        "scopeViolations": { "type": "integer", "minimum": 0 },
+        "securityOrPrivacyEvents": { "type": "integer", "minimum": 0 },
+        "rollbackEvents": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "observation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["observationId", "taskStratumId", "receipt", "acceptedClosure", "humanOperationsByReason", "ownerAttentionSeconds", "ownerAttentionNullReason", "protocolPreparationOperations", "protocolPreparationSeconds", "protocolPreparationNullReason", "orchestratorContextTokens", "workerContextTokens", "wallSeconds", "computeSeconds", "costUsd", "retryCount", "escalationCount", "candidatePromoted", "qualityEvents", "evidenceIds", "excluded", "exclusionReasonId"],
+      "properties": {
+        "observationId": { "type": "string", "pattern": "^efficacy-observation:[a-z0-9][a-z0-9._-]*$" },
+        "taskStratumId": { "type": "string", "minLength": 1 },
+        "receipt": { "$ref": "#/$defs/optionalImmutableReference" },
+        "acceptedClosure": { "type": "boolean" },
+        "humanOperationsByReason": { "$ref": "#/$defs/humanOperations" },
+        "ownerAttentionSeconds": { "type": ["number", "null"], "minimum": 0 },
+        "ownerAttentionNullReason": { "type": ["string", "null"] },
+        "protocolPreparationOperations": { "type": ["integer", "null"], "minimum": 0 },
+        "protocolPreparationSeconds": { "type": ["number", "null"], "minimum": 0 },
+        "protocolPreparationNullReason": { "type": ["string", "null"] },
+        "orchestratorContextTokens": { "type": ["integer", "null"], "minimum": 0 },
+        "workerContextTokens": { "type": ["integer", "null"], "minimum": 0 },
+        "wallSeconds": { "type": "number", "minimum": 0 },
+        "computeSeconds": { "type": ["number", "null"], "minimum": 0 },
+        "costUsd": { "type": ["number", "null"], "minimum": 0 },
+        "retryCount": { "type": "integer", "minimum": 0 },
+        "escalationCount": { "type": "integer", "minimum": 0 },
+        "candidatePromoted": { "type": "boolean" },
+        "qualityEvents": { "$ref": "#/$defs/qualityEvents" },
+        "evidenceIds": { "type": "array", "items": { "type": "string", "pattern": "^evidence:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true },
+        "excluded": { "type": "boolean" },
+        "exclusionReasonId": { "type": ["string", "null"] }
+      }
+    },
+    "baseline": {
+      "type": "object", "additionalProperties": false,
+      "required": ["workflowIdentity", "startAt", "endAt", "observations"],
+      "properties": {
+        "workflowIdentity": { "type": "string", "minLength": 1 },
+        "startAt": { "type": ["string", "null"], "format": "date-time" },
+        "endAt": { "type": ["string", "null"], "format": "date-time" },
+        "observations": { "type": "array", "items": { "$ref": "#/$defs/observation" }, "uniqueItems": true }
+      }
+    },
+    "stratumWeight": {
+      "type": "object", "additionalProperties": false,
+      "required": ["taskStratumId", "weight"],
+      "properties": { "taskStratumId": { "type": "string", "minLength": 1 }, "weight": { "type": "number", "minimum": 0 } }
+    },
+    "candidateWindow": {
+      "type": "object", "additionalProperties": false,
+      "required": ["earliestStartAt", "maximumEndAt", "minimumTasks", "minimumAcceptedClosures", "requiredStrata", "fixedStratumWeights"],
+      "properties": {
+        "earliestStartAt": { "type": ["string", "null"], "format": "date-time" },
+        "maximumEndAt": { "type": ["string", "null"], "format": "date-time" },
+        "minimumTasks": { "type": "integer", "minimum": 1 },
+        "minimumAcceptedClosures": { "type": "integer", "minimum": 1 },
+        "requiredStrata": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "fixedStratumWeights": { "type": "array", "items": { "$ref": "#/$defs/stratumWeight" }, "uniqueItems": true }
+      }
+    },
+    "metricDefinition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["metricId", "source", "direction", "aggregate", "required", "humanBurden"],
+      "properties": {
+        "metricId": { "type": "string", "pattern": "^metric:[a-z0-9][a-z0-9._-]*$" },
+        "source": { "enum": ["acceptedClosureRate", "humanOperationsPerAcceptedClosure", "routineProtocolOperationsPerAcceptedClosure", "protocolPreparationOperationsPerAcceptedClosure", "retryRate", "escalationRate", "evidenceDefectRate", "candidatePromotionYield", "ownerAttentionSecondsPerAcceptedClosure", "contextTokensPerAcceptedClosure", "computeSecondsPerAcceptedClosure", "costUsdPerAcceptedClosure", "wallSecondsPerAcceptedClosure"] },
+        "direction": { "enum": ["lower_is_better", "higher_is_better", "zero_tolerance"] },
+        "aggregate": { "enum": ["ratio_of_sums", "rate", "mean", "sum"] },
+        "required": { "type": "boolean" },
+        "humanBurden": { "type": "boolean" }
+      }
+    },
+    "margin": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "value"],
+      "properties": { "kind": { "enum": ["absolute", "relative"] }, "value": { "type": "number", "minimum": 0 } }
+    },
+    "threshold": {
+      "type": "object", "additionalProperties": false,
+      "required": ["thresholdId", "metricId", "kind", "margin", "minimumImprovement"],
+      "properties": {
+        "thresholdId": { "type": "string", "pattern": "^efficacy-threshold:[a-z0-9][a-z0-9._-]*$" },
+        "metricId": { "type": "string", "pattern": "^metric:[a-z0-9][a-z0-9._-]*$" },
+        "kind": { "enum": ["noninferiority", "improvement"] },
+        "margin": { "$ref": "#/$defs/margin" },
+        "minimumImprovement": { "type": ["number", "null"], "minimum": 0 }
+      }
+    },
+    "hardGuardrail": {
+      "type": "object", "additionalProperties": false,
+      "required": ["guardrailId", "source", "maximumCount"],
+      "properties": {
+        "guardrailId": { "type": "string", "pattern": "^efficacy-guardrail:[a-z0-9][a-z0-9._-]*$" },
+        "source": { "enum": ["evaluatorFalseGreens", "authorityViolations", "scopeViolations", "securityOrPrivacyEvents"] },
+        "maximumCount": { "const": 0 }
+      }
+    },
+    "exclusionRule": {
+      "type": "object", "additionalProperties": false,
+      "required": ["exclusionReasonId", "description"],
+      "properties": { "exclusionReasonId": { "type": "string", "pattern": "^exclusion:[a-z0-9][a-z0-9._-]*$" }, "description": { "type": "string", "minLength": 1 } }
+    },
+    "decisionPolicy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["advanceRequiresAllRequiredMetrics", "advanceRequiresAllGuardrails", "advanceRequiresImprovement", "unknownResult", "humanBurdenFailure", "hardGuardrailFailure"],
+      "properties": {
+        "advanceRequiresAllRequiredMetrics": { "const": true },
+        "advanceRequiresAllGuardrails": { "const": true },
+        "advanceRequiresImprovement": { "const": true },
+        "unknownResult": { "const": "hold" },
+        "humanBurdenFailure": { "const": "simplify" },
+        "hardGuardrailFailure": { "const": "rollback" }
+      }
+    }
+  }
+}

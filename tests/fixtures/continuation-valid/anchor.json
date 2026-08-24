@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "0.3.0",
+  "anchorId": "continuation-anchor:continuation_fixture_review",
+  "state": "trusted",
+  "ownerRepositoryId": "repo:continuation_fixture",
+  "receipt": {
+    "id": "receipt:continuation_fixture_final",
+    "path": "tests/fixtures/continuation-valid/receipt.final.json",
+    "sha256": "A5843BDBBE2BEAD5B4604843CA89766797345709D78E25E1744624E41D85F23A",
+    "schemaVersion": "0.3.0"
+  },
+  "createdAt": "2026-08-22T12:06:00Z",
+  "supersedes": null,
+  "notes": "Synthetic conformance anchor only. Trust is supplied by the validator's independently pinned canonical digest; this record grants no real-project authority."
+}

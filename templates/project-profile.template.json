@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "0.3.0",
+  "profileId": "project:example_project",
+  "state": "template_inert",
+  "repositoryId": "repo:example_project",
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+    "schemaVersion": "0.3.0"
+  },
+  "authority": {
+    "id": "authority:example_project",
+    "path": "templates/active-authority.template.json",
+    "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "schemaVersion": "0.3.0"
+  },
+  "policyBindings": {
+    "risk": {
+      "id": "risk-policy:example_project",
+      "path": "templates/risk-policy.template.json",
+      "sha256": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "schemaVersion": "0.3.0"
+    },
+    "data": {
+      "id": "data-policy:example_project",
+      "path": "templates/data-policy.template.json",
+      "sha256": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+      "schemaVersion": "0.3.0"
+    },
+    "evidence": {
+      "id": "evidence-policy:example_project",
+      "path": "templates/evidence-policy.template.json",
+      "sha256": "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+      "schemaVersion": "0.3.0"
+    },
+    "toolRegistry": {
+      "id": "tool-registry:example_project",
+      "path": "templates/tool-registry.template.json",
+      "sha256": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+      "schemaVersion": "0.3.0"
+    },
+    "evaluatorRegistry": {
+      "id": "evaluator-registry:example_project",
+      "path": "templates/evaluator-registry.template.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "schemaVersion": "0.3.0"
+    }
+  },
+  "artifactLanes": [
+    "ordinary_source",
+    "external_human"
+  ],
+  "allowedRoots": [
+    "docs",
+    "src",
+    "tests"
+  ],
+  "humanOnlyDecisions": [
+    "product_direction",
+    "unsettled_trust_or_privacy",
+    "subjective_quality",
+    "promotion",
+    "publication"
+  ],
+  "targetOperations": [
+    {
+      "operationId": "operation:example_read_only_status",
+      "state": "placeholder",
+      "effects": [
+        "read"
+      ]
+    }
+  ]
+}

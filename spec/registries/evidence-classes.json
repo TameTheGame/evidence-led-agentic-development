@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "0.3.0",
+  "registryId": "vocabulary:elad_evidence_classes_0.3.0",
+  "status": "reference_only",
+  "evidenceClasses": [
+    "deterministic",
+    "pure_unit",
+    "framework_runtime",
+    "headless_integration",
+    "rendered_client",
+    "multi_process",
+    "real_remote",
+    "clean_isolated_delivery",
+    "calibrated_model",
+    "external_human"
+  ],
+  "rule": "A narrower class never closes a broader claim without an explicit calibrated policy mapping."
+}

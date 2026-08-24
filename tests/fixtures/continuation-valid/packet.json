@@ -1,0 +1,172 @@
+{
+  "schemaVersion": "0.3.0",
+  "packetId": "packet:continuation_fixture_review",
+  "state": "admitted",
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "FC49D794CAAE67445BC708B6219DD463352C3561A9E8F1DD7CE5CD1CA6707873",
+    "schemaVersion": "0.3.0"
+  },
+  "intent": {
+    "id": "intent:continuation_fixture_review",
+    "path": "tests/fixtures/continuation-valid/intent.json",
+    "sha256": "A973BAF47CA1E273BD62F18D56C366AC5E954BAE054BD9975C9015B4DBD1D1BB",
+    "schemaVersion": "0.3.0"
+  },
+  "projectProfile": {
+    "id": "project:continuation_fixture",
+    "path": "tests/fixtures/continuation-valid/project-profile.json",
+    "sha256": "69A4A0375AF2B74B74601F5A133D422A2E7B5FAD9E428B85001C9EAC249AA1B7",
+    "schemaVersion": "0.3.0"
+  },
+  "authority": {
+    "id": "authority:continuation_fixture",
+    "path": "tests/fixtures/continuation-valid/authority.json",
+    "sha256": "DD9C7080AC12D31CBF8D10996DA6BE74B95439E5339D0B01956452C807ECE537",
+    "schemaVersion": "0.3.0"
+  },
+  "policyBindings": {
+    "risk": {
+      "id": "risk-policy:continuation_fixture",
+      "path": "tests/fixtures/continuation-valid/risk-policy.json",
+      "sha256": "30056E651848A91CA7E6ED04669861015A8B8E8262B241621C060DFA634BFF17",
+      "schemaVersion": "0.3.0"
+    },
+    "data": {
+      "id": "data-policy:continuation_fixture",
+      "path": "tests/fixtures/continuation-valid/data-policy.json",
+      "sha256": "68E5508A3932AA1871E14772DC867D1F4256B9D41D119BEA4E57CE707CE37E57",
+      "schemaVersion": "0.3.0"
+    },
+    "evidence": {
+      "id": "evidence-policy:continuation_fixture",
+      "path": "tests/fixtures/continuation-valid/evidence-policy.json",
+      "sha256": "C9F7A473A88B58B020759BC258BF4A996938EEF4723EF4FA2A7E121537D29901",
+      "schemaVersion": "0.3.0"
+    }
+  },
+  "riskClass": "low",
+  "dataClass": "internal",
+  "taskFamily": "read_only_contract_review",
+  "artifactLane": "ordinary_source",
+  "requestedEffects": [
+    "read"
+  ],
+  "repository": {
+    "repositoryId": "repo:continuation_fixture",
+    "baseRef": "synthetic-fixture",
+    "baseHead": "ffffffffffffffffffffffffffffffffffffffff",
+    "candidateId": "candidate:continuation_fixture_review",
+    "dirtyInputSha256": "2153CD946EC5547A825EF7BE28302D3D384A6A32A58D21F24A61949585E2C640"
+  },
+  "writer": {
+    "profile": {
+      "id": "writer:continuation_fixture_worker",
+      "path": "tests/fixtures/continuation-valid/writer-profile.json",
+      "sha256": "764C94BB323004144C48B3C8FC2F96CBB9481C928939965396B061D4F78967CB",
+      "schemaVersion": "0.3.0"
+    },
+    "certificate": {
+      "id": "certificate:continuation_fixture_worker",
+      "path": "tests/fixtures/continuation-valid/capability-certificate.json",
+      "sha256": "5E8DB4E2EF27DCA79FA474862F2794AEDF5F12E3C47000F5311B4424B7F2E8BD",
+      "schemaVersion": "0.3.0"
+    },
+    "roleId": "role:independent_verifier"
+  },
+  "paths": {
+    "allowedExisting": [
+      "tests/fixtures/continuation-valid/retrieval/subject.txt",
+      "tests/fixtures/continuation-valid/candidate/output.txt",
+      "tests/fixtures/continuation-valid/evidence/machine-evidence.txt",
+      "tests/fixtures/continuation-valid/human/human-acceptance-card.md"
+    ],
+    "allowedNew": [],
+    "prohibited": [
+      "production",
+      "secrets"
+    ]
+  },
+  "toolRegistry": {
+    "id": "tool-registry:continuation_fixture",
+    "path": "tests/fixtures/continuation-valid/tool-registry.json",
+    "sha256": "C1AFCC8BE8595DB6586FB38BFE36B4CA6DC97847AA1E6C5B9DFC1706C5B0884B",
+    "schemaVersion": "0.3.0"
+  },
+  "evaluatorRegistry": {
+    "id": "evaluator-registry:continuation_fixture",
+    "path": "tests/fixtures/continuation-valid/evaluator-registry.json",
+    "sha256": "4E7D7DD95264144FD62F74C70A17FB17F5E1FE7216DBF45A88E979A5D7B1C604",
+    "schemaVersion": "0.3.0"
+  },
+  "tools": [
+    {
+      "toolId": "tool:continuation_fixture_read_bundle",
+      "registryEntrySha256": "3F4BEFCB0CCCF847F35F85D0847D89D3D4483C8D7393041298019793B581A713",
+      "effect": "read",
+      "inputSha256": "2153CD946EC5547A825EF7BE28302D3D384A6A32A58D21F24A61949585E2C640"
+    }
+  ],
+  "retrievalManifest": {
+    "id": "retrieval-manifest:continuation_fixture_review",
+    "path": "tests/fixtures/continuation-valid/retrieval-manifest.json",
+    "sha256": "2C8A4D367CBBCB7042C084D3B888F84DA0F8F1DD070ADFBCF9AD4AC7CDCE39C7",
+    "schemaVersion": "0.3.0"
+  },
+  "claims": [
+    {
+      "claimId": "claim:continuation_fixture_contract_matches",
+      "claimClass": "claim-class:deterministic_document_identity",
+      "description": "The synthetic candidate matches its frozen contract.",
+      "acceptanceOwner": "machine",
+      "evidenceClass": "deterministic",
+      "subject": {
+        "kind": "candidate",
+        "selector": "receipt_candidate",
+        "repositoryId": "repo:continuation_fixture",
+        "id": "candidate:continuation_fixture_review",
+        "baseHead": "ffffffffffffffffffffffffffffffffffffffff",
+        "sha256": null
+      },
+      "evaluatorId": "evaluator:continuation_fixture_contract_check",
+      "negativeControlId": "case:continuation_fixture_wrong_subject"
+    },
+    {
+      "claimId": "claim:continuation_fixture_is_useful",
+      "claimClass": "claim-class:subjective_product_quality",
+      "description": "The synthetic candidate is useful to the fixture owner.",
+      "acceptanceOwner": "external_human",
+      "evidenceClass": "external_human",
+      "subject": {
+        "kind": "candidate",
+        "selector": "receipt_candidate",
+        "repositoryId": "repo:continuation_fixture",
+        "id": "candidate:continuation_fixture_review",
+        "baseHead": "ffffffffffffffffffffffffffffffffffffffff",
+        "sha256": null
+      },
+      "evaluatorId": "evaluator:continuation_fixture_human_review",
+      "negativeControlId": "case:continuation_fixture_wrong_review_bundle"
+    }
+  ],
+  "budgets": {
+    "contextTokens": 2048,
+    "outputTokens": 512,
+    "retrievals": 1,
+    "sequentialToolCalls": 2,
+    "totalToolCalls": 3,
+    "attempts": 1,
+    "spawns": 0,
+    "wallSeconds": 60,
+    "maxCostUsd": null,
+    "resourceEnvelope": "resource-envelope:continuation_fixture_worker"
+  },
+  "stopStates": [
+    "NEED_CONTEXT",
+    "EVIDENCE_FAILED",
+    "OUT_OF_SCOPE",
+    "ESCALATE"
+  ],
+  "finalizationCeiling": "read_only"
+}

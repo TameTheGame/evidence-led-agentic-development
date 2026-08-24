@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "0.3.0",
+  "registryId": "evaluator-registry:example_project",
+  "state": "template_inert",
+  "ownerRepositoryId": "repo:example_project",
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+    "schemaVersion": "0.3.0"
+  },
+  "evaluators": [
+    {
+      "evaluatorId": "evaluator:example_contract_check",
+      "state": "placeholder",
+      "reference": {
+        "id": "evaluator-definition:example_contract_check",
+        "path": "templates/EVALUATOR_CARD.template.md",
+        "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+        "schemaVersion": "0.3.0"
+      },
+      "taskFamilies": [
+        "read_only_contract_review"
+      ],
+      "evidenceClasses": [
+        "deterministic"
+      ],
+      "negativeControlIds": [
+        "case:example_deliberate_mismatch"
+      ]
+    },
+    {
+      "evaluatorId": "evaluator:external_human_review",
+      "state": "placeholder",
+      "reference": {
+        "id": "evaluator-definition:external_human_review",
+        "path": "templates/HUMAN_ACCEPTANCE_CARD.template.md",
+        "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+        "schemaVersion": "0.3.0"
+      },
+      "taskFamilies": [
+        "read_only_contract_review"
+      ],
+      "evidenceClasses": [
+        "external_human"
+      ],
+      "negativeControlIds": [
+        "case:example_missing_subject_identity"
+      ]
+    }
+  ]
+}

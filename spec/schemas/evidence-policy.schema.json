@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:evidence-policy:0.3.0",
+  "title": "Evidence Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "policyId", "state", "owner", "ownerRepositoryId", "rules"],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "policyId": { "type": "string", "pattern": "^evidence-policy:[a-z0-9][a-z0-9._-]*$" },
+    "state": { "enum": ["template_inert", "inactive", "active", "superseded"] },
+    "owner": { "type": "string", "minLength": 1 },
+    "ownerRepositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claimClass", "evidenceClass", "acceptanceOwner", "machineDelegation", "eligibleWriterProfiles", "eligibleReviewerIds", "evaluatorId"],
+        "properties": {
+          "claimClass": { "type": "string", "pattern": "^claim-class:[a-z0-9][a-z0-9._-]*$" },
+          "evidenceClass": { "type": "string", "minLength": 1 },
+          "acceptanceOwner": { "enum": ["machine", "external_human"] },
+          "machineDelegation": { "type": "boolean" },
+          "eligibleWriterProfiles": { "type": "array", "items": { "type": "string", "pattern": "^writer:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true },
+          "eligibleReviewerIds": { "type": "array", "items": { "type": "string", "pattern": "^human:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true },
+          "evaluatorId": { "type": "string", "pattern": "^evaluator:[a-z0-9][a-z0-9._-]*$" }
+        }
+      }
+    }
+  }
+}

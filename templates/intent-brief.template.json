@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "0.3.0",
+  "intentId": "intent:example_read_only_review",
+  "state": "template_inert",
+  "outcome": "Produce a read-only evidence-backed review of one bounded document set.",
+  "purpose": "Demonstrate task shaping without operational authority.",
+  "nonGoals": [
+    "Do not edit product files.",
+    "Do not activate a writer or evidence policy.",
+    "Do not promote or publish."
+  ],
+  "riskClass": "low",
+  "dataClass": "internal",
+  "claims": [
+    {
+      "claimId": "claim:documents_match_contract",
+      "claimClass": "claim-class:deterministic_document_identity",
+      "description": "The selected documents satisfy the frozen review contract.",
+      "acceptanceOwner": "machine",
+      "evidenceClass": "deterministic",
+      "subject": {
+        "kind": "candidate",
+        "selector": "receipt_candidate",
+        "repositoryId": "repo:example_project",
+        "id": "candidate:example_read_only_review",
+        "baseHead": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sha256": null
+      }
+    },
+    {
+      "claimId": "claim:summary_is_useful",
+      "claimClass": "claim-class:subjective_product_quality",
+      "description": "The summary is useful to the project owner.",
+      "acceptanceOwner": "external_human",
+      "evidenceClass": "external_human",
+      "subject": {
+        "kind": "candidate",
+        "selector": "receipt_candidate",
+        "repositoryId": "repo:example_project",
+        "id": "candidate:example_read_only_review",
+        "baseHead": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sha256": null
+      }
+    }
+  ],
+  "humanOnlyDecisions": [
+    "Whether to adopt any recommendation."
+  ],
+  "budgets": {
+    "attempts": 1,
+    "toolCalls": 4,
+    "retrievals": 0,
+    "spawns": 0
+  },
+  "stopStates": [
+    "NEED_CONTEXT",
+    "EVIDENCE_FAILED",
+    "OUT_OF_SCOPE",
+    "ESCALATE"
+  ]
+}

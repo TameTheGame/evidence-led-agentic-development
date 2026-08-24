@@ -1,0 +1,2 @@
+Synthetic source subject for exact-byte continuation verification.
+Requirement: render the token ORBIT-27 on one candidate output line.

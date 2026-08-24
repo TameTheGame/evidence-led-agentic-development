@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "0.3.0",
+  "policyId": "data-policy:continuation_fixture",
+  "state": "active",
+  "owner": "human:continuation_fixture_owner",
+  "classes": [
+    {
+      "dataClass": "public",
+      "allowedExecutionLocations": [
+        "isolated_local"
+      ],
+      "cloudFallback": "forbid"
+    },
+    {
+      "dataClass": "internal",
+      "allowedExecutionLocations": [
+        "isolated_local"
+      ],
+      "cloudFallback": "forbid"
+    },
+    {
+      "dataClass": "private_local",
+      "allowedExecutionLocations": [
+        "isolated_local"
+      ],
+      "cloudFallback": "forbid"
+    },
+    {
+      "dataClass": "restricted",
+      "allowedExecutionLocations": [],
+      "cloudFallback": "forbid"
+    }
+  ]
+}

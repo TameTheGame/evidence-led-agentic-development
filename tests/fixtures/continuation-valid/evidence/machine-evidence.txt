@@ -1,0 +1,5 @@
+evaluator=synthetic-token-verifier
+subject=candidate/output.txt
+expected=ORBIT-27
+observed=ORBIT-27
+result=PASS

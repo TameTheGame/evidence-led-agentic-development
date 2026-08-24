@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "0.3.0",
+  "profileId": "writer:synthetic_read_only_reviewer",
+  "state": "unqualified",
+  "modelSubject": {
+    "id": "model:synthetic_unqualified",
+    "revision": "no-qualification-run",
+    "artifactSha256": null,
+    "artifactSha256NullReason": "Synthetic example only; no model artifact or cloud revision has been qualified."
+  },
+  "executionLocation": "local",
+  "identityBindings": {
+    "runtime": {
+      "id": "runtime:synthetic_unqualified",
+      "path": "blueprint.json",
+      "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "schemaVersion": "0.3.0"
+    },
+    "harness": {
+      "id": "harness:synthetic_unqualified",
+      "path": "adapters/README.md",
+      "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "schemaVersion": "0.3.0"
+    },
+    "adapter": {
+      "id": "adapter:synthetic_unqualified",
+      "path": "adapters/README.md",
+      "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "schemaVersion": "0.3.0"
+    },
+    "promptTemplate": {
+      "id": "template:synthetic_task_brief",
+      "path": "templates/TASK_BRIEF.template.md",
+      "sha256": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "schemaVersion": "0.3.0"
+    },
+    "toolSchema": {
+      "id": "schema:synthetic_tool_contract",
+      "path": "spec/schemas/task-packet.schema.json",
+      "sha256": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+      "schemaVersion": "0.3.0"
+    },
+    "protocolBundle": {
+      "id": "protocol:elad_0.3.0",
+      "path": "blueprint.json",
+      "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+      "schemaVersion": "0.3.0"
+    }
+  },
+  "roles": [
+    "role:independent_verifier"
+  ],
+  "configuredBudgets": {
+    "contextTokens": 4096,
+    "outputTokens": 1024,
+    "retrievals": 0,
+    "sequentialToolCalls": 2,
+    "totalToolCalls": 2,
+    "attempts": 1,
+    "spawns": 0,
+    "wallSeconds": 120,
+    "maxCostUsd": null,
+    "resourceEnvelope": "resource-envelope:synthetic_read_only_reviewer"
+  },
+  "mutationCeiling": "read_only",
+  "knownFailures": [
+    "No qualification has been run, so no task is eligible."
+  ]
+}

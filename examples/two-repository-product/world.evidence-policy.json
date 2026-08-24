@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "0.3.0",
+  "policyId": "evidence-policy:synthetic_world_content",
+  "state": "inactive",
+  "owner": "human:synthetic_owner",
+  "ownerRepositoryId": "repo:synthetic_world_content",
+  "rules": [
+    {
+      "claimClass": "claim-class:deterministic_world_contract",
+      "evidenceClass": "deterministic",
+      "acceptanceOwner": "external_human",
+      "machineDelegation": false,
+      "eligibleWriterProfiles": [],
+      "eligibleReviewerIds": [
+        "human:synthetic_owner"
+      ],
+      "evaluatorId": "evaluator:synthetic_world_contract"
+    }
+  ]
+}

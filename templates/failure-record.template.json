@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "0.3.0",
+  "failureId": "failure:example_unresolved",
+  "state": "template_inert",
+  "fingerprint": "replace-with-stable-causal-fingerprint",
+  "taskClass": "example_task",
+  "subjectSha256": "8888888888888888888888888888888888888888888888888888888888888888",
+  "failureClass": "harness_process_or_evidence",
+  "symptom": "Replace with the smallest reproducible symptom.",
+  "firstCausalLayer": "Replace with code, context, tool, environment, evaluator, or authority.",
+  "attempts": [
+    {
+      "attempt": 1,
+      "causalDifference": "Initial bounded attempt.",
+      "result": "No real attempt occurred; this is an inert template."
+    }
+  ],
+  "evidenceRefs": [],
+  "resolution": null,
+  "regressionImpact": "Name the regression/evaluator change or explicitly state none.",
+  "certificateImpact": "Name the narrowed/expired/revoked profile effect or explicitly state none.",
+  "reviewedBy": null
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "0.3.0",
+  "manifestId": "retrieval-manifest:example_read_only_review",
+  "state": "template_inert",
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+    "schemaVersion": "0.3.0"
+  },
+  "subject": {
+    "repositoryId": "repo:example_project",
+    "baseRef": "main",
+    "baseHead": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "projectProfile": {
+      "id": "project:example_project",
+      "path": "templates/project-profile.template.json",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "schemaVersion": "0.3.0"
+    },
+    "authority": {
+      "id": "authority:example_project",
+      "path": "templates/active-authority.template.json",
+      "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "schemaVersion": "0.3.0"
+    }
+  },
+  "framing": "elad-canonical-json-outer-sha256-v1",
+  "entries": [
+    {
+      "repositoryId": "repo:example_project",
+      "path": "docs/example.md",
+      "bytes": 128,
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "role": "frozen_review_subject",
+      "slice": null,
+      "freshness": "current_at_base",
+      "workerAccess": "prebundled"
+    }
+  ],
+  "createdAt": null,
+  "supersedes": null
+}

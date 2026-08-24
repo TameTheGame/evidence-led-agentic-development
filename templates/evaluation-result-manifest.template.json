@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "0.3.0",
+  "resultManifestId": "evaluation-result:template_unrun",
+  "state": "template_inert",
+  "ownerRepositoryId": "repo:template_target",
+  "authority": {
+    "grantsAuthority": false,
+    "grantsMutation": false,
+    "grantsPromotion": false,
+    "grantsPublication": false
+  },
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "schemaVersion": "0.3.0"
+  },
+  "evaluationPack": {
+    "id": "evaluation-pack:template_unrun",
+    "path": "templates/evaluation-pack.template.json",
+    "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "schemaVersion": "0.3.0"
+  },
+  "qualificationSubjectSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "qualificationSubject": {
+    "subjectId": "qualification-subject:template_unqualified",
+    "model": {
+      "kind": "local_artifacts",
+      "id": "model:template_unqualified",
+      "revision": "template-inert",
+      "artifacts": [],
+      "cloudDeployment": null
+    },
+    "executionLocation": "isolated_local",
+    "runtime": { "id": "runtime:template_unqualified", "path": "reference/README.md", "sha256": "1111111111111111111111111111111111111111111111111111111111111111", "schemaVersion": "0.3.0" },
+    "harness": { "id": "harness:template_unqualified", "path": "adapters/README.md", "sha256": "2222222222222222222222222222222222222222222222222222222222222222", "schemaVersion": "0.3.0" },
+    "adapter": { "id": "adapter:template_unqualified", "path": "adapters/README.md", "sha256": "3333333333333333333333333333333333333333333333333333333333333333", "schemaVersion": "0.3.0" },
+    "promptTemplate": { "id": "template:task_brief_unqualified", "path": "templates/TASK_BRIEF.template.md", "sha256": "4444444444444444444444444444444444444444444444444444444444444444", "schemaVersion": "0.3.0" },
+    "contextCompiler": { "id": "context-compiler:template_unqualified", "path": "reference/README.md", "sha256": "5555555555555555555555555555555555555555555555555555555555555555", "schemaVersion": "0.3.0" },
+    "toolSchema": { "id": "schema:task_packet_unqualified", "path": "spec/schemas/task-packet.schema.json", "sha256": "6666666666666666666666666666666666666666666666666666666666666666", "schemaVersion": "0.3.0" },
+    "configuredResourceEnvelope": { "id": "resource-envelope:template_configured", "path": "templates/resource-envelope.template.json", "sha256": "7777777777777777777777777777777777777777777777777777777777777777", "schemaVersion": "0.3.0" }
+  },
+  "toolRegistry": { "id": "tool-registry:template_target", "path": "templates/tool-registry.template.json", "sha256": "8888888888888888888888888888888888888888888888888888888888888888", "schemaVersion": "0.3.0" },
+  "evaluatorRegistry": { "id": "evaluator-registry:template_target", "path": "templates/evaluator-registry.template.json", "sha256": "9999999999999999999999999999999999999999999999999999999999999999", "schemaVersion": "0.3.0" },
+  "configuredResourceEnvelope": { "id": "resource-envelope:template_configured", "path": "templates/resource-envelope.template.json", "sha256": "7777777777777777777777777777777777777777777777777777777777777777", "schemaVersion": "0.3.0" },
+  "runs": [],
+  "scopeResults": [],
+  "aggregate": {
+    "qualificationState": "unrun",
+    "declaredCaseCount": 0,
+    "executedRunCount": 0,
+    "passedRunCount": 0,
+    "failedRunCount": 0,
+    "inconclusiveRunCount": 0,
+    "falseGreenCount": 0,
+    "evaluatorCrashCount": 0
+  },
+  "evidenceManifest": { "id": "evidence-manifest:template_unrun", "path": "templates/evidence-manifest.template.json", "sha256": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", "schemaVersion": "0.3.0" },
+  "independentVerification": null,
+  "startedAt": null,
+  "completedAt": null,
+  "supersedes": null
+}

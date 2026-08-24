@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "0.3.0",
+  "manifestId": "evidence-manifest:synthetic_application_review",
+  "state": "draft",
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+    "schemaVersion": "0.3.0"
+  },
+  "subject": {
+    "kind": "candidate",
+    "repositoryId": "repo:synthetic_simulation_app",
+    "id": "candidate:synthetic_application_review",
+    "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+    "baseHead": "cccccccccccccccccccccccccccccccccccccccc"
+  },
+  "framing": "elad-canonical-json-outer-sha256-v1",
+  "outerEnvelopeRequired": true,
+  "entries": [],
+  "createdAt": null,
+  "supersedes": null
+}

@@ -1,0 +1,558 @@
+{
+  "schemaVersion": "0.3.0",
+  "vectorSetId": "vector-set:elad_task_rigor_0.3.0",
+  "status": "reference_only",
+  "authority": "none",
+  "description": "Synthetic advisory-selector vectors. Passing them never grants target or evidence authority.",
+  "positiveCases": [
+    {
+      "caseId": "light_deterministic",
+      "state": "planned",
+      "dimensions": {
+        "uncertainty": "low",
+        "complexity": "low",
+        "reversibility": "easy",
+        "consequence": "low",
+        "delegationDistance": "same_episode"
+      },
+      "evidenceApplicability": {
+        "claims": [
+          {"claimDomain": "static_deterministic", "evaluatorClass": "exact_deterministic", "evaluatorMaturity": "not_applicable"}
+        ],
+        "taskEffect": "read_only"
+      },
+      "expectedMinimumProfile": "light",
+      "selectedProfile": "light",
+      "higherRigorReason": null,
+      "loopDisposition": "planned",
+      "evidenceKinds": [
+        "bounded_contract",
+        "deterministic_check",
+        "result_inspection"
+      ]
+    },
+    {
+      "caseId": "light_supervised_worker",
+      "state": "complete",
+      "dimensions": {
+        "uncertainty": "low",
+        "complexity": "low",
+        "reversibility": "easy",
+        "consequence": "low",
+        "delegationDistance": "supervised_worker"
+      },
+      "evidenceApplicability": {
+        "claims": [
+          {"claimDomain": "static_deterministic", "evaluatorClass": "exact_deterministic", "evaluatorMaturity": "not_applicable"}
+        ],
+        "taskEffect": "read_only"
+      },
+      "expectedMinimumProfile": "light",
+      "selectedProfile": "light",
+      "higherRigorReason": null,
+      "loopDisposition": "complete",
+      "evidenceKinds": [
+        "bounded_contract",
+        "deterministic_check",
+        "result_inspection"
+      ]
+    },
+    {
+      "caseId": "bounded_integration",
+      "state": "observed",
+      "dimensions": {
+        "uncertainty": "moderate",
+        "complexity": "moderate",
+        "reversibility": "managed",
+        "consequence": "moderate",
+        "delegationDistance": "bounded_handoff"
+      },
+      "evidenceApplicability": {
+        "claims": [
+          {"claimDomain": "static_deterministic", "evaluatorClass": "exact_deterministic", "evaluatorMaturity": "not_applicable"}
+        ],
+        "taskEffect": "reversible_artifact_change"
+      },
+      "expectedMinimumProfile": "bounded",
+      "selectedProfile": "bounded",
+      "higherRigorReason": null,
+      "loopDisposition": "observed",
+      "evidenceKinds": [
+        "bounded_contract",
+        "deterministic_check",
+        "result_inspection",
+        "targeted_regression",
+        "failure_stop"
+      ]
+    },
+    {
+      "caseId": "evaluated_agentic",
+      "state": "complete",
+      "dimensions": {
+        "uncertainty": "high",
+        "complexity": "moderate",
+        "reversibility": "managed",
+        "consequence": "moderate",
+        "delegationDistance": "autonomous_cross_context"
+      },
+      "evidenceApplicability": {
+        "claims": [
+          {"claimDomain": "semantic_or_stochastic", "evaluatorClass": "fallible", "evaluatorMaturity": "unproven"},
+          {"claimDomain": "runtime_or_operational", "evaluatorClass": "exact_deterministic", "evaluatorMaturity": "not_applicable"}
+        ],
+        "taskEffect": "stateful_reversible_change"
+      },
+      "expectedMinimumProfile": "evaluated",
+      "selectedProfile": "evaluated",
+      "higherRigorReason": null,
+      "loopDisposition": "complete",
+      "evidenceKinds": [
+        "bounded_contract",
+        "result_inspection",
+        "baseline_or_eval_set",
+        "runtime_or_trace",
+        "error_analysis",
+        "evaluator_check",
+        "iteration_decision",
+        "rollback_proof"
+      ]
+    },
+    {
+      "caseId": "light_new_exact_regression",
+      "state": "planned",
+      "dimensions": {
+        "uncertainty": "low",
+        "complexity": "low",
+        "reversibility": "easy",
+        "consequence": "low",
+        "delegationDistance": "same_episode"
+      },
+      "evidenceApplicability": {
+        "claims": [
+          {"claimDomain": "static_deterministic", "evaluatorClass": "exact_deterministic", "evaluatorMaturity": "not_applicable"}
+        ],
+        "taskEffect": "read_only"
+      },
+      "expectedMinimumProfile": "light",
+      "selectedProfile": "light",
+      "higherRigorReason": null,
+      "loopDisposition": "planned",
+      "evidenceKinds": [
+        "bounded_contract",
+        "deterministic_check",
+        "result_inspection"
+      ]
+    },
+    {
+      "caseId": "assured_high_consequence",
+      "state": "complete",
+      "dimensions": {
+        "uncertainty": "moderate",
+        "complexity": "high",
+        "reversibility": "irreversible",
+        "consequence": "critical",
+        "delegationDistance": "external_target"
+      },
+      "evidenceApplicability": {
+        "claims": [
+          {"claimDomain": "semantic_or_stochastic", "evaluatorClass": "fallible", "evaluatorMaturity": "partial"}
+        ],
+        "taskEffect": "irreversible_or_durable_external_effect"
+      },
+      "expectedMinimumProfile": "assured",
+      "selectedProfile": "assured",
+      "higherRigorReason": null,
+      "loopDisposition": "complete",
+      "evidenceKinds": [
+        "bounded_contract",
+        "result_inspection",
+        "baseline_or_eval_set",
+        "error_analysis",
+        "evaluator_check",
+        "iteration_decision",
+        "independent_expected_behavior",
+        "bound_evidence_identity",
+        "independent_verification",
+        "adversarial_or_recovery"
+      ]
+    },
+    {
+      "caseId": "assured_compound_uncertainty",
+      "state": "planned",
+      "dimensions": {
+        "uncertainty": "high",
+        "complexity": "moderate",
+        "reversibility": "difficult",
+        "consequence": "moderate",
+        "delegationDistance": "bounded_handoff"
+      },
+      "evidenceApplicability": {
+        "claims": [
+          {"claimDomain": "static_deterministic", "evaluatorClass": "exact_deterministic", "evaluatorMaturity": "not_applicable"}
+        ],
+        "taskEffect": "stateful_reversible_change"
+      },
+      "expectedMinimumProfile": "assured",
+      "selectedProfile": "assured",
+      "higherRigorReason": null,
+      "loopDisposition": "planned",
+      "evidenceKinds": [
+        "bounded_contract",
+        "result_inspection",
+        "deterministic_check",
+        "error_analysis",
+        "iteration_decision",
+        "independent_expected_behavior",
+        "bound_evidence_identity",
+        "independent_verification",
+        "adversarial_or_recovery",
+        "rollback_proof"
+      ]
+    },
+    {
+      "caseId": "voluntary_higher_rigor",
+      "state": "planned",
+      "dimensions": {
+        "uncertainty": "low",
+        "complexity": "low",
+        "reversibility": "easy",
+        "consequence": "low",
+        "delegationDistance": "same_episode"
+      },
+      "evidenceApplicability": {
+        "claims": [
+          {"claimDomain": "static_deterministic", "evaluatorClass": "exact_deterministic", "evaluatorMaturity": "not_applicable"}
+        ],
+        "taskEffect": "reversible_artifact_change"
+      },
+      "expectedMinimumProfile": "light",
+      "selectedProfile": "bounded",
+      "higherRigorReason": "This task establishes a regression that many future tasks will reuse.",
+      "loopDisposition": "planned",
+      "evidenceKinds": [
+        "bounded_contract",
+        "deterministic_check",
+        "result_inspection",
+        "targeted_regression",
+        "failure_stop"
+      ]
+    },
+    {
+      "caseId": "assured_read_only_static_audit",
+      "state": "complete",
+      "dimensions": {
+        "uncertainty": "moderate",
+        "complexity": "moderate",
+        "reversibility": "easy",
+        "consequence": "high",
+        "delegationDistance": "same_episode"
+      },
+      "evidenceApplicability": {
+        "claims": [
+          {"claimDomain": "static_deterministic", "evaluatorClass": "exact_deterministic", "evaluatorMaturity": "not_applicable"}
+        ],
+        "taskEffect": "read_only"
+      },
+      "expectedMinimumProfile": "assured",
+      "selectedProfile": "assured",
+      "higherRigorReason": null,
+      "loopDisposition": "complete",
+      "evidenceKinds": [
+        "bounded_contract",
+        "result_inspection",
+        "deterministic_check",
+        "error_analysis",
+        "iteration_decision",
+        "independent_expected_behavior",
+        "bound_evidence_identity",
+        "independent_verification",
+        "adversarial_or_recovery"
+      ]
+    },
+    {
+      "caseId": "evaluated_stateful_static_mutation",
+      "state": "complete",
+      "dimensions": {
+        "uncertainty": "high",
+        "complexity": "moderate",
+        "reversibility": "managed",
+        "consequence": "moderate",
+        "delegationDistance": "bounded_handoff"
+      },
+      "evidenceApplicability": {
+        "claims": [
+          {"claimDomain": "static_deterministic", "evaluatorClass": "exact_deterministic", "evaluatorMaturity": "not_applicable"}
+        ],
+        "taskEffect": "stateful_reversible_change"
+      },
+      "expectedMinimumProfile": "evaluated",
+      "selectedProfile": "evaluated",
+      "higherRigorReason": null,
+      "loopDisposition": "complete",
+      "evidenceKinds": [
+        "bounded_contract",
+        "result_inspection",
+        "deterministic_check",
+        "error_analysis",
+        "iteration_decision",
+        "rollback_proof"
+      ]
+    },
+    {
+      "caseId": "assured_read_only_runtime_observation",
+      "state": "complete",
+      "dimensions": {
+        "uncertainty": "high",
+        "complexity": "moderate",
+        "reversibility": "easy",
+        "consequence": "high",
+        "delegationDistance": "bounded_handoff"
+      },
+      "evidenceApplicability": {
+        "claims": [
+          {"claimDomain": "runtime_or_operational", "evaluatorClass": "exact_deterministic", "evaluatorMaturity": "not_applicable"}
+        ],
+        "taskEffect": "read_only"
+      },
+      "expectedMinimumProfile": "assured",
+      "selectedProfile": "assured",
+      "higherRigorReason": null,
+      "loopDisposition": "complete",
+      "evidenceKinds": [
+        "bounded_contract",
+        "result_inspection",
+        "runtime_or_trace",
+        "error_analysis",
+        "iteration_decision",
+        "independent_expected_behavior",
+        "bound_evidence_identity",
+        "independent_verification",
+        "adversarial_or_recovery"
+      ]
+    }
+  ],
+  "negativeCases": [
+    {
+      "caseId": "authority_grant_attempt",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "set", "jsonPointer": "/authorityEffect", "value": "candidate_write"},
+      "expectedCode": "E-AUTHORITY"
+    },
+    {
+      "caseId": "falsified_recommendation",
+      "baseCase": "assured_high_consequence",
+      "mutation": {"operation": "set", "jsonPointer": "/recommendedMinimumProfile", "value": "light"},
+      "expectedCode": "E-RECOMMENDATION"
+    },
+    {
+      "caseId": "selected_below_minimum",
+      "baseCase": "evaluated_agentic",
+      "mutation": {"operation": "set", "jsonPointer": "/selectedProfile", "value": "bounded"},
+      "expectedCode": "E-PROFILE-BELOW-MINIMUM"
+    },
+    {
+      "caseId": "higher_rigor_without_reason",
+      "baseCase": "voluntary_higher_rigor",
+      "mutation": {"operation": "set", "jsonPointer": "/higherRigorReason", "value": null},
+      "expectedCode": "E-HIGHER-RIGOR-REASON"
+    },
+    {
+      "caseId": "spurious_reason_at_minimum",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "set", "jsonPointer": "/higherRigorReason", "value": "More process feels safer."},
+      "expectedCode": "E-HIGHER-RIGOR-REASON"
+    },
+    {
+      "caseId": "light_missing_deterministic_check",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "remove_evidence_kind", "value": "deterministic_check"},
+      "expectedCode": "E-EVIDENCE-MINIMUM"
+    },
+    {
+      "caseId": "bounded_missing_failure_stop",
+      "baseCase": "bounded_integration",
+      "mutation": {"operation": "remove_evidence_kind", "value": "failure_stop"},
+      "expectedCode": "E-EVIDENCE-MINIMUM"
+    },
+    {
+      "caseId": "evaluated_missing_error_analysis",
+      "baseCase": "evaluated_agentic",
+      "mutation": {"operation": "remove_evidence_kind", "value": "error_analysis"},
+      "expectedCode": "E-EVIDENCE-MINIMUM"
+    },
+    {
+      "caseId": "assured_missing_independent_verification",
+      "baseCase": "assured_high_consequence",
+      "mutation": {"operation": "remove_evidence_kind", "value": "independent_verification"},
+      "expectedCode": "E-EVIDENCE-MINIMUM"
+    },
+    {
+      "caseId": "duplicate_evidence_kind",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "duplicate_evidence_kind", "value": "bounded_contract"},
+      "expectedCode": "E-EVIDENCE-DUPLICATE"
+    },
+    {
+      "caseId": "planned_claims_observation",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "set", "jsonPointer": "/loop/0/observedResult", "value": "pass"},
+      "expectedCode": "E-LOOP-STATE"
+    },
+    {
+      "caseId": "observed_without_next_change",
+      "baseCase": "bounded_integration",
+      "mutation": {"operation": "set", "jsonPointer": "/loop/0/nextChange", "value": null},
+      "expectedCode": "E-LOOP-STATE"
+    },
+    {
+      "caseId": "complete_claims_next_change",
+      "baseCase": "evaluated_agentic",
+      "mutation": {"operation": "set", "jsonPointer": "/loop/0/nextChange", "value": "Try something else."},
+      "expectedCode": "E-LOOP-STATE"
+    },
+    {
+      "caseId": "seven_question_field_missing",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "remove", "jsonPointer": "/loop/0/materialUncertainty"},
+      "expectedCode": "E-SCHEMA"
+    },
+    {
+      "caseId": "unknown_dimension_value",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "set", "jsonPointer": "/dimensions/uncertainty", "value": "certain_enough"},
+      "expectedCode": "E-DIMENSION"
+    },
+    {
+      "caseId": "unknown_profile",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "set", "jsonPointer": "/selectedProfile", "value": "maximum"},
+      "expectedCode": "E-PROFILE"
+    },
+    {
+      "caseId": "no_escalation_trigger",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "set", "jsonPointer": "/escalationTriggers", "value": []},
+      "expectedCode": "E-TRIGGERS"
+    },
+    {
+      "caseId": "unknown_simplification_trigger",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "append", "jsonPointer": "/simplificationTriggers", "value": "skip_all_future_tests"},
+      "expectedCode": "E-TRIGGERS"
+    },
+    {
+      "caseId": "scaffolding_cross_classification",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "copy_scaffold", "from": "/scaffolding/reuseExisting/0", "jsonPointer": "/scaffolding/recurForThisTask"},
+      "expectedCode": "E-SCAFFOLDING"
+    },
+    {
+      "caseId": "no_recurring_work",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "set", "jsonPointer": "/scaffolding/recurForThisTask", "value": []},
+      "expectedCode": "E-SCAFFOLDING"
+    },
+    {
+      "caseId": "operational_zero_registry_digest",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "set", "jsonPointer": "/registry/sha256", "value": "0000000000000000000000000000000000000000000000000000000000000000"},
+      "expectedCode": "E-REGISTRY-REFERENCE"
+    },
+    {
+      "caseId": "registry_substitution",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "set", "jsonPointer": "/registry/id", "value": "vocabulary:invented"},
+      "expectedCode": "E-REGISTRY-REFERENCE"
+    },
+    {
+      "caseId": "unknown_top_level_field",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "set", "jsonPointer": "/mutationAuthority", "value": true},
+      "expectedCode": "E-SCHEMA"
+    },
+    {
+      "caseId": "empty_reliability_basis",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "set", "jsonPointer": "/evidenceStrategy/whyReliable", "value": ""},
+      "expectedCode": "E-EVIDENCE-STRATEGY"
+    },
+    {
+      "caseId": "applicability_missing",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "remove", "jsonPointer": "/evidenceApplicability"},
+      "expectedCode": "E-SCHEMA"
+    },
+    {
+      "caseId": "claim_domains_empty",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "set", "jsonPointer": "/evidenceApplicability/claims", "value": []},
+      "expectedCode": "E-APPLICABILITY"
+    },
+    {
+      "caseId": "claim_domain_unknown",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "set", "jsonPointer": "/evidenceApplicability/claims", "value": [{"claimDomain": "mixed_or_other", "evaluatorClass": "exact_deterministic", "evaluatorMaturity": "not_applicable"}]},
+      "expectedCode": "E-APPLICABILITY"
+    },
+    {
+      "caseId": "task_effect_unknown",
+      "baseCase": "light_deterministic",
+      "mutation": {"operation": "set", "jsonPointer": "/evidenceApplicability/taskEffect", "value": "unknown_effect"},
+      "expectedCode": "E-APPLICABILITY"
+    },
+    {
+      "caseId": "read_only_irreversible_contradiction",
+      "baseCase": "assured_high_consequence",
+      "mutation": {"operation": "set", "jsonPointer": "/evidenceApplicability/taskEffect", "value": "read_only"},
+      "expectedCode": "E-EFFECT-CONTRADICTION"
+    },
+    {
+      "caseId": "new_exact_regression_missing_deterministic_check",
+      "baseCase": "light_new_exact_regression",
+      "mutation": {"operation": "remove_evidence_kind", "value": "deterministic_check"},
+      "expectedCode": "E-EVIDENCE-MINIMUM"
+    },
+    {
+      "caseId": "unproven_evaluator_missing_check",
+      "baseCase": "evaluated_agentic",
+      "mutation": {"operation": "remove_evidence_kind", "value": "evaluator_check"},
+      "expectedCode": "E-EVIDENCE-MINIMUM"
+    },
+    {
+      "caseId": "exact_evaluator_uses_fallible_maturity",
+      "baseCase": "light_new_exact_regression",
+      "mutation": {"operation": "set", "jsonPointer": "/evidenceApplicability/claims/0/evaluatorMaturity", "value": "unproven"},
+      "expectedCode": "E-EVALUATOR-CLASS"
+    },
+    {
+      "caseId": "fallible_evaluator_omits_maturity",
+      "baseCase": "evaluated_agentic",
+      "mutation": {"operation": "set", "jsonPointer": "/evidenceApplicability/claims/0/evaluatorMaturity", "value": "not_applicable"},
+      "expectedCode": "E-EVALUATOR-CLASS"
+    },
+    {
+      "caseId": "duplicate_claim_domain",
+      "baseCase": "evaluated_agentic",
+      "mutation": {"operation": "append", "jsonPointer": "/evidenceApplicability/claims", "value": {"claimDomain": "semantic_or_stochastic", "evaluatorClass": "fallible", "evaluatorMaturity": "proven"}},
+      "expectedCode": "E-APPLICABILITY"
+    },
+    {
+      "caseId": "runtime_assured_missing_trace",
+      "baseCase": "assured_read_only_runtime_observation",
+      "mutation": {"operation": "remove_evidence_kind", "value": "runtime_or_trace"},
+      "expectedCode": "E-EVIDENCE-MINIMUM"
+    },
+    {
+      "caseId": "stateful_evaluated_missing_rollback",
+      "baseCase": "evaluated_stateful_static_mutation",
+      "mutation": {"operation": "remove_evidence_kind", "value": "rollback_proof"},
+      "expectedCode": "E-EVIDENCE-MINIMUM"
+    },
+    {
+      "caseId": "runtime_domain_falsified_recommendation",
+      "baseCase": "assured_read_only_runtime_observation",
+      "mutation": {"operation": "set", "jsonPointer": "/recommendedMinimumProfile", "value": "light"},
+      "expectedCode": "E-RECOMMENDATION"
+    }
+  ]
+}

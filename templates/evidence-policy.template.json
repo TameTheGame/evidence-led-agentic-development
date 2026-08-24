@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "0.3.0",
+  "policyId": "evidence-policy:example_project",
+  "state": "template_inert",
+  "owner": "replace-with-project-owner",
+  "ownerRepositoryId": "repo:example_project",
+  "rules": [
+    {
+      "claimClass": "claim-class:deterministic_document_identity",
+      "evidenceClass": "deterministic",
+      "acceptanceOwner": "machine",
+      "machineDelegation": false,
+      "eligibleWriterProfiles": [],
+      "eligibleReviewerIds": [],
+      "evaluatorId": "evaluator:example_contract_check"
+    },
+    {
+      "claimClass": "claim-class:subjective_product_quality",
+      "evidenceClass": "external_human",
+      "acceptanceOwner": "external_human",
+      "machineDelegation": false,
+      "eligibleWriterProfiles": [],
+      "eligibleReviewerIds": [
+        "human:example_owner"
+      ],
+      "evaluatorId": "evaluator:external_human_review"
+    }
+  ]
+}

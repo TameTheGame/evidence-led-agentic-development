@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:review-bundle:0.3.0",
+  "title": "Review Bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "bundleId",
+    "state",
+    "protocolBundle",
+    "packet",
+    "evidenceManifest",
+    "candidate",
+    "resolvedSubject",
+    "claimIds",
+    "framing",
+    "entries",
+    "createdAt",
+    "supersedes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "bundleId": { "type": "string", "pattern": "^review-bundle:[a-z0-9][a-z0-9._-]*$" },
+    "state": { "enum": ["template_inert", "draft", "sealed", "superseded"] },
+    "protocolBundle": { "$ref": "#/$defs/immutableReference" },
+    "packet": { "$ref": "#/$defs/immutableReference" },
+    "evidenceManifest": { "$ref": "#/$defs/immutableReference" },
+    "candidate": { "$ref": "#/$defs/candidate" },
+    "resolvedSubject": { "$ref": "#/$defs/resolvedSubject" },
+    "claimIds": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^claim:[a-z0-9][a-z0-9._-]*$" },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "framing": { "const": "elad-canonical-json-outer-sha256-v1" },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["artifactId", "path", "bytes", "sha256", "role", "evidenceIds"],
+        "properties": {
+          "artifactId": { "type": "string", "pattern": "^artifact:[a-z0-9][a-z0-9._-]*$" },
+          "path": { "$ref": "#/$defs/repositoryPath" },
+          "bytes": { "type": "integer", "minimum": 0 },
+          "sha256": { "$ref": "#/$defs/sha256" },
+          "role": { "type": "string", "minLength": 1 },
+          "evidenceIds": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^evidence:[a-z0-9][a-z0-9._-]*$" },
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "createdAt": { "type": ["string", "null"], "format": "date-time" },
+    "supersedes": { "$ref": "#/$defs/optionalImmutableReference" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[A-F0-9]{64}$" },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*:)(?!.*[. ](?:/|$))(?!.*(?:^|/)(?:[Cc][Oo][Nn]|[Pp][Rr][Nn]|[Aa][Uu][Xx]|[Nn][Uu][Ll]|[Cc][Ll][Oo][Cc][Kk]\\$|[Cc][Oo][Nn][Ii][Nn]\\$|[Cc][Oo][Nn][Oo][Uu][Tt]\\$|[Cc][Oo][Mm][1-9¹²³]|[Ll][Pp][Tt][1-9¹²³])(?:\\.[^/]*)?(?:/|$))[^/\\x00-\\x1F<>\"|?*]+(?:/[^/\\x00-\\x1F<>\"|?*]+)*$"
+    },
+    "immutableReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "schemaVersion"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" },
+        "path": { "$ref": "#/$defs/repositoryPath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    },
+    "optionalImmutableReference": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "schemaVersion"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^review-bundle:[a-z0-9][a-z0-9._-]*$" },
+        "path": { "$ref": "#/$defs/repositoryPath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidateState", "candidateId", "candidateSha256", "baseHead", "head"],
+      "properties": {
+        "candidateState": { "enum": ["unchanged", "checkpointed", "finalized"] },
+        "candidateId": { "type": "string", "pattern": "^candidate:[a-z0-9][a-z0-9._-]*$" },
+        "candidateSha256": { "$ref": "#/$defs/sha256" },
+        "baseHead": { "type": "string", "pattern": "^[a-f0-9]{40,64}$" },
+        "head": { "type": "string", "pattern": "^[a-f0-9]{40,64}$" }
+      }
+    },
+    "resolvedSubject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "repositoryId", "id", "baseHead", "sha256"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "repositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
+        "id": { "type": "string", "minLength": 1 },
+        "baseHead": { "type": "string", "pattern": "^[a-f0-9]{40,64}$" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}

@@ -1,0 +1,416 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:resource-envelope:0.3.0",
+  "title": "Immutable Resource Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "envelopeId",
+    "state",
+    "ownerRepositoryId",
+    "authority",
+    "stage",
+    "purpose",
+    "lineageId",
+    "parentEnvelope",
+    "protocolBundle",
+    "writerProfile",
+    "qualificationSubjectSha256",
+    "subjectBindings",
+    "execution",
+    "limits",
+    "effectiveConfiguration",
+    "derivation",
+    "observations",
+    "recordedAt",
+    "expiresAt",
+    "invalidationTriggers",
+    "supersedes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "envelopeId": { "type": "string", "pattern": "^resource-envelope:[a-z0-9][a-z0-9._-]*$" },
+    "state": { "enum": ["template_inert", "sealed", "superseded"] },
+    "ownerRepositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
+    "authority": { "$ref": "#/$defs/nonAuthority" },
+    "stage": { "enum": ["configured", "requested", "observed", "measured_safe"] },
+    "purpose": { "enum": ["qualification", "task"] },
+    "lineageId": { "type": "string", "pattern": "^resource-lineage:[a-z0-9][a-z0-9._-]*$" },
+    "parentEnvelope": { "$ref": "#/$defs/optionalImmutableReference" },
+    "protocolBundle": { "$ref": "#/$defs/immutableReference" },
+    "writerProfile": { "$ref": "#/$defs/immutableReference" },
+    "qualificationSubjectSha256": { "$ref": "#/$defs/sha256" },
+    "subjectBindings": { "$ref": "#/$defs/subjectBindings" },
+    "execution": { "$ref": "#/$defs/execution" },
+    "limits": { "$ref": "#/$defs/limits" },
+    "effectiveConfiguration": { "$ref": "#/$defs/effectiveConfiguration" },
+    "derivation": { "$ref": "#/$defs/optionalDerivation" },
+    "observations": { "$ref": "#/$defs/optionalObservations" },
+    "recordedAt": { "type": ["string", "null"], "format": "date-time" },
+    "expiresAt": { "type": ["string", "null"], "format": "date-time" },
+    "invalidationTriggers": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "supersedes": { "$ref": "#/$defs/optionalImmutableReference" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[A-F0-9]{64}$" },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*:)(?!.*[. ](?:/|$))(?!.*(?:^|/)(?:[Cc][Oo][Nn]|[Pp][Rr][Nn]|[Aa][Uu][Xx]|[Nn][Uu][Ll]|[Cc][Ll][Oo][Cc][Kk]\\$|[Cc][Oo][Nn][Ii][Nn]\\$|[Cc][Oo][Nn][Oo][Uu][Tt]\\$|[Cc][Oo][Mm][1-9¹²³]|[Ll][Pp][Tt][1-9¹²³])(?:\\.[^/]*)?(?:/|$))[^/\\x00-\\x1F<>\"|?*]+(?:/[^/\\x00-\\x1F<>\"|?*]+)*$"
+    },
+    "nonAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grantsAuthority", "grantsMutation", "grantsPromotion", "grantsPublication"],
+      "properties": {
+        "grantsAuthority": { "const": false },
+        "grantsMutation": { "const": false },
+        "grantsPromotion": { "const": false },
+        "grantsPublication": { "const": false }
+      }
+    },
+    "immutableReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "schemaVersion"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" },
+        "path": { "$ref": "#/$defs/repositoryPath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    },
+    "optionalImmutableReference": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "schemaVersion"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" },
+        "path": { "$ref": "#/$defs/repositoryPath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    },
+    "artifactIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifactId", "role", "sourceRepository", "sourceRevision", "filename", "bytes", "sha256", "format"],
+      "properties": {
+        "artifactId": { "type": "string", "pattern": "^artifact:[a-z0-9][a-z0-9._-]*$" },
+        "role": { "enum": ["target", "draft", "projector", "adapter", "backend"] },
+        "sourceRepository": { "type": "string", "minLength": 1 },
+        "sourceRevision": { "type": "string", "minLength": 1 },
+        "filename": { "type": "string", "minLength": 1 },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "format": { "type": "string", "minLength": 1 }
+      }
+    },
+    "subjectBindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["modelIdentitySha256", "runtime", "harness", "adapter", "promptTemplate", "contextCompiler", "toolSchema"],
+      "properties": {
+        "modelIdentitySha256": { "$ref": "#/$defs/sha256" },
+        "runtime": { "$ref": "#/$defs/immutableReference" },
+        "harness": { "$ref": "#/$defs/immutableReference" },
+        "adapter": { "$ref": "#/$defs/immutableReference" },
+        "promptTemplate": { "$ref": "#/$defs/immutableReference" },
+        "contextCompiler": { "$ref": "#/$defs/immutableReference" },
+        "toolSchema": { "$ref": "#/$defs/immutableReference" }
+      }
+    },
+    "acceleratorDevice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deviceId", "vendor", "product", "architecture", "computeCapability", "totalVramBytes"],
+      "properties": {
+        "deviceId": { "type": "string", "minLength": 1 },
+        "vendor": { "type": "string", "minLength": 1 },
+        "product": { "type": "string", "minLength": 1 },
+        "architecture": { "type": "string", "minLength": 1 },
+        "computeCapability": { "type": ["string", "null"] },
+        "totalVramBytes": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "localExecution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hostClassId", "acceleratorDevices", "driver", "backendArtifact", "modelArtifacts", "endpointPolicy"],
+      "properties": {
+        "hostClassId": { "type": "string", "minLength": 1 },
+        "acceleratorDevices": { "type": "array", "items": { "$ref": "#/$defs/acceleratorDevice" }, "uniqueItems": true },
+        "driver": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["vendor", "version"],
+          "properties": {
+            "vendor": { "type": "string", "minLength": 1 },
+            "version": { "type": "string", "minLength": 1 }
+          }
+        },
+        "backendArtifact": { "$ref": "#/$defs/artifactIdentity" },
+        "modelArtifacts": { "type": "array", "items": { "$ref": "#/$defs/artifactIdentity" }, "uniqueItems": true },
+        "endpointPolicy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["transport", "bindAddress", "portClass", "networkMode", "cloudFallback"],
+          "properties": {
+            "transport": { "type": "string", "minLength": 1 },
+            "bindAddress": { "type": "string", "minLength": 1 },
+            "portClass": { "type": "string", "minLength": 1 },
+            "networkMode": { "enum": ["none", "loopback_only"] },
+            "cloudFallback": { "const": false }
+          }
+        }
+      }
+    },
+    "cloudExecution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["providerId", "modelId", "deploymentId", "modelRevision", "apiVersion", "endpointClass", "region", "dataResidency", "identityStrength", "providerSnapshot", "quotaSnapshot"],
+      "properties": {
+        "providerId": { "type": "string", "minLength": 1 },
+        "modelId": { "type": "string", "minLength": 1 },
+        "deploymentId": { "type": "string", "minLength": 1 },
+        "modelRevision": { "type": "string", "minLength": 1 },
+        "apiVersion": { "type": "string", "minLength": 1 },
+        "endpointClass": { "type": "string", "minLength": 1 },
+        "region": { "type": "string", "minLength": 1 },
+        "dataResidency": { "type": "string", "minLength": 1 },
+        "identityStrength": { "enum": ["immutable_revision", "observed_provider_alias"] },
+        "providerSnapshot": { "$ref": "#/$defs/immutableReference" },
+        "quotaSnapshot": { "$ref": "#/$defs/immutableReference" }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "local", "cloud"],
+      "properties": {
+        "kind": { "enum": ["local", "cloud"] },
+        "local": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["hostClassId", "acceleratorDevices", "driver", "backendArtifact", "modelArtifacts", "endpointPolicy"],
+          "properties": {
+            "hostClassId": { "type": "string", "minLength": 1 },
+            "acceleratorDevices": { "type": "array", "items": { "$ref": "#/$defs/acceleratorDevice" }, "uniqueItems": true },
+            "driver": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["vendor", "version"],
+              "properties": {
+                "vendor": { "type": "string", "minLength": 1 },
+                "version": { "type": "string", "minLength": 1 }
+              }
+            },
+            "backendArtifact": { "$ref": "#/$defs/artifactIdentity" },
+            "modelArtifacts": { "type": "array", "items": { "$ref": "#/$defs/artifactIdentity" }, "uniqueItems": true },
+            "endpointPolicy": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["transport", "bindAddress", "portClass", "networkMode", "cloudFallback"],
+              "properties": {
+                "transport": { "type": "string", "minLength": 1 },
+                "bindAddress": { "type": "string", "minLength": 1 },
+                "portClass": { "type": "string", "minLength": 1 },
+                "networkMode": { "enum": ["none", "loopback_only"] },
+                "cloudFallback": { "const": false }
+              }
+            }
+          }
+        },
+        "cloud": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["providerId", "modelId", "deploymentId", "modelRevision", "apiVersion", "endpointClass", "region", "dataResidency", "identityStrength", "providerSnapshot", "quotaSnapshot"],
+          "properties": {
+            "providerId": { "type": "string", "minLength": 1 },
+            "modelId": { "type": "string", "minLength": 1 },
+            "deploymentId": { "type": "string", "minLength": 1 },
+            "modelRevision": { "type": "string", "minLength": 1 },
+            "apiVersion": { "type": "string", "minLength": 1 },
+            "endpointClass": { "type": "string", "minLength": 1 },
+            "region": { "type": "string", "minLength": 1 },
+            "dataResidency": { "type": "string", "minLength": 1 },
+            "identityStrength": { "enum": ["immutable_revision", "observed_provider_alias"] },
+            "providerSnapshot": { "$ref": "#/$defs/immutableReference" },
+            "quotaSnapshot": { "$ref": "#/$defs/immutableReference" }
+          }
+        }
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contextTokens", "outputTokens", "retrievals", "sequentialToolCalls", "totalToolCalls", "attempts", "spawns", "wallSeconds", "maxCostUsd", "concurrency"],
+      "properties": {
+        "contextTokens": { "type": "integer", "minimum": 1 },
+        "outputTokens": { "type": "integer", "minimum": 1 },
+        "retrievals": { "type": "integer", "minimum": 0 },
+        "sequentialToolCalls": { "type": "integer", "minimum": 0 },
+        "totalToolCalls": { "type": "integer", "minimum": 0 },
+        "attempts": { "type": "integer", "minimum": 0 },
+        "spawns": { "type": "integer", "minimum": 0 },
+        "wallSeconds": { "type": "integer", "minimum": 1 },
+        "maxCostUsd": { "type": ["number", "null"], "minimum": 0 },
+        "concurrency": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "resourceCaps": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maximumPeakVramBytes", "maximumPeakHostRamBytes", "maximumScratchBytes"],
+      "properties": {
+        "maximumPeakVramBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "maximumPeakHostRamBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "maximumScratchBytes": { "type": ["integer", "null"], "minimum": 0 }
+      }
+    },
+    "admissionFloors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimumFreeVramBeforeLoadBytes", "minimumFreeHostRamBeforeLoadBytes", "minimumScratchDiskFreeBytes"],
+      "properties": {
+        "minimumFreeVramBeforeLoadBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "minimumFreeHostRamBeforeLoadBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "minimumScratchDiskFreeBytes": { "type": ["integer", "null"], "minimum": 0 }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["budgets", "resourceCaps", "admissionFloors"],
+      "properties": {
+        "budgets": { "$ref": "#/$defs/budgets" },
+        "resourceCaps": { "$ref": "#/$defs/resourceCaps" },
+        "admissionFloors": { "$ref": "#/$defs/admissionFloors" }
+      }
+    },
+    "controlSources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contextWindow", "kvCacheTypes", "gpuOffload", "parallelism", "speculativeMode"],
+      "properties": {
+        "contextWindow": { "enum": ["harness", "backend", "provider", "observed_only", "not_applicable"] },
+        "kvCacheTypes": { "enum": ["harness", "backend", "provider", "observed_only", "not_applicable"] },
+        "gpuOffload": { "enum": ["harness", "backend", "observed_only", "not_applicable"] },
+        "parallelism": { "enum": ["harness", "backend", "provider", "observed_only", "not_applicable"] },
+        "speculativeMode": { "enum": ["harness", "backend", "provider", "observed_only", "not_applicable"] }
+      }
+    },
+    "effectiveConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contextWindowTokens", "outputReserveTokens", "gpuLayerMode", "gpuLayerCount", "tensorSplit", "kvCacheTypeK", "kvCacheTypeV", "parallelSlots", "batchSize", "microBatchSize", "speculativeMode", "draftArtifactId", "maximumDraftTokens", "visionProjectorEnabled", "projectorArtifactId", "reasoningMode", "promptMode", "toolCallFormat", "contextCompilerMode", "effectiveCommandOrConfig", "controlSources"],
+      "properties": {
+        "contextWindowTokens": { "type": "integer", "minimum": 1 },
+        "outputReserveTokens": { "type": "integer", "minimum": 1 },
+        "gpuLayerMode": { "enum": ["all", "count", "split", "not_applicable"] },
+        "gpuLayerCount": { "type": ["integer", "null"], "minimum": 0 },
+        "tensorSplit": { "type": "array", "items": { "type": "number", "minimum": 0 } },
+        "kvCacheTypeK": { "type": ["string", "null"] },
+        "kvCacheTypeV": { "type": ["string", "null"] },
+        "parallelSlots": { "type": "integer", "minimum": 1 },
+        "batchSize": { "type": ["integer", "null"], "minimum": 1 },
+        "microBatchSize": { "type": ["integer", "null"], "minimum": 1 },
+        "speculativeMode": { "enum": ["disabled", "draft_model", "backend_native", "not_applicable"] },
+        "draftArtifactId": { "type": ["string", "null"] },
+        "maximumDraftTokens": { "type": ["integer", "null"], "minimum": 0 },
+        "visionProjectorEnabled": { "type": "boolean" },
+        "projectorArtifactId": { "type": ["string", "null"] },
+        "reasoningMode": { "type": "string", "minLength": 1 },
+        "promptMode": { "type": "string", "minLength": 1 },
+        "toolCallFormat": { "type": "string", "minLength": 1 },
+        "contextCompilerMode": { "type": "string", "minLength": 1 },
+        "effectiveCommandOrConfig": { "$ref": "#/$defs/immutableReference" },
+        "controlSources": { "$ref": "#/$defs/controlSources" }
+      }
+    },
+    "derivation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evaluationResultManifest", "supportCaseIds", "derivedAt"],
+      "properties": {
+        "evaluationResultManifest": { "$ref": "#/$defs/immutableReference" },
+        "supportCaseIds": { "type": "array", "items": { "type": "string", "pattern": "^case:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true },
+        "derivedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "optionalDerivation": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["evaluationResultManifest", "supportCaseIds", "derivedAt"],
+      "properties": {
+        "evaluationResultManifest": { "$ref": "#/$defs/immutableReference" },
+        "supportCaseIds": { "type": "array", "items": { "type": "string", "pattern": "^case:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true },
+        "derivedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "actualBudgetUse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contextTokens", "outputTokens", "retrievals", "sequentialToolCalls", "totalToolCalls", "attempts", "spawns", "wallSeconds", "costUsd", "concurrency"],
+      "properties": {
+        "contextTokens": { "type": "integer", "minimum": 0 },
+        "outputTokens": { "type": "integer", "minimum": 0 },
+        "retrievals": { "type": "integer", "minimum": 0 },
+        "sequentialToolCalls": { "type": "integer", "minimum": 0 },
+        "totalToolCalls": { "type": "integer", "minimum": 0 },
+        "attempts": { "type": "integer", "minimum": 0 },
+        "spawns": { "type": "integer", "minimum": 0 },
+        "wallSeconds": { "type": "number", "minimum": 0 },
+        "costUsd": { "type": ["number", "null"], "minimum": 0 },
+        "concurrency": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "observations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actualBudgetUse", "preflightFreeVramBytes", "peakVramBytes", "preflightFreeHostRamBytes", "peakHostRamBytes", "scratchBytes", "loadedArtifactSha256s", "backendReportedContextTokens", "backendReportedKvCacheTypeK", "backendReportedKvCacheTypeV", "backendReportedGpuLayers", "backendReportedParallelSlots", "endpointObservation", "fallbackUsed", "processExitClass", "cleanupResult"],
+      "properties": {
+        "actualBudgetUse": { "$ref": "#/$defs/actualBudgetUse" },
+        "preflightFreeVramBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "peakVramBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "preflightFreeHostRamBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "peakHostRamBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "scratchBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "loadedArtifactSha256s": { "type": "array", "items": { "$ref": "#/$defs/sha256" }, "uniqueItems": true },
+        "backendReportedContextTokens": { "type": ["integer", "null"], "minimum": 0 },
+        "backendReportedKvCacheTypeK": { "type": ["string", "null"] },
+        "backendReportedKvCacheTypeV": { "type": ["string", "null"] },
+        "backendReportedGpuLayers": { "type": ["integer", "null"], "minimum": 0 },
+        "backendReportedParallelSlots": { "type": ["integer", "null"], "minimum": 0 },
+        "endpointObservation": { "type": "string", "minLength": 1 },
+        "fallbackUsed": { "type": "boolean" },
+        "processExitClass": { "type": "string", "minLength": 1 },
+        "cleanupResult": { "type": "string", "minLength": 1 }
+      }
+    },
+    "optionalObservations": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["actualBudgetUse", "preflightFreeVramBytes", "peakVramBytes", "preflightFreeHostRamBytes", "peakHostRamBytes", "scratchBytes", "loadedArtifactSha256s", "backendReportedContextTokens", "backendReportedKvCacheTypeK", "backendReportedKvCacheTypeV", "backendReportedGpuLayers", "backendReportedParallelSlots", "endpointObservation", "fallbackUsed", "processExitClass", "cleanupResult"],
+      "properties": {
+        "actualBudgetUse": { "$ref": "#/$defs/actualBudgetUse" },
+        "preflightFreeVramBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "peakVramBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "preflightFreeHostRamBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "peakHostRamBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "scratchBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "loadedArtifactSha256s": { "type": "array", "items": { "$ref": "#/$defs/sha256" }, "uniqueItems": true },
+        "backendReportedContextTokens": { "type": ["integer", "null"], "minimum": 0 },
+        "backendReportedKvCacheTypeK": { "type": ["string", "null"] },
+        "backendReportedKvCacheTypeV": { "type": ["string", "null"] },
+        "backendReportedGpuLayers": { "type": ["integer", "null"], "minimum": 0 },
+        "backendReportedParallelSlots": { "type": ["integer", "null"], "minimum": 0 },
+        "endpointObservation": { "type": "string", "minLength": 1 },
+        "fallbackUsed": { "type": "boolean" },
+        "processExitClass": { "type": "string", "minLength": 1 },
+        "cleanupResult": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "0.3.0",
+  "receiptId": "receipt:example_read_only_review",
+  "recordState": "template_inert",
+  "recordedAt": null,
+  "supersedes": null,
+  "packet": {
+    "id": "packet:example_read_only_review",
+    "path": "templates/task-packet.template.json",
+    "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "schemaVersion": "0.3.0"
+  },
+  "bindings": {
+    "protocolBundle": {
+      "id": "protocol:elad_0.3.0",
+      "path": "blueprint.json",
+      "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+      "schemaVersion": "0.3.0"
+    },
+    "intent": {
+      "id": "intent:example_read_only_review",
+      "path": "templates/intent-brief.template.json",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "schemaVersion": "0.3.0"
+    },
+    "projectProfile": {
+      "id": "project:example_project",
+      "path": "templates/project-profile.template.json",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "schemaVersion": "0.3.0"
+    },
+    "authority": {
+      "id": "authority:example_project",
+      "path": "templates/active-authority.template.json",
+      "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "schemaVersion": "0.3.0"
+    },
+    "riskPolicy": {
+      "id": "risk-policy:example_project",
+      "path": "templates/risk-policy.template.json",
+      "sha256": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "schemaVersion": "0.3.0"
+    },
+    "dataPolicy": {
+      "id": "data-policy:example_project",
+      "path": "templates/data-policy.template.json",
+      "sha256": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+      "schemaVersion": "0.3.0"
+    },
+    "evidencePolicy": {
+      "id": "evidence-policy:example_project",
+      "path": "templates/evidence-policy.template.json",
+      "sha256": "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+      "schemaVersion": "0.3.0"
+    },
+    "toolRegistry": {
+      "id": "tool-registry:example_project",
+      "path": "templates/tool-registry.template.json",
+      "sha256": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+      "schemaVersion": "0.3.0"
+    },
+    "evaluatorRegistry": {
+      "id": "evaluator-registry:example_project",
+      "path": "templates/evaluator-registry.template.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "schemaVersion": "0.3.0"
+    }
+  },
+  "riskClass": "low",
+  "dataClass": "internal",
+  "taskFamily": "read_only_contract_review",
+  "artifactLane": "ordinary_source",
+  "requestedEffects": [
+    "read"
+  ],
+  "writer": {
+    "profile": {
+      "id": "writer:example_local_worker",
+      "path": "templates/writer-profile.template.json",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "schemaVersion": "0.3.0"
+    },
+    "certificate": {
+      "id": "certificate:example_local_worker_unqualified",
+      "path": "templates/capability-certificate.template.json",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "schemaVersion": "0.3.0"
+    }
+  },
+  "terminalStatus": "OUT_OF_SCOPE",
+  "candidate": {
+    "state": "unchanged",
+    "candidateId": "candidate:example_read_only_review",
+    "candidateSha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "baseHead": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "head": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "changedPaths": [],
+  "claims": [
+    {
+      "claimId": "claim:documents_match_contract",
+      "claimClass": "claim-class:deterministic_document_identity",
+      "acceptanceOwner": "machine",
+      "evidenceClass": "deterministic",
+      "resolvedSubject": {
+        "kind": "candidate",
+        "repositoryId": "repo:example_project",
+        "id": "candidate:example_read_only_review",
+        "baseHead": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+      },
+      "result": "not_evaluated",
+      "evidenceRefs": [],
+      "externalHumanReceipt": null
+    },
+    {
+      "claimId": "claim:summary_is_useful",
+      "claimClass": "claim-class:subjective_product_quality",
+      "acceptanceOwner": "external_human",
+      "evidenceClass": "external_human",
+      "resolvedSubject": {
+        "kind": "candidate",
+        "repositoryId": "repo:example_project",
+        "id": "candidate:example_read_only_review",
+        "baseHead": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+      },
+      "result": "not_evaluated",
+      "evidenceRefs": [],
+      "externalHumanReceipt": null
+    }
+  ],
+  "evidenceManifest": {
+    "id": "evidence-manifest:example_read_only_review",
+    "path": "templates/evidence-manifest.template.json",
+    "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+    "schemaVersion": "0.3.0"
+  },
+  "openHumanClaims": [
+    "claim:summary_is_useful"
+  ],
+  "metrics": {
+    "contextTokens": null,
+    "outputTokens": null,
+    "retrievals": 0,
+    "sequentialToolCalls": 0,
+    "totalToolCalls": 0,
+    "attempts": 0,
+    "spawns": 0,
+    "wallSeconds": 0.0,
+    "costUsd": null,
+    "resourceEnvelope": "resource-envelope:example_local_worker",
+    "resourceObservation": "Template only; no real worker ran."
+  },
+  "firstCausalFailure": "The template writer and certificate are unqualified and the template authority is held.",
+  "finalizationState": "not_started",
+  "requestedNextAction": "owner_decision"
+}

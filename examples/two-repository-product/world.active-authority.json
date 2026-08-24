@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "0.3.0",
+  "authorityId": "authority:synthetic_world_content",
+  "state": "held",
+  "owner": "human:synthetic_owner",
+  "ownerRepositoryId": "repo:synthetic_world_content",
+  "maturityLevel": 0,
+  "authorizations": {
+    "candidateMutation": false,
+    "targetMutation": false,
+    "evidenceAcceptance": false,
+    "promotion": false,
+    "publication": false
+  },
+  "supersedes": null,
+  "notes": "Synthetic world-content example only; no operational authority."
+}

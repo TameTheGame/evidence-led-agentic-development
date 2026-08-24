@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:data-policy:0.3.0",
+  "title": "Data Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "policyId", "state", "owner", "classes"],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "policyId": { "type": "string", "pattern": "^data-policy:[a-z0-9][a-z0-9._-]*$" },
+    "state": { "enum": ["template_inert", "inactive", "active", "superseded"] },
+    "owner": { "type": "string", "minLength": 1 },
+    "classes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["dataClass", "allowedExecutionLocations", "cloudFallback"],
+        "properties": {
+          "dataClass": { "enum": ["public", "internal", "private_local", "restricted"] },
+          "allowedExecutionLocations": { "type": "array", "items": { "enum": ["cloud", "local", "isolated_local"] }, "uniqueItems": true },
+          "cloudFallback": { "enum": ["forbid", "separate_authority"] }
+        }
+      }
+    }
+  }
+}

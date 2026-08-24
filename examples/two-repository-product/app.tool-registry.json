@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "0.3.0",
+  "registryId": "tool-registry:synthetic_simulation_app",
+  "state": "inactive",
+  "ownerRepositoryId": "repo:synthetic_simulation_app",
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+    "schemaVersion": "0.3.0"
+  },
+  "tools": [
+    {
+      "toolId": "tool:synthetic_read_source",
+      "state": "placeholder",
+      "entrySha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "effect": "read",
+      "inputSchema": {
+        "id": "schema:synthetic_read_source_input",
+        "path": "spec/schemas/task-packet.schema.json",
+        "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "schemaVersion": "0.3.0"
+      },
+      "outputSchema": {
+        "id": "schema:synthetic_read_source_output",
+        "path": "spec/schemas/worker-receipt.schema.json",
+        "sha256": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "schemaVersion": "0.3.0"
+      }
+    }
+  ]
+}

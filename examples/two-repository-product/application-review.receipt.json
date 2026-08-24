@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "0.3.0",
+  "receiptId": "receipt:synthetic_application_review",
+  "recordState": "template_inert",
+  "recordedAt": null,
+  "supersedes": null,
+  "packet": {
+    "id": "packet:synthetic_application_review",
+    "path": "examples/two-repository-product/application-review.packet.json",
+    "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "schemaVersion": "0.3.0"
+  },
+  "bindings": {
+    "protocolBundle": {
+      "id": "protocol:elad_0.3.0",
+      "path": "blueprint.json",
+      "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+      "schemaVersion": "0.3.0"
+    },
+    "intent": {
+      "id": "intent:synthetic_application_review",
+      "path": "examples/two-repository-product/application-review.intent.json",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "schemaVersion": "0.3.0"
+    },
+    "projectProfile": {
+      "id": "project:synthetic_simulation_app",
+      "path": "examples/two-repository-product/simulation-app.profile.json",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "schemaVersion": "0.3.0"
+    },
+    "authority": {
+      "id": "authority:synthetic_simulation_app",
+      "path": "examples/two-repository-product/app.active-authority.json",
+      "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "schemaVersion": "0.3.0"
+    },
+    "riskPolicy": {
+      "id": "risk-policy:synthetic_product",
+      "path": "examples/two-repository-product/risk-policy.json",
+      "sha256": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "schemaVersion": "0.3.0"
+    },
+    "dataPolicy": {
+      "id": "data-policy:synthetic_product",
+      "path": "examples/two-repository-product/data-policy.json",
+      "sha256": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+      "schemaVersion": "0.3.0"
+    },
+    "evidencePolicy": {
+      "id": "evidence-policy:synthetic_simulation_app",
+      "path": "examples/two-repository-product/app.evidence-policy.json",
+      "sha256": "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+      "schemaVersion": "0.3.0"
+    },
+    "toolRegistry": {
+      "id": "tool-registry:synthetic_simulation_app",
+      "path": "examples/two-repository-product/app.tool-registry.json",
+      "sha256": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+      "schemaVersion": "0.3.0"
+    },
+    "evaluatorRegistry": {
+      "id": "evaluator-registry:synthetic_simulation_app",
+      "path": "examples/two-repository-product/app.evaluator-registry.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "schemaVersion": "0.3.0"
+    }
+  },
+  "riskClass": "low",
+  "dataClass": "internal",
+  "taskFamily": "read_only_contract_review",
+  "artifactLane": "ordinary_source",
+  "requestedEffects": [
+    "read"
+  ],
+  "writer": {
+    "profile": {
+      "id": "writer:synthetic_read_only_reviewer",
+      "path": "examples/two-repository-product/application-review.writer-profile.json",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "schemaVersion": "0.3.0"
+    },
+    "certificate": {
+      "id": "certificate:synthetic_unqualified",
+      "path": "examples/two-repository-product/application-review.capability-certificate.json",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "schemaVersion": "0.3.0"
+    }
+  },
+  "terminalStatus": "OUT_OF_SCOPE",
+  "candidate": {
+    "state": "unchanged",
+    "candidateId": "candidate:synthetic_application_review",
+    "candidateSha256": "8888888888888888888888888888888888888888888888888888888888888888",
+    "baseHead": "cccccccccccccccccccccccccccccccccccccccc",
+    "head": "cccccccccccccccccccccccccccccccccccccccc"
+  },
+  "changedPaths": [],
+  "claims": [
+    {
+      "claimId": "claim:synthetic_scope_matches",
+      "claimClass": "claim-class:deterministic_scope_identity",
+      "acceptanceOwner": "machine",
+      "evidenceClass": "deterministic",
+      "resolvedSubject": {
+        "kind": "candidate",
+        "repositoryId": "repo:synthetic_simulation_app",
+        "id": "candidate:synthetic_application_review",
+        "baseHead": "cccccccccccccccccccccccccccccccccccccccc",
+        "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+      },
+      "result": "not_evaluated",
+      "evidenceRefs": [],
+      "externalHumanReceipt": null
+    }
+  ],
+  "evidenceManifest": {
+    "id": "evidence-manifest:synthetic_application_review",
+    "path": "examples/two-repository-product/application-review.evidence-manifest.json",
+    "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+    "schemaVersion": "0.3.0"
+  },
+  "openHumanClaims": [],
+  "metrics": {
+    "contextTokens": 0,
+    "outputTokens": 0,
+    "retrievals": 0,
+    "sequentialToolCalls": 0,
+    "totalToolCalls": 0,
+    "attempts": 0,
+    "spawns": 0,
+    "wallSeconds": 0.0,
+    "costUsd": null,
+    "resourceEnvelope": "resource-envelope:synthetic_read_only_reviewer",
+    "resourceObservation": "Synthetic refusal; no worker ran."
+  },
+  "firstCausalFailure": "The synthetic writer is unqualified and the project authority is held.",
+  "finalizationState": "not_started",
+  "requestedNextAction": "owner_decision"
+}

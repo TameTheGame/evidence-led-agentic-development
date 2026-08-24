@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "0.3.0",
+  "profileId": "writer:example_local_worker",
+  "state": "unqualified",
+  "modelSubject": {
+    "id": "model:replace_with_exact_subject",
+    "revision": "unqualified-template",
+    "artifactSha256": null,
+    "artifactSha256NullReason": "Template only; bind exact cloud revision or local model bytes during qualification."
+  },
+  "executionLocation": "local",
+  "identityBindings": {
+    "runtime": {
+      "id": "runtime:example_unqualified",
+      "path": "blueprint.json",
+      "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "schemaVersion": "0.3.0"
+    },
+    "harness": {
+      "id": "harness:example_local",
+      "path": "adapters/README.md",
+      "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "schemaVersion": "0.3.0"
+    },
+    "adapter": {
+      "id": "adapter:example_json",
+      "path": "adapters/README.md",
+      "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "schemaVersion": "0.3.0"
+    },
+    "promptTemplate": {
+      "id": "template:example_task_brief",
+      "path": "templates/TASK_BRIEF.template.md",
+      "sha256": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "schemaVersion": "0.3.0"
+    },
+    "toolSchema": {
+      "id": "schema:example_tool_contract",
+      "path": "spec/schemas/task-packet.schema.json",
+      "sha256": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+      "schemaVersion": "0.3.0"
+    },
+    "protocolBundle": {
+      "id": "protocol:elad_0.3.0",
+      "path": "blueprint.json",
+      "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+      "schemaVersion": "0.3.0"
+    }
+  },
+  "roles": [
+    "role:candidate_worker"
+  ],
+  "configuredBudgets": {
+    "contextTokens": 8192,
+    "outputTokens": 2048,
+    "retrievals": 0,
+    "sequentialToolCalls": 4,
+    "totalToolCalls": 4,
+    "attempts": 1,
+    "spawns": 0,
+    "wallSeconds": 300,
+    "maxCostUsd": null,
+    "resourceEnvelope": "resource-envelope:example_local_worker"
+  },
+  "mutationCeiling": "read_only",
+  "knownFailures": [
+    "No qualification has been run; this template grants no routing or write authority."
+  ]
+}

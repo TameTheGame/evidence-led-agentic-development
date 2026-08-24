@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "0.3.0",
+  "profileId": "project:synthetic_simulation_app",
+  "state": "inactive",
+  "repositoryId": "repo:synthetic_simulation_app",
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+    "schemaVersion": "0.3.0"
+  },
+  "authority": {
+    "id": "authority:synthetic_simulation_app",
+    "path": "examples/two-repository-product/app.active-authority.json",
+    "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "schemaVersion": "0.3.0"
+  },
+  "policyBindings": {
+    "risk": {
+      "id": "risk-policy:synthetic_product",
+      "path": "examples/two-repository-product/risk-policy.json",
+      "sha256": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "schemaVersion": "0.3.0"
+    },
+    "data": {
+      "id": "data-policy:synthetic_product",
+      "path": "examples/two-repository-product/data-policy.json",
+      "sha256": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+      "schemaVersion": "0.3.0"
+    },
+    "evidence": {
+      "id": "evidence-policy:synthetic_simulation_app",
+      "path": "examples/two-repository-product/app.evidence-policy.json",
+      "sha256": "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+      "schemaVersion": "0.3.0"
+    },
+    "toolRegistry": {
+      "id": "tool-registry:synthetic_simulation_app",
+      "path": "examples/two-repository-product/app.tool-registry.json",
+      "sha256": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+      "schemaVersion": "0.3.0"
+    },
+    "evaluatorRegistry": {
+      "id": "evaluator-registry:synthetic_simulation_app",
+      "path": "examples/two-repository-product/app.evaluator-registry.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "schemaVersion": "0.3.0"
+    }
+  },
+  "artifactLanes": [
+    "ordinary_source",
+    "target_native",
+    "runtime",
+    "external_human"
+  ],
+  "allowedRoots": [
+    "src",
+    "ui",
+    "config",
+    "tests"
+  ],
+  "humanOnlyDecisions": [
+    "product_behavior",
+    "privacy_and_persistence",
+    "subjective_user_experience",
+    "promotion",
+    "publication"
+  ],
+  "targetOperations": [
+    {
+      "operationId": "operation:synthetic_run_registered_suite",
+      "state": "placeholder",
+      "effects": [
+        "runtime_process"
+      ]
+    }
+  ]
+}

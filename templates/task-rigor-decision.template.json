@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "0.3.0",
+  "decisionId": "rigor-decision:example_inert",
+  "state": "template_inert",
+  "authorityEffect": "none",
+  "registry": {
+    "id": "vocabulary:elad_task_rigor_profiles_0.3.0",
+    "path": "spec/registries/task-rigor-profiles.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "schemaVersion": "0.3.0"
+  },
+  "loop": [
+    {
+      "iterationId": "iteration:example_1",
+      "tryingToEstablish": "Replace with the observable fact this step should establish.",
+      "materialUncertainty": "Replace with the uncertainty that currently matters most.",
+      "cheapestReliableEvidence": "Replace with the lowest-cost evidence that can discriminate success from failure.",
+      "evidenceSource": "deterministic",
+      "observedResult": null,
+      "nextChange": null,
+      "completionBasis": null
+    }
+  ],
+  "dimensions": {
+    "uncertainty": "low",
+    "complexity": "low",
+    "reversibility": "easy",
+    "consequence": "low",
+    "delegationDistance": "same_episode"
+  },
+  "evidenceApplicability": {
+    "claims": [
+      {
+        "claimDomain": "static_deterministic",
+        "evaluatorClass": "exact_deterministic",
+        "evaluatorMaturity": "not_applicable"
+      }
+    ],
+    "taskEffect": "reversible_artifact_change"
+  },
+  "recommendedMinimumProfile": "light",
+  "selectedProfile": "light",
+  "higherRigorReason": null,
+  "evidenceStrategy": {
+    "cheapestReliableEvidence": "Run one existing deterministic check and inspect its exact result.",
+    "whyReliable": "The expected result is defined independently and the check detects the realistic failure.",
+    "sourceClass": "deterministic",
+    "independenceBasis": "Use an existing external oracle or a predeclared expected value rather than generating the expectation from the implementation.",
+    "nextEvidenceIfInconclusive": "Stop and select a fresh bounded or evaluated decision; do not widen authority."
+  },
+  "evidencePlan": [
+    {
+      "evidenceKind": "bounded_contract",
+      "sourceId": "contract:example",
+      "expectedResult": "The change remains inside the named scope and non-goals.",
+      "detectsFailure": "Scope drift or an outcome different from the accepted task.",
+      "independence": "predeclared_expectation"
+    },
+    {
+      "evidenceKind": "deterministic_check",
+      "sourceId": "evaluator:example_existing_check",
+      "expectedResult": "The existing deterministic evaluator passes.",
+      "detectsFailure": "The exact regression the evaluator is designed to expose.",
+      "independence": "existing_external_oracle"
+    },
+    {
+      "evidenceKind": "result_inspection",
+      "sourceId": "inspection:example_result",
+      "expectedResult": "The observed result matches the predeclared expectation.",
+      "detectsFailure": "Silent skips, zero discovery, or an unrelated green result.",
+      "independence": "predeclared_expectation"
+    }
+  ],
+  "escalationTriggers": [
+    "oracle_cannot_discriminate",
+    "scope_or_coupling_expands"
+  ],
+  "simplificationTriggers": [
+    "proven_capability_can_be_reused",
+    "extra_layer_adds_no_discrimination"
+  ],
+  "scaffolding": {
+    "reuseExisting": [
+      {
+        "itemId": "scaffold:project_authority",
+        "reason": "Existing target authority remains the source of permission."
+      },
+      {
+        "itemId": "scaffold:deterministic_evaluator",
+        "reason": "Reuse a proven evaluator rather than rebuild its qualification corpus."
+      }
+    ],
+    "createOnceOrPeriodic": [],
+    "recurForThisTask": [
+      {
+        "itemId": "scaffold:run_selected_check",
+        "reason": "This invocation supplies the evidence for the exact task result."
+      }
+    ],
+    "proportionalityRationale": "The task is deterministic, reversible, and low consequence, so a bounded contract and one discriminating check are sufficient."
+  },
+  "rationale": "This inert example demonstrates the optional light selector shape and grants no authority."
+}

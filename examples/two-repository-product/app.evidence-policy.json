@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "0.3.0",
+  "policyId": "evidence-policy:synthetic_simulation_app",
+  "state": "inactive",
+  "owner": "human:synthetic_owner",
+  "ownerRepositoryId": "repo:synthetic_simulation_app",
+  "rules": [
+    {
+      "claimClass": "claim-class:deterministic_scope_identity",
+      "evidenceClass": "deterministic",
+      "acceptanceOwner": "machine",
+      "machineDelegation": false,
+      "eligibleWriterProfiles": [],
+      "eligibleReviewerIds": [],
+      "evaluatorId": "evaluator:synthetic_scope_check"
+    }
+  ]
+}

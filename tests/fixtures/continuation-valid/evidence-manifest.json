@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "0.3.0",
+  "manifestId": "evidence-manifest:continuation_fixture_review",
+  "state": "sealed",
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "FC49D794CAAE67445BC708B6219DD463352C3561A9E8F1DD7CE5CD1CA6707873",
+    "schemaVersion": "0.3.0"
+  },
+  "subject": {
+    "kind": "candidate",
+    "repositoryId": "repo:continuation_fixture",
+    "id": "candidate:continuation_fixture_review",
+    "sha256": "E4586278E2489A2A3F4943ECCA1A367A57E86F0B1653A6B3F6A59BAF1A86F200",
+    "baseHead": "ffffffffffffffffffffffffffffffffffffffff"
+  },
+  "framing": "elad-canonical-json-outer-sha256-v1",
+  "outerEnvelopeRequired": true,
+  "entries": [
+    {
+      "evidenceId": "evidence:continuation_fixture_candidate_output",
+      "path": "tests/fixtures/continuation-valid/candidate/output.txt",
+      "bytes": 9,
+      "sha256": "E4586278E2489A2A3F4943ECCA1A367A57E86F0B1653A6B3F6A59BAF1A86F200",
+      "role": "candidate_subject",
+      "evidenceClass": "deterministic",
+      "resolvedSubject": {
+        "kind": "candidate",
+        "repositoryId": "repo:continuation_fixture",
+        "id": "candidate:continuation_fixture_review",
+        "baseHead": "ffffffffffffffffffffffffffffffffffffffff",
+        "sha256": "E4586278E2489A2A3F4943ECCA1A367A57E86F0B1653A6B3F6A59BAF1A86F200"
+      },
+      "claimIds": [
+        "claim:continuation_fixture_contract_matches"
+      ]
+    },
+    {
+      "evidenceId": "evidence:continuation_fixture_machine_result",
+      "path": "tests/fixtures/continuation-valid/evidence/machine-evidence.txt",
+      "bytes": 112,
+      "sha256": "6EF96BCC425D705E99558A2799E867FC30F0E3B1F10FA8A5F5D7350A5DD91337",
+      "role": "machine_verifier_output",
+      "evidenceClass": "deterministic",
+      "resolvedSubject": {
+        "kind": "candidate",
+        "repositoryId": "repo:continuation_fixture",
+        "id": "candidate:continuation_fixture_review",
+        "baseHead": "ffffffffffffffffffffffffffffffffffffffff",
+        "sha256": "E4586278E2489A2A3F4943ECCA1A367A57E86F0B1653A6B3F6A59BAF1A86F200"
+      },
+      "claimIds": [
+        "claim:continuation_fixture_contract_matches"
+      ]
+    }
+  ],
+  "createdAt": "2026-08-22T12:02:00Z",
+  "supersedes": null
+}

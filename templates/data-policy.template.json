@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "0.3.0",
+  "policyId": "data-policy:example_project",
+  "state": "template_inert",
+  "owner": "replace-with-project-owner",
+  "classes": [
+    {
+      "dataClass": "public",
+      "allowedExecutionLocations": [
+        "local"
+      ],
+      "cloudFallback": "separate_authority"
+    },
+    {
+      "dataClass": "internal",
+      "allowedExecutionLocations": [
+        "local"
+      ],
+      "cloudFallback": "forbid"
+    },
+    {
+      "dataClass": "private_local",
+      "allowedExecutionLocations": [
+        "isolated_local"
+      ],
+      "cloudFallback": "forbid"
+    },
+    {
+      "dataClass": "restricted",
+      "allowedExecutionLocations": [],
+      "cloudFallback": "forbid"
+    }
+  ]
+}

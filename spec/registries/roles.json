@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "0.3.0",
+  "registryId": "vocabulary:elad_roles_0.3.0",
+  "status": "reference_only",
+  "roles": [
+    {
+      "id": "role:product_authority",
+      "mayMutateCandidate": false,
+      "mayMutateTarget": false,
+      "mayPromote": false,
+      "purpose": "Own intent, retained decisions, adoption, and publication."
+    },
+    {
+      "id": "role:orchestrator",
+      "mayMutateCandidate": false,
+      "mayMutateTarget": false,
+      "mayPromote": false,
+      "purpose": "Shape packets, route by capability, and consume compact receipts."
+    },
+    {
+      "id": "role:candidate_worker",
+      "mayMutateCandidate": true,
+      "mayMutateTarget": false,
+      "mayPromote": false,
+      "purpose": "Implement one bounded candidate outcome."
+    },
+    {
+      "id": "role:deterministic_worker",
+      "mayMutateCandidate": true,
+      "mayMutateTarget": false,
+      "mayPromote": false,
+      "purpose": "Run registered reproducible transformations and checks."
+    },
+    {
+      "id": "role:independent_verifier",
+      "mayMutateCandidate": false,
+      "mayMutateTarget": false,
+      "mayPromote": false,
+      "purpose": "Evaluate the frozen candidate and evidence read-only."
+    },
+    {
+      "id": "role:target_executor",
+      "mayMutateCandidate": false,
+      "mayMutateTarget": true,
+      "mayPromote": false,
+      "purpose": "Execute one narrow target-owned native or runtime plan."
+    },
+    {
+      "id": "role:promotion_writer",
+      "mayMutateCandidate": false,
+      "mayMutateTarget": false,
+      "mayPromote": true,
+      "purpose": "Integrate one accepted candidate under fresh authority."
+    }
+  ]
+}

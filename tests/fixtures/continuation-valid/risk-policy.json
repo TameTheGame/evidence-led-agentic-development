@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "0.3.0",
+  "policyId": "risk-policy:continuation_fixture",
+  "state": "active",
+  "owner": "human:continuation_fixture_owner",
+  "classes": [
+    {
+      "riskClass": "low",
+      "allowedEffects": [
+        "read"
+      ],
+      "requiresHumanDecision": false
+    },
+    {
+      "riskClass": "normal",
+      "allowedEffects": [],
+      "requiresHumanDecision": true
+    },
+    {
+      "riskClass": "high",
+      "allowedEffects": [],
+      "requiresHumanDecision": true
+    },
+    {
+      "riskClass": "critical",
+      "allowedEffects": [],
+      "requiresHumanDecision": true
+    }
+  ]
+}

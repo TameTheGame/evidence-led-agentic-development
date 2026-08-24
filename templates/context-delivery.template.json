@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "0.3.0",
+  "bundleId": "context-delivery:example_read_only_review",
+  "state": "template_inert",
+  "protocolBundle": {
+    "id": "protocol-bundle:elad_0.3.0",
+    "path": "automation/protocol/protocol-bundle.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "schemaVersion": "0.3.0"
+  },
+  "packet": {
+    "id": "packet:example_read_only_review",
+    "path": "automation/packets/example-read-only-review.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "schemaVersion": "0.3.0"
+  },
+  "retrievalManifest": {
+    "id": "retrieval-manifest:example_read_only_review",
+    "path": "automation/retrieval/example-read-only-review.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "schemaVersion": "0.3.0"
+  },
+  "framing": "elad-model-visible-context-v1",
+  "segments": [],
+  "compiledArtifact": {
+    "path": "automation/context/example-read-only-review/model-visible-context.json",
+    "bytes": 0,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "accounting": {
+    "methodId": "context-accounting:unqualified_template",
+    "counterToolId": "tool:unqualified_template_counter",
+    "counterRegistryEntrySha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "inputTokens": 0,
+    "outputReserveTokens": 0,
+    "requiredContextTokens": 0
+  },
+  "createdAt": null,
+  "supersedes": null
+}

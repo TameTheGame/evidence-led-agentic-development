@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:risk-policy:0.3.0",
+  "title": "Risk Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "policyId", "state", "owner", "classes"],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "policyId": { "type": "string", "pattern": "^risk-policy:[a-z0-9][a-z0-9._-]*$" },
+    "state": { "enum": ["template_inert", "inactive", "active", "superseded"] },
+    "owner": { "type": "string", "minLength": 1 },
+    "classes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["riskClass", "allowedEffects", "requiresHumanDecision"],
+        "properties": {
+          "riskClass": { "enum": ["low", "normal", "high", "critical"] },
+          "allowedEffects": {
+            "type": "array",
+            "items": { "enum": ["read", "candidate_write", "target_native_write", "runtime_process", "data_write"] },
+            "uniqueItems": true
+          },
+          "requiresHumanDecision": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

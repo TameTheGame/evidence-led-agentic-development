@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "0.3.0",
+  "policyId": "risk-policy:example_project",
+  "state": "template_inert",
+  "owner": "replace-with-project-owner",
+  "classes": [
+    {
+      "riskClass": "low",
+      "allowedEffects": [
+        "read"
+      ],
+      "requiresHumanDecision": true
+    },
+    {
+      "riskClass": "normal",
+      "allowedEffects": [
+        "read"
+      ],
+      "requiresHumanDecision": true
+    },
+    {
+      "riskClass": "high",
+      "allowedEffects": [
+        "read"
+      ],
+      "requiresHumanDecision": true
+    },
+    {
+      "riskClass": "critical",
+      "allowedEffects": [
+        "read"
+      ],
+      "requiresHumanDecision": true
+    }
+  ]
+}

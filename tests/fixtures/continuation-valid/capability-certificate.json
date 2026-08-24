@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "0.3.0",
+  "certificateId": "certificate:continuation_fixture_worker",
+  "state": "qualified",
+  "writerProfile": {
+    "id": "writer:continuation_fixture_worker",
+    "path": "tests/fixtures/continuation-valid/writer-profile.json",
+    "sha256": "764C94BB323004144C48B3C8FC2F96CBB9481C928939965396B061D4F78967CB",
+    "schemaVersion": "0.3.0"
+  },
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "FC49D794CAAE67445BC708B6219DD463352C3561A9E8F1DD7CE5CD1CA6707873",
+    "schemaVersion": "0.3.0"
+  },
+  "toolRegistry": {
+    "id": "tool-registry:continuation_fixture",
+    "path": "tests/fixtures/continuation-valid/tool-registry.json",
+    "sha256": "C1AFCC8BE8595DB6586FB38BFE36B4CA6DC97847AA1E6C5B9DFC1706C5B0884B",
+    "schemaVersion": "0.3.0"
+  },
+  "evaluatorRegistry": {
+    "id": "evaluator-registry:continuation_fixture",
+    "path": "tests/fixtures/continuation-valid/evaluator-registry.json",
+    "sha256": "4E7D7DD95264144FD62F74C70A17FB17F5E1FE7216DBF45A88E979A5D7B1C604",
+    "schemaVersion": "0.3.0"
+  },
+  "evaluationPack": {
+    "reference": {
+      "id": "evalpack:continuation_fixture",
+      "path": "templates/EVALUATOR_CARD.template.md",
+      "sha256": "27DF1C352ED78E73C712B17F7F2B56EBD37D3514D9735B1F015A19EC66AF761C",
+      "schemaVersion": "0.3.0"
+    },
+    "positiveCases": 2,
+    "negativeCases": 2,
+    "holdoutCases": 1,
+    "coldRuns": 1
+  },
+  "eligibility": {
+    "roles": [
+      "role:independent_verifier"
+    ],
+    "taskFamilies": [
+      "read_only_contract_review"
+    ],
+    "riskClasses": [
+      "low"
+    ],
+    "dataClasses": [
+      "internal"
+    ],
+    "artifactLanes": [
+      "ordinary_source"
+    ],
+    "effectClasses": [
+      "read"
+    ],
+    "evidenceClasses": [
+      "deterministic"
+    ],
+    "mutationCeiling": "read_only"
+  },
+  "measuredSafeBudgets": {
+    "contextTokens": 3072,
+    "outputTokens": 768,
+    "retrievals": 2,
+    "sequentialToolCalls": 3,
+    "totalToolCalls": 5,
+    "attempts": 1,
+    "spawns": 0,
+    "wallSeconds": 90,
+    "maxCostUsd": null,
+    "resourceEnvelope": "resource-envelope:continuation_fixture_worker"
+  },
+  "issuedAt": "2026-08-22T12:00:00Z",
+  "expiresAt": "2099-12-31T23:59:59Z",
+  "invalidationTriggers": [
+    "fixture_content_change",
+    "protocol_or_registry_change",
+    "validator_semantics_change"
+  ]
+}

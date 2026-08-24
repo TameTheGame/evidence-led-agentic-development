@@ -1,0 +1,443 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:task-rigor-decision:0.3.0",
+  "title": "Task Rigor Decision",
+  "description": "Optional advisory selection of the minimum evidence posture for one task. It grants no target authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "decisionId",
+    "state",
+    "authorityEffect",
+    "registry",
+    "loop",
+    "dimensions",
+    "evidenceApplicability",
+    "recommendedMinimumProfile",
+    "selectedProfile",
+    "higherRigorReason",
+    "evidenceStrategy",
+    "evidencePlan",
+    "escalationTriggers",
+    "simplificationTriggers",
+    "scaffolding",
+    "rationale"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "0.3.0"
+    },
+    "decisionId": {
+      "type": "string",
+      "pattern": "^rigor-decision:[a-z0-9][a-z0-9._-]*$"
+    },
+    "state": {
+      "enum": [
+        "template_inert",
+        "planned",
+        "observed",
+        "complete",
+        "superseded"
+      ]
+    },
+    "authorityEffect": {
+      "const": "none",
+      "description": "A rigor decision can constrain evidence expectations but cannot grant any effect or acceptance authority."
+    },
+    "registry": {
+      "$ref": "#/$defs/immutableReference"
+    },
+    "loop": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/iteration"
+      }
+    },
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "uncertainty",
+        "complexity",
+        "reversibility",
+        "consequence",
+        "delegationDistance"
+      ],
+      "properties": {
+        "uncertainty": {
+          "enum": ["low", "moderate", "high"]
+        },
+        "complexity": {
+          "enum": ["low", "moderate", "high"]
+        },
+        "reversibility": {
+          "enum": ["easy", "managed", "difficult", "irreversible"]
+        },
+        "consequence": {
+          "enum": ["low", "moderate", "high", "critical"]
+        },
+        "delegationDistance": {
+          "enum": [
+            "same_episode",
+            "supervised_worker",
+            "bounded_handoff",
+            "autonomous_cross_context",
+            "external_target"
+          ]
+        }
+      }
+    },
+    "evidenceApplicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Closed descriptive classification derived from the accepted task contract for evidence selection. It grants no authority and does not replace exact claim/effect contracts.",
+      "required": [
+        "claims",
+        "taskEffect"
+      ],
+      "properties": {
+        "claims": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/claimClass"
+          }
+        },
+        "taskEffect": {
+          "enum": [
+            "read_only",
+            "reversible_artifact_change",
+            "stateful_reversible_change",
+            "irreversible_or_durable_external_effect"
+          ]
+        }
+      }
+    },
+    "recommendedMinimumProfile": {
+      "$ref": "#/$defs/profileName"
+    },
+    "selectedProfile": {
+      "$ref": "#/$defs/profileName"
+    },
+    "higherRigorReason": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "evidenceStrategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cheapestReliableEvidence",
+        "whyReliable",
+        "sourceClass",
+        "independenceBasis",
+        "nextEvidenceIfInconclusive"
+      ],
+      "properties": {
+        "cheapestReliableEvidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "whyReliable": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceClass": {
+          "enum": [
+            "deterministic",
+            "runtime_or_trace",
+            "calibrated_model",
+            "external_human",
+            "mixed"
+          ]
+        },
+        "independenceBasis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nextEvidenceIfInconclusive": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "evidencePlan": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/evidenceItem"
+      }
+    },
+    "escalationTriggers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/escalationTrigger"
+      }
+    },
+    "simplificationTriggers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/simplificationTrigger"
+      }
+    },
+    "scaffolding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reuseExisting",
+        "createOnceOrPeriodic",
+        "recurForThisTask",
+        "proportionalityRationale"
+      ],
+      "properties": {
+        "reuseExisting": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/scaffoldingItem"
+          }
+        },
+        "createOnceOrPeriodic": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/scaffoldingItem"
+          }
+        },
+        "recurForThisTask": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/scaffoldingItem"
+          }
+        },
+        "proportionalityRationale": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[A-F0-9]{64}$"
+    },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*:)(?!.*[. ](?:/|$))(?!.*(?:^|/)(?:[Cc][Oo][Nn]|[Pp][Rr][Nn]|[Aa][Uu][Xx]|[Nn][Uu][Ll]|[Cc][Ll][Oo][Cc][Kk]\\$|[Cc][Oo][Nn][Ii][Nn]\\$|[Cc][Oo][Nn][Oo][Uu][Tt]\\$|[Cc][Oo][Mm][1-9¹²³]|[Ll][Pp][Tt][1-9¹²³])(?:\\.[^/]*)?(?:/|$))[^/\\x00-\\x1F<>\"|?*]+(?:/[^/\\x00-\\x1F<>\"|?*]+)*$"
+    },
+    "immutableReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "schemaVersion"],
+      "properties": {
+        "id": {
+          "const": "vocabulary:elad_task_rigor_profiles_0.3.0"
+        },
+        "path": {
+          "const": "spec/registries/task-rigor-profiles.json"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "schemaVersion": {
+          "const": "0.3.0"
+        }
+      }
+    },
+    "profileName": {
+      "enum": ["light", "bounded", "evaluated", "assured"]
+    },
+    "claimClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claimDomain",
+        "evaluatorClass",
+        "evaluatorMaturity"
+      ],
+      "properties": {
+        "claimDomain": {
+          "enum": [
+            "static_deterministic",
+            "semantic_or_stochastic",
+            "runtime_or_operational"
+          ]
+        },
+        "evaluatorClass": {
+          "enum": [
+            "exact_deterministic",
+            "fallible"
+          ]
+        },
+        "evaluatorMaturity": {
+          "enum": [
+            "not_applicable",
+            "proven",
+            "partial",
+            "unproven",
+            "none"
+          ]
+        }
+      }
+    },
+    "iteration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "iterationId",
+        "tryingToEstablish",
+        "materialUncertainty",
+        "cheapestReliableEvidence",
+        "evidenceSource",
+        "observedResult",
+        "nextChange",
+        "completionBasis"
+      ],
+      "properties": {
+        "iterationId": {
+          "type": "string",
+          "pattern": "^iteration:[a-z0-9][a-z0-9._-]*$"
+        },
+        "tryingToEstablish": {
+          "type": "string",
+          "minLength": 1
+        },
+        "materialUncertainty": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cheapestReliableEvidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceSource": {
+          "enum": [
+            "deterministic",
+            "runtime_or_trace",
+            "calibrated_model",
+            "external_human",
+            "mixed"
+          ]
+        },
+        "observedResult": {
+          "type": ["string", "null"],
+          "minLength": 1
+        },
+        "nextChange": {
+          "type": ["string", "null"],
+          "minLength": 1
+        },
+        "completionBasis": {
+          "type": ["string", "null"],
+          "minLength": 1
+        }
+      }
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceKind",
+        "sourceId",
+        "expectedResult",
+        "detectsFailure",
+        "independence"
+      ],
+      "properties": {
+        "evidenceKind": {
+          "enum": [
+            "bounded_contract",
+            "deterministic_check",
+            "result_inspection",
+            "targeted_regression",
+            "failure_stop",
+            "baseline_or_eval_set",
+            "runtime_or_trace",
+            "error_analysis",
+            "evaluator_check",
+            "iteration_decision",
+            "independent_expected_behavior",
+            "bound_evidence_identity",
+            "independent_verification",
+            "adversarial_or_recovery",
+            "rollback_proof"
+          ]
+        },
+        "sourceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expectedResult": {
+          "type": "string",
+          "minLength": 1
+        },
+        "detectsFailure": {
+          "type": "string",
+          "minLength": 1
+        },
+        "independence": {
+          "enum": [
+            "predeclared_expectation",
+            "existing_external_oracle",
+            "independent_fixture",
+            "independent_runtime_observation",
+            "calibrated_evaluator",
+            "external_human",
+            "independent_verifier"
+          ]
+        }
+      }
+    },
+    "escalationTrigger": {
+      "enum": [
+        "unexpected_nondeterminism",
+        "oracle_cannot_discriminate",
+        "scope_or_coupling_expands",
+        "reversibility_worsens",
+        "consequence_increases",
+        "evaluator_false_green_or_drift",
+        "handoff_or_autonomy_expands",
+        "external_or_native_effect_appears",
+        "human_judgment_remains",
+        "security_privacy_rights_or_authority_issue"
+      ]
+    },
+    "simplificationTrigger": {
+      "enum": [
+        "uncertainty_becomes_deterministic",
+        "reusable_evaluator_is_proven",
+        "scope_or_effects_shrink",
+        "delegation_becomes_shorter",
+        "proven_capability_can_be_reused",
+        "extra_layer_adds_no_discrimination"
+      ]
+    },
+    "scaffoldingItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["itemId", "reason"],
+      "properties": {
+        "itemId": {
+          "type": "string",
+          "pattern": "^scaffold:[a-z0-9][a-z0-9._-]*$"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

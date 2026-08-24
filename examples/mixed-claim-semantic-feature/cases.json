@@ -1,0 +1,32 @@
+{
+  "status": "synthetic_non_operational",
+  "authorityEffect": "none",
+  "cases": [
+    {
+      "caseId": "clear_single_purpose",
+      "independentFacts": [
+        "The README describes a local repository catalog.",
+        "The package metadata names a catalog command."
+      ],
+      "mustPreserve": ["local", "repository catalog"],
+      "mustNotInvent": ["cloud service", "deployment system"]
+    },
+    {
+      "caseId": "conflicting_signals",
+      "independentFacts": [
+        "The README describes an image classifier.",
+        "The package metadata describes a documentation generator."
+      ],
+      "mustPreserve": ["conflict", "unresolved alternatives"],
+      "mustNotInvent": ["a documentation generator that performs image classification"]
+    },
+    {
+      "caseId": "sparse_evidence",
+      "independentFacts": [
+        "Only the name and one programming language are known."
+      ],
+      "mustPreserve": ["uncertainty"],
+      "mustNotInvent": ["framework", "audience", "deployment target"]
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "0.3.0",
+  "certificateId": "certificate:example_local_worker_unqualified",
+  "state": "unqualified",
+  "writerProfile": {
+    "id": "writer:example_local_worker",
+    "path": "templates/writer-profile.template.json",
+    "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "schemaVersion": "0.3.0"
+  },
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+    "schemaVersion": "0.3.0"
+  },
+  "toolRegistry": {
+    "id": "tool-registry:example_project",
+    "path": "templates/tool-registry.template.json",
+    "sha256": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+    "schemaVersion": "0.3.0"
+  },
+  "evaluatorRegistry": {
+    "id": "evaluator-registry:example_project",
+    "path": "templates/evaluator-registry.template.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "schemaVersion": "0.3.0"
+  },
+  "evaluationPack": {
+    "reference": {
+      "id": "evalpack:example_unrun",
+      "path": "templates/EVALUATOR_CARD.template.md",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "schemaVersion": "0.3.0"
+    },
+    "positiveCases": 0,
+    "negativeCases": 0,
+    "holdoutCases": 0,
+    "coldRuns": 0
+  },
+  "eligibility": {
+    "roles": [],
+    "taskFamilies": [],
+    "riskClasses": [],
+    "dataClasses": [],
+    "artifactLanes": [],
+    "effectClasses": [],
+    "evidenceClasses": [],
+    "mutationCeiling": "read_only"
+  },
+  "measuredSafeBudgets": {
+    "contextTokens": 1,
+    "outputTokens": 1,
+    "retrievals": 0,
+    "sequentialToolCalls": 0,
+    "totalToolCalls": 0,
+    "attempts": 0,
+    "spawns": 0,
+    "wallSeconds": 1,
+    "maxCostUsd": null,
+    "resourceEnvelope": "resource-envelope:example_local_worker"
+  },
+  "issuedAt": null,
+  "expiresAt": null,
+  "invalidationTriggers": [
+    "model_or_quant_change",
+    "runtime_or_harness_change",
+    "adapter_or_tool_schema_change",
+    "prompt_or_context_policy_change",
+    "evaluation_pack_change",
+    "protocol_or_registry_change"
+  ]
+}

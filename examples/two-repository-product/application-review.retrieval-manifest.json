@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "0.3.0",
+  "manifestId": "retrieval-manifest:synthetic_application_review",
+  "state": "draft",
+  "protocolBundle": {
+    "id": "protocol:elad_0.3.0",
+    "path": "blueprint.json",
+    "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+    "schemaVersion": "0.3.0"
+  },
+  "subject": {
+    "repositoryId": "repo:synthetic_simulation_app",
+    "baseRef": "main",
+    "baseHead": "cccccccccccccccccccccccccccccccccccccccc",
+    "projectProfile": {
+      "id": "project:synthetic_simulation_app",
+      "path": "examples/two-repository-product/simulation-app.profile.json",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "schemaVersion": "0.3.0"
+    },
+    "authority": {
+      "id": "authority:synthetic_simulation_app",
+      "path": "examples/two-repository-product/app.active-authority.json",
+      "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "schemaVersion": "0.3.0"
+    }
+  },
+  "framing": "elad-canonical-json-outer-sha256-v1",
+  "entries": [
+    {
+      "repositoryId": "repo:synthetic_simulation_app",
+      "path": "src/example.cs",
+      "bytes": 256,
+      "sha256": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+      "role": "frozen_review_subject",
+      "slice": null,
+      "freshness": "current_at_base",
+      "workerAccess": "prebundled"
+    }
+  ],
+  "createdAt": null,
+  "supersedes": null
+}

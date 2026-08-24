@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:task-packet:0.3.0",
+  "title": "Task Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "packetId",
+    "state",
+    "protocolBundle",
+    "intent",
+    "projectProfile",
+    "authority",
+    "policyBindings",
+    "riskClass",
+    "dataClass",
+    "taskFamily",
+    "artifactLane",
+    "requestedEffects",
+    "repository",
+    "writer",
+    "paths",
+    "toolRegistry",
+    "evaluatorRegistry",
+    "tools",
+    "retrievalManifest",
+    "claims",
+    "budgets",
+    "stopStates",
+    "finalizationCeiling"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "packetId": { "type": "string", "pattern": "^packet:[a-z0-9][a-z0-9._-]*$" },
+    "state": { "enum": ["template_inert", "draft", "admitted", "running", "terminal", "superseded"] },
+    "protocolBundle": { "$ref": "#/$defs/immutableReference" },
+    "intent": { "$ref": "#/$defs/immutableReference" },
+    "projectProfile": { "$ref": "#/$defs/immutableReference" },
+    "authority": { "$ref": "#/$defs/immutableReference" },
+    "policyBindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["risk", "data", "evidence"],
+      "properties": {
+        "risk": { "$ref": "#/$defs/immutableReference" },
+        "data": { "$ref": "#/$defs/immutableReference" },
+        "evidence": { "$ref": "#/$defs/immutableReference" }
+      }
+    },
+    "riskClass": { "enum": ["low", "normal", "high", "critical"] },
+    "dataClass": { "enum": ["public", "internal", "private_local", "restricted"] },
+    "taskFamily": { "type": "string", "minLength": 1 },
+    "artifactLane": { "enum": ["ordinary_source", "target_native", "runtime", "external_human"] },
+    "requestedEffects": {
+      "type": "array",
+      "items": { "enum": ["read", "candidate_write", "target_native_write", "runtime_process", "data_write"] },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repositoryId", "baseRef", "baseHead", "candidateId", "dirtyInputSha256"],
+      "properties": {
+        "repositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
+        "baseRef": { "type": "string", "minLength": 1 },
+        "baseHead": { "type": "string", "pattern": "^[a-f0-9]{40,64}$" },
+        "candidateId": { "type": "string", "pattern": "^candidate:[a-z0-9][a-z0-9._-]*$" },
+        "dirtyInputSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "writer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "certificate", "roleId"],
+      "properties": {
+        "profile": { "$ref": "#/$defs/immutableReference" },
+        "certificate": { "$ref": "#/$defs/immutableReference" },
+        "roleId": { "type": "string", "pattern": "^role:[a-z0-9][a-z0-9._-]*$" }
+      }
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allowedExisting", "allowedNew", "prohibited"],
+      "properties": {
+        "allowedExisting": { "type": "array", "items": { "$ref": "#/$defs/repositoryPath" }, "uniqueItems": true },
+        "allowedNew": { "type": "array", "items": { "$ref": "#/$defs/repositoryPath" }, "uniqueItems": true },
+        "prohibited": { "type": "array", "items": { "$ref": "#/$defs/repositoryPath" }, "uniqueItems": true }
+      }
+    },
+    "toolRegistry": { "$ref": "#/$defs/immutableReference" },
+    "evaluatorRegistry": { "$ref": "#/$defs/immutableReference" },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["toolId", "registryEntrySha256", "effect", "inputSha256"],
+        "properties": {
+          "toolId": { "type": "string", "pattern": "^tool:[a-z0-9][a-z0-9._-]*$" },
+          "registryEntrySha256": { "$ref": "#/$defs/sha256" },
+          "effect": { "enum": ["read", "candidate_write", "target_native_write", "runtime_process", "data_write"] },
+          "inputSha256": { "$ref": "#/$defs/sha256" }
+        }
+      },
+      "uniqueItems": true
+    },
+    "retrievalManifest": { "$ref": "#/$defs/immutableReference" },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/claim" }
+    },
+    "budgets": { "$ref": "#/$defs/budgets" },
+    "stopStates": { "type": "array", "items": { "enum": ["NEED_CONTEXT", "EVIDENCE_FAILED", "OUT_OF_SCOPE", "ESCALATE"] }, "uniqueItems": true },
+    "finalizationCeiling": { "enum": ["read_only", "candidate_checkpoint", "finalized_on_candidate"] }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[A-F0-9]{64}$" },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*:)(?!.*[. ](?:/|$))(?!.*(?:^|/)(?:[Cc][Oo][Nn]|[Pp][Rr][Nn]|[Aa][Uu][Xx]|[Nn][Uu][Ll]|[Cc][Ll][Oo][Cc][Kk]\\$|[Cc][Oo][Nn][Ii][Nn]\\$|[Cc][Oo][Nn][Oo][Uu][Tt]\\$|[Cc][Oo][Mm][1-9¹²³]|[Ll][Pp][Tt][1-9¹²³])(?:\\.[^/]*)?(?:/|$))[^/\\x00-\\x1F<>\"|?*]+(?:/[^/\\x00-\\x1F<>\"|?*]+)*$"
+    },
+    "immutableReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "schemaVersion"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" },
+        "path": { "$ref": "#/$defs/repositoryPath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contextTokens", "outputTokens", "retrievals", "sequentialToolCalls", "totalToolCalls", "attempts", "spawns", "wallSeconds", "maxCostUsd", "resourceEnvelope"],
+      "properties": {
+        "contextTokens": { "type": "integer", "minimum": 1 },
+        "outputTokens": { "type": "integer", "minimum": 1 },
+        "retrievals": { "type": "integer", "minimum": 0 },
+        "sequentialToolCalls": { "type": "integer", "minimum": 0 },
+        "totalToolCalls": { "type": "integer", "minimum": 0 },
+        "attempts": { "type": "integer", "minimum": 0 },
+        "spawns": { "type": "integer", "minimum": 0 },
+        "wallSeconds": { "type": "integer", "minimum": 1 },
+        "maxCostUsd": { "type": ["number", "null"], "minimum": 0 },
+        "resourceEnvelope": { "type": "string", "pattern": "^resource-envelope:[a-z0-9][a-z0-9._-]*$" }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claimId", "claimClass", "description", "acceptanceOwner", "evidenceClass", "subject", "evaluatorId", "negativeControlId"],
+      "properties": {
+        "claimId": { "type": "string", "pattern": "^claim:[a-z0-9][a-z0-9._-]*$" },
+        "claimClass": { "type": "string", "pattern": "^claim-class:[a-z0-9][a-z0-9._-]*$" },
+        "description": { "type": "string", "minLength": 1 },
+        "acceptanceOwner": { "enum": ["machine", "external_human"] },
+        "evidenceClass": { "type": "string", "minLength": 1 },
+        "subject": { "$ref": "#/$defs/subjectSelector" },
+        "evaluatorId": { "type": "string", "pattern": "^evaluator:[a-z0-9][a-z0-9._-]*$" },
+        "negativeControlId": { "type": "string", "pattern": "^case:[a-z0-9][a-z0-9._-]*$" }
+      }
+    },
+    "subjectSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "selector", "repositoryId", "id", "baseHead", "sha256"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "selector": { "type": "string", "pattern": "^[a-z][a-z0-9._-]*$" },
+        "repositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
+        "id": { "type": "string", "minLength": 1 },
+        "baseHead": { "type": "string", "pattern": "^[a-f0-9]{40,64}$" },
+        "sha256": { "type": ["string", "null"], "pattern": "^[A-F0-9]{64}$" }
+      }
+    }
+  }
+}

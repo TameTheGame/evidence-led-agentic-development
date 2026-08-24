@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:capability-certificate:0.3.0",
+  "title": "Capability Certificate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "certificateId",
+    "state",
+    "writerProfile",
+    "protocolBundle",
+    "toolRegistry",
+    "evaluatorRegistry",
+    "evaluationPack",
+    "eligibility",
+    "measuredSafeBudgets",
+    "issuedAt",
+    "expiresAt",
+    "invalidationTriggers"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "certificateId": { "type": "string", "pattern": "^certificate:[a-z0-9][a-z0-9._-]*$" },
+    "state": { "enum": ["unqualified", "shadow", "canary", "candidate_only", "qualified", "narrowed", "expired", "revoked"] },
+    "writerProfile": { "$ref": "#/$defs/immutableReference" },
+    "protocolBundle": { "$ref": "#/$defs/immutableReference" },
+    "toolRegistry": { "$ref": "#/$defs/immutableReference" },
+    "evaluatorRegistry": { "$ref": "#/$defs/immutableReference" },
+    "evaluationPack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reference", "positiveCases", "negativeCases", "holdoutCases", "coldRuns"],
+      "properties": {
+        "reference": { "$ref": "#/$defs/immutableReference" },
+        "positiveCases": { "type": "integer", "minimum": 0 },
+        "negativeCases": { "type": "integer", "minimum": 0 },
+        "holdoutCases": { "type": "integer", "minimum": 0 },
+        "coldRuns": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "eligibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["roles", "taskFamilies", "riskClasses", "dataClasses", "artifactLanes", "effectClasses", "evidenceClasses", "mutationCeiling"],
+      "properties": {
+        "roles": { "type": "array", "items": { "type": "string", "pattern": "^role:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true },
+        "taskFamilies": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "riskClasses": { "type": "array", "items": { "enum": ["low", "normal", "high", "critical"] }, "uniqueItems": true },
+        "dataClasses": { "type": "array", "items": { "enum": ["public", "internal", "private_local", "restricted"] }, "uniqueItems": true },
+        "artifactLanes": { "type": "array", "items": { "enum": ["ordinary_source", "target_native", "runtime", "external_human"] }, "uniqueItems": true },
+        "effectClasses": { "type": "array", "items": { "enum": ["read", "candidate_write", "target_native_write", "runtime_process", "data_write"] }, "uniqueItems": true },
+        "evidenceClasses": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "mutationCeiling": { "enum": ["read_only", "candidate_only", "target_operation"] }
+      }
+    },
+    "measuredSafeBudgets": { "$ref": "#/$defs/budgets" },
+    "issuedAt": { "type": ["string", "null"], "format": "date-time" },
+    "expiresAt": { "type": ["string", "null"], "format": "date-time" },
+    "invalidationTriggers": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[A-F0-9]{64}$" },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*:)(?!.*[. ](?:/|$))(?!.*(?:^|/)(?:[Cc][Oo][Nn]|[Pp][Rr][Nn]|[Aa][Uu][Xx]|[Nn][Uu][Ll]|[Cc][Ll][Oo][Cc][Kk]\\$|[Cc][Oo][Nn][Ii][Nn]\\$|[Cc][Oo][Nn][Oo][Uu][Tt]\\$|[Cc][Oo][Mm][1-9¹²³]|[Ll][Pp][Tt][1-9¹²³])(?:\\.[^/]*)?(?:/|$))[^/\\x00-\\x1F<>\"|?*]+(?:/[^/\\x00-\\x1F<>\"|?*]+)*$"
+    },
+    "immutableReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "schemaVersion"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" },
+        "path": { "$ref": "#/$defs/repositoryPath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contextTokens", "outputTokens", "retrievals", "sequentialToolCalls", "totalToolCalls", "attempts", "spawns", "wallSeconds", "maxCostUsd", "resourceEnvelope"],
+      "properties": {
+        "contextTokens": { "type": "integer", "minimum": 1 },
+        "outputTokens": { "type": "integer", "minimum": 1 },
+        "retrievals": { "type": "integer", "minimum": 0 },
+        "sequentialToolCalls": { "type": "integer", "minimum": 0 },
+        "totalToolCalls": { "type": "integer", "minimum": 0 },
+        "attempts": { "type": "integer", "minimum": 0 },
+        "spawns": { "type": "integer", "minimum": 0 },
+        "wallSeconds": { "type": "integer", "minimum": 1 },
+        "maxCostUsd": { "type": ["number", "null"], "minimum": 0 },
+        "resourceEnvelope": { "type": "string", "pattern": "^resource-envelope:[a-z0-9][a-z0-9._-]*$" }
+      }
+    }
+  }
+}

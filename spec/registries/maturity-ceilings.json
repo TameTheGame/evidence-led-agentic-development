@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "0.3.0",
+  "registryId": "vocabulary:elad_maturity_ceilings_0.3.0",
+  "status": "reference_only",
+  "description": "Closed maximum authority/effect/finalization ceilings for protocol 0.3.0. Rows only narrow other admission layers. Promotion and publication remain absent protocol surfaces and are denied at every level.",
+  "levels": [
+    {
+      "level": 0,
+      "name": "Blueprint",
+      "allowedEffects": [],
+      "allowedFinalizationCeilings": [],
+      "maxTrueAuthorizations": []
+    },
+    {
+      "level": 1,
+      "name": "Contracted read-only",
+      "allowedEffects": ["read"],
+      "allowedFinalizationCeilings": ["read_only"],
+      "maxTrueAuthorizations": ["machineEvidenceAcceptance"]
+    },
+    {
+      "level": 2,
+      "name": "Candidate-safe",
+      "allowedEffects": ["read", "candidate_write"],
+      "allowedFinalizationCeilings": ["read_only", "candidate_checkpoint", "finalized_on_candidate"],
+      "maxTrueAuthorizations": ["candidateMutation", "machineEvidenceAcceptance"]
+    },
+    {
+      "level": 3,
+      "name": "Capability-routed",
+      "allowedEffects": ["read", "candidate_write"],
+      "allowedFinalizationCeilings": ["read_only", "candidate_checkpoint", "finalized_on_candidate"],
+      "maxTrueAuthorizations": ["candidateMutation", "machineEvidenceAcceptance"]
+    },
+    {
+      "level": 4,
+      "name": "Fenced execution",
+      "allowedEffects": ["read", "candidate_write", "target_native_write", "runtime_process", "data_write"],
+      "allowedFinalizationCeilings": ["read_only", "candidate_checkpoint", "finalized_on_candidate"],
+      "maxTrueAuthorizations": ["candidateMutation", "targetMutation", "machineEvidenceAcceptance"]
+    },
+    {
+      "level": 5,
+      "name": "Operational delivery",
+      "allowedEffects": ["read", "candidate_write", "target_native_write", "runtime_process", "data_write"],
+      "allowedFinalizationCeilings": ["read_only", "candidate_checkpoint", "finalized_on_candidate"],
+      "maxTrueAuthorizations": ["candidateMutation", "targetMutation", "machineEvidenceAcceptance"]
+    },
+    {
+      "level": 6,
+      "name": "Continuously calibrated",
+      "allowedEffects": ["read", "candidate_write", "target_native_write", "runtime_process", "data_write"],
+      "allowedFinalizationCeilings": ["read_only", "candidate_checkpoint", "finalized_on_candidate"],
+      "maxTrueAuthorizations": ["candidateMutation", "targetMutation", "machineEvidenceAcceptance"]
+    }
+  ]
+}

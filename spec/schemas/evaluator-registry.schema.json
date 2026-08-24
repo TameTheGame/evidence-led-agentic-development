@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:elad:schema:evaluator-registry:0.3.0",
+  "title": "Evaluator Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "registryId", "state", "ownerRepositoryId", "protocolBundle", "evaluators"],
+  "properties": {
+    "schemaVersion": { "const": "0.3.0" },
+    "registryId": { "type": "string", "pattern": "^evaluator-registry:[a-z0-9][a-z0-9._-]*$" },
+    "state": { "enum": ["template_inert", "inactive", "active", "superseded"] },
+    "ownerRepositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
+    "protocolBundle": { "$ref": "#/$defs/immutableReference" },
+    "evaluators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evaluatorId", "state", "reference", "taskFamilies", "evidenceClasses", "negativeControlIds"],
+        "properties": {
+          "evaluatorId": { "type": "string", "pattern": "^evaluator:[a-z0-9][a-z0-9._-]*$" },
+          "state": { "enum": ["placeholder", "inactive", "calibrated", "expired", "revoked"] },
+          "reference": { "$ref": "#/$defs/immutableReference" },
+          "taskFamilies": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+          "evidenceClasses": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+          "negativeControlIds": { "type": "array", "items": { "type": "string", "pattern": "^case:[a-z0-9][a-z0-9._-]*$" }, "uniqueItems": true }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[A-F0-9]{64}$" },
+    "repositoryPath": { "type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*:)(?!.*[. ](?:/|$))(?!.*(?:^|/)(?:[Cc][Oo][Nn]|[Pp][Rr][Nn]|[Aa][Uu][Xx]|[Nn][Uu][Ll]|[Cc][Ll][Oo][Cc][Kk]\\$|[Cc][Oo][Nn][Ii][Nn]\\$|[Cc][Oo][Nn][Oo][Uu][Tt]\\$|[Cc][Oo][Mm][1-9¹²³]|[Ll][Pp][Tt][1-9¹²³])(?:\\.[^/]*)?(?:/|$))[^/\\x00-\\x1F<>\"|?*]+(?:/[^/\\x00-\\x1F<>\"|?*]+)*$" },
+    "immutableReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "schemaVersion"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" },
+        "path": { "$ref": "#/$defs/repositoryPath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    }
+  }
+}
