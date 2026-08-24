@@ -20,9 +20,7 @@ present. Authority still comes from you and the target project's own rules.
 
 Copy this to your coding agent:
 
-```text
-Follow this first-run guide for <one small task> for <x> project: [https://github.com/TameTheGame/evidence-led-agentic-development/tree/main](https://github.com/TameTheGame/evidence-led-agentic-development/edit/main/docs/FIRST_RUN.md)
-```
+Follow this first-run guide for `<one small task>` for `<x>` project: [https://github.com/TameTheGame/evidence-led-agentic-development/tree/main](https://github.com/TameTheGame/evidence-led-agentic-development/edit/main/docs/FIRST_RUN.md)
 
 That is enough to begin. The rest of this page explains what the agent will do and when it
 will come back to you for a decision.
