@@ -21,8 +21,7 @@ benchmark, safety certification, or replacement for target-owned tests and decis
 ## Start here
 
 - New adopter working with a coding agent: use the
-  [short first-run walkthrough](docs/FIRST_RUN.md). Sections prefixed
-  **Agent instructions:** are for the agent; you supply intent, authority, and acceptance.
+  [short first-run walkthrough](docs/FIRST_RUN.md).
 - Project owner: read [Start Here](START_HERE.md) and the
   [Adoption Runbook](docs/ADOPTION_RUNBOOK.md).
 - Evaluator or researcher: read the candid [Empirical Status](docs/EMPIRICAL_STATUS.md)
