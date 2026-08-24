@@ -65,7 +65,8 @@ and their limits.
 
 ## How it works
 
-Every task follows the same small loop:
+Describe the outcome you want in ordinary language—or give the agent the project and ask
+what the next useful step should be. The agent handles the ELAD loop:
 
 ```text
 define the outcome and boundaries
@@ -81,6 +82,9 @@ inspected diff may be the entire process. More formal records become useful only
 work crosses contexts, depends on fallible evaluation, affects a live system, or has
 consequences that make stronger evidence worthwhile.
 
+You do not complete this loop as a questionnaire. The agent derives it from your request
+and the project, then surfaces only the decisions that require your authority or judgment.
+
 ## Use only as much rigor as the task needs
 
 | Profile | Use it when | Typical shape |
@@ -90,8 +94,8 @@ consequences that make stronger evidence worthwhile.
 | `evaluated` | Success is semantic, stochastic, experiential, runtime-dependent, or judged by a fallible evaluator. | representative cases -> inspect outputs -> analyze errors -> iterate |
 | `assured` | The work is difficult to reverse, security/privacy sensitive, production-facing, or otherwise high-consequence. | isolated work -> independent expectations -> stronger verification -> separate approval |
 
-Start with `light`. Move up only when the facts require it. Move back down when a reusable
-check has made the work predictable.
+The agent starts with `light`, moves up only when the facts require it, and moves back down
+when a reusable check has made the work predictable. You do not need to choose the label.
 
 Rigor describes how much evidence a task needs. It does not grant permission. A mature
 project can still use `light` for a typo, and a read-only decision can deserve `assured`

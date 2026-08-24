@@ -7,18 +7,26 @@ agent capability with permission or agent confidence with proof.
 If this is your first visit, start with [First Run](docs/FIRST_RUN.md). It gives your
 coding agent a small procedure for one task and keeps the decisions that matter with you.
 
-## The method in one minute
+## How you use it
 
-For each step:
+Tell your coding agent what you want in ordinary language. You can also hand it a project
+and ask, “What is the next useful step?”
 
-1. Say what outcome you want and what the agent may change.
-2. Identify the uncertainty most likely to change the plan.
-3. Choose the cheapest check that can reliably resolve it.
-4. Let the agent make the smallest useful change and inspect the result.
-5. Continue, increase rigor, or stop based on the evidence.
+```text
+Use ELAD with this project. I want <high-level outcome>.
+```
 
-That loop can fit inside one prompt and one test. It does not require a protocol packet,
-receipt, or independent reviewer unless the task gives those things a real job.
+```text
+Use ELAD with this project. What is the next useful step?
+```
+
+The agent—not you—turns that into the next bounded task. It reads the project rules,
+chooses an appropriate check, does the work, inspects the result, and decides whether to
+continue or stop. It comes back to you when a missing decision would change the intended
+outcome, authority, or an important product tradeoff.
+
+You do not need to complete a questionnaire, decompose the project, choose a rigor label,
+or specify evidence for every step.
 
 ## The agent chooses the smallest useful path
 
@@ -30,11 +38,13 @@ receipt, or independent reviewer unless the task gives those things a real job.
 - **Assured:** consequential work that warrants isolation, independent expectations,
   recovery evidence, or separate review.
 
-The agent will start with `light` & escalate when evidence reveals more uncertainty, consequence, or
-coupling than expected. It will simplify when a reusable check has made the work predictable.
+The agent starts with `light`, escalates when evidence reveals more uncertainty,
+consequence, or coupling than expected, and simplifies when a reusable check has made the
+work predictable.
 
-These profiles describe evidence effort, not permission. Scope and authority come from
-you and the project being changed.
+You do not have to select a profile. These labels describe the evidence effort behind the
+work, not permission. Scope and authority still come from you and the project being
+changed.
 
 ## What you do not need for a small task
 
@@ -51,7 +61,7 @@ another worker, use
 | Your next question | Read |
 |---|---|
 | How do I try one task? | [First Run](docs/FIRST_RUN.md) |
-| How do I choose a rigor profile? | [Adaptive Rigor](docs/ADAPTIVE_RIGOR.md) |
+| How does the agent choose a rigor profile? | [Adaptive Rigor](docs/ADAPTIVE_RIGOR.md) |
 | How do I adopt this across a project? | [Adoption Runbook](docs/ADOPTION_RUNBOOK.md) |
 | What evidence fits an uncertain claim? | [Evaluation and Evidence](docs/EVALUATION_AND_EVIDENCE.md) |
 | When should I qualify a model or harness? | [Model and Harness Qualification](docs/MODEL_QUALIFICATION.md) |

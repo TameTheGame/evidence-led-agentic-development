@@ -7,8 +7,9 @@ or a list of protocol records that you must personally execute.
 
 The role split is intentionally small:
 
-- **Your role:** choose the project and desired outcome, set authority and
-  prohibitions, answer material product questions, and accept or reject the result.
+- **Your role:** give the agent a project and high-level outcome—or ask it what should
+  happen next—set any important boundaries, answer material product questions, and accept
+  or reject the result.
 - **The agent's role:** read the repository instructions, inspect the target, propose the
   smallest adequate task contract, run commands, make authorized changes, collect
   evidence, report limitations, and stop at the declared boundary.
@@ -16,11 +17,13 @@ The role split is intentionally small:
 ELAD does not give the agent authority merely because this repository or walkthrough is
 present. Authority still comes from you and the target project's own rules.
 
-## Start with one small task
+## Start with an ordinary request
 
-Copy this to your coding agent:
+Copy either of these to your coding agent:
 
-*Follow this first-run guide for `<one small task>` for `<x>` project: https://github.com/TameTheGame/evidence-led-agentic-development*
+*Use ELAD with `<project>`. I want `<high-level outcome>`. Follow this guide: https://github.com/TameTheGame/evidence-led-agentic-development*
+
+*Use ELAD with `<project>` and tell me the next useful step. Follow this guide: https://github.com/TameTheGame/evidence-led-agentic-development*
 
 That is enough to begin. The rest of this page explains what the agent will do and when it
 will come back to you for a decision.
@@ -46,32 +49,25 @@ artifact inventory. It does not run a model or prove that ELAD works in your pro
 The agent should summarize the result for you. You do not need to interpret the
 validator's internal counts.
 
-## 2. Choose one small outcome
+## 2. Describe the outcome—or ask what comes next
 
-Name one confined, reversible change in a project you own. Ordinary language is enough. A
-documentation correction with an existing link check or a small code fix with an existing
-unit test is ideal.
+Ordinary language is enough. Describe what you want at a high level, or give the agent the
+project and ask it to identify the next useful step. You do not need to decompose the work
+into a confined task yourself.
 
-You do not need to select an ELAD rigor label or fill out a schema. The agent should infer
-the lightest defensible path and explain any reason to escalate.
+The agent should propose a confined, reversible next action, infer the lightest defensible
+path, and explain any reason to escalate. You do not need to select an ELAD rigor label,
+fill out a schema, or design the evidence plan.
 
 > ## 3. Agent instructions: propose and execute a light task
 
-Before editing, the agent should compile your request and the target project's
-rules into this compact proposal:
+Before editing, the agent should briefly tell you what it plans to change, what it will
+leave alone, and how it will check the result. If you asked what comes next, this is where
+the agent proposes the first useful action.
 
-```text
-Outcome: <what should observably be true>
-Allowed scope: <exact files or component>
-Prohibited effects: <what must not change or run>
-Authority: <who owns the repository and what this episode may do>
-Evidence: <existing exact check plus diff inspection>
-Stop: <the passing result or condition that ends the task>
-```
-
-You only need to correct the proposal if it misunderstands the intended outcome, scope,
-authority, or tradeoff. Once authorized, the agent makes the change, runs the named check,
-inspects the diff, reports the result, and stops.
+You only need to respond if the proposal misunderstands your intent or needs authority
+beyond what you granted. Otherwise, the agent makes the change, runs the check, inspects
+the result, reports back, and stops at the declared boundary.
 
 That is a complete `light` ELAD task. You and the agent do not need to copy a JSON schema
 or create a formal receipt. The optional

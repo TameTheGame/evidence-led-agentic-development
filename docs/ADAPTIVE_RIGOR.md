@@ -12,15 +12,18 @@ removing the controls that make their autonomy trustworthy.
 
 ## The seven-question loop
 
-For each useful step:
+These are questions for the agent or orchestrator to answer from the owner's request,
+project rules, and available evidence. They are not a questionnaire for the owner.
 
-1. State the outcome you want.
-2. Identify the uncertainty that could prevent it.
-3. Choose the cheapest evidence that can settle that uncertainty.
-4. Make the smallest useful change or experiment.
-5. Inspect the result and the first meaningful failure.
-6. Continue, change direction, escalate, or stop.
-7. Decide whether enough evidence exists to consider the step complete.
+For each useful step, the agent asks:
+
+1. What observable outcome does the request imply?
+2. What uncertainty could prevent it?
+3. What is the cheapest evidence that can settle that uncertainty?
+4. What is the smallest useful change or experiment?
+5. What did the result and first meaningful failure reveal?
+6. Should the work continue, change direction, escalate, or stop?
+7. Is there enough evidence to consider the step complete?
 
 For a light task, the request, repository rules, one existing test, and a diff may contain
 the whole loop. Add durable records only when work crosses contexts, authority boundaries,

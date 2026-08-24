@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Corrected the onboarding flow so project owners can describe a high-level outcome or
+  simply ask what comes next; the agent, not the owner, performs ELAD's task decomposition,
+  uncertainty analysis, rigor selection, and evidence planning.
 - Visually distinguished agent-only headings from reader-facing steps with a restrained
   blockquote treatment in the onboarding guides.
 - Reframed the empirical summary around ELAD's four deliberate reference-project
