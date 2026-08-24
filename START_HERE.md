@@ -60,7 +60,7 @@ another worker, use
 | How do I implement the formal protocol? | [Architecture](docs/ARCHITECTURE.md) and [Conformance](docs/PROTOCOL_030_CONFORMANCE.md) |
 | What has ELAD actually demonstrated? | [Empirical Status](docs/EMPIRICAL_STATUS.md) |
 
-## Agent instructions: entering this repository
+> ## Agent instructions: entering this repository
 
 Read only what the task needs:
 

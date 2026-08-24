@@ -25,7 +25,7 @@ Copy this to your coding agent:
 That is enough to begin. The rest of this page explains what the agent will do and when it
 will come back to you for a decision.
 
-## 1. Agent instructions: validate the ELAD reference repository
+> ## 1. Agent instructions: validate the ELAD reference repository
 
 The coding agent should use Python 3.10 or newer and run this from the ELAD repository
 root:
@@ -55,7 +55,7 @@ unit test is ideal.
 You do not need to select an ELAD rigor label or fill out a schema. The agent should infer
 the lightest defensible path and explain any reason to escalate.
 
-## 3. Agent instructions: propose and execute a light task
+> ## 3. Agent instructions: propose and execute a light task
 
 Before editing, the agent should compile your request and the target project's
 rules into this compact proposal:
@@ -78,7 +78,7 @@ or create a formal receipt. The optional
 [`LIGHT_TASK` template](../templates/LIGHT_TASK.template.md) is available when saving the
 card would help future work.
 
-## 4. Agent instructions: use a bounded handoff only when needed
+> ## 4. Agent instructions: use a bounded handoff only when needed
 
 If another worker or context will implement the task, the agent should add only the
 information that prevents scope drift: minimal context, output contract, verifier
@@ -91,7 +91,7 @@ involved. A supervised worker can still receive a bounded handoff, and delegatio
 rigor only for the risk or uncertainty it actually adds. Any request for broader authority
 returns to you.
 
-## 5. Agent instructions: split mixed claims before adding evaluation
+> ## 5. Agent instructions: split mixed claims before adding evaluation
 
 Suppose a feature both adds an exact CLI flag and generates a semantic description. The
 flag, schema, failure behavior, and no-call default may be deterministic claims; the

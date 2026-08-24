@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Visually distinguished agent-only headings from reader-facing steps with a restrained
+  blockquote treatment in the onboarding guides.
 - Reframed the empirical summary around ELAD's four deliberate reference-project
   experiments and their positive results, while keeping the production-scale and
   generality limits explicit.
