@@ -21,12 +21,7 @@ present. Authority still comes from you and the target project's own rules.
 Copy this to your coding agent:
 
 ```text
-Follow this first-run guide for one small task in a project I own.
-Before changing anything, briefly tell me:
-- what you plan to change;
-- what you will leave alone; and
-- how you will check your work.
-Wait for my approval. Then do only that work and report back.
+Follow this first-run guide for <one small task> for <x> project: [https://github.com/TameTheGame/evidence-led-agentic-development/tree/main](https://github.com/TameTheGame/evidence-led-agentic-development/edit/main/docs/FIRST_RUN.md)
 ```
 
 That is enough to begin. The rest of this page explains what the agent will do and when it
