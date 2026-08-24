@@ -8,7 +8,7 @@
 |---|---|
 | `README.md` | Plain-language methodology, profiles, boundaries, and adoption |
 | `START_HERE.md` | Short owner/agent entrypoint |
-| `docs/FIRST_RUN.md` | Human-owner decisions and agent-executed first-run procedure |
+| `docs/FIRST_RUN.md` | Project-owner decisions and explicitly prefixed agent instructions |
 | `docs/EMPIRICAL_STATUS.md` | Demonstrated, bounded, and untested claims |
 | `STATUS.md` | Current candidate state, completed surfaces, and absent authority |
 | `AGENTS.md` | Repository rules and adaptive change lifecycle |

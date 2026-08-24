@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-- Clarified that the first-run procedure is executed by a coding agent while the human
-  owner supplies intent, authority, material decisions, and acceptance.
+- Clarified the first-run voice by speaking directly to the project owner while prefixing
+  every coding-agent procedure with `Agent instructions:`.
 
 ## 0.3.0 — 2026-08-23
 

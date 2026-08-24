@@ -1,17 +1,17 @@
 # Start Here
 
 Evidence-Led Agentic Development is a practical way to let cloud and local AI agents do
-substantial engineering work without asking a human to supervise every tool call—or
+substantial engineering work without asking you to supervise every tool call—or
 pretending uncertain behavior is correct because a model says so.
 
 This repository is currently a **non-operational Level 0 blueprint**. Nothing here is a
 live controller or permission grant.
 
-If this is your first visit, give the
-[short human-and-agent first-run walkthrough](docs/FIRST_RUN.md) to your coding agent
-before reading the formal contracts. The procedural steps are for the agent; the page
-marks the human owner's decisions explicitly. For a precise account of what has and has
-not been tested, see [Empirical Status](docs/EMPIRICAL_STATUS.md).
+If this is your first visit, give the [short first-run walkthrough](docs/FIRST_RUN.md) to
+your coding agent before reading the formal contracts. Sections prefixed
+**Agent instructions:** are for the agent; the remaining text speaks directly to you. For
+a precise account of what has and has not been tested, see
+[Empirical Status](docs/EMPIRICAL_STATUS.md).
 
 ## In one minute
 
@@ -126,7 +126,7 @@ cannot launder authority between repositories.
 - Orchestrators see compact receipts instead of hundreds of low-level tool calls.
 - Local workers receive tasks that fit their measured context, tool, and resource
   envelope.
-- Human attention is reserved for intent, product judgment, trust, subjective
+- Your attention is reserved for intent, product judgment, trust, subjective
   experience, publication, and conditions automation cannot reliably observe.
 - Reusable validators are cheap to invoke; per-task paperwork exists only when it adds
   discriminating evidence or protects a meaningful boundary.
@@ -144,5 +144,5 @@ end by stating that no authority is granted. This validates only the inert refer
 repository; it does not prove a live model, project, target, runtime, reviewer decision,
 or cross-platform environment.
 
-A coding agent or CI normally performs this validation. A human owner is not expected to
-run the command personally.
+A coding agent or CI normally performs this validation. You are not expected to run the
+command personally.
