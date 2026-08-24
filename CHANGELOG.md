@@ -2,7 +2,7 @@
 
 ## 0.3.0 — 2026-08-23
 
-- Prepared a clean public source candidate under Apache-2.0, with verified primary-source
+- Released a clean public source tree under Apache-2.0, with verified primary-source
   research attribution, exact licensed CI dependencies, a clean-history publication
   boundary, public contribution/security guidance, and no product-specific residue.
 - Added a cross-platform `python tools/validate_all.py` entrypoint, made hosted CI execute

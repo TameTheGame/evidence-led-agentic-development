@@ -7,7 +7,7 @@ This document separates those claims.
 ## Demonstrated in this repository
 
 The dependency-free Level-0 suite checks the exact repository artifacts. At the 0.3.0
-release-candidate boundary it includes:
+release boundary it includes:
 
 - structural and semantic checks over 29 schema/template pairs;
 - a portable path corpus with malicious and reserved-name cases;

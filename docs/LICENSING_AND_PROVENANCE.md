@@ -58,16 +58,13 @@ Generated artifacts are distributed under Apache-2.0 with the rest of the reposi
 
 ## Publication-history boundary
 
-The development branch contains pre-publication terminology in its reachable history.
-Publishing the sanitized current tree with that full history would reintroduce material
-intentionally removed from the public source set. The first public branch must therefore
-be created as a clean root commit from a verified sanitized tree. This is a publication
-boundary, not a claim that prior commits contained credentials.
+The private development branch contains pre-publication terminology in its reachable
+history. The public repository was initialized instead from one clean root commit built
+from the verified sanitized tree. This is a publication boundary, not a claim that prior
+commits contained credentials. Future public development proceeds normally from that
+fresh history; the private design history remains separate.
 
-Only the clean public branch should be pushed to a new public remote. Do not use
-`git push --all`, mirror pushes, or tags rooted in the development history.
-
-## Remaining publication checks
+## Publication record and release rule
 
 - [x] One explicit code-and-documentation license is selected.
 - [x] Current-tree provenance and secret-oriented scans cover tracked text and generated artifacts.
@@ -76,8 +73,11 @@ Only the clean public branch should be pushed to a new public remote. Do not use
 - [x] Research attribution uses verified primary URLs and does not imply endorsement.
 - [x] Synthetic examples contain no known product topology or identifiers.
 - [x] Target-specific adapters remain target-local or require a separate provenance review.
-- [ ] Hosted CI passes for the exact public commit on every configured matrix cell.
-- [ ] The public host's private-vulnerability-reporting path is enabled or replaced by a documented private contact.
-- [ ] Publication is authorized separately from candidate preparation.
+- [x] The initial public root commit passed every configured hosted CI matrix cell.
+- [x] The public host's private-vulnerability-reporting path is enabled.
+- [x] Publication was authorized separately from candidate preparation.
+
+Every release tag must identify an exact commit that has passed the full hosted matrix;
+the tag is created only after that run succeeds.
 
 This is an engineering provenance review, not legal advice or a legal-opinion letter.

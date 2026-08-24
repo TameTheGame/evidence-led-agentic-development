@@ -1,6 +1,6 @@
 # Repository Manifest
 
-**Version:** 0.3.0 public release candidate
+**Version:** 0.3.0
 
 ## Read first
 

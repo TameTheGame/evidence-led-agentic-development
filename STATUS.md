@@ -1,6 +1,6 @@
 # Status
 
-**Current version:** `0.3.0` public release candidate
+**Current version:** `0.3.0`
 
 **Maturity:** Level 0 — Blueprint
 
@@ -8,9 +8,9 @@
 
 ## Current objective
 
-Prepare a clean, licensed, evidence-honest public source candidate for the adaptive,
-platform-neutral 0.3 blueprint. No target repository, model, harness, runtime, evidence
-authority, promotion, or publication is activated by this work.
+Maintain a clean, licensed, evidence-honest public Level-0 release of the adaptive,
+platform-neutral 0.3 blueprint. Publishing the blueprint activates no target repository,
+model, harness, runtime, evidence authority, promotion, or downstream publication.
 
 ## Completed surfaces
 
@@ -61,9 +61,9 @@ semantic composition validator supports an assured claim.
 - `0.1.0`: initial Level-0 design that exposed authority and evidence-contract defects.
 - `0.2.0`: green hardened protocol baseline and compatibility predecessor to 0.3.
 
-The development history is not part of the first public source branch. The public branch
-must start from the verified sanitized 0.3 tree so removed pre-publication terminology is
-not accidentally republished.
+The private development history is not part of the public repository. Its initial branch
+starts from the verified sanitized 0.3 tree, while the earlier design lineage remains
+private.
 
 ## Not implemented or authorized
 
@@ -83,14 +83,16 @@ observations supply bounded adoption evidence for the methodology, but their cor
 not distributed here and they do not prove an arbitrary target adapter, authoring tool,
 runtime harness, or target authority. See `docs/EMPIRICAL_STATUS.md`.
 
-## Remaining release steps
+## Release evidence
 
-1. Complete all dependency-free checks and exact release-bundle generation.
-2. Freeze the sanitized candidate to an exact local commit.
-3. Create a clean root public branch and verify it from an isolated exported tree.
-4. Run one bounded open-source-readiness review and correct only material findings.
-5. After publication is separately authorized, require every hosted CI matrix cell to
-   pass for the exact public commit before tagging a release.
-6. Enable private vulnerability reporting or document another private reporting channel.
+- The sanitized source was frozen as a clean public root commit and verified from an
+  isolated exported tree.
+- One bounded open-source-readiness review found and corrected the material thesis,
+  licensing, provenance, first-run, empirical-boundary, CI, and history issues.
+- The initial public root commit passed all six hosted Windows, Ubuntu, and macOS jobs on
+  Python 3.10 and 3.12.
+- Private vulnerability reporting is enabled on the public repository.
+- A release tag is created only after its exact target commit passes the same hosted
+  matrix.
 
 Downstream adoption and any operational implementation remain separate owner decisions.

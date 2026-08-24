@@ -42,19 +42,18 @@ mutation, lease, promotion, or publication surface.
 
 ## Supported versions
 
-Security corrections are accepted for the current `0.3.x` release-candidate line. Older
+Security corrections are accepted for the current `0.3.x` public release line. Older
 pre-release lines are historical and may receive documentation only when needed to avoid
 unsafe adoption.
 
 ## Reporting a concern
 
 Do not publish a suspected vulnerability, secret, or exploit transcript in an issue or
-example. Once the public repository exists, use its private vulnerability-reporting
-feature. If that feature is not enabled, contact the maintainer privately through the
+example. Use the repository's enabled private vulnerability-reporting feature. If that
+feature is temporarily unavailable, contact the maintainer privately through the
 repository owner's public profile and disclose only enough to establish a private channel.
 
-The public repository must not be announced until one of those private reporting routes
-is confirmed. Ordinary non-sensitive correctness issues may use the public issue tracker.
+Ordinary non-sensitive correctness issues may use the public issue tracker.
 
 ## Future operational work
 
