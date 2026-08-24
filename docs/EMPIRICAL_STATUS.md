@@ -1,8 +1,11 @@
 # Empirical Status
 
-ELAD has substantial internal protocol and software validation plus a small body of
-portability evidence. It has not been demonstrated as a production automation system.
-This document separates those claims.
+ELAD has substantial internal protocol and software validation. It has also been used in
+four deliberate development experiments on a working Python CLI, covering deterministic
+single-agent work, cold adoption, heterogeneous delegation, and semantic product
+evaluation. Those experiments provide positive empirical evidence for core parts of the
+method in a bounded software setting. ELAD has not yet been demonstrated as a production
+automation system. This document separates those claims.
 
 ## Demonstrated in this repository
 
@@ -22,25 +25,25 @@ A green run establishes conformance of those inert artifacts and synthetic cases
 not establish a live model, target adapter, runtime, operating-system matrix, human
 decision, project outcome, or safety property outside the checked contracts.
 
-## Portability observations
+## Empirical reference-project results
 
-A separate small Python repository-inventory CLI was used for four bounded observations
+A separate Python repository-inventory CLI was used for four bounded experiments
 against a frozen ELAD 0.3.0 baseline:
 
-| Observation | Result | What it supported |
+| Experiment | Result | What it supported |
 |---|---|---|
 | Deterministic single-agent development | A confined CLI slice completed with 34 deterministic tests | The lightweight path could guide ordinary software work without requiring the full assured packet chain |
 | Cold adoption | A fresh adopter found the light path but encountered onboarding ambiguity | Progressive disclosure needed improvement while authority remained non-skippable |
 | Deterministic heterogeneous delegation | A bounded worker implemented a parser slice; the integrated suite reached 59 deterministic tests | A compact worker packet and frozen orchestrator-owned checks were sufficient for that low-risk delegation |
 | Semantic product evaluation | The suite reached 72 deterministic tests; an eight-case semantic set found a conflicting-signal defect at 7/8, and one causal prompt correction reached 8/8 | Evaluated rigor produced information that deterministic tests could not, while neighboring exact claims stayed deterministic |
 
-Those observations motivated the per-claim evaluator-maturity correction, the compact
+Those experiments motivated the per-claim evaluator-maturity correction, the compact
 bounded-worker packet, clearer execution-subject identity, and the separation of coding
 agents from stochastic product behavior.
 
-## Important limits on the portability evidence
+## Important limits on the reference-project evidence
 
-- All four observations came from one small CLI product family over a short period.
+- All four experiments came from one small CLI product family over a short period.
 - The work was not a randomized study and did not compare ELAD with a controlled
   alternative methodology.
 - The experiment corpus and raw harness records are not distributed in this public source
@@ -52,8 +55,8 @@ agents from stochastic product behavior.
 - No Level-1-or-higher reference implementation, live authority service, candidate
   manager, target adapter, lease backend, evidence-acceptance service, or promotion path
   exists here.
-- No production workload, consequential autonomous mutation, hosted cross-platform matrix,
-  or long-term efficacy study has passed.
+- No production workload, consequential autonomous mutation, target-runtime
+  cross-platform matrix, or long-term efficacy study has passed.
 
 These are evidence gaps, not failed claims. They must remain unclaimed until corresponding
 evidence exists.

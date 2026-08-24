@@ -43,10 +43,13 @@ engineering work, while evidence and explicit boundaries decide whether it shoul
 continue. The goal is not maximum automation or maximum process. It is reliable progress
 with less routine supervision and no more machinery than the work can justify.
 
-ELAD's public evidence is promising but bounded. It has extensive internal conformance
-tests and four small portability observations, but it has not been proven as a production
-controller or across arbitrary projects and platforms. See
-[Empirical Status](docs/EMPIRICAL_STATUS.md) for the exact boundary.
+ELAD has been tested beyond its own conformance suite. In a four-part reference project,
+it guided deterministic single-agent development, cold adoption, bounded delegation to a
+different model, and a semantic feature whose evaluation caught a real defect that the
+deterministic tests missed. Those results are meaningful empirical support for the method
+in a bounded software project. They are not yet proof of production-scale automation or
+universal applicability. See [Empirical Status](docs/EMPIRICAL_STATUS.md) for the results
+and their limits.
 
 ## Start here
 

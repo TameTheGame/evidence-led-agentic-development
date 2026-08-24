@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Reframed the empirical summary around ELAD's four deliberate reference-project
+  experiments and their positive results, while keeping the production-scale and
+  generality limits explicit.
 - Reworked the reader-facing process guides around progressive disclosure: start with one
   small task, add evaluation for uncertain claims, and introduce qualification or formal
   assurance only when repeated autonomy or consequential effects justify them.
