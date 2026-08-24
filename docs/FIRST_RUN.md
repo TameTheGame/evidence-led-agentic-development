@@ -7,8 +7,8 @@ or a list of protocol records that you must personally execute.
 
 The role split is intentionally small:
 
-- **Your role:** choose the project and desired outcome, set or approve authority and
-  prohibited effects, answer material product questions, and accept or reject the result.
+- **Your role:** choose the project and desired outcome, set authority and
+  prohibitions, answer material product questions, and accept or reject the result.
 - **The agent's role:** read the repository instructions, inspect the target, propose the
   smallest adequate task contract, run commands, make authorized changes, collect
   evidence, report limitations, and stop at the declared boundary.
