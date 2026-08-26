@@ -47,6 +47,9 @@ model, harness, runtime, evidence authority, promotion, or downstream publicatio
   dependency pins, a clean-history publication boundary, and a short first-run path.
 - A candid empirical-status statement that separates internal conformance, portability
   observations, and untested operational claims.
+- A documented boundary to the separately maintained, separately authorized ELAD
+  Harness Readiness Suite for model- and harness-agnostic local-worker comparison. The
+  companion does not change this repository's Level-0 maturity or authority.
 
 ## Design lineage
 

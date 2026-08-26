@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Documented the separately maintained ELAD Harness Readiness Suite `v0.1.0` as an
+  optional model- and harness-agnostic operational companion; retained Level 0,
+  default-deny authority, exact-subject qualification, and bounded empirical claims.
 - Corrected the onboarding flow so project owners can describe a high-level outcome or
   simply ask what comes next; the agent, not the owner, performs ELAD's task decomposition,
   uncertainty analysis, rigor selection, and evidence planning.

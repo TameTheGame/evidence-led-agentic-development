@@ -39,6 +39,7 @@
 | `docs/LIFECYCLE_ORACLE_ASSESSMENT.md` | Cost/value/independence disposition of the 44,100-domain oracle |
 | `docs/MATURITY_MODEL.md` | Proven capability levels, independent of per-task rigor |
 | `docs/MODEL_QUALIFICATION.md` | Exact cloud/local model+harness qualification and routing |
+| `docs/MODEL_HARNESS_READINESS_EVALUATION.md` | Separate operational companion for fair model/harness readiness comparison |
 | `docs/OPERATIONS_AND_LEARNING.md` | Observability, error analysis, efficacy, drift, and simplification |
 | `docs/HUMAN_DECISION_BOUNDARY.md` | Decisions retained by the project owner and concise review cards |
 | `docs/PATH_IDENTITY.md` | One portable repository-path grammar |

@@ -62,6 +62,10 @@ and their limits.
   [Adoption Runbook](docs/ADOPTION_RUNBOOK.md).
 - **Implementing the protocol:** begin with [Architecture](docs/ARCHITECTURE.md),
   [Conformance](docs/PROTOCOL_030_CONFORMANCE.md), and the [manifest](MANIFEST.md).
+- **Comparing local coding models or harnesses for repeated ELAD work:** read
+  [Model and Harness Readiness Evaluation](docs/MODEL_HARNESS_READINESS_EVALUATION.md)
+  and use the separately authorized
+  [ELAD Harness Readiness Suite](https://github.com/TameTheGame/elad-harness-readiness-suite).
 
 ## How it works
 

@@ -41,6 +41,28 @@ Those experiments motivated the per-claim evaluator-maturity correction, the com
 bounded-worker packet, clearer execution-subject identity, and the separation of coding
 agents from stochastic product behavior.
 
+## Separate harness-readiness companion evidence
+
+The public
+[ELAD Harness Readiness Suite](https://github.com/TameTheGame/elad-harness-readiness-suite)
+is a separately maintained operational companion for applying ELAD's qualification logic
+to exact local coding-model and harness subjects. Release
+[`v0.1.0`](https://github.com/TameTheGame/elad-harness-readiness-suite/releases/tag/v0.1.0)
+contains a dependency-free synthetic demo, 35 deterministic framework checks, and a
+six-cell hosted Windows/macOS/Ubuntu matrix on Python 3.10 and 3.13.
+
+Its design was extracted from a separate owner-local comparison of four harness subjects
+on one exact local coding model. That origin case contained 24 controlled-parity runs and
+140 production-realism products, with blinded semantic review and separate
+handoff/long-session checks. The raw corpus and private machine evidence are not
+distributed, so those origin results remain bounded and are not independently
+reproducible. The public synthetic suite makes the testing logic reproducible; it does
+not reproduce or certify the original winner.
+
+Publishing the companion adds neither a live adapter nor execution authority to this
+repository. It does not establish universal model/harness rank, arbitrary-project
+generality, OS isolation, restricted-data safety, or production readiness.
+
 ## Important limits on the reference-project evidence
 
 - All four experiments came from one small CLI product family over a short period.

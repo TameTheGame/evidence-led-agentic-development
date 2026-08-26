@@ -95,3 +95,13 @@ context compiler, tool schema, protocol, evaluator, target profile, or runtime.
 
 A worker cannot renew its own qualification. Unaffected expensive cases do not need to be
 rerun merely because another task used the same route.
+
+## Compare candidate subjects with the public companion
+
+When the decision is which local model-and-harness subject should perform repeated ELAD
+work, use [Model and Harness Readiness Evaluation](MODEL_HARNESS_READINESS_EVALUATION.md).
+The separately maintained
+[ELAD Harness Readiness Suite](https://github.com/TameTheGame/elad-harness-readiness-suite)
+provides a model- and harness-agnostic implementation of that comparison. Adopting or
+running it is a separate owner decision and does not grant authority through this
+Level-0 repository.

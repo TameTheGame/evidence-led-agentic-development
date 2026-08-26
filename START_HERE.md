@@ -65,6 +65,7 @@ another worker, use
 | How do I adopt this across a project? | [Adoption Runbook](docs/ADOPTION_RUNBOOK.md) |
 | What evidence fits an uncertain claim? | [Evaluation and Evidence](docs/EVALUATION_AND_EVIDENCE.md) |
 | When should I qualify a model or harness? | [Model and Harness Qualification](docs/MODEL_QUALIFICATION.md) |
+| How do I compare exact local model-and-harness subjects fairly? | [Model and Harness Readiness Evaluation](docs/MODEL_HARNESS_READINESS_EVALUATION.md) |
 | What decisions should remain with me? | [Decisions You Keep](docs/HUMAN_DECISION_BOUNDARY.md) |
 | What can a project safely automate today? | [Maturity Model](docs/MATURITY_MODEL.md) |
 | How do I implement the formal protocol? | [Architecture](docs/ARCHITECTURE.md) and [Conformance](docs/PROTOCOL_030_CONFORMANCE.md) |
