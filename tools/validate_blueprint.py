@@ -1862,6 +1862,55 @@ def validate_text_hygiene() -> int:
     return count
 
 
+def validate_proportional_review_policy() -> int:
+    required_fragments = {
+        "docs/ADAPTIVE_RIGOR.md": (
+            "expected lifecycle cost is lower than the expected cost of recurrence",
+            "least expensive durable mechanism that prevents the validated failure",
+            "passing an assurance system's own tests proves internal consistency",
+            "assurance depth and verification frequency are selected separately from task rigor",
+            "quick: at most one critic pass plus decisive checks",
+            "standard: at most one complete review/correction cycle",
+            "high assurance: at most two complete review/correction cycles",
+            "renaming, recreating, or reframing a candidate does not reset it",
+            "unresolved high-consequence uncertainty together with new objective evidence",
+            "fresh explicit owner authorization",
+            "stop with `blocked`, `revise`, or a narrower claim",
+            "invalidates only the claims and evidence it can causally affect",
+            "causal footprint cannot be bounded",
+            "alters architecture, authority, evidence meaning",
+            "git commit and blob identity together with clean/dirty state",
+            "when git cannot supply the needed identity",
+            "prefer eligible local verification",
+        ),
+        "templates/WORKFLOW.template.md": (
+            "assurance depth and verification frequency from uncertainty",
+            "quick: at most one critic pass plus decisive checks",
+            "standard: at most one complete review/correction cycle",
+            "high assurance: at most two complete cycles",
+            "candidate recreation, renaming, or reframing does not reset it",
+            "revalidate only the claims and evidence a change can causally affect",
+            "extra cycle requires unresolved high-consequence uncertainty plus new objective evidence",
+            "never lower the acceptance threshold",
+            "git commit/blob identity and clean/dirty state",
+            "prefer eligible local verification",
+        ),
+    }
+    checked = 0
+    for relative, fragments in required_fragments.items():
+        normalized = " ".join((ROOT / relative).read_text(encoding="utf-8").casefold().split())
+        for fragment in fragments:
+            require(fragment in normalized, f"proportional review policy is incomplete: {relative}: {fragment}")
+            checked += 1
+
+    agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    require(
+        "docs/ADAPTIVE_RIGOR.md#proportional-assurance-budgets-and-causal-revalidation" in agents,
+        "AGENTS.md does not reference the canonical proportional assurance policy",
+    )
+    return checked + 1
+
+
 def validate_no_generated_cache() -> None:
     generated = [
         path.relative_to(ROOT).as_posix()
@@ -2464,6 +2513,7 @@ def main() -> int:
     path_count = validate_paths(json_documents)
     link_count = validate_markdown_links()
     text_count = validate_text_hygiene()
+    proportional_policy_count = validate_proportional_review_policy()
 
     blueprint = load_json("blueprint.json")
     registries = load_canonical_registries(blueprint)
@@ -2587,6 +2637,7 @@ def main() -> int:
         f"Validated {len(json_paths)} JSON files, {schema_count} schemas, {instance_count} schema instances, "
         f"{path_schema_count} path-bearing schemas against {path_vector_count} canonical vectors, "
         f"{path_count} repository paths, {link_count} relative Markdown links, {text_count} text files, "
+        f"{proportional_policy_count} proportional review policy bindings, "
         f"all 44,100 receipt lifecycle tuples with exactly 33 independently rule-derived admissions, "
         f"{claim_aggregate_vector_count} claim-aggregate vectors, {lifecycle_shape_count} admitted lifecycle shapes, "
         f"{lifecycle_mutation_count} single-field lifecycle denials, {continuation_receipt_count} anchored receipt states, "

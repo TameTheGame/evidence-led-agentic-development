@@ -95,6 +95,10 @@ Cheap reusable conformance may run routinely. Full packets, manifests, negative 
 qualification, independent review, and human bundles are conditional on the selected
 rigor and effect boundary.
 
+Review depth, non-resetting assurance budgets, claim-scoped revalidation, Git-native
+identity, and extra-cycle escalation follow the canonical
+[proportional assurance policy](docs/ADAPTIVE_RIGOR.md#proportional-assurance-budgets-and-causal-revalidation).
+
 ## Validation boundary
 
 Validators are dependency-free and read-only. They may parse repository files and run

@@ -109,6 +109,45 @@ Model confidence and self-review can be useful signals, but they are not proof. 
 calibrated evaluator until its logic, runtime, dependencies, target, or claim class drifts,
 or a new false-green pattern appears.
 
+## Proportional assurance budgets and causal revalidation
+
+A durable control is justified when its expected lifecycle cost is lower than the
+expected cost of recurrence, unless a specifically identified high consequence warrants
+more. Lifecycle cost includes authoring, execution, maintenance, review, invalidation,
+and false-positive handling. Use the least expensive durable mechanism that prevents the
+validated failure. Passing an assurance system's own tests proves internal consistency;
+it does not prove that the system is worth its complexity.
+
+Assurance depth and verification frequency are selected separately from task rigor
+according to uncertainty, consequence, reversibility, recurrence, and expected lifecycle
+cost. These hard defaults bound the review itself:
+
+- Quick: at most one critic pass plus decisive checks.
+- Standard: at most one complete review/correction cycle.
+- High assurance: at most two complete review/correction cycles.
+
+A complete cycle includes critique, adjudication, accepted correction, and decisive
+verification. Corrections consume the current budget; renaming, recreating, or reframing
+a candidate does not reset it. An extra cycle requires unresolved high-consequence
+uncertainty together with new objective evidence, or fresh explicit owner authorization
+after the expected cost and benefit have been reported. When the budget is exhausted,
+stop with `BLOCKED`, `REVISE`, or a narrower claim. Never silently lower the acceptance
+threshold.
+
+A change invalidates only the claims and evidence it can causally affect. Revalidate that
+scope and retain unaffected review evidence. Require a complete fresh review only when
+the causal footprint cannot be bounded or the change alters architecture, authority,
+evidence meaning, security/privacy/rights boundaries, evaluator semantics, or another
+specified high-consequence shared surface.
+
+For ordinary Git-tracked artifacts, use Git commit and blob identity together with
+clean/dirty state. Add raw byte counts or hashes only for external, ignored, generated,
+transported, or otherwise non-Git artifacts when Git cannot supply the needed identity.
+When an exact local model-and-harness subject is qualified and its verifier is sufficient,
+prefer eligible local verification. Cloud execution remains useful for orchestration,
+novel direction, unresolved exceptional complexity, or independence unavailable in the
+local portfolio; it is not an automatic duplicate pass.
+
 ## Escalate only when evidence tells you to
 
 Escalate when you discover unexpected nondeterminism, wider scope, weaker reversibility,

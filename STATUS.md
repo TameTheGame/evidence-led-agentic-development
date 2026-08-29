@@ -23,6 +23,8 @@ model, harness, runtime, evidence authority, promotion, or downstream publicatio
 - Portability corrections from four bounded observations in a separate reference project:
   evaluator maturity is per claim; exact regressions, program execution, and AI
   participation no longer over-escalate neighboring deterministic claims.
+- Lifecycle-cost assurance selection with hard review budgets, claim-scoped
+  revalidation, Git-native identity, and qualified local-first verification.
 - A genuine lightweight path that needs no formal JSON record when an issue/prompt and
   existing deterministic check are sufficient.
 - Optional strict component contracts for cross-context or high-consequence autonomous

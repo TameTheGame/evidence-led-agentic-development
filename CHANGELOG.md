@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Added lifecycle-cost proportionality, hard non-resetting review budgets, claim-scoped
+  revalidation, Git-native tracked-artifact identity, and qualified local-first
+  verification without adding a new schema or control platform.
 - Documented the separately maintained ELAD Harness Readiness Suite `v0.1.0` as an
   optional model- and harness-agnostic operational companion; retained Level 0,
   default-deny authority, exact-subject qualification, and bounded empirical claims.

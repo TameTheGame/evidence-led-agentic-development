@@ -41,6 +41,27 @@ Start at the cheapest profile supported by facts. Escalate on unexpected couplin
 evaluator weakness, stochastic failure, irreversible effects, or unresolved human
 claims. Simplify when recurring ceremony does not alter decisions.
 
+## Review budget and causal revalidation
+
+Use the least expensive durable mechanism that prevents the validated failure. Select
+assurance depth and verification frequency from uncertainty, consequence, reversibility,
+recurrence, and expected lifecycle cost. Hard default limits are Quick: at most one
+critic pass plus decisive checks; Standard: at most one complete review/correction cycle;
+High assurance: at most two complete cycles. Corrections consume the current budget, and
+candidate recreation, renaming, or reframing does not reset it.
+
+Revalidate only the claims and evidence a change can causally affect. Require a complete
+fresh review only when the causal footprint cannot be bounded or a specified
+high-consequence shared surface changes. An extra cycle requires unresolved
+high-consequence uncertainty plus new objective evidence, or fresh explicit owner
+authorization after reporting expected cost and benefit. At exhaustion, stop with
+`BLOCKED`, `REVISE`, or a narrower claim; never lower the acceptance threshold.
+
+Use Git commit/blob identity and clean/dirty state for ordinary tracked artifacts. Add
+raw hashes only when Git cannot identify external, ignored, generated, transported, or
+otherwise non-Git evidence. Prefer eligible local verification when its exact qualified
+subject and verifier are sufficient.
+
 ## Adaptive task loop
 
 1. Confirm exact scope and effect authority.
