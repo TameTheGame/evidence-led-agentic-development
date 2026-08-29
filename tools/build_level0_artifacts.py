@@ -193,8 +193,8 @@ def build_bundle(blueprint: dict[str, Any]) -> None:
         )
 
     bundle = {
-        "schemaVersion": "0.3.0",
-        "bundleId": "protocol-bundle:elad_0.3.0",
+        "schemaVersion": "0.4.0",
+        "bundleId": "protocol-bundle:elad_0.4.0",
         "protocolId": blueprint["protocolId"],
         "version": blueprint["version"],
         "state": "reference_only",

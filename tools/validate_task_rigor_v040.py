@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dependency-free checks for the ELAD 0.3 adaptive-rigor core.
+"""Dependency-free checks for the ELAD 0.4 adaptive-rigor core.
 
 This validator is read-only. A rigor decision selects evidence posture only; it never
 grants mutation, evidence-acceptance, promotion, publication, or target authority.
@@ -24,8 +24,8 @@ VECTORS_PATH = ROOT / "tests" / "task-rigor-vectors.json"
 DOC_PATH = ROOT / "docs" / "ADAPTIVE_RIGOR.md"
 LIGHT_TEMPLATE_PATH = ROOT / "templates" / "LIGHT_TASK.template.md"
 
-VERSION = "0.3.0"
-REGISTRY_ID = "vocabulary:elad_task_rigor_profiles_0.3.0"
+VERSION = "0.4.0"
+REGISTRY_ID = "vocabulary:elad_task_rigor_profiles_0.4.0"
 REGISTRY_REPO_PATH = "spec/registries/task-rigor-profiles.json"
 PROFILES = ["light", "bounded", "evaluated", "assured"]
 RANK = {name: index for index, name in enumerate(PROFILES)}
@@ -248,7 +248,7 @@ def validate_registry(registry: dict[str, Any]) -> None:
 
 
 def validate_schema_contract(schema: dict[str, Any], registry: dict[str, Any]) -> None:
-    require(schema.get("$id") == "urn:elad:schema:task-rigor-decision:0.3.0", "E-SCHEMA-CONTRACT", "schema ID changed")
+    require(schema.get("$id") == "urn:elad:schema:task-rigor-decision:0.4.0", "E-SCHEMA-CONTRACT", "schema ID changed")
     require(schema.get("type") == "object" and schema.get("additionalProperties") is False, "E-SCHEMA-CONTRACT", "schema root is not closed")
     require(set(schema.get("required", [])) == DECISION_KEYS, "E-SCHEMA-CONTRACT", "schema required fields changed")
     properties = schema.get("properties", {})
@@ -612,7 +612,7 @@ def validate_vectors(vectors: dict[str, Any], template: dict[str, Any], registry
     }
     exact_object(vectors, keys, "task-rigor vectors")
     require(vectors["schemaVersion"] == VERSION, "E-VECTORS", "vector version changed")
-    require(vectors["vectorSetId"] == "vector-set:elad_task_rigor_0.3.0", "E-VECTORS", "vector-set identity changed")
+    require(vectors["vectorSetId"] == "vector-set:elad_task_rigor_0.4.0", "E-VECTORS", "vector-set identity changed")
     require(vectors["status"] == "reference_only" and vectors["authority"] == "none", "E-AUTHORITY", "vectors claim authority")
     positives = vectors["positiveCases"]
     negatives = vectors["negativeCases"]
@@ -701,7 +701,7 @@ def main() -> int:
         print(f"FAIL — {exc}", file=sys.stderr)
         return 1
     print(
-        "PASS — ELAD 0.3 adaptive-rigor core: "
+        "PASS — ELAD 0.4 adaptive-rigor core: "
         f"{len(PROFILES)} orthogonal task profiles, {positive_count} positive vectors, "
         f"{negative_count} malicious/contradictory vectors; true lightweight path retained. "
         "Advisory evidence selection only. No authority granted."

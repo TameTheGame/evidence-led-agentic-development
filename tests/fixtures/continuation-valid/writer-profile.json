@@ -1,10 +1,10 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "profileId": "writer:continuation_fixture_worker",
   "state": "qualified",
   "modelSubject": {
     "id": "model:synthetic_continuation_fixture",
-    "revision": "fixture-0.3.0",
+    "revision": "fixture-0.4.0",
     "artifactSha256": "E4586278E2489A2A3F4943ECCA1A367A57E86F0B1653A6B3F6A59BAF1A86F200",
     "artifactSha256NullReason": null
   },
@@ -13,38 +13,38 @@
     "runtime": {
       "id": "runtime:continuation_fixture",
       "path": "spec/schemas/writer-profile.schema.json",
-      "sha256": "9E3C9A18B9A47BB670BDC9E75D1404E4FA8589959D715C913706501741F0F0DE",
-      "schemaVersion": "0.3.0"
+      "sha256": "24BCD7160B15912FFCAC65966BEBECF9EB2E2039E561FB0F29F1BE9E4330CDA0",
+      "schemaVersion": "0.4.0"
     },
     "harness": {
       "id": "harness:continuation_fixture",
       "path": "spec/schemas/task-packet.schema.json",
-      "sha256": "0445EBC7A69CE73A8EF00EA2EB6B0AD6FB1E6921356E7CFD466444138E783B0A",
-      "schemaVersion": "0.3.0"
+      "sha256": "C1690F7CBF1345101985C4032780F00630FCC78013BEB5C0199444AAE39CEB83",
+      "schemaVersion": "0.4.0"
     },
     "adapter": {
       "id": "adapter:continuation_fixture",
       "path": "spec/schemas/worker-receipt.schema.json",
-      "sha256": "6CF9CBBCDD10A1B9B14A50730C62703A07B0F9E6C336FB53A665FF8BF972F2A6",
-      "schemaVersion": "0.3.0"
+      "sha256": "90C26035DD49417FD2DE1683C204FE4EBB6805700B04E353EED6198D650104BB",
+      "schemaVersion": "0.4.0"
     },
     "promptTemplate": {
       "id": "template:continuation_fixture_task_brief",
       "path": "templates/TASK_BRIEF.template.md",
       "sha256": "4397392247BF60B3A229FE09D3EE104108642D4D3C0DE4D8B54EBAF8CEA90F49",
-      "schemaVersion": "0.3.0"
+      "schemaVersion": "0.4.0"
     },
     "toolSchema": {
-      "id": "schema:task_packet_0.3.0",
+      "id": "schema:task_packet_0.4.0",
       "path": "spec/schemas/task-packet.schema.json",
-      "sha256": "0445EBC7A69CE73A8EF00EA2EB6B0AD6FB1E6921356E7CFD466444138E783B0A",
-      "schemaVersion": "0.3.0"
+      "sha256": "C1690F7CBF1345101985C4032780F00630FCC78013BEB5C0199444AAE39CEB83",
+      "schemaVersion": "0.4.0"
     },
     "protocolBundle": {
-      "id": "protocol:elad_0.3.0",
+      "id": "protocol:elad_0.4.0",
       "path": "blueprint.json",
-      "sha256": "FC49D794CAAE67445BC708B6219DD463352C3561A9E8F1DD7CE5CD1CA6707873",
-      "schemaVersion": "0.3.0"
+      "sha256": "34B0279DA8BE529C30B9FD927513A120553DB6AEE09255634605F3CE86ABDC90",
+      "schemaVersion": "0.4.0"
     }
   },
   "roles": [

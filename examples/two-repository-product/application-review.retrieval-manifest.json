@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "manifestId": "retrieval-manifest:synthetic_application_review",
   "state": "draft",
   "protocolBundle": {
-    "id": "protocol:elad_0.3.0",
+    "id": "protocol:elad_0.4.0",
     "path": "blueprint.json",
     "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-    "schemaVersion": "0.3.0"
+    "schemaVersion": "0.4.0"
   },
   "subject": {
     "repositoryId": "repo:synthetic_simulation_app",
@@ -16,13 +16,13 @@
       "id": "project:synthetic_simulation_app",
       "path": "examples/two-repository-product/simulation-app.profile.json",
       "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
-      "schemaVersion": "0.3.0"
+      "schemaVersion": "0.4.0"
     },
     "authority": {
       "id": "authority:synthetic_simulation_app",
       "path": "examples/two-repository-product/app.active-authority.json",
       "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-      "schemaVersion": "0.3.0"
+      "schemaVersion": "0.4.0"
     }
   },
   "framing": "elad-canonical-json-outer-sha256-v1",

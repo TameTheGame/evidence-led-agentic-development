@@ -1,37 +1,37 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "certificateId": "certificate:example_local_worker_unqualified",
   "state": "unqualified",
   "writerProfile": {
     "id": "writer:example_local_worker",
     "path": "templates/writer-profile.template.json",
     "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
-    "schemaVersion": "0.3.0"
+    "schemaVersion": "0.4.0"
   },
   "protocolBundle": {
-    "id": "protocol:elad_0.3.0",
+    "id": "protocol:elad_0.4.0",
     "path": "blueprint.json",
     "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-    "schemaVersion": "0.3.0"
+    "schemaVersion": "0.4.0"
   },
   "toolRegistry": {
     "id": "tool-registry:example_project",
     "path": "templates/tool-registry.template.json",
     "sha256": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
-    "schemaVersion": "0.3.0"
+    "schemaVersion": "0.4.0"
   },
   "evaluatorRegistry": {
     "id": "evaluator-registry:example_project",
     "path": "templates/evaluator-registry.template.json",
     "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "schemaVersion": "0.3.0"
+    "schemaVersion": "0.4.0"
   },
   "evaluationPack": {
     "reference": {
       "id": "evalpack:example_unrun",
       "path": "templates/EVALUATOR_CARD.template.md",
       "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
-      "schemaVersion": "0.3.0"
+      "schemaVersion": "0.4.0"
     },
     "positiveCases": 0,
     "negativeCases": 0,

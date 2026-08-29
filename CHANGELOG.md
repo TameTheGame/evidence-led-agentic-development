@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.4.0 — 2026-08-29
+
+- Promoted the complete normative protocol, authenticated bundle, conformance corpus,
+  and dependency-free validators to exact `0.4.0` identities. Existing `0.3.0`
+  adopters remain valid while pinned; adopting `0.4.0` requires an explicit repin and
+  claim-scoped revalidation of affected target-owned review-flow bindings.
 - Added lifecycle-cost proportionality, hard non-resetting review budgets, claim-scoped
   revalidation, Git-native tracked-artifact identity, and qualified local-first
   verification without adding a new schema or control platform.

@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "manifestId": "evidence-manifest:continuation_fixture_review",
   "state": "sealed",
   "protocolBundle": {
-    "id": "protocol:elad_0.3.0",
+    "id": "protocol:elad_0.4.0",
     "path": "blueprint.json",
-    "sha256": "FC49D794CAAE67445BC708B6219DD463352C3561A9E8F1DD7CE5CD1CA6707873",
-    "schemaVersion": "0.3.0"
+    "sha256": "34B0279DA8BE529C30B9FD927513A120553DB6AEE09255634605F3CE86ABDC90",
+    "schemaVersion": "0.4.0"
   },
   "subject": {
     "kind": "candidate",

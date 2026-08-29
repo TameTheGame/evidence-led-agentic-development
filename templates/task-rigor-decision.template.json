@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "decisionId": "rigor-decision:example_inert",
   "state": "template_inert",
   "authorityEffect": "none",
   "registry": {
-    "id": "vocabulary:elad_task_rigor_profiles_0.3.0",
+    "id": "vocabulary:elad_task_rigor_profiles_0.4.0",
     "path": "spec/registries/task-rigor-profiles.json",
     "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "schemaVersion": "0.3.0"
+    "schemaVersion": "0.4.0"
   },
   "loop": [
     {

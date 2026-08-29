@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:capability-certificate:0.3.0",
+  "$id": "urn:elad:schema:capability-certificate:0.4.0",
   "title": "Capability Certificate",
   "type": "object",
   "additionalProperties": false,
@@ -20,7 +20,7 @@
     "invalidationTriggers"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.3.0" },
+    "schemaVersion": { "const": "0.4.0" },
     "certificateId": { "type": "string", "pattern": "^certificate:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["unqualified", "shadow", "canary", "candidate_only", "qualified", "narrowed", "expired", "revoked"] },
     "writerProfile": { "$ref": "#/$defs/immutableReference" },

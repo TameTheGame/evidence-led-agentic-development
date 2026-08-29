@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:project-profile:0.3.0",
+  "$id": "urn:elad:schema:project-profile:0.4.0",
   "title": "Project Profile",
   "type": "object",
   "additionalProperties": false,
@@ -18,7 +18,7 @@
     "targetOperations"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.3.0" },
+    "schemaVersion": { "const": "0.4.0" },
     "profileId": { "type": "string", "pattern": "^project:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["template_inert", "inactive", "active", "superseded"] },
     "repositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },

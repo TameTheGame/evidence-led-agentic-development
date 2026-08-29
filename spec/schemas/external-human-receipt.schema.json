@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:external-human-receipt:0.3.0",
+  "$id": "urn:elad:schema:external-human-receipt:0.4.0",
   "title": "External Human Receipt",
   "type": "object",
   "additionalProperties": false,
@@ -23,7 +23,7 @@
     "supersedes"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.3.0" },
+    "schemaVersion": { "const": "0.4.0" },
     "receiptId": { "type": "string", "pattern": "^human-receipt:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["template_inert", "recorded", "superseded"] },
     "protocolBundle": { "$ref": "#/$defs/immutableReference" },

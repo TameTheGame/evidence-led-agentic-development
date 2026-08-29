@@ -2,7 +2,7 @@
 
 ## Current surface
 
-Version 0.3.0 is non-operational and dependency-free. It parses repository-local text
+Version 0.4.0 is non-operational and dependency-free. It parses repository-local text
 and JSON and runs in-memory controls. It has no network, provider, secret, target,
 mutation, lease, promotion, or publication surface.
 
@@ -42,9 +42,9 @@ mutation, lease, promotion, or publication surface.
 
 ## Supported versions
 
-Security corrections are accepted for the current `0.3.x` public release line. Older
-pre-release lines are historical and may receive documentation only when needed to avoid
-unsafe adoption.
+Security corrections are accepted for the current `0.4.x` public release line. Version
+`0.3.0` and older lines are historical and may receive documentation only when needed to
+avoid unsafe adoption.
 
 ## Reporting a concern
 

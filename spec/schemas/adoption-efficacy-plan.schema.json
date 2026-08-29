@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:adoption-efficacy-plan:0.3.0",
+  "$id": "urn:elad:schema:adoption-efficacy-plan:0.4.0",
   "title": "Adoption Efficacy Plan",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "planId", "state", "ownerRepositoryId", "authority", "projectProfile", "protocolBundle", "transition", "baseline", "candidateWindow", "metricDefinitions", "thresholds", "hardGuardrails", "exclusionRules", "missingDataPolicy", "decisionPolicy", "rollbackTarget", "simplificationTargets", "frozenAt", "approvedByOwner", "supersedes"],
   "properties": {
-    "schemaVersion": { "const": "0.3.0" },
+    "schemaVersion": { "const": "0.4.0" },
     "planId": { "type": "string", "pattern": "^efficacy-plan:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["template_inert", "draft", "frozen", "superseded"] },
     "ownerRepositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },

@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "0.3.0",
-  "registryId": "vocabulary:elad_task_rigor_profiles_0.3.0",
+  "schemaVersion": "0.4.0",
+  "registryId": "vocabulary:elad_task_rigor_profiles_0.4.0",
   "status": "reference_only",
   "authorityEffect": "none",
   "description": "Advisory claim-neutral evidence bases plus closed per-claim evaluator, claim-domain, and task-effect modules. They can constrain evidence expectations but can never grant mutation, evidence-acceptance, promotion, publication, or other target authority.",

@@ -61,7 +61,7 @@ and their limits.
 - **Adopting ELAD across a project:** use the
   [Adoption Runbook](docs/ADOPTION_RUNBOOK.md).
 - **Implementing the protocol:** begin with [Architecture](docs/ARCHITECTURE.md),
-  [Conformance](docs/PROTOCOL_030_CONFORMANCE.md), and the [manifest](MANIFEST.md).
+  [Conformance](docs/PROTOCOL_040_CONFORMANCE.md), and the [manifest](MANIFEST.md).
 - **Comparing local coding models or harnesses for repeated ELAD work:** read
   [Model and Harness Readiness Evaluation](docs/MODEL_HARNESS_READINESS_EVALUATION.md)
   and use the separately authorized
@@ -134,7 +134,7 @@ evaluators.
 | Repeated autonomous delegation | [Model and Harness Qualification](docs/MODEL_QUALIFICATION.md) |
 | A need to separate task rigor from project capability | [Maturity Model](docs/MATURITY_MODEL.md) |
 | Live, scarce, or overlapping target effects | [Architecture](docs/ARCHITECTURE.md) and [Threat Model](docs/THREAT_MODEL.md) |
-| Formal packets, receipts, or lifecycle implementation | [Conformance Contract](docs/PROTOCOL_030_CONFORMANCE.md) |
+| Formal packets, receipts, or lifecycle implementation | [Conformance Contract](docs/PROTOCOL_040_CONFORMANCE.md) |
 
 Stop reading when the next layer would not change the task, evidence, authority, or
 decision.

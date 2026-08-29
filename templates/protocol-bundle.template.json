@@ -1,8 +1,8 @@
 {
-  "schemaVersion": "0.3.0",
-  "bundleId": "protocol-bundle:elad_0.3.0_template",
-  "protocolId": "protocol:elad_0.3.0",
-  "version": "0.3.0",
+  "schemaVersion": "0.4.0",
+  "bundleId": "protocol-bundle:elad_0.4.0_template",
+  "protocolId": "protocol:elad_0.4.0",
+  "version": "0.4.0",
   "state": "template_inert",
   "framing": "elad-protocol-bundle-v1",
   "entries": []

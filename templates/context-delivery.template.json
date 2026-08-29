@@ -1,24 +1,24 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "bundleId": "context-delivery:example_read_only_review",
   "state": "template_inert",
   "protocolBundle": {
-    "id": "protocol-bundle:elad_0.3.0",
+    "id": "protocol-bundle:elad_0.4.0",
     "path": "automation/protocol/protocol-bundle.json",
     "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "schemaVersion": "0.3.0"
+    "schemaVersion": "0.4.0"
   },
   "packet": {
     "id": "packet:example_read_only_review",
     "path": "automation/packets/example-read-only-review.json",
     "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "schemaVersion": "0.3.0"
+    "schemaVersion": "0.4.0"
   },
   "retrievalManifest": {
     "id": "retrieval-manifest:example_read_only_review",
     "path": "automation/retrieval/example-read-only-review.json",
     "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "schemaVersion": "0.3.0"
+    "schemaVersion": "0.4.0"
   },
   "framing": "elad-model-visible-context-v1",
   "segments": [],

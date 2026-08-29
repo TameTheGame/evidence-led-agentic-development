@@ -1,6 +1,6 @@
 # Repository Manifest
 
-**Version:** 0.3.0
+**Version:** 0.4.0
 
 ## Read first
 
@@ -45,7 +45,7 @@
 | `docs/PATH_IDENTITY.md` | One portable repository-path grammar |
 | `docs/THREAT_MODEL.md` | Trust boundaries and failure modes |
 | `docs/RESEARCH_BASIS.md` | Andrew Ng source identities and methodology translation |
-| `docs/PROTOCOL_030_CONFORMANCE.md` | Exact Level 0 conformance claims and limits |
+| `docs/PROTOCOL_040_CONFORMANCE.md` | Exact Level 0 conformance claims and limits |
 | `docs/DECISIONS.md` | Durable protocol decisions |
 | `docs/LICENSING_AND_PROVENANCE.md` | Publication prerequisites |
 
@@ -59,7 +59,7 @@
 | `templates/LIGHT_TASK.template.md` | Optional small task card; existing issue/prompt may substitute |
 | `templates/BOUNDED_WORKER_PACKET.template.md` | Compact finite worker handoff; distinct from the assured JSON packet |
 | `tests/task-rigor-vectors.json` | Eleven positive and 37 malicious/contradictory cases, including per-claim evaluator and claim/effect decoupling |
-| `tools/validate_task_rigor_v030.py` | Dependency-free selector conformance |
+| `tools/validate_task_rigor_v040.py` | Dependency-free selector conformance |
 
 ## Draft schema contracts
 
@@ -91,7 +91,7 @@ not operational services.
 - `tool-registry.schema.json`
 - `evaluator-registry.schema.json`
 
-### Protocol 0.3 assurance modules
+### Protocol 0.4 assurance modules
 
 - `protocol-bundle.schema.json`
 - `core-lock.schema.json`
@@ -141,11 +141,11 @@ These are selective starting points. No adopter should copy all templates by def
 | `tools/Test-Blueprint.ps1` | Runs the six dependency-free validation slices |
 | `tools/validate_all.py` | Cross-platform Python entrypoint for all six slices |
 | `tools/validate_blueprint.py` | Main structural, path, lifecycle, continuation, and malicious checks |
-| `tools/validate_context_authority_v030.py` | Context/core-lock/maturity/authority semantics |
-| `tools/validate_protocol_security_v030.py` | Typed-reference, subject, evidence, and attack semantics |
-| `tools/validate_adoption_v030.py` | Qualification, resource, and efficacy semantics |
-| `tools/validate_task_rigor_v030.py` | Adaptive-rigor semantics |
-| `tools/validate_release_bundle_v030.py` | Explicit authenticated artifact inventory |
+| `tools/validate_context_authority_v040.py` | Context/core-lock/maturity/authority semantics |
+| `tools/validate_protocol_security_v040.py` | Typed-reference, subject, evidence, and attack semantics |
+| `tools/validate_adoption_v040.py` | Qualification, resource, and efficacy semantics |
+| `tools/validate_task_rigor_v040.py` | Adaptive-rigor semantics |
+| `tools/validate_release_bundle_v040.py` | Explicit authenticated artifact inventory |
 | `tools/build_level0_artifacts.py` | Deterministically refreshes inert registry bindings, synthetic fixture references, and release bundle |
 | `tests/path-vectors.json` | 122 portable-path cases |
 | `tests/receipt-lifecycle-vectors.json` | External 33-row closed-world table over 44,100 tuples |

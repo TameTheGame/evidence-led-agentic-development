@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:evidence-manifest:0.3.0",
+  "$id": "urn:elad:schema:evidence-manifest:0.4.0",
   "title": "Evidence Manifest",
   "type": "object",
   "additionalProperties": false,
@@ -17,7 +17,7 @@
     "supersedes"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.3.0" },
+    "schemaVersion": { "const": "0.4.0" },
     "manifestId": { "type": "string", "pattern": "^evidence-manifest:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["template_inert", "draft", "sealed", "superseded"] },
     "protocolBundle": { "$ref": "#/$defs/immutableReference" },

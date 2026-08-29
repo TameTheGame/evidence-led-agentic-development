@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "oracleId": "elad-worker-receipt-lifecycle-v1",
   "description": "Independent closed-world oracle for worker-receipt lifecycle admission. The validator must enumerate the complete domain cross-product and admit exactly the tuples listed in allowedRows; it must not reproduce these rows in code.",
   "dimensions": [

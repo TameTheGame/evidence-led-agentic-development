@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "anchorId": "continuation-anchor:continuation_fixture_review",
   "state": "trusted",
   "ownerRepositoryId": "repo:continuation_fixture",
   "receipt": {
     "id": "receipt:continuation_fixture_final",
     "path": "tests/fixtures/continuation-valid/receipt.final.json",
-    "sha256": "A5843BDBBE2BEAD5B4604843CA89766797345709D78E25E1744624E41D85F23A",
-    "schemaVersion": "0.3.0"
+    "sha256": "F8B2688207A15D467B15AA98CD7E9BBD2EE3C24D39E3AD460324AD60C888D3D5",
+    "schemaVersion": "0.4.0"
   },
   "createdAt": "2026-08-22T12:06:00Z",
   "supersedes": null,

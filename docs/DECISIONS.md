@@ -167,3 +167,25 @@ inference harnesses. Small semantic evaluation may use proportional generator sa
 a calibrated judge, one-factor causal iteration, and a stopping rule that neither ignores
 a failed designed discriminator nor chases perfect scores indefinitely. Model-judge
 evidence never becomes external-human acceptance.
+
+## ADR-0017 — Proportional assurance is a 0.4 compatibility boundary
+
+**Status:** accepted for Level-0 release in 0.4.0
+
+The lifecycle-cost invariant, hard non-resetting review budgets, causal claim-scoped
+revalidation, Git-native tracked-artifact identity, and qualified local-first routing
+materially change how ELAD selects and repeats assurance work. They therefore ship as
+Protocol 0.4 rather than remaining indefinitely under `Unreleased` while the normative
+artifacts still identify themselves as 0.3.
+
+The change is deliberately a compact policy correction, not a reusable-control registry,
+selection engine, vector framework, receipt expansion, or generic control platform. The
+existing schemas remain structurally the same, but every active protocol, schema,
+registry, vector, template, example, bundle, and validator identity is rebound to exact
+0.4.0 so mixed-version chains fail closed.
+
+A target pinned to 0.3.0 remains valid only against that exact release. Adopting 0.4.0
+requires an explicit repin and target-owned, claim-scoped revalidation of the affected
+review and learning flow; it grants no new target authority. The preserved integrated
+episode drafts remain non-normative 0.3 artifacts. Rollback is continued pinning to
+`v0.3.0`, not a mixed 0.3/0.4 chain.

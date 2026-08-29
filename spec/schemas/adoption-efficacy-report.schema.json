@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:adoption-efficacy-report:0.3.0",
+  "$id": "urn:elad:schema:adoption-efficacy-report:0.4.0",
   "title": "Adoption Efficacy Report",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "reportId", "state", "ownerRepositoryId", "authority", "plan", "protocolBundle", "candidateAdoptionIdentity", "candidateObservations", "recomputedBaselineAggregates", "candidateAggregates", "metricResults", "guardrailResults", "decision", "requiredActions", "evidenceManifest", "independentVerification", "startedAt", "completedAt", "supersedes"],
   "properties": {
-    "schemaVersion": { "const": "0.3.0" },
+    "schemaVersion": { "const": "0.4.0" },
     "reportId": { "type": "string", "pattern": "^efficacy-report:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["template_inert", "sealed", "superseded"] },
     "ownerRepositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },

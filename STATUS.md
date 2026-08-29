@@ -1,6 +1,6 @@
 # Status
 
-**Current version:** `0.3.0`
+**Current version:** `0.4.0`
 
 **Maturity:** Level 0 — Blueprint
 
@@ -9,7 +9,7 @@
 ## Current objective
 
 Maintain a clean, licensed, evidence-honest public Level-0 release of the adaptive,
-platform-neutral 0.3 blueprint. Publishing the blueprint activates no target repository,
+platform-neutral 0.4 blueprint. Publishing the blueprint activates no target repository,
 model, harness, runtime, evidence authority, promotion, or downstream publication.
 
 ## Completed surfaces
@@ -61,14 +61,21 @@ made lifecycle comparison genuinely differential, added adaptive rigor and a rea
 path, and demoted the integrated episode artifacts to non-normative drafts because no
 semantic composition validator supports an assured claim.
 
+Version 0.4 makes the later proportional-review correction an explicit compatibility
+boundary. It adds a governing lifecycle-cost invariant, hard non-resetting assurance
+budgets, causal claim-scoped revalidation, Git-native tracked-artifact identity, and
+qualified local-first routing without adding a registry, selector engine, or generic
+control platform.
+
 ## Historical baselines
 
 - `0.1.0`: initial Level-0 design that exposed authority and evidence-contract defects.
 - `0.2.0`: green hardened protocol baseline and compatibility predecessor to 0.3.
+- `0.3.0`: first clean public release and compatibility predecessor to 0.4.
 
 The private development history is not part of the public repository. Its initial branch
-starts from the verified sanitized 0.3 tree, while the earlier design lineage remains
-private.
+starts from the verified sanitized 0.3 tree; the public 0.4 line advances only that clean
+history, while the earlier design lineage remains private.
 
 ## Not implemented or authorized
 

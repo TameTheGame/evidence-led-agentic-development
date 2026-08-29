@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:task-rigor-decision:0.3.0",
+  "$id": "urn:elad:schema:task-rigor-decision:0.4.0",
   "title": "Task Rigor Decision",
   "description": "Optional advisory selection of the minimum evidence posture for one task. It grants no target authority.",
   "type": "object",
@@ -26,7 +26,7 @@
   ],
   "properties": {
     "schemaVersion": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "decisionId": {
       "type": "string",
@@ -243,7 +243,7 @@
       "required": ["id", "path", "sha256", "schemaVersion"],
       "properties": {
         "id": {
-          "const": "vocabulary:elad_task_rigor_profiles_0.3.0"
+          "const": "vocabulary:elad_task_rigor_profiles_0.4.0"
         },
         "path": {
           "const": "spec/registries/task-rigor-profiles.json"
@@ -252,7 +252,7 @@
           "$ref": "#/$defs/sha256"
         },
         "schemaVersion": {
-          "const": "0.3.0"
+          "const": "0.4.0"
         }
       }
     },

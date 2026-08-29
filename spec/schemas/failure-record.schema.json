@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:failure-record:0.3.0",
+  "$id": "urn:elad:schema:failure-record:0.4.0",
   "title": "Reviewed Failure Record",
   "type": "object",
   "additionalProperties": false,
@@ -22,7 +22,7 @@
     "reviewedBy"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.3.0" },
+    "schemaVersion": { "const": "0.4.0" },
     "failureId": { "type": "string", "pattern": "^failure:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["template_inert", "open", "resolved", "superseded"] },
     "fingerprint": { "type": "string", "minLength": 1 },

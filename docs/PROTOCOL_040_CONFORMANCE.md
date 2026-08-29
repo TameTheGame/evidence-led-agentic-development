@@ -1,17 +1,19 @@
-# Protocol 0.3 Conformance Contract
+# Protocol 0.4 Conformance Contract
 
-Protocol 0.3 is a breaking Level 0 correction to the Evidence-Led Agentic Development
+Protocol 0.4 is a versioned Level 0 evolution of the Evidence-Led Agentic Development
 blueprint. It is a platform-neutral reference contract and conformance corpus—not a live
 controller, approval service, model runner, target adapter, lease backend, evidence
 authority, promotion service, or proof that any real model/harness is qualified.
 
-The frozen 0.2 commit remains historical evidence. A target pinned to 0.2 must explicitly
-adopt 0.3 and rerun the target-owned checks affected by the change. Mixed protocol chains
-are denied.
+The frozen `v0.3.0` release remains the compatibility predecessor. A target pinned to
+0.3 remains bound to that exact protocol; adopting 0.4 requires an explicit repin and
+rerunning the target-owned checks affected by the changed review-flow contract. Mixed
+protocol chains are denied. The preserved non-normative episode drafts remain identified
+as 0.3 historical artifacts and are not part of the 0.4 authenticated bundle.
 
-## The central 0.3 correction
+## The central 0.4 correction
 
-Version 0.3 separates three orthogonal decisions:
+Version 0.4 retains three orthogonal decisions:
 
 1. **Project capability maturity:** the maximum infrastructure/effects the target has
    empirically proven.
@@ -24,6 +26,16 @@ Version 0.3 separates three orthogonal decisions:
 A maturity level never forces maximum per-task ceremony. A rigor decision never grants
 authority. A model certificate never overrides the target.
 
+Within that separation, assurance must minimize expected lifecycle cost while still
+meeting the claim's acceptance threshold. Quick review permits at most one critic pass;
+standard review permits one complete review/correction cycle; high assurance permits at
+most two. Corrections consume the current budget, and candidate creation, renaming, or
+reframing never resets it. Extra cycles require either high-consequence uncertainty plus
+new objective evidence or fresh owner authorization after cost and expected benefit are
+reported. A correction invalidates only the claims and evidence in its causal footprint;
+ordinary tracked artifacts use Git identity and clean/dirty state, and qualified local
+checks are preferred when they can answer the claim reliably.
+
 ## What the strict assurance modules protect
 
 The optional `assured` protocol retains strong controls for cross-context,
@@ -33,7 +45,7 @@ high-consequence autonomy:
    owner-local workflow, profile, policy, exact qualified scope, tools/evaluators,
    requested effects, and any required writer lease.
 2. **Maturity constrains effects.** Promotion and publication remain unavailable in the
-   executable 0.3 reference because no reviewed contract exists for either.
+   executable 0.4 reference because no reviewed contract exists for either.
 3. **Context means delivered bytes.** Source identity, delivery bytes, ordered
    model-visible segments, and bounded context continuation are distinct authenticated
    records when strict context proof is required.
@@ -48,7 +60,7 @@ high-consequence autonomy:
    sealed review bundle and eligible reviewer.
 
 These records are conditional. There is no normative integrated `assured` episode
-contract in 0.3: the preserved schema/template are non-normative drafts because structural
+contract in 0.4: the preserved schema/template are non-normative drafts because structural
 validity does not prove cross-component semantic admission. They are not a universal task
 format or conformance evidence.
 
@@ -90,7 +102,7 @@ The external receipt transition table contains 33 admitted rows across seven dim
 whose full Cartesian product is 44,100 tuples. The number describes exhaustive
 closed-world negative space, not 44,100 realistic authored scenarios.
 
-Version 0.3 implements a separate rules-derived admission predicate that does not read
+Version 0.4 retains a separate rules-derived admission predicate that does not read
 the table, compares both verdicts over every tuple, and uses focused vectors for claim
 aggregate semantics, all 15 unique admitted shapes, and single-field denials across all
 seven dimensions. This is cheap reusable protocol conformance. It applies only to formal
@@ -144,7 +156,7 @@ empirical gates. Unrun is not failed, but it is never passed by inference.
 
 ## Release conditions
 
-Protocol 0.3 may be called a reviewed Level 0 blueprint only when:
+Protocol 0.4 may be called a reviewed Level 0 blueprint only when:
 
 1. the explicit normative inventory is authenticated by the release bundle;
 2. templates remain inert and examples remain synthetic;

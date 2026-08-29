@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:data-policy:0.3.0",
+  "$id": "urn:elad:schema:data-policy:0.4.0",
   "title": "Data Policy",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "policyId", "state", "owner", "classes"],
   "properties": {
-    "schemaVersion": { "const": "0.3.0" },
+    "schemaVersion": { "const": "0.4.0" },
     "policyId": { "type": "string", "pattern": "^data-policy:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["template_inert", "inactive", "active", "superseded"] },
     "owner": { "type": "string", "minLength": 1 },

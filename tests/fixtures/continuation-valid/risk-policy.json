@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "policyId": "risk-policy:continuation_fixture",
   "state": "active",
   "owner": "human:continuation_fixture_owner",

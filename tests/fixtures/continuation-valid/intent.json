@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "intentId": "intent:continuation_fixture_review",
   "state": "accepted",
   "outcome": "Verify one synthetic read-only candidate and preserve a transcript-free human closure.",

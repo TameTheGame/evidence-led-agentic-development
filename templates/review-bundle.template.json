@@ -1,24 +1,24 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "bundleId": "review-bundle:example_summary_review",
   "state": "template_inert",
   "protocolBundle": {
-    "id": "protocol:elad_0.3.0",
+    "id": "protocol:elad_0.4.0",
     "path": "blueprint.json",
     "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-    "schemaVersion": "0.3.0"
+    "schemaVersion": "0.4.0"
   },
   "packet": {
     "id": "packet:example_read_only_review",
     "path": "templates/task-packet.template.json",
     "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
-    "schemaVersion": "0.3.0"
+    "schemaVersion": "0.4.0"
   },
   "evidenceManifest": {
     "id": "evidence-manifest:example_read_only_review",
     "path": "templates/evidence-manifest.template.json",
     "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
-    "schemaVersion": "0.3.0"
+    "schemaVersion": "0.4.0"
   },
   "candidate": {
     "candidateState": "unchanged",

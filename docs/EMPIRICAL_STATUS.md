@@ -25,6 +25,11 @@ A green run establishes conformance of those inert artifacts and synthetic cases
 not establish a live model, target adapter, runtime, operating-system matrix, human
 decision, project outcome, or safety property outside the checked contracts.
 
+Version 0.4 rebinds the active normative inventory and validators to exact 0.4 identities
+and adds focused integrity checks for the proportional-review policy. It adds no new
+reference-project experiment and does not upgrade the empirical claims below; those
+observations remain historical results against their frozen 0.3.0 baseline.
+
 ## Empirical reference-project results
 
 A separate Python repository-inventory CLI was used for four bounded experiments

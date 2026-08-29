@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:typed-reference:0.3.0",
+  "$id": "urn:elad:schema:typed-reference:0.4.0",
   "title": "Typed Immutable Reference",
   "description": "A provider-neutral reference to canonical JSON or exact raw bytes. This record grants no authority.",
   "type": "object",
@@ -76,7 +76,7 @@
       "pattern": "^[A-F0-9]{64}$"
     },
     "schemaVersion": {
-      "const": "0.3.0"
+      "const": "0.4.0"
     },
     "digestMode": {
       "enum": [

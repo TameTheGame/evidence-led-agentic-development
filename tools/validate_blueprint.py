@@ -32,7 +32,7 @@ WRITER_RE = re.compile(r"^writer:[a-z0-9][a-z0-9._-]*$")
 MARKDOWN_LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 PATH_PATTERN_SOURCE = "spec/schemas/task-packet.schema.json"
 FIXTURE_ROOT = "tests/fixtures/continuation-valid"
-TRUSTED_CONTINUATION_ANCHOR_SHA256 = "1C59765D0C93ABDED658FA7EA33C8074C9715B3658BD6A77405066AB42D1FC57"
+TRUSTED_CONTINUATION_ANCHOR_SHA256 = "4BFB739CDE9D77D0B174F389AC37D73069EB93EBDD8889077159F3832B66CB1F"
 _PATH_RE: re.Pattern[str] | None = None
 
 
@@ -198,13 +198,13 @@ def resolve_outer_reference(reference: Any, id_field: str, label: str) -> dict[s
 
 def load_canonical_registries(blueprint: dict[str, Any]) -> dict[str, dict[str, Any]]:
     expected = {
-        "roles": ("registryId", "vocabulary:elad_roles_0.3.0"),
-        "evidenceClasses": ("registryId", "vocabulary:elad_evidence_classes_0.3.0"),
-        "terminalStatuses": ("registryId", "vocabulary:elad_terminal_statuses_0.3.0"),
-        "failureClasses": ("registryId", "vocabulary:elad_failure_classes_0.3.0"),
-        "maturityCeilings": ("registryId", "vocabulary:elad_maturity_ceilings_0.3.0"),
-        "subjectSelectors": ("registryId", "vocabulary:elad_subject_selectors_0.3.0"),
-        "taskRigorProfiles": ("registryId", "vocabulary:elad_task_rigor_profiles_0.3.0"),
+        "roles": ("registryId", "vocabulary:elad_roles_0.4.0"),
+        "evidenceClasses": ("registryId", "vocabulary:elad_evidence_classes_0.4.0"),
+        "terminalStatuses": ("registryId", "vocabulary:elad_terminal_statuses_0.4.0"),
+        "failureClasses": ("registryId", "vocabulary:elad_failure_classes_0.4.0"),
+        "maturityCeilings": ("registryId", "vocabulary:elad_maturity_ceilings_0.4.0"),
+        "subjectSelectors": ("registryId", "vocabulary:elad_subject_selectors_0.4.0"),
+        "taskRigorProfiles": ("registryId", "vocabulary:elad_task_rigor_profiles_0.4.0"),
     }
     bindings = blueprint.get("canonicalRegistries")
     require(isinstance(bindings, dict) and set(bindings) == set(expected), "blueprint canonical-registry bindings are incomplete or extra")
@@ -757,7 +757,7 @@ def validate_lifecycle_semantic_vectors(oracle: dict[str, Any]) -> tuple[int, in
         set(vectors) == {"schemaVersion", "vectorSetId", "description", "claimAggregateVectors", "lifecycleVectors"},
         "lifecycle semantic-vector file is incomplete or extra",
     )
-    require(vectors.get("schemaVersion") == "0.3.0", "lifecycle semantic vectors use the wrong schema version")
+    require(vectors.get("schemaVersion") == "0.4.0", "lifecycle semantic vectors use the wrong schema version")
     require(vectors.get("vectorSetId") == "elad-lifecycle-semantics-v1", "unknown lifecycle semantic-vector set")
 
     claim_vectors = vectors.get("claimAggregateVectors")
@@ -1711,7 +1711,7 @@ def validate_schema_instances() -> int:
         ("templates/worker-receipt.template.json", "worker-receipt.schema.json"),
         ("templates/writer-profile.template.json", "writer-profile.schema.json"),
     ]
-    require(len(template_pairs) == 29, "every normative 0.3.0 schema must have one template pair")
+    require(len(template_pairs) == 29, "every normative 0.4.0 schema must have one template pair")
     require(
         {schema_name for _, schema_name in template_pairs}
         == {path.name for path in (ROOT / "spec" / "schemas").glob("*.schema.json")},
@@ -2209,7 +2209,7 @@ def run_negative_controls(
     controls.append(("manifest altered bytes", lambda: validate_manifest_bytes(byte_manifest, altered_payload, "byte fixture")))
 
     outer_document = {
-        "schemaVersion": "0.3.0",
+        "schemaVersion": "0.4.0",
         "manifestId": "evidence-manifest:outer_test",
         "entries": [],
     }
@@ -2217,7 +2217,7 @@ def run_negative_controls(
         "id": "evidence-manifest:outer_test",
         "path": "evidence/outer-test.json",
         "sha256": canonical_sha256(outer_document),
-        "schemaVersion": "0.3.0",
+        "schemaVersion": "0.4.0",
     }
     validate_outer_reference(outer_reference, outer_document, "manifestId", "outer-envelope fixture")
     bad_outer = copy.deepcopy(outer_reference)

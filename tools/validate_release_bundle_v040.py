@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the exact inert ELAD 0.3 normative protocol bundle."""
+"""Validate the exact inert ELAD 0.4 normative protocol bundle."""
 
 from __future__ import annotations
 
@@ -26,9 +26,9 @@ def main() -> int:
     try:
         bundle = json.loads((ROOT / "protocol-bundle.json").read_text(encoding="utf-8"))
         blueprint = json.loads((ROOT / "blueprint.json").read_text(encoding="utf-8"))
-        deny(bundle.get("schemaVersion") == bundle.get("version") == "0.3.0", "bundle version mismatch")
-        deny(bundle.get("bundleId") == "protocol-bundle:elad_0.3.0", "bundle identity mismatch")
-        deny(bundle.get("protocolId") == blueprint.get("protocolId") == "protocol:elad_0.3.0", "protocol identity mismatch")
+        deny(bundle.get("schemaVersion") == bundle.get("version") == "0.4.0", "bundle version mismatch")
+        deny(bundle.get("bundleId") == "protocol-bundle:elad_0.4.0", "bundle identity mismatch")
+        deny(bundle.get("protocolId") == blueprint.get("protocolId") == "protocol:elad_0.4.0", "protocol identity mismatch")
         deny(bundle.get("state") == blueprint.get("status") == "reference_only", "bundle or blueprint is not reference-only")
         deny(bundle.get("framing") == "elad-protocol-bundle-v1", "bundle framing mismatch")
 
@@ -94,7 +94,7 @@ def main() -> int:
         deny(blueprint.get("maturity") == {"level": 0, "name": "Blueprint"}, "blueprint is not Level 0")
         deny(authority.get("default") == "deny" and authority.get("operational") is False, "blueprint authority is not deny/non-operational")
         deny(not any(value for key, value in authority.items() if key.startswith("issues")), "blueprint issues authority")
-        print(f"PASS — ELAD 0.3 release bundle authenticates {len(entries)} normative artifacts; Level-0 reference only, no self-entry, no authority granted.")
+        print(f"PASS — ELAD 0.4 release bundle authenticates {len(entries)} normative artifacts; Level-0 reference only, no self-entry, no authority granted.")
         return 0
     except Exception as exc:
         print(f"FAIL — {exc}", file=sys.stderr)

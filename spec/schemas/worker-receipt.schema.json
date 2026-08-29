@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:worker-receipt:0.3.0",
+  "$id": "urn:elad:schema:worker-receipt:0.4.0",
   "title": "Worker Receipt",
   "type": "object",
   "additionalProperties": false,
@@ -30,7 +30,7 @@
     "requestedNextAction"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.3.0" },
+    "schemaVersion": { "const": "0.4.0" },
     "receiptId": { "type": "string", "pattern": "^receipt:[a-z0-9][a-z0-9._-]*$" },
     "recordState": { "enum": ["template_inert", "sealed"] },
     "recordedAt": { "type": ["string", "null"], "format": "date-time" },

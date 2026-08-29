@@ -131,7 +131,7 @@ durable data, production, promotion, or publication.
 
 Full assured packets and formal receipts belong here when exact identity and auditable
 closure matter. Their implementation is described in the [protocol conformance
-reference](PROTOCOL_030_CONFORMANCE.md).
+reference](PROTOCOL_040_CONFORMANCE.md).
 
 ## 7. Measure whether the method is helping
 

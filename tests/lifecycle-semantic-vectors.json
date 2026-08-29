@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "vectorSetId": "elad-lifecycle-semantics-v1",
   "description": "External examples for claim aggregation and lifecycle admission. Shape rows state representative allowed behavior; mutation rows change exactly one field of an allowed shape and must fail closed.",
   "claimAggregateVectors": [

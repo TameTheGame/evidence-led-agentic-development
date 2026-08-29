@@ -1,50 +1,50 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "profileId": "project:continuation_fixture",
   "state": "active",
   "repositoryId": "repo:continuation_fixture",
   "protocolBundle": {
-    "id": "protocol:elad_0.3.0",
+    "id": "protocol:elad_0.4.0",
     "path": "blueprint.json",
-    "sha256": "FC49D794CAAE67445BC708B6219DD463352C3561A9E8F1DD7CE5CD1CA6707873",
-    "schemaVersion": "0.3.0"
+    "sha256": "34B0279DA8BE529C30B9FD927513A120553DB6AEE09255634605F3CE86ABDC90",
+    "schemaVersion": "0.4.0"
   },
   "authority": {
     "id": "authority:continuation_fixture",
     "path": "tests/fixtures/continuation-valid/authority.json",
-    "sha256": "DD9C7080AC12D31CBF8D10996DA6BE74B95439E5339D0B01956452C807ECE537",
-    "schemaVersion": "0.3.0"
+    "sha256": "4B79D75BBE31687DD2A13BC85B33D4D6A334EECC9D7DB72698F50DBE560BB578",
+    "schemaVersion": "0.4.0"
   },
   "policyBindings": {
     "risk": {
       "id": "risk-policy:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/risk-policy.json",
-      "sha256": "30056E651848A91CA7E6ED04669861015A8B8E8262B241621C060DFA634BFF17",
-      "schemaVersion": "0.3.0"
+      "sha256": "C77374A77FD2DD88F6F8F6E2CF0E59E83AD05549C379A04E635A63BC5391EA2D",
+      "schemaVersion": "0.4.0"
     },
     "data": {
       "id": "data-policy:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/data-policy.json",
-      "sha256": "68E5508A3932AA1871E14772DC867D1F4256B9D41D119BEA4E57CE707CE37E57",
-      "schemaVersion": "0.3.0"
+      "sha256": "AD53364FD7379933508218632DBDC153D372CA1591DA6767392B08825D9E5379",
+      "schemaVersion": "0.4.0"
     },
     "evidence": {
       "id": "evidence-policy:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/evidence-policy.json",
-      "sha256": "C9F7A473A88B58B020759BC258BF4A996938EEF4723EF4FA2A7E121537D29901",
-      "schemaVersion": "0.3.0"
+      "sha256": "D649269E16D84D2F92D8A7ACEE77812F7A88AAC6B9895DDE45D671BEE5D63611",
+      "schemaVersion": "0.4.0"
     },
     "toolRegistry": {
       "id": "tool-registry:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/tool-registry.json",
-      "sha256": "C1AFCC8BE8595DB6586FB38BFE36B4CA6DC97847AA1E6C5B9DFC1706C5B0884B",
-      "schemaVersion": "0.3.0"
+      "sha256": "E1926A9A3F891AE2AE3C8BFBBDA1459A14CAB2A90E47AD8A27B9789E1A1D88A1",
+      "schemaVersion": "0.4.0"
     },
     "evaluatorRegistry": {
       "id": "evaluator-registry:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/evaluator-registry.json",
-      "sha256": "4E7D7DD95264144FD62F74C70A17FB17F5E1FE7216DBF45A88E979A5D7B1C604",
-      "schemaVersion": "0.3.0"
+      "sha256": "A83459DF14EC540CB2E3921F6FD7A00D5A2CAB0363D3906D4EBFD19D8548B7F2",
+      "schemaVersion": "0.4.0"
     }
   },
   "artifactLanes": [

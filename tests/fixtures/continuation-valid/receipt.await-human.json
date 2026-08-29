@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "receiptId": "receipt:continuation_fixture_await_human",
   "recordState": "sealed",
   "recordedAt": "2026-08-22T12:03:30Z",
@@ -7,63 +7,63 @@
   "packet": {
     "id": "packet:continuation_fixture_review",
     "path": "tests/fixtures/continuation-valid/packet.json",
-    "sha256": "1E5235A0DECE5998E3FCAF3A4807A5D00A09CE57922FE40E4EB6A33E3793DE11",
-    "schemaVersion": "0.3.0"
+    "sha256": "AF40C5C88F77686F1764E91E8440DDF94A7E524A97DAAF18E89F172E76065A13",
+    "schemaVersion": "0.4.0"
   },
   "bindings": {
     "protocolBundle": {
-      "id": "protocol:elad_0.3.0",
+      "id": "protocol:elad_0.4.0",
       "path": "blueprint.json",
-      "sha256": "FC49D794CAAE67445BC708B6219DD463352C3561A9E8F1DD7CE5CD1CA6707873",
-      "schemaVersion": "0.3.0"
+      "sha256": "34B0279DA8BE529C30B9FD927513A120553DB6AEE09255634605F3CE86ABDC90",
+      "schemaVersion": "0.4.0"
     },
     "intent": {
       "id": "intent:continuation_fixture_review",
       "path": "tests/fixtures/continuation-valid/intent.json",
-      "sha256": "A973BAF47CA1E273BD62F18D56C366AC5E954BAE054BD9975C9015B4DBD1D1BB",
-      "schemaVersion": "0.3.0"
+      "sha256": "529426DF70F218FFA4745E9D3545093CE9BF220A9DB17863D09D212E6813C287",
+      "schemaVersion": "0.4.0"
     },
     "projectProfile": {
       "id": "project:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/project-profile.json",
-      "sha256": "69A4A0375AF2B74B74601F5A133D422A2E7B5FAD9E428B85001C9EAC249AA1B7",
-      "schemaVersion": "0.3.0"
+      "sha256": "4CA30577B439DDE9E5B8945CBCAE71C2E61C05BC5ADAC525489BDB238DF4C0A4",
+      "schemaVersion": "0.4.0"
     },
     "authority": {
       "id": "authority:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/authority.json",
-      "sha256": "DD9C7080AC12D31CBF8D10996DA6BE74B95439E5339D0B01956452C807ECE537",
-      "schemaVersion": "0.3.0"
+      "sha256": "4B79D75BBE31687DD2A13BC85B33D4D6A334EECC9D7DB72698F50DBE560BB578",
+      "schemaVersion": "0.4.0"
     },
     "riskPolicy": {
       "id": "risk-policy:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/risk-policy.json",
-      "sha256": "30056E651848A91CA7E6ED04669861015A8B8E8262B241621C060DFA634BFF17",
-      "schemaVersion": "0.3.0"
+      "sha256": "C77374A77FD2DD88F6F8F6E2CF0E59E83AD05549C379A04E635A63BC5391EA2D",
+      "schemaVersion": "0.4.0"
     },
     "dataPolicy": {
       "id": "data-policy:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/data-policy.json",
-      "sha256": "68E5508A3932AA1871E14772DC867D1F4256B9D41D119BEA4E57CE707CE37E57",
-      "schemaVersion": "0.3.0"
+      "sha256": "AD53364FD7379933508218632DBDC153D372CA1591DA6767392B08825D9E5379",
+      "schemaVersion": "0.4.0"
     },
     "evidencePolicy": {
       "id": "evidence-policy:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/evidence-policy.json",
-      "sha256": "C9F7A473A88B58B020759BC258BF4A996938EEF4723EF4FA2A7E121537D29901",
-      "schemaVersion": "0.3.0"
+      "sha256": "D649269E16D84D2F92D8A7ACEE77812F7A88AAC6B9895DDE45D671BEE5D63611",
+      "schemaVersion": "0.4.0"
     },
     "toolRegistry": {
       "id": "tool-registry:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/tool-registry.json",
-      "sha256": "C1AFCC8BE8595DB6586FB38BFE36B4CA6DC97847AA1E6C5B9DFC1706C5B0884B",
-      "schemaVersion": "0.3.0"
+      "sha256": "E1926A9A3F891AE2AE3C8BFBBDA1459A14CAB2A90E47AD8A27B9789E1A1D88A1",
+      "schemaVersion": "0.4.0"
     },
     "evaluatorRegistry": {
       "id": "evaluator-registry:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/evaluator-registry.json",
-      "sha256": "4E7D7DD95264144FD62F74C70A17FB17F5E1FE7216DBF45A88E979A5D7B1C604",
-      "schemaVersion": "0.3.0"
+      "sha256": "A83459DF14EC540CB2E3921F6FD7A00D5A2CAB0363D3906D4EBFD19D8548B7F2",
+      "schemaVersion": "0.4.0"
     }
   },
   "riskClass": "low",
@@ -77,14 +77,14 @@
     "profile": {
       "id": "writer:continuation_fixture_worker",
       "path": "tests/fixtures/continuation-valid/writer-profile.json",
-      "sha256": "764C94BB323004144C48B3C8FC2F96CBB9481C928939965396B061D4F78967CB",
-      "schemaVersion": "0.3.0"
+      "sha256": "4AC473FCCAF3988BD65DDEAD5A557BF2A6077A1555F6A8A8701D9AC6D8635E30",
+      "schemaVersion": "0.4.0"
     },
     "certificate": {
       "id": "certificate:continuation_fixture_worker",
       "path": "tests/fixtures/continuation-valid/capability-certificate.json",
-      "sha256": "5E8DB4E2EF27DCA79FA474862F2794AEDF5F12E3C47000F5311B4424B7F2E8BD",
-      "schemaVersion": "0.3.0"
+      "sha256": "5D51023FD9BD62E46EA8C53DD0708F1C917E276D68385D14E3A97CB7A3C6D72C",
+      "schemaVersion": "0.4.0"
     }
   },
   "terminalStatus": "COMPLETE",
@@ -136,8 +136,8 @@
   "evidenceManifest": {
     "id": "evidence-manifest:continuation_fixture_review",
     "path": "tests/fixtures/continuation-valid/evidence-manifest.json",
-    "sha256": "BFADFE0D814B67C21B7CC0ECFC0C167C1C64A9AA06CB97BEACAEF1E3ACDAABC6",
-    "schemaVersion": "0.3.0"
+    "sha256": "B08BC436308A4E06A8156645B0493D38A7A097ADEF23C1A2B6CB0C9120E1F1D1",
+    "schemaVersion": "0.4.0"
   },
   "openHumanClaims": [
     "claim:continuation_fixture_is_useful"

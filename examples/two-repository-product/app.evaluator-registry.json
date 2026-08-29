@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "registryId": "evaluator-registry:synthetic_simulation_app",
   "state": "inactive",
   "ownerRepositoryId": "repo:synthetic_simulation_app",
   "protocolBundle": {
-    "id": "protocol:elad_0.3.0",
+    "id": "protocol:elad_0.4.0",
     "path": "blueprint.json",
     "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-    "schemaVersion": "0.3.0"
+    "schemaVersion": "0.4.0"
   },
   "evaluators": [
     {
@@ -17,7 +17,7 @@
         "id": "evaluator-definition:synthetic_scope_check",
         "path": "templates/EVALUATOR_CARD.template.md",
         "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
-        "schemaVersion": "0.3.0"
+        "schemaVersion": "0.4.0"
       },
       "taskFamilies": [
         "read_only_contract_review"

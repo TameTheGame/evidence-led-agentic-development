@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "anchorId": "continuation-anchor:example_read_only_review",
   "state": "template_inert",
   "ownerRepositoryId": "repo:example_project",
@@ -7,7 +7,7 @@
     "id": "receipt:example_read_only_review",
     "path": "templates/worker-receipt.template.json",
     "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
-    "schemaVersion": "0.3.0"
+    "schemaVersion": "0.4.0"
   },
   "createdAt": null,
   "supersedes": null,

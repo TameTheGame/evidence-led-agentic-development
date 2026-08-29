@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "0.3.0",
-  "registryId": "vocabulary:elad_subject_selectors_0.3.0",
+  "schemaVersion": "0.4.0",
+  "registryId": "vocabulary:elad_subject_selectors_0.4.0",
   "status": "reference_only",
   "authority": "none",
   "closed": true,
