@@ -7,6 +7,10 @@ them worthwhile.
 
 > Scope and authority are mandatory; ceremony is proportional.
 
+Select Direct primary-agent delivery or explicit Conserve routing through
+[Operating Modes](OPERATING_MODES.md). This choice is independent of rigor; constrained
+worker packaging applies when that route is selected.
+
 Begin with the target project's actual rules. If authority is missing or contradictory,
 stop and ask the owner. ELAD never supplies permission that the project has not granted.
 

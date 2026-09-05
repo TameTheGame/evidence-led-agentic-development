@@ -1,5 +1,21 @@
 # Decisions
 
+## ADR-0018 — Delivery mode is separate from rigor
+
+**Status:** accepted for Level 0 guidance on 2026-09-05; unreleased source change
+
+[Operating Modes](OPERATING_MODES.md) is the canonical delivery-mode policy. Direct
+supports capable primary-agent completion inside existing scope, including light and
+bounded source tasks. Conserve explicitly routes bounded work to an eligible cheaper
+or local subject. Logical roles do not require a separate agent per role, and
+constrained-worker packaging applies to selected delegates.
+
+This supersedes blanket local-first routing in current guidance while retaining review
+budgets, claim-scoped revalidation, qualification for repeated autonomy, and actual effect
+boundaries. Historical release claims and runtime evidence remain historical. No schema,
+selector engine, version bump, target repin, runtime activation, or publication follows.
+The dated research note supplies design motivation, not comparative efficacy evidence.
+
 ## ADR-0001 — Evidence-led mission
 
 **Status:** accepted for Level 0

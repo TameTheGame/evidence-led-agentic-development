@@ -45,7 +45,7 @@ guidance for ELAD is:
 | Iterate from examples and errors | Build/observe/evaluate/error-analysis loop; first-causal-failure classification; next-smallest experiment |
 | Vary evaluation by project and stage | Orthogonal `light`, `bounded`, `evaluated`, and `assured` task profiles |
 | Choose code/workflow/agent deliberately | Least-adaptive-reliable routing and explicit delegation |
-| Manage agent context | Precompiled worker slices, file-backed traces, compact orchestrator receipts |
+| Manage agent context | Task-selected reading; precompiled slices and compact receipts for selected constrained workers |
 | Understand model limits | Exact model+harness subjects and empirical qualification for repeated autonomy |
 | Evaluation-driven development | Existing deterministic tests, runtime probes, frozen eval sets, calibrated semantic judges, adversarial review, human judgment |
 | Evaluate evaluators | Reusable calibration receipts, counterexamples, holdouts, drift-triggered reruns |
@@ -73,3 +73,27 @@ The blueprint also applied the iterative method to itself:
 ML training and serving are not inherent requirements for adopting ELAD. They become
 relevant when a project fine-tunes workers, builds representative datasets, measures
 variance, or operates model infrastructure.
+
+## Astra adoption note (2026-09-05)
+
+Non-normative, source-checked on 2026-09-05. OpenAI's
+[GPT-6 Astra guidance](https://developers.openai.com/api/docs/guides/latest-model?model=gpt-6-astra)
+and Eric Provencher's 2026-09-04 article
+[*Rethinking skills and prompts for GPT-6 Astra*](https://x.com/i/article/2095989703967125509),
+linked from his [original post](https://x.com/pvncher/status/2095991462416490862),
+informed the instruction audit. The article text was checked through a public
+syndication response because direct X retrieval returned 403.
+
+The relevant guidance favors clear initiative and completion, task-selected context,
+narrow skill triggers, useful bounded delegation, and testing proportionate to risk.
+Stronger instruction following makes accumulated instructions worth auditing. ELAD's
+translation is the provider-neutral [Operating Modes](OPERATING_MODES.md) distinction:
+capable primary-agent Direct delivery alongside explicit Conserve routing that preserves
+different model and harness needs. No source prompts or article bytes are redistributed;
+no endorsement or comparative performance claim is implied.
+
+This note changes no installed model, reasoning setting, plugin, or runtime. API migration
+requirements are not native Codex configuration switches. Keep an effective existing
+reasoning setting; OpenAI's advice to move unsupported none/minimal settings to low
+concerns an actual migration. A Direct trial requires task-level acceptance and cost
+evidence before any broader efficiency conclusion.

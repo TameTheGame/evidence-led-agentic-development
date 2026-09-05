@@ -30,6 +30,10 @@ or specify evidence for every step.
 
 ## The agent chooses the smallest useful path
 
+Direct lets the capable primary agent complete your authorized outcome. Select Conserve
+when you want eligible cheaper or local execution. [Operating Modes](docs/OPERATING_MODES.md)
+defines this choice separately from the rigor profiles below.
+
 - **Light:** a confined change with a trustworthy deterministic check.
 - **Bounded:** a task with moderate coupling or a handoff that needs a short written
   boundary.
@@ -73,13 +77,9 @@ another worker, use
 
 > ## Agent instructions: entering this repository
 
-Read only what the task needs:
-
-1. `AGENTS.md`
-2. `STATUS.md`
-3. `blueprint.json`
-4. `MANIFEST.md`
-5. the exact task-selected document, schema, fixture, or test
+Read `AGENTS.md`, then its task-selected context. Consult `STATUS.md` for milestone or
+release questions, `blueprint.json` for version or contract claims, and `MANIFEST.md` to
+locate the exact affected document, schema, fixture, or test.
 
 Do not preload the repository or infer permission to change another project, run a model,
 start a target runtime, accept evidence, or promote a candidate.

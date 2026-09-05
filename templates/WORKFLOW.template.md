@@ -28,6 +28,12 @@ For each material step:
 
 ## Select task rigor
 
+Select Direct or explicit Conserve through the adopting project's pinned
+[Operating Modes](../docs/OPERATING_MODES.md) guidance. Direct owns authorized delivery
+end to end; Conserve uses eligible cheaper/local subjects with their required containment.
+Mode is independent of rigor and authority. Neither label grants effects or lowers the
+acceptance threshold. Keep this link bound to the adopted ELAD revision when copying.
+
 Task rigor is independent of project maturity and effect authority.
 
 | Profile | Use | Required recurring work |
@@ -59,8 +65,8 @@ authorization after reporting expected cost and benefit. At exhaustion, stop wit
 
 Use Git commit/blob identity and clean/dirty state for ordinary tracked artifacts. Add
 raw hashes only when Git cannot identify external, ignored, generated, transported, or
-otherwise non-Git evidence. Prefer eligible local verification when its exact qualified
-subject and verifier are sufficient.
+otherwise non-Git evidence. Select delivery mode through Operating Modes; reuse sufficient
+verification without an automatic duplicate cloud pass.
 
 ## Adaptive task loop
 
@@ -68,13 +74,14 @@ subject and verifier are sufficient.
 2. Select rigor and evidence layers.
 3. Reuse current evaluator calibration; add task-specific negatives only for new or
    consequential false-green risks.
-4. Compile only the needed context. Generate full packets/manifests only for assured or
-   cross-context work.
+4. Read only the needed context. Supply bounded packets and tool/resource limits for
+   selected constrained delegates; full records remain conditional on the effect/handoff.
 5. Execute one coherent change on the appropriate surface.
 6. Run the cheapest discriminating check first.
 7. Retry only with a causal hypothesis and changed layer, inside the task's experiment
    budget.
-8. Return a compact result; keep raw logs file-backed.
+8. Complete authorized implementation, verification, and causal repair before returning
+   a compact result; keep raw logs file-backed.
 9. Request only retained human judgment after objective prerequisites are green.
 10. Finalize, promote, and publish separately where applicable.
 11. Record only durable facts or reusable causal lessons.

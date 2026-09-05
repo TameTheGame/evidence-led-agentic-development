@@ -1881,7 +1881,7 @@ def validate_proportional_review_policy() -> int:
             "alters architecture, authority, evidence meaning",
             "git commit and blob identity together with clean/dirty state",
             "when git cannot supply the needed identity",
-            "prefer eligible local verification",
+            "select delivery mode through",
         ),
         "templates/WORKFLOW.template.md": (
             "assurance depth and verification frequency from uncertainty",
@@ -1893,7 +1893,7 @@ def validate_proportional_review_policy() -> int:
             "extra cycle requires unresolved high-consequence uncertainty plus new objective evidence",
             "never lower the acceptance threshold",
             "git commit/blob identity and clean/dirty state",
-            "prefer eligible local verification",
+            "select delivery mode through operating modes",
         ),
     }
     checked = 0

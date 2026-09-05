@@ -47,7 +47,9 @@ pins change.
 Andrew Ng's public AI Engineering Skills Map articles informed the build/evaluate/error-
 analysis framing. ELAD paraphrases that guidance and separates it from the project's own
 engineering synthesis. The verified primary URLs and translation boundary are recorded
-in `docs/RESEARCH_BASIS.md`. No endorsement is implied.
+in `docs/RESEARCH_BASIS.md`. Its dated non-normative Astra note also attributes OpenAI
+and Eric Provencher's prompt guidance through concise paraphrase. No source prompts,
+articles, images, or private target evidence are redistributed. No endorsement is implied.
 
 ## Generated artifacts
 

@@ -6,8 +6,10 @@ Formal qualification answers a practical routing question:
 
 It is worth the setup cost for repeated autonomous delegation, constrained local workers,
 broader candidate or runtime effects, machine evidence acceptance, or recurring tasks
-where a routing mistake would be expensive. A one-off supervised light task can stay
-owner-bounded and independently checked without earning a reusable certificate.
+where a routing mistake would be expensive. Under [Operating Modes](OPERATING_MODES.md),
+user-directed light or bounded Direct source work can remain within repository authority
+and independently checked without earning a reusable certificate. Conserve uses an
+eligible exact subject; a supervised experiment earns no reusable routing claim.
 
 ## Qualify the complete setup
 
@@ -84,8 +86,9 @@ for the uncertainty or risk introduced by the boundary.
 
 For orchestrators, qualify long-horizon planning, ambiguity resolution, worker selection,
 and compact-result consumption. Keep repetitive worker transcripts out of orchestrator
-context unless a selected causal slice is needed. If an orchestrator later becomes a
-writer or promoter, begin a new authority episode for that effect.
+context unless a selected causal slice is needed. An orchestration-only grant cannot
+become a writer or promoter grant. A Direct source task already authorized for planning
+and implementation needs no new grant merely for moving between those responsibilities.
 
 ## Reuse the result until it drifts
 

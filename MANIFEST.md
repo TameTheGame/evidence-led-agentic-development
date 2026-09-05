@@ -8,6 +8,7 @@
 |---|---|
 | `README.md` | Plain-language methodology, profiles, boundaries, and adoption |
 | `START_HERE.md` | Short owner/agent entrypoint |
+| `docs/OPERATING_MODES.md` | Canonical Direct/Conserve delivery guidance, conditional worker controls, and adoption evidence |
 | `docs/FIRST_RUN.md` | Project-owner decisions and explicitly prefixed agent instructions |
 | `docs/EMPIRICAL_STATUS.md` | Demonstrated, bounded, and untested claims |
 | `STATUS.md` | Current candidate state, completed surfaces, and absent authority |
@@ -44,7 +45,7 @@
 | `docs/HUMAN_DECISION_BOUNDARY.md` | Decisions retained by the project owner and concise review cards |
 | `docs/PATH_IDENTITY.md` | One portable repository-path grammar |
 | `docs/THREAT_MODEL.md` | Trust boundaries and failure modes |
-| `docs/RESEARCH_BASIS.md` | Andrew Ng source identities and methodology translation |
+| `docs/RESEARCH_BASIS.md` | Research attribution, methodology translation, and dated non-normative Astra adoption note |
 | `docs/PROTOCOL_040_CONFORMANCE.md` | Exact Level 0 conformance claims and limits |
 | `docs/DECISIONS.md` | Durable protocol decisions |
 | `docs/LICENSING_AND_PROVENANCE.md` | Publication prerequisites |

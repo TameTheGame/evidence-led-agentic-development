@@ -4,13 +4,15 @@
 
 <One paragraph describing the product and the bounded role of agents.>
 
-## Read order
+## Task-selected context
 
-1. `STATUS.md`
-2. <active authority record, if implemented>
-3. `WORKFLOW.md`
-4. `MANIFEST.md`
-5. Only task-selected sources.
+Read only the context needed for the outcome. Check `STATUS.md` when milestone or
+next-action state matters. Before a governed effect, inspect <active authority record,
+if implemented> and its applicable current fields. Read the relevant `WORKFLOW.md`
+section; use `MANIFEST.md` to locate exact product, source, and evidence records.
+
+A small mechanical edit does not require the entire orientation bundle. Scope,
+authority, data, and acceptance boundaries still apply to their effects.
 
 ## Authority
 
@@ -23,6 +25,11 @@
 - Scope and authority are mandatory; ceremony is proportional.
 
 ## Adaptive task rigor
+
+Direct primary-agent delivery and explicit Conserve cheaper/local routing follow
+`WORKFLOW.md` and the project's pinned ELAD Operating Modes guidance. Mode is separate
+from rigor; user-directed Direct source work can be light or bounded without a mandatory
+worker packet or reusable autonomous certificate.
 
 Project maturity, task rigor, and effect authority are separate.
 
@@ -56,7 +63,7 @@ Executing a program does not by itself make an exact claim runtime/operational.
 1. State the learning question, outcome, scope, and effect authority.
 2. Split mixed claims, classify evaluator maturity per claim, and select rigor plus the
    cheapest reliable evidence.
-3. Compile only the context the worker needs.
+3. Read task-selected context; package bounded context only for selected delegates.
 4. Reuse current evaluator calibration; add a negative only for evaluator changes, new
    failure modes, or consequential false-green risk.
 5. Execute the smallest useful change or experiment.

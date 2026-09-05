@@ -5,18 +5,17 @@
 This repository is a provider-neutral, target-neutral blueprint for reliable,
 proportionate, evidence-led AI software delivery. It is Level 0 and default-deny.
 
-## Read order
+## Task-selected context
 
-Before changing this repository, read:
+Read the current sources needed for the outcome. Check `STATUS.md` when milestone or
+release state matters; `blueprint.json` for version, contract, or capability claims;
+`README.md` for orientation; and `MANIFEST.md` to locate ownership. Read
+`docs/ADAPTIVE_RIGOR.md` when changing or applying rigor semantics, plus the exact
+affected contract, example, or test.
 
-1. `STATUS.md`
-2. `blueprint.json`
-3. `README.md`
-4. `MANIFEST.md`
-5. `docs/ADAPTIVE_RIGOR.md`
-6. only the exact task-selected contract, example, or test.
-
-Do not preload the whole repository into an orchestrator or worker context.
+A small mechanical edit does not require the full orientation bundle. The default-deny
+authority and synthetic-only boundaries below always apply; inspect applicable authority
+before any governed effect. Do not preload the whole repository.
 
 ## Current authority
 
@@ -29,6 +28,11 @@ Do not preload the whole repository into an orchestrator or worker context.
 - Synthetic model, continuation, and human records are test data only.
 
 ## Adaptive-rigor rule
+
+Use [Operating Modes](docs/OPERATING_MODES.md) for Direct primary-agent delivery and
+explicit Conserve routing. Read it when selecting or changing delivery mode; its worker
+controls are conditional on the selected route. Ordinary user-directed Direct source
+work may be light or bounded without a mandatory packet or autonomous certificate.
 
 Project maturity, task rigor, and effect authority are orthogonal.
 

@@ -143,10 +143,10 @@ specified high-consequence shared surface.
 For ordinary Git-tracked artifacts, use Git commit and blob identity together with
 clean/dirty state. Add raw byte counts or hashes only for external, ignored, generated,
 transported, or otherwise non-Git artifacts when Git cannot supply the needed identity.
-When an exact local model-and-harness subject is qualified and its verifier is sufficient,
-prefer eligible local verification. Cloud execution remains useful for orchestration,
-novel direction, unresolved exceptional complexity, or independence unavailable in the
-local portfolio; it is not an automatic duplicate pass.
+Select delivery mode through [Operating Modes](OPERATING_MODES.md). Direct supports
+primary-agent completion; Conserve explicitly selects eligible cheaper or local work.
+Mode is independent of rigor and authority. Reuse sufficient verification without an
+automatic duplicate cloud pass; require separate independence when the claim warrants it.
 
 ## Escalate only when evidence tells you to
 

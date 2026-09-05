@@ -53,6 +53,9 @@ and their limits.
 
 ## Start here
 
+- **Choosing delivery mode:** use [Operating Modes](docs/OPERATING_MODES.md) for
+  Direct end-to-end primary-agent work or explicit Conserve routing to an eligible
+  cheaper/local subject. Mode is independent of rigor and grants no effects.
 - **Trying ELAD for the first time:** give your coding agent the
   [First Run](docs/FIRST_RUN.md) guide.
 - **Want the short explanation:** read [Start Here](START_HERE.md).

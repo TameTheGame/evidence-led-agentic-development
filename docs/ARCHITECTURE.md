@@ -14,6 +14,9 @@ The effective workflow is the intersection of these decisions, not a single univ
 pipeline. A high-maturity project can run a `light` task. An `assured` read-only
 review can have zero mutation authority.
 
+[Operating Modes](OPERATING_MODES.md) separately selects Direct primary-agent delivery
+or explicit Conserve routing. Neither is another rigor profile or a new authority plane.
+
 ## Adaptive delivery topology
 
 ```text
@@ -123,15 +126,18 @@ Roles are separated to the degree required by task rigor and effect risk:
 | Target executor | one narrow target-owned plan | no generic console/filesystem/process/package gateway |
 | Promotion writer | integrate an accepted candidate under fresh authority | no worker-lease reuse or scope expansion |
 
-A light task need not instantiate seven agents. Assured target-native, shared-state, or
-promotion work uses stronger separation.
+Roles are responsibilities; ordinary user-directed Direct source work, including
+bounded work, need not instantiate separate agents. Independent verification and stronger
+separation remain required when the claim or target-native, shared-state, or promotion
+effect warrants them.
 
 ## Context architecture
 
-The orchestrator retains intent, dependency state, capability summaries, unresolved
-decisions, and compact results. It delegates repetitive exploration and tool use.
+When delegation is useful, the orchestrator retains intent, dependency state, capability
+summaries, unresolved decisions, and compact results. Direct may complete the source task
+itself; delegation is selected for task value rather than required by the role name.
 
-A constrained local worker receives:
+A selected constrained worker receives:
 
 - one atomic objective;
 - a prebundled source slice sized to measured usable context;
@@ -154,8 +160,9 @@ and the same model in harness B are separate subjects. Advertised context length
 working horizon.
 
 Formal qualification is required for repeated autonomous routing, elevated effects, or
-machine evidence authority. A one-off supervised light task can be owner-bounded without
-a transferable certificate.
+machine evidence authority. User-directed Direct source delivery, light or bounded, can
+remain inside ordinary repository authority without a transferable certificate; this
+does not qualify a repeated autonomous route.
 
 ## Immutable references in the assured profile
 

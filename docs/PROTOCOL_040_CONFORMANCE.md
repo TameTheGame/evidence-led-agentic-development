@@ -33,8 +33,14 @@ most two. Corrections consume the current budget, and candidate creation, renami
 reframing never resets it. Extra cycles require either high-consequence uncertainty plus
 new objective evidence or fresh owner authorization after cost and expected benefit are
 reported. A correction invalidates only the claims and evidence in its causal footprint;
-ordinary tracked artifacts use Git identity and clean/dirty state, and qualified local
-checks are preferred when they can answer the claim reliably.
+ordinary tracked artifacts use Git identity and clean/dirty state. The released 0.4
+design preferred qualified local checks; current unreleased routing guidance makes
+that preference conditional on explicit Conserve selection.
+
+The unreleased [Operating Modes](OPERATING_MODES.md) clarification permits capable
+Direct delivery separately from rigor. It changes no versioned schema, registry, vector,
+certificate, or bundle identity and does not repin existing adopters. Historical releases
+retain their exact contract; adopting this guidance remains an owner-local decision.
 
 ## What the strict assurance modules protect
 

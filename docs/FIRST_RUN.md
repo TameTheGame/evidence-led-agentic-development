@@ -28,6 +28,10 @@ Copy either of these to your coding agent:
 That is enough to begin. The rest of this page explains what the agent will do and when it
 will come back to you for a decision.
 
+Use Direct for capable primary-agent delivery or select Conserve for eligible cheaper
+or local work. [Operating Modes](OPERATING_MODES.md) defines this separately from rigor;
+ordinary Direct source work can also be bounded when the outcome requires it.
+
 > ## 1. Agent instructions: validate the ELAD reference repository
 
 The coding agent should use Python 3.10 or newer and run this from the ELAD repository

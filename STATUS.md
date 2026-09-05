@@ -24,7 +24,10 @@ model, harness, runtime, evidence authority, promotion, or downstream publicatio
   evaluator maturity is per claim; exact regressions, program execution, and AI
   participation no longer over-escalate neighboring deterministic claims.
 - Lifecycle-cost assurance selection with hard review budgets, claim-scoped
-  revalidation, Git-native identity, and qualified local-first verification.
+  revalidation, Git-native identity, and mode-aware verification.
+- Direct primary-agent delivery and explicit Conserve routing, independent of task rigor;
+  see `docs/OPERATING_MODES.md`. This unreleased guidance does not repin a release,
+  establish model superiority, or activate an operational route.
 - A genuine lightweight path that needs no formal JSON record when an issue/prompt and
   existing deterministic check are sufficient.
 - Optional strict component contracts for cross-context or high-consequence autonomous

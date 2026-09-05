@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Added canonical Direct/Conserve operating-mode guidance, independent of rigor:
+  capable primary-agent delivery and explicit eligible cheaper/local routing.
+  Replaced blanket local-first routing and required document preloads with conditional
+  worker controls and task-selected context. Existing qualification, effect boundaries,
+  review budgets, runtime evidence, and protocol identities remain intact.
+- Added a dated, non-normative Astra instruction-audit note with primary attribution;
+  it makes no model-superiority claim and activates no runtime or downstream adoption.
+
 ## 0.4.0 — 2026-08-29
 
 - Promoted the complete normative protocol, authenticated bundle, conformance corpus,
