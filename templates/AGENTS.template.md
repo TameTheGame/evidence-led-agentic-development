@@ -4,13 +4,11 @@
 
 <One paragraph describing the product and the bounded role of agents.>
 
-## Read order
+## Task-selected context
 
-1. `STATUS.md`
-2. <active authority record, if implemented>
-3. `WORKFLOW.md`
-4. `MANIFEST.md`
-5. Only task-selected sources.
+Read only the current context needed for the outcome. Check `STATUS.md` when milestone or next-action state matters. Before a governed effect, inspect <active authority record, if implemented> and its applicable current fields. Read the relevant `WORKFLOW.md` section for delivery rules; use `MANIFEST.md` to locate ownership; select the exact product, architecture, source, and evidence records needed for the change.
+
+A small mechanical edit does not require the entire orientation bundle. Scope, authority, hold, data, and acceptance boundaries remain mandatory for their applicable effects.
 
 ## Authority
 
