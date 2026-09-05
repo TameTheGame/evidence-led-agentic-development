@@ -1,37 +1,37 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "certificateId": "certificate:continuation_fixture_worker",
   "state": "qualified",
   "writerProfile": {
     "id": "writer:continuation_fixture_worker",
     "path": "tests/fixtures/continuation-valid/writer-profile.json",
-    "sha256": "4AC473FCCAF3988BD65DDEAD5A557BF2A6077A1555F6A8A8701D9AC6D8635E30",
-    "schemaVersion": "0.4.0"
+    "sha256": "1F723FC844F64D9F60812F230CE45183F090279BA0A39EA7F4EDDF209786A7C6",
+    "schemaVersion": "0.5"
   },
   "protocolBundle": {
-    "id": "protocol:elad_0.4.0",
+    "id": "protocol:elad_0.5",
     "path": "blueprint.json",
-    "sha256": "34B0279DA8BE529C30B9FD927513A120553DB6AEE09255634605F3CE86ABDC90",
-    "schemaVersion": "0.4.0"
+    "sha256": "315581BDC08AEE592876DED84E3C89D2C91796AF26E7CC8B79249573589688EE",
+    "schemaVersion": "0.5"
   },
   "toolRegistry": {
     "id": "tool-registry:continuation_fixture",
     "path": "tests/fixtures/continuation-valid/tool-registry.json",
-    "sha256": "E1926A9A3F891AE2AE3C8BFBBDA1459A14CAB2A90E47AD8A27B9789E1A1D88A1",
-    "schemaVersion": "0.4.0"
+    "sha256": "A42CB259A40A03C9B102443AA5B71E6CFE8885D95AD2471EDD243DF8C6EE3BFA",
+    "schemaVersion": "0.5"
   },
   "evaluatorRegistry": {
     "id": "evaluator-registry:continuation_fixture",
     "path": "tests/fixtures/continuation-valid/evaluator-registry.json",
-    "sha256": "A83459DF14EC540CB2E3921F6FD7A00D5A2CAB0363D3906D4EBFD19D8548B7F2",
-    "schemaVersion": "0.4.0"
+    "sha256": "832DAD820E5AA86B8A62FFC3963BA683C06830734BE866339BB33DF8512796B1",
+    "schemaVersion": "0.5"
   },
   "evaluationPack": {
     "reference": {
       "id": "evalpack:continuation_fixture",
       "path": "templates/EVALUATOR_CARD.template.md",
       "sha256": "27DF1C352ED78E73C712B17F7F2B56EBD37D3514D9735B1F015A19EC66AF761C",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "positiveCases": 2,
     "negativeCases": 2,

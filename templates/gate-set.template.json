@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "gateSetId": "gates:example_project",
   "ownerRepositoryId": "repo:example_project",
   "planningSummaryOnly": true,

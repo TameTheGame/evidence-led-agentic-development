@@ -1,6 +1,6 @@
 # Status
 
-**Current version:** `0.4.0`
+**Current version:** `0.5`
 
 **Maturity:** Level 0 — Blueprint
 
@@ -9,7 +9,7 @@
 ## Current objective
 
 Maintain a clean, licensed, evidence-honest public Level-0 release of the adaptive,
-platform-neutral 0.4 blueprint. Publishing the blueprint activates no target repository,
+platform-neutral 0.5 blueprint. Publishing the blueprint activates no target repository,
 model, harness, runtime, evidence authority, promotion, or downstream publication.
 
 Development uses this one canonical public repository and its `main` history. Earlier
@@ -31,7 +31,7 @@ distinct evaluation project, not a duplicate of this repository.
 - Lifecycle-cost assurance selection with hard review budgets, claim-scoped
   revalidation, Git-native identity, and mode-aware verification.
 - Direct primary-agent delivery and explicit Conserve routing, independent of task rigor;
-  see `docs/OPERATING_MODES.md`. This unreleased guidance does not repin a release,
+  see `docs/OPERATING_MODES.md`. This released guidance does not repin an adopter,
   establish model superiority, or activate an operational route.
 - A genuine lightweight path that needs no formal JSON record when an issue/prompt and
   existing deterministic check are sufficient.
@@ -75,14 +75,20 @@ budgets, causal claim-scoped revalidation, Git-native tracked-artifact identity,
 qualified local-first routing without adding a registry, selector engine, or generic
 control platform.
 
+Version 0.5 releases Direct/Conserve routing and task-selected context, consolidates
+blueprint development on public `main`, and adopts two-component release numbers.
+Authorized user-facing updates now include a versioned GitHub Release by default;
+`docs/RELEASING.md` defines the completion check. The reference protocol remains inert.
+
 ## Historical baselines
 
 - `0.1.0`: initial Level-0 design that exposed authority and evidence-contract defects.
 - `0.2.0`: green hardened protocol baseline and compatibility predecessor to 0.3.
 - `0.3.0`: first clean public release and compatibility predecessor to 0.4.
+- `0.4.0`: proportional-assurance release and compatibility predecessor to 0.5.
 
 The retired private development history is not part of the public repository. The public
-history starts from the verified sanitized 0.3 tree; the public 0.4 line advances only
+history starts from the verified sanitized 0.3 tree; the public 0.5 line advances only
 that clean history. Earlier design lineage is preserved in an external private archive,
 not a parallel development branch or publication source.
 
@@ -114,6 +120,7 @@ runtime harness, or target authority. See `docs/EMPIRICAL_STATUS.md`.
   Python 3.10 and 3.12.
 - Private vulnerability reporting is enabled on the public repository.
 - A release tag is created only after its exact target commit passes the same hosted
-  matrix.
+  matrix. A version-tag run repeats that matrix and publishes its checked-in notes only
+  after success; the delivery agent verifies the resulting GitHub Release.
 
 Downstream adoption and any operational implementation remain separate owner decisions.

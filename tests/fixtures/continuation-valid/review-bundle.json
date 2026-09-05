@@ -1,24 +1,24 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "bundleId": "review-bundle:continuation_fixture_review",
   "state": "sealed",
   "protocolBundle": {
-    "id": "protocol:elad_0.4.0",
+    "id": "protocol:elad_0.5",
     "path": "blueprint.json",
-    "sha256": "34B0279DA8BE529C30B9FD927513A120553DB6AEE09255634605F3CE86ABDC90",
-    "schemaVersion": "0.4.0"
+    "sha256": "315581BDC08AEE592876DED84E3C89D2C91796AF26E7CC8B79249573589688EE",
+    "schemaVersion": "0.5"
   },
   "packet": {
     "id": "packet:continuation_fixture_review",
     "path": "tests/fixtures/continuation-valid/packet.json",
-    "sha256": "AF40C5C88F77686F1764E91E8440DDF94A7E524A97DAAF18E89F172E76065A13",
-    "schemaVersion": "0.4.0"
+    "sha256": "1ECF88DB32CCAECBC348CE46E47860BEF3DAB0CC2E92B4491347FA28A2A91B52",
+    "schemaVersion": "0.5"
   },
   "evidenceManifest": {
     "id": "evidence-manifest:continuation_fixture_review",
     "path": "tests/fixtures/continuation-valid/evidence-manifest.json",
-    "sha256": "B08BC436308A4E06A8156645B0493D38A7A097ADEF23C1A2B6CB0C9120E1F1D1",
-    "schemaVersion": "0.4.0"
+    "sha256": "3FEB26E181C2EA872B87F8D3161E7CCFBE431104507AEDFB3D44E2830DF34EDB",
+    "schemaVersion": "0.5"
   },
   "candidate": {
     "candidateState": "unchanged",

@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:evidence-policy:0.4.0",
+  "$id": "urn:elad:schema:evidence-policy:0.5",
   "title": "Evidence Policy",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "policyId", "state", "owner", "ownerRepositoryId", "rules"],
   "properties": {
-    "schemaVersion": { "const": "0.4.0" },
+    "schemaVersion": { "const": "0.5" },
     "policyId": { "type": "string", "pattern": "^evidence-policy:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["template_inert", "inactive", "active", "superseded"] },
     "owner": { "type": "string", "minLength": 1 },

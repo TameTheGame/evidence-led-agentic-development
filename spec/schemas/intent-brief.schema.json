@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:intent-brief:0.4.0",
+  "$id": "urn:elad:schema:intent-brief:0.5",
   "title": "Intent Brief",
   "type": "object",
   "additionalProperties": false,
@@ -19,7 +19,7 @@
     "stopStates"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.4.0" },
+    "schemaVersion": { "const": "0.5" },
     "intentId": { "type": "string", "pattern": "^intent:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["template_inert", "draft", "accepted", "superseded"] },
     "outcome": { "type": "string", "minLength": 1 },

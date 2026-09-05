@@ -30,6 +30,11 @@ and adds focused integrity checks for the proportional-review policy. It adds no
 reference-project experiment and does not upgrade the empirical claims below; those
 observations remain historical results against their frozen 0.3.0 baseline.
 
+Version 0.5 releases the Direct/Conserve guidance, advances active identities to `0.5`,
+and validates release metadata and version-tag matching. It adds no new model comparison
+or reference-project experiment; neither the mode guidance nor release automation expands
+the empirical or operational claims below.
+
 ## Empirical reference-project results
 
 A separate Python repository-inventory CLI was used for four bounded experiments

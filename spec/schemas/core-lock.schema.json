@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:core-lock:0.4.0",
+  "$id": "urn:elad:schema:core-lock:0.5",
   "title": "Core Lock",
   "type": "object",
   "additionalProperties": false,
@@ -17,7 +17,7 @@
     "supersedes"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.4.0" },
+    "schemaVersion": { "const": "0.5" },
     "lockId": { "type": "string", "pattern": "^core-lock:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["template_inert", "approved", "superseded"] },
     "ownerRepositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
@@ -34,8 +34,8 @@
       ],
       "properties": {
         "name": { "const": "Evidence-Led Agentic Development" },
-        "version": { "const": "0.4.0" },
-        "protocolId": { "const": "protocol:elad_0.4.0" },
+        "version": { "const": "0.5" },
+        "protocolId": { "const": "protocol:elad_0.5" },
         "distributionIdentity": { "type": "string", "minLength": 1 },
         "sourceCommit": { "type": "string", "pattern": "^[a-f0-9]{40,64}$" },
         "distributionSha256": { "$ref": "#/$defs/sha256" }
@@ -62,7 +62,7 @@
         "id": { "type": "string", "pattern": "^protocol-bundle:[a-z0-9][a-z0-9._-]*$" },
         "path": { "$ref": "#/$defs/repositoryPath" },
         "sha256": { "$ref": "#/$defs/sha256" },
-        "schemaVersion": { "const": "0.4.0" }
+        "schemaVersion": { "const": "0.5" }
       }
     },
     "optionalImmutableReference": {
@@ -73,7 +73,7 @@
         "id": { "type": "string", "pattern": "^core-lock:[a-z0-9][a-z0-9._-]*$" },
         "path": { "$ref": "#/$defs/repositoryPath" },
         "sha256": { "$ref": "#/$defs/sha256" },
-        "schemaVersion": { "const": "0.4.0" }
+        "schemaVersion": { "const": "0.5" }
       }
     }
   }

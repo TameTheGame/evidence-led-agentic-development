@@ -97,8 +97,11 @@ For a material change:
 7. Run `tools/Test-Blueprint.ps1` and inspect the exact diff.
 8. Record a durable decision only for compatibility, authority, or other lasting
    architecture changes.
-9. Do not publish, tag, install, activate targets, or grant authority without separate
-   owner permission.
+9. Close authorized user-facing blueprint updates through
+   [Releasing](docs/RELEASING.md): version bump, notes, validated commit, tag, and verified
+   GitHub Release are the default deliverable unless the owner requests draft/local-only
+   work. This standing repository-release permission grants no target installation,
+   activation, or other operational authority.
 
 Cheap reusable conformance may run routinely. Full packets, manifests, negative suites,
 qualification, independent review, and human bundles are conditional on the selected

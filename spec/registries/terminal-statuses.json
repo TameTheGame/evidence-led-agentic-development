@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "0.4.0",
-  "registryId": "vocabulary:elad_terminal_statuses_0.4.0",
+  "schemaVersion": "0.5",
+  "registryId": "vocabulary:elad_terminal_statuses_0.5",
   "status": "reference_only",
   "terminalStatuses": [
     "COMPLETE",

@@ -1,8 +1,8 @@
 {
-  "schemaVersion": "0.4.0",
-  "registryId": "vocabulary:elad_maturity_ceilings_0.4.0",
+  "schemaVersion": "0.5",
+  "registryId": "vocabulary:elad_maturity_ceilings_0.5",
   "status": "reference_only",
-  "description": "Closed maximum authority/effect/finalization ceilings for protocol 0.4.0. Rows only narrow other admission layers. Promotion and publication remain absent protocol surfaces and are denied at every level.",
+  "description": "Closed maximum authority/effect/finalization ceilings for protocol 0.5. Rows only narrow other admission layers. Promotion and publication remain absent protocol surfaces and are denied at every level.",
   "levels": [
     {
       "level": 0,

@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "0.4.0",
-  "vectorSetId": "elad-context-authority-v040",
+  "schemaVersion": "0.5",
+  "vectorSetId": "elad-context-authority-v05",
   "description": "External expectations for the bounded protocol-0.3 context, authority, experiment/fallback, core-lock, and protocol-bundle semantic validator. The operational fixture is synthesized in memory and grants no authority over a real repository, model, harness, or human reviewer.",
   "expectedMaturityLevels": [
     {

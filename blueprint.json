@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "schemaVersion": "0.4.0",
-  "protocolId": "protocol:elad_0.4.0",
+  "schemaVersion": "0.5",
+  "protocolId": "protocol:elad_0.5",
   "name": "Evidence-Led Agentic Development",
   "slug": "evidence-led-agentic-development",
-  "version": "0.4.0",
+  "version": "0.5",
   "status": "reference_only",
   "maturity": {
     "level": 0,
@@ -44,46 +44,46 @@
   ],
   "canonicalRegistries": {
     "roles": {
-      "id": "vocabulary:elad_roles_0.4.0",
+      "id": "vocabulary:elad_roles_0.5",
       "path": "spec/registries/roles.json",
-      "sha256": "A49DF2589540F87E050A62D92C25A33C141628D061D1E0115DEFFEF4473D78CC",
-      "schemaVersion": "0.4.0"
+      "sha256": "AAC5B5A36D323C6CCE56CB0146A259D6B4C997F41D2EC3A01B7B7A44EF714D42",
+      "schemaVersion": "0.5"
     },
     "evidenceClasses": {
-      "id": "vocabulary:elad_evidence_classes_0.4.0",
+      "id": "vocabulary:elad_evidence_classes_0.5",
       "path": "spec/registries/evidence-classes.json",
-      "sha256": "BDD6F3EC1929853D4EA9C9A62D4DD9C141D1E54C20ABD341362646985C2FBD8F",
-      "schemaVersion": "0.4.0"
+      "sha256": "35B4EABE81B1AF72B7E43D0A3BEF33D413E5CE1D9F3639F82DB1E7B4C865F60F",
+      "schemaVersion": "0.5"
     },
     "terminalStatuses": {
-      "id": "vocabulary:elad_terminal_statuses_0.4.0",
+      "id": "vocabulary:elad_terminal_statuses_0.5",
       "path": "spec/registries/terminal-statuses.json",
-      "sha256": "F70EE377A09166B7458357146FC409B7B85CF227554878BBC4DB9E7CABBD43EC",
-      "schemaVersion": "0.4.0"
+      "sha256": "DBD1D4D9C50FEFB1CA40BB1D30F7592CA4353CC08B6B1297489316E3843C49A3",
+      "schemaVersion": "0.5"
     },
     "failureClasses": {
-      "id": "vocabulary:elad_failure_classes_0.4.0",
+      "id": "vocabulary:elad_failure_classes_0.5",
       "path": "spec/registries/failure-classes.json",
-      "sha256": "26FE6E72CD42E0E00EAA4823968A90D569F523ECE50007A02A0B0183D5A20226",
-      "schemaVersion": "0.4.0"
+      "sha256": "ABD40532C915EC198190E02105AD642540E2987040CDB9864BE895D0FCE23567",
+      "schemaVersion": "0.5"
     },
     "maturityCeilings": {
-      "id": "vocabulary:elad_maturity_ceilings_0.4.0",
+      "id": "vocabulary:elad_maturity_ceilings_0.5",
       "path": "spec/registries/maturity-ceilings.json",
-      "sha256": "31B8EFAD8A6FCF539F567DD89C5E2396023BDF619E132C5FA73B1F4A0FFC5AA8",
-      "schemaVersion": "0.4.0"
+      "sha256": "73DC9ACB5A0F3CC70C2504DD2BCF2ED0ADD805C2BC1BA65A66E81E279C01532B",
+      "schemaVersion": "0.5"
     },
     "subjectSelectors": {
-      "id": "vocabulary:elad_subject_selectors_0.4.0",
+      "id": "vocabulary:elad_subject_selectors_0.5",
       "path": "spec/registries/subject-selectors.json",
-      "sha256": "60F2E646CDB7732FF970B4AC56A478D99E092B7D4C182C07F070329DCA2B5D57",
-      "schemaVersion": "0.4.0"
+      "sha256": "30E1012DDFAEE91656373F7E1BC46AC058CA1F2B3B627FF303926B6727AA0EE0",
+      "schemaVersion": "0.5"
     },
     "taskRigorProfiles": {
-      "id": "vocabulary:elad_task_rigor_profiles_0.4.0",
+      "id": "vocabulary:elad_task_rigor_profiles_0.5",
       "path": "spec/registries/task-rigor-profiles.json",
-      "sha256": "30C410A328C74876C1CE4FCF8B2465E13EE60F8621A7E4B62C1BC50096C4BAA6",
-      "schemaVersion": "0.4.0"
+      "sha256": "1B7D4A349B7EFDFE3B1E1CAC812469EA900DEC8FB295F6C0594C70CEA8B24512",
+      "schemaVersion": "0.5"
     }
   },
   "artifactInventory": {

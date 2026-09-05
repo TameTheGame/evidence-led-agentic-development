@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:gate-set:0.4.0",
+  "$id": "urn:elad:schema:gate-set:0.5",
   "title": "Gate Set",
   "type": "object",
   "additionalProperties": false,
@@ -14,7 +14,7 @@
     "gates"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.4.0" },
+    "schemaVersion": { "const": "0.5" },
     "gateSetId": { "type": "string", "pattern": "^gates:[a-z0-9][a-z0-9._-]*$" },
     "ownerRepositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
     "planningSummaryOnly": { "type": "boolean" },

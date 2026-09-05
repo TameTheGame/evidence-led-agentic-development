@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "0.4.0",
-  "vectorSetId": "vector-set:elad_task_rigor_0.4.0",
+  "schemaVersion": "0.5",
+  "vectorSetId": "vector-set:elad_task_rigor_0.5",
   "status": "reference_only",
   "authority": "none",
   "description": "Synthetic advisory-selector vectors. Passing them never grants target or evidence authority.",

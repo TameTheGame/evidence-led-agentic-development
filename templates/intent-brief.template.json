@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "intentId": "intent:example_read_only_review",
   "state": "template_inert",
   "outcome": "Produce a read-only evidence-backed review of one bounded document set.",

@@ -1,18 +1,18 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "receiptId": "human-receipt:continuation_fixture_review",
   "state": "recorded",
   "protocolBundle": {
-    "id": "protocol:elad_0.4.0",
+    "id": "protocol:elad_0.5",
     "path": "blueprint.json",
-    "sha256": "34B0279DA8BE529C30B9FD927513A120553DB6AEE09255634605F3CE86ABDC90",
-    "schemaVersion": "0.4.0"
+    "sha256": "315581BDC08AEE592876DED84E3C89D2C91796AF26E7CC8B79249573589688EE",
+    "schemaVersion": "0.5"
   },
   "packet": {
     "id": "packet:continuation_fixture_review",
     "path": "tests/fixtures/continuation-valid/packet.json",
-    "sha256": "AF40C5C88F77686F1764E91E8440DDF94A7E524A97DAAF18E89F172E76065A13",
-    "schemaVersion": "0.4.0"
+    "sha256": "1ECF88DB32CCAECBC348CE46E47860BEF3DAB0CC2E92B4491347FA28A2A91B52",
+    "schemaVersion": "0.5"
   },
   "claimId": "claim:continuation_fixture_is_useful",
   "claimClass": "claim-class:subjective_product_quality",
@@ -34,8 +34,8 @@
   "reviewBundle": {
     "id": "review-bundle:continuation_fixture_review",
     "path": "tests/fixtures/continuation-valid/review-bundle.json",
-    "sha256": "063B93F9828C28519FA0094B0F17724393DD6A707D4CF0510621BF08A63695F4",
-    "schemaVersion": "0.4.0"
+    "sha256": "769CC0A635D1C71094C463B086E251E67397D65AAC2C23125DC5F8B3B00C6BE8",
+    "schemaVersion": "0.5"
   },
   "reviewer": {
     "reviewerId": "human:fixture-owner",

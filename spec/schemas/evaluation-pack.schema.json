@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:evaluation-pack:0.4.0",
+  "$id": "urn:elad:schema:evaluation-pack:0.5",
   "title": "Evaluation Pack",
   "type": "object",
   "additionalProperties": false,
@@ -23,7 +23,7 @@
     "supersedes"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.4.0" },
+    "schemaVersion": { "const": "0.5" },
     "packId": { "type": "string", "pattern": "^evaluation-pack:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["template_inert", "draft", "frozen", "superseded"] },
     "ownerRepositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
@@ -78,7 +78,7 @@
         "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" },
         "path": { "$ref": "#/$defs/repositoryPath" },
         "sha256": { "$ref": "#/$defs/sha256" },
-        "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+        "schemaVersion": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" }
       }
     },
     "optionalImmutableReference": {
@@ -89,7 +89,7 @@
         "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" },
         "path": { "$ref": "#/$defs/repositoryPath" },
         "sha256": { "$ref": "#/$defs/sha256" },
-        "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+        "schemaVersion": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" }
       }
     },
     "artifactIdentity": {

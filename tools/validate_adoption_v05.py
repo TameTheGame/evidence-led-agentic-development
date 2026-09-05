@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only, dependency-free conformance checks for the inert ELAD 0.4.0 slice.
+"""Read-only, dependency-free conformance checks for the inert ELAD 0.5 slice.
 
 This validator reads only the five new schemas, their five inert templates, and
 the external adoption-vector corpus. A PASS proves structural and synthetic
@@ -27,7 +27,7 @@ if sys.version_info < (3, 10):
 
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "0.4.0"
+VERSION = "0.5"
 SCHEMA_TEMPLATE_PAIRS = (
     ("spec/schemas/evaluation-pack.schema.json", "templates/evaluation-pack.template.json"),
     ("spec/schemas/evaluation-result-manifest.schema.json", "templates/evaluation-result-manifest.template.json"),
@@ -848,7 +848,7 @@ def main() -> int:
         valid_count, rejected_count, category_counts = validate_vectors(load_json(VECTOR_PATH))
         total = valid_count + rejected_count
         print(
-            "PASS — ELAD 0.4.0 bounded adoption slice: "
+            "PASS — ELAD 0.5 bounded adoption slice: "
             f"5 closed schemas ({closed_object_count} closed object nodes), "
             "5 structurally valid inert templates, "
             f"{total} semantic vectors ({valid_count} valid, {rejected_count} malicious rejected; "

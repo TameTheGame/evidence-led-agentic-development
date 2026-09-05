@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "registryId": "evaluator-registry:continuation_fixture",
   "state": "active",
   "ownerRepositoryId": "repo:continuation_fixture",
   "protocolBundle": {
-    "id": "protocol:elad_0.4.0",
+    "id": "protocol:elad_0.5",
     "path": "blueprint.json",
-    "sha256": "34B0279DA8BE529C30B9FD927513A120553DB6AEE09255634605F3CE86ABDC90",
-    "schemaVersion": "0.4.0"
+    "sha256": "315581BDC08AEE592876DED84E3C89D2C91796AF26E7CC8B79249573589688EE",
+    "schemaVersion": "0.5"
   },
   "evaluators": [
     {
@@ -17,7 +17,7 @@
         "id": "evalpack:continuation_fixture_contract",
         "path": "templates/EVALUATOR_CARD.template.md",
         "sha256": "27DF1C352ED78E73C712B17F7F2B56EBD37D3514D9735B1F015A19EC66AF761C",
-        "schemaVersion": "0.4.0"
+        "schemaVersion": "0.5"
       },
       "taskFamilies": [
         "read_only_contract_review"
@@ -36,7 +36,7 @@
         "id": "evalpack:continuation_fixture_human",
         "path": "templates/HUMAN_ACCEPTANCE_CARD.template.md",
         "sha256": "0A6BA98A4034B58C2DA9267AB75F52CA99958C44EA31F0DD44297F9CD010A4AC",
-        "schemaVersion": "0.4.0"
+        "schemaVersion": "0.5"
       },
       "taskFamilies": [
         "read_only_contract_review"

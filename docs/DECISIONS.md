@@ -1,8 +1,30 @@
 # Decisions
 
+## ADR-0019 — Versioned release closure and two-component numbering
+
+**Status:** accepted by the maintainer on 2026-09-05 for v0.5 and future blueprint updates
+
+Completed Direct/Conserve and repository-consolidation changes were pushed without a new
+release. The maintainer requested v0.5, two-component numbers, and release closure as
+the default. [Releasing](RELEASING.md) is the canonical policy: accepted user-facing
+updates include a coherent version bump, notes, validation, tag, and verified GitHub
+Release unless explicitly scoped to draft/local-only work. This is standing permission
+for this public blueprint only, not a generic publication capability or adopter authority.
+
+The alternative of renaming old releases would break existing pins and provenance.
+Instead, old three-component tags and non-normative 0.3 drafts remain immutable. Active
+protocol identities advance together to exact `0.5`; mixed-version chains fail closed.
+Adoption requires an explicit owner-local repin and affected checks. Rollback means
+using the prior exact release, not rewriting its tag or combining protocol versions.
+
+The existing hosted workflow gains one narrowly scoped release job after the full
+conformance matrix; pull requests and ordinary branch pushes retain read-only access.
+Validation rejects malformed versions, mismatched tags, missing notes, and stale release
+metadata. Failed publication is unfinished delivery, not a reason to move a published tag.
+
 ## ADR-0018 — Delivery mode is separate from rigor
 
-**Status:** accepted for Level 0 guidance on 2026-09-05; unreleased source change
+**Status:** accepted for Level 0 guidance on 2026-09-05; released in v0.5
 
 [Operating Modes](OPERATING_MODES.md) is the canonical delivery-mode policy. Direct
 supports capable primary-agent completion inside existing scope, including light and
@@ -12,8 +34,9 @@ constrained-worker packaging applies to selected delegates.
 
 This supersedes blanket local-first routing in current guidance while retaining review
 budgets, claim-scoped revalidation, qualification for repeated autonomy, and actual effect
-boundaries. Historical release claims and runtime evidence remain historical. No schema,
-selector engine, version bump, target repin, runtime activation, or publication follows.
+boundaries. Historical release claims and runtime evidence remain historical. No selector
+engine, target repin, or runtime activation follows. ADR-0019 releases this guidance and
+updates the protocol identities without adding target operational capability.
 The dated research note supplies design motivation, not comparative efficacy evidence.
 
 ## ADR-0001 — Evidence-led mission

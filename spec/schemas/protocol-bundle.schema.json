@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:protocol-bundle:0.4.0",
+  "$id": "urn:elad:schema:protocol-bundle:0.5",
   "title": "Protocol Bundle",
   "type": "object",
   "additionalProperties": false,
@@ -14,10 +14,10 @@
     "entries"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.4.0" },
+    "schemaVersion": { "const": "0.5" },
     "bundleId": { "type": "string", "pattern": "^protocol-bundle:[a-z0-9][a-z0-9._-]*$" },
     "protocolId": { "type": "string", "pattern": "^protocol:[a-z0-9][a-z0-9._-]*$" },
-    "version": { "const": "0.4.0" },
+    "version": { "const": "0.5" },
     "state": { "enum": ["template_inert", "reference_only", "released", "superseded"] },
     "framing": { "const": "elad-protocol-bundle-v1" },
     "entries": {

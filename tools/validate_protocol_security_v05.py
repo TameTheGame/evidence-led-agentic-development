@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Synthetic, dependency-free ELAD 0.4 protocol-security checks.
+"""Synthetic, dependency-free ELAD 0.5 protocol-security checks.
 
 This Level-0 suite constructs only in-memory records. It never launches a model,
 touches a target repository, grants authority, or accepts production evidence.
@@ -17,7 +17,7 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "0.4.0"
+VERSION = "0.5"
 SHA = re.compile(r"^[A-F0-9]{64}$")
 REF_FIELDS = {"kind", "id", "path", "bytes", "sha256", "schemaVersion", "digestMode"}
 
@@ -47,7 +47,7 @@ def digest(data: bytes) -> str:
 
 EXPECTED_REGISTRY = {
     "schemaVersion": VERSION,
-    "registryId": "vocabulary:elad_subject_selectors_0.4.0",
+    "registryId": "vocabulary:elad_subject_selectors_0.5",
     "status": "reference_only",
     "authority": "none",
     "closed": True,
@@ -165,7 +165,7 @@ def build() -> tuple[dict[str, Any], dict[str, Any]]:
         "spec/registries/subject-selectors.json": copy.deepcopy(EXPECTED_REGISTRY),
     }
     registry_ref = reference(store, "registry", EXPECTED_REGISTRY["registryId"], "spec/registries/subject-selectors.json")
-    store["protocol/bundle.json"] = {"schemaVersion": VERSION, "id": "protocol-bundle:elad_0.4.0", "authority": "none", "selectorRegistry": registry_ref}
+    store["protocol/bundle.json"] = {"schemaVersion": VERSION, "id": "protocol-bundle:elad_0.5", "authority": "none", "selectorRegistry": registry_ref}
     for name, kind in (("runtime", "runtime_lock"), ("harness", "harness_lock"), ("adapter", "adapter_lock")):
         store[f"locks/{name}.json"] = {"schemaVersion": VERSION, "id": f"{name}-lock:synthetic", "authority": "none"}
     store["schemas/tools.json"] = {"schemaVersion": VERSION, "id": "schema:synthetic_tools", "authority": "none", "closed": True}
@@ -194,7 +194,7 @@ def build() -> tuple[dict[str, Any], dict[str, Any]]:
         "id": "packet:synthetic",
         "authority": "none",
         "repository": {"repositoryId": "repo:synthetic", "candidateId": "candidate:synthetic", "baseHead": "a" * 40},
-        "protocolBundle": reference(store, "protocol_bundle", "protocol-bundle:elad_0.4.0", "protocol/bundle.json"),
+        "protocolBundle": reference(store, "protocol_bundle", "protocol-bundle:elad_0.5", "protocol/bundle.json"),
         "writerProfile": writer_ref,
         "writerProfileMirror": copy.deepcopy(writer_ref),
         "claims": [
@@ -503,7 +503,7 @@ def main() -> int:
     if failures:
         for item in failures: print(f"FAIL {item}", file=sys.stderr)
         return 1
-    print(f"PASS — ELAD 0.4 protocol-security slice: {accepted} positive vectors, {rejected} malicious controls rejected. Level-0 inert; no authority granted.")
+    print(f"PASS — ELAD 0.5 protocol-security slice: {accepted} positive vectors, {rejected} malicious controls rejected. Level-0 inert; no authority granted.")
     return 0
 
 

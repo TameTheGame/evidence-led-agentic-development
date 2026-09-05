@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "profileId": "writer:synthetic_read_only_reviewer",
   "state": "unqualified",
   "modelSubject": {
@@ -14,37 +14,37 @@
       "id": "runtime:synthetic_unqualified",
       "path": "blueprint.json",
       "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "harness": {
       "id": "harness:synthetic_unqualified",
       "path": "adapters/README.md",
       "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "adapter": {
       "id": "adapter:synthetic_unqualified",
       "path": "adapters/README.md",
       "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "promptTemplate": {
       "id": "template:synthetic_task_brief",
       "path": "templates/TASK_BRIEF.template.md",
       "sha256": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "toolSchema": {
       "id": "schema:synthetic_tool_contract",
       "path": "spec/schemas/task-packet.schema.json",
       "sha256": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "protocolBundle": {
-      "id": "protocol:elad_0.4.0",
+      "id": "protocol:elad_0.5",
       "path": "blueprint.json",
       "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     }
   },
   "roles": [

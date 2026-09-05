@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "receiptId": "receipt:example_read_only_review",
   "recordState": "template_inert",
   "recordedAt": null,
@@ -8,62 +8,62 @@
     "id": "packet:example_read_only_review",
     "path": "templates/task-packet.template.json",
     "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
-    "schemaVersion": "0.4.0"
+    "schemaVersion": "0.5"
   },
   "bindings": {
     "protocolBundle": {
-      "id": "protocol:elad_0.4.0",
+      "id": "protocol:elad_0.5",
       "path": "blueprint.json",
       "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "intent": {
       "id": "intent:example_read_only_review",
       "path": "templates/intent-brief.template.json",
       "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "projectProfile": {
       "id": "project:example_project",
       "path": "templates/project-profile.template.json",
       "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "authority": {
       "id": "authority:example_project",
       "path": "templates/active-authority.template.json",
       "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "riskPolicy": {
       "id": "risk-policy:example_project",
       "path": "templates/risk-policy.template.json",
       "sha256": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "dataPolicy": {
       "id": "data-policy:example_project",
       "path": "templates/data-policy.template.json",
       "sha256": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "evidencePolicy": {
       "id": "evidence-policy:example_project",
       "path": "templates/evidence-policy.template.json",
       "sha256": "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "toolRegistry": {
       "id": "tool-registry:example_project",
       "path": "templates/tool-registry.template.json",
       "sha256": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "evaluatorRegistry": {
       "id": "evaluator-registry:example_project",
       "path": "templates/evaluator-registry.template.json",
       "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     }
   },
   "riskClass": "low",
@@ -78,13 +78,13 @@
       "id": "writer:example_local_worker",
       "path": "templates/writer-profile.template.json",
       "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "certificate": {
       "id": "certificate:example_local_worker_unqualified",
       "path": "templates/capability-certificate.template.json",
       "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     }
   },
   "terminalStatus": "OUT_OF_SCOPE",
@@ -134,7 +134,7 @@
     "id": "evidence-manifest:example_read_only_review",
     "path": "templates/evidence-manifest.template.json",
     "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
-    "schemaVersion": "0.4.0"
+    "schemaVersion": "0.5"
   },
   "openHumanClaims": [
     "claim:summary_is_useful"

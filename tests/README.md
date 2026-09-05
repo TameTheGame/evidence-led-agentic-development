@@ -1,6 +1,6 @@
 # Test Strategy
 
-Version 0.4 uses dependency-free, read-only Python conformance checks. Python 3.10 or
+Version 0.5 uses dependency-free, read-only Python conformance checks. Python 3.10 or
 newer is required; no third-party packages are installed.
 
 These checks validate reusable blueprint infrastructure. They do not require every
@@ -61,17 +61,17 @@ The 44,100 figure is exhaustive negative space, not 44,100 realistic hand-author
 cases. Runtime is measured in milliseconds. Retain this suite for protocol conformance,
 but invoke the lifecycle only for formal assured receipts.
 
-## Other 0.4 semantic suites
+## Other 0.5 semantic suites
 
-- `validate_context_authority_v040.py`: protocol/core-lock identity, maturity/effect
+- `validate_context_authority_v05.py`: protocol/core-lock identity, maturity/effect
   containment, context delivery, and bounded continuation.
-- `validate_protocol_security_v040.py`: typed references, exact subjects, evidence and
+- `validate_protocol_security_v05.py`: typed references, exact subjects, evidence and
   review authenticity, and malicious substitutions.
-- `validate_adoption_v040.py`: qualification, resource, adoption-efficacy, and policy
+- `validate_adoption_v05.py`: qualification, resource, adoption-efficacy, and policy
   semantics.
-- `validate_task_rigor_v040.py`: advisory task-rigor selection and proportional
+- `validate_task_rigor_v05.py`: advisory task-rigor selection and proportional
   evidence/scaffolding rules.
-- `validate_release_bundle_v040.py`: exact authenticated Level 0 artifact inventory.
+- `validate_release_bundle_v05.py`: exact authenticated Level 0 artifact inventory.
 
 These are Level 0 in-memory conformance slices. They do not imply that a live controller
 composes them yet.

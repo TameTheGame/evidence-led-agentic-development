@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "failureId": "failure:example_unresolved",
   "state": "template_inert",
   "fingerprint": "replace-with-stable-causal-fingerprint",

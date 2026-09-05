@@ -82,6 +82,9 @@ branches.
 - [x] Publication was authorized separately from candidate preparation.
 
 Every release tag must identify an exact commit that has passed the full hosted matrix;
-the tag is created only after that run succeeds.
+the tag is created only after that run succeeds. The tag's own matrix must also pass
+before the repository's release job publishes its checked-in notes. The maintainer's
+standing completion rule, two-component numbering, and publication verification are
+defined in [Releasing](RELEASING.md). Historical tags are never renamed or moved.
 
 This is an engineering provenance review, not legal advice or a legal-opinion letter.

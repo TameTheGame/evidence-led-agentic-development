@@ -1,19 +1,19 @@
-# Protocol 0.4 Conformance Contract
+# Protocol 0.5 Conformance Contract
 
-Protocol 0.4 is a versioned Level 0 evolution of the Evidence-Led Agentic Development
+Protocol 0.5 is a versioned Level 0 evolution of the Evidence-Led Agentic Development
 blueprint. It is a platform-neutral reference contract and conformance corpus—not a live
 controller, approval service, model runner, target adapter, lease backend, evidence
 authority, promotion service, or proof that any real model/harness is qualified.
 
-The frozen `v0.3.0` release remains the compatibility predecessor. A target pinned to
-0.3 remains bound to that exact protocol; adopting 0.4 requires an explicit repin and
-rerunning the target-owned checks affected by the changed review-flow contract. Mixed
+The frozen `v0.4.0` release is the compatibility predecessor. A target pinned to
+0.3.0 or 0.4.0 remains bound to that exact protocol; adopting 0.5 requires an explicit
+repin and rerunning the target-owned checks affected by the changed delivery contract. Mixed
 protocol chains are denied. The preserved non-normative episode drafts remain identified
-as 0.3 historical artifacts and are not part of the 0.4 authenticated bundle.
+as 0.3 historical artifacts and are not part of the 0.5 authenticated bundle.
 
-## The central 0.4 correction
+## The central 0.5 correction
 
-Version 0.4 retains three orthogonal decisions:
+Version 0.5 retains three orthogonal decisions:
 
 1. **Project capability maturity:** the maximum infrastructure/effects the target has
    empirically proven.
@@ -33,14 +33,16 @@ most two. Corrections consume the current budget, and candidate creation, renami
 reframing never resets it. Extra cycles require either high-consequence uncertainty plus
 new objective evidence or fresh owner authorization after cost and expected benefit are
 reported. A correction invalidates only the claims and evidence in its causal footprint;
-ordinary tracked artifacts use Git identity and clean/dirty state. The released 0.4
-design preferred qualified local checks; current unreleased routing guidance makes
-that preference conditional on explicit Conserve selection.
+ordinary tracked artifacts use Git identity and clean/dirty state. The historical 0.4
+design preferred qualified local checks; 0.5 makes that preference conditional on
+explicit Conserve selection.
 
-The unreleased [Operating Modes](OPERATING_MODES.md) clarification permits capable
-Direct delivery separately from rigor. It changes no versioned schema, registry, vector,
-certificate, or bundle identity and does not repin existing adopters. Historical releases
-retain their exact contract; adopting this guidance remains an owner-local decision.
+The released [Operating Modes](OPERATING_MODES.md) clarification permits capable Direct
+delivery separately from rigor. Active schema, registry, vector, template, example and
+bundle identities are consistently rebound to `0.5`. Version-reference fields now use
+two numeric components; other structural contracts are unchanged. Existing adopter pins
+are unchanged. Historical releases retain their exact
+contract; adopting this guidance remains an owner-local decision.
 
 ## What the strict assurance modules protect
 
@@ -51,7 +53,7 @@ high-consequence autonomy:
    owner-local workflow, profile, policy, exact qualified scope, tools/evaluators,
    requested effects, and any required writer lease.
 2. **Maturity constrains effects.** Promotion and publication remain unavailable in the
-   executable 0.4 reference because no reviewed contract exists for either.
+   executable 0.5 reference because no reviewed contract exists for either.
 3. **Context means delivered bytes.** Source identity, delivery bytes, ordered
    model-visible segments, and bounded context continuation are distinct authenticated
    records when strict context proof is required.
@@ -66,7 +68,7 @@ high-consequence autonomy:
    sealed review bundle and eligible reviewer.
 
 These records are conditional. There is no normative integrated `assured` episode
-contract in 0.4: the preserved schema/template are non-normative drafts because structural
+contract in 0.5: the preserved schema/template are non-normative drafts because structural
 validity does not prove cross-component semantic admission. They are not a universal task
 format or conformance evidence.
 
@@ -108,7 +110,7 @@ The external receipt transition table contains 33 admitted rows across seven dim
 whose full Cartesian product is 44,100 tuples. The number describes exhaustive
 closed-world negative space, not 44,100 realistic authored scenarios.
 
-Version 0.4 retains a separate rules-derived admission predicate that does not read
+Version 0.5 retains a separate rules-derived admission predicate that does not read
 the table, compares both verdicts over every tuple, and uses focused vectors for claim
 aggregate semantics, all 15 unique admitted shapes, and single-field denials across all
 seven dimensions. This is cheap reusable protocol conformance. It applies only to formal
@@ -162,7 +164,7 @@ empirical gates. Unrun is not failed, but it is never passed by inference.
 
 ## Release conditions
 
-Protocol 0.4 may be called a reviewed Level 0 blueprint only when:
+Protocol 0.5 may be called a reviewed Level 0 blueprint only when:
 
 1. the explicit normative inventory is authenticated by the release bundle;
 2. templates remain inert and examples remain synthetic;

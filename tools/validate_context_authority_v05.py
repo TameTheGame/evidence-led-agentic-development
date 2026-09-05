@@ -2,7 +2,7 @@
 """Standalone protocol-0.3 context and authority conformance checks.
 
 This dependency-free validator exercises only the bounded files introduced by the
-0.4.0 context/authority/core-lock correction.  It uses an in-memory synthetic fixture;
+0.5 context/authority/core-lock correction.  It uses an in-memory synthetic fixture;
 a PASS grants no authority over a real repository, model, harness, target, reviewer,
 promotion, or publication surface.
 """
@@ -170,7 +170,7 @@ def validate_templates() -> int:
 
 def validate_maturity_registry(vectors: dict[str, Any]) -> dict[int, dict[str, Any]]:
     registry = load_json("spec/registries/maturity-ceilings.json")
-    require(registry.get("schemaVersion") == "0.4.0", "maturity registry version mismatch")
+    require(registry.get("schemaVersion") == "0.5", "maturity registry version mismatch")
     require(registry.get("status") == "reference_only", "maturity registry is not reference-only")
     rows = registry.get("levels", [])
     require([row.get("level") for row in rows] == list(range(7)), "maturity registry must contain ordered levels 0-6")
@@ -198,7 +198,7 @@ def immutable_reference(identifier: str, path: str, document: dict[str, Any]) ->
         "id": identifier,
         "path": path,
         "sha256": canonical_sha256(document),
-        "schemaVersion": "0.4.0",
+        "schemaVersion": "0.5",
     }
 
 
@@ -229,9 +229,9 @@ def protocol_entry(path: str, artifact_class: str, digest_mode: str, data: bytes
 
 
 def validate_protocol_bundle(bundle: dict[str, Any], files: dict[str, bytes], expected_paths: set[str]) -> None:
-    require(bundle.get("schemaVersion") == bundle.get("version") == "0.4.0", "protocol bundle version mismatch")
-    require(bundle.get("bundleId") == "protocol-bundle:elad_0.4.0", "protocol bundle ID mismatch")
-    require(bundle.get("protocolId") == "protocol:elad_0.4.0", "protocol ID mismatch")
+    require(bundle.get("schemaVersion") == bundle.get("version") == "0.5", "protocol bundle version mismatch")
+    require(bundle.get("bundleId") == "protocol-bundle:elad_0.5", "protocol bundle ID mismatch")
+    require(bundle.get("protocolId") == "protocol:elad_0.5", "protocol ID mismatch")
     require(bundle.get("framing") == "elad-protocol-bundle-v1", "protocol bundle framing mismatch")
     require(bundle.get("state") in {"reference_only", "released"}, "protocol bundle is not sealed for inspection")
     entries = bundle.get("entries", [])
@@ -257,7 +257,7 @@ def validate_protocol_bundle(bundle: dict[str, Any], files: dict[str, bytes], ex
 def validate_reference(reference: dict[str, Any], identifier: str, path: str, document: dict[str, Any], label: str) -> None:
     require(reference.get("id") == identifier, f"{label} ID mismatch")
     require(reference.get("path") == path, f"{label} path mismatch")
-    require(reference.get("schemaVersion") == "0.4.0", f"{label} schema version mismatch")
+    require(reference.get("schemaVersion") == "0.5", f"{label} schema version mismatch")
     require(reference.get("sha256") == canonical_sha256(document), f"{label} digest mismatch")
 
 
@@ -271,7 +271,7 @@ def validate_core_lock(
     require(core.get("ownerRepositoryId") == repository_id, "core lock owner repository mismatch")
     blueprint = core.get("blueprint", {})
     require(blueprint.get("name") == "Evidence-Led Agentic Development", "core lock blueprint name mismatch")
-    require(blueprint.get("version") == bundle.get("version") == "0.4.0", "core lock blueprint version mismatch")
+    require(blueprint.get("version") == bundle.get("version") == "0.5", "core lock blueprint version mismatch")
     require(blueprint.get("protocolId") == bundle.get("protocolId"), "core lock protocol mismatch")
     require(blueprint.get("distributionIdentity") not in {None, "", "replace-with-approved-private-or-public-source"}, "core lock distribution identity is a placeholder")
     require(blueprint.get("sourceCommit") != ZERO_COMMIT, "approved core lock contains a placeholder commit")
@@ -512,17 +512,17 @@ def validate_delta_and_fallback(intent: dict[str, Any], packet: dict[str, Any], 
 
 def build_fixture() -> dict[str, Any]:
     protocol_files = {
-        "blueprint.json": canonical_json_bytes({"schemaVersion": "0.4.0", "protocolId": "protocol:elad_0.4.0"}),
-        "VERSION": b"0.4.0\n",
+        "blueprint.json": canonical_json_bytes({"schemaVersion": "0.5", "protocolId": "protocol:elad_0.5"}),
+        "VERSION": b"0.5\n",
         "spec/schemas/synthetic.schema.json": canonical_json_bytes({"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object"}),
-        "spec/registries/synthetic.json": canonical_json_bytes({"schemaVersion": "0.4.0", "values": ["synthetic"]}),
-        "tests/synthetic-oracle.json": canonical_json_bytes({"schemaVersion": "0.4.0", "expected": "deny_by_default"}),
+        "spec/registries/synthetic.json": canonical_json_bytes({"schemaVersion": "0.5", "values": ["synthetic"]}),
+        "tests/synthetic-oracle.json": canonical_json_bytes({"schemaVersion": "0.5", "expected": "deny_by_default"}),
     }
     bundle = {
-        "schemaVersion": "0.4.0",
-        "bundleId": "protocol-bundle:elad_0.4.0",
-        "protocolId": "protocol:elad_0.4.0",
-        "version": "0.4.0",
+        "schemaVersion": "0.5",
+        "bundleId": "protocol-bundle:elad_0.5",
+        "protocolId": "protocol:elad_0.5",
+        "version": "0.5",
         "state": "reference_only",
         "framing": "elad-protocol-bundle-v1",
         "entries": [
@@ -536,14 +536,14 @@ def build_fixture() -> dict[str, Any]:
     owner = "human:synthetic_owner"
     repository_id = "repo:synthetic_context_fixture"
     core = {
-        "schemaVersion": "0.4.0",
+        "schemaVersion": "0.5",
         "lockId": "core-lock:synthetic_context_fixture",
         "state": "approved",
         "ownerRepositoryId": repository_id,
         "blueprint": {
             "name": "Evidence-Led Agentic Development",
-            "version": "0.4.0",
-            "protocolId": "protocol:elad_0.4.0",
+            "version": "0.5",
+            "protocolId": "protocol:elad_0.5",
             "distributionIdentity": "synthetic:inline_protocol_distribution",
             "sourceCommit": "e" * 40,
             "distributionSha256": "9" * 64,
@@ -724,7 +724,7 @@ def build_fixture() -> dict[str, Any]:
     compiled = compile_context(segments, artifacts)
     artifacts["automation/context/model-visible-context.json"] = compiled
     context = {
-        "schemaVersion": "0.4.0",
+        "schemaVersion": "0.5",
         "bundleId": "context-delivery:synthetic_context_fixture",
         "state": "sealed",
         "protocolBundle": immutable_reference(bundle["bundleId"], "automation/protocol/protocol-bundle.json", bundle),
@@ -922,7 +922,7 @@ def apply_mutation(fixture: dict[str, Any], mutation: str) -> None:
                 entry["digestMode"] = "canonical_json"
                 break
     elif mutation == "protocol_ref_blueprint":
-        fixture["core"]["protocolBundle"]["id"] = "protocol:elad_0.4.0"
+        fixture["core"]["protocolBundle"]["id"] = "protocol:elad_0.5"
         fixture["core"]["protocolBundle"]["path"] = "blueprint.json"
     else:
         raise ValidationError(f"unknown semantic mutation: {mutation}")
@@ -963,7 +963,7 @@ def main() -> int:
     require(sys.version_info >= (3, 10), "Python 3.10 or newer is required")
     template_count = validate_templates()
     vectors = load_json("tests/context-authority-vectors.json")
-    require(vectors.get("schemaVersion") == "0.4.0", "vector version mismatch")
+    require(vectors.get("schemaVersion") == "0.5", "vector version mismatch")
     matrix = validate_maturity_registry(vectors)
 
     maturity_count = 0
@@ -989,7 +989,7 @@ def main() -> int:
         semantic_count += 1
 
     print(
-        "PASS — protocol 0.4 context/authority slice: "
+        "PASS — protocol 0.5 context/authority slice: "
         f"templates={template_count}, maturity_vectors={maturity_count}, "
         f"semantic_vectors={semantic_count}, total_vectors={maturity_count + semantic_count}."
     )

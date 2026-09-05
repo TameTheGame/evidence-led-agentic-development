@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "0.4.0",
-  "vectorSetId": "adoption-vectors:qualification_resource_efficacy_v040",
+  "schemaVersion": "0.5",
+  "vectorSetId": "adoption-vectors:qualification_resource_efficacy_v05",
   "state": "template_inert",
   "authority": {
     "grantsAuthority": false,

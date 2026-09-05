@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "policyId": "risk-policy:synthetic_product",
   "state": "inactive",
   "owner": "human:synthetic_owner",

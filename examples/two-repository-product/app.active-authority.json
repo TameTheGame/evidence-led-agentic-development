@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "authorityId": "authority:synthetic_simulation_app",
   "state": "held",
   "owner": "human:synthetic_owner",

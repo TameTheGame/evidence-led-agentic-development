@@ -61,6 +61,10 @@ profiles, claim classes, gates, and rollback.
 
 ## Promotion and publication
 
+Publication of this blueprint's own source releases follows the standing maintainer
+decision in [Releasing](docs/RELEASING.md). That repository-maintenance permission is
+not an implementation of the target-promotion or target-publication capabilities below.
+
 Candidate work never carries promotion authority. A future promotion design must use a
 fresh authority episode, exact accepted candidate/evidence identity, separate fenced
 surface, divergence checks, malicious fixtures, and explicit owner review. Publication

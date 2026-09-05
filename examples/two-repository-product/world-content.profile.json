@@ -1,50 +1,50 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "profileId": "project:synthetic_world_content",
   "state": "inactive",
   "repositoryId": "repo:synthetic_world_content",
   "protocolBundle": {
-    "id": "protocol:elad_0.4.0",
+    "id": "protocol:elad_0.5",
     "path": "blueprint.json",
     "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-    "schemaVersion": "0.4.0"
+    "schemaVersion": "0.5"
   },
   "authority": {
     "id": "authority:synthetic_world_content",
     "path": "examples/two-repository-product/world.active-authority.json",
     "sha256": "1212121212121212121212121212121212121212121212121212121212121212",
-    "schemaVersion": "0.4.0"
+    "schemaVersion": "0.5"
   },
   "policyBindings": {
     "risk": {
       "id": "risk-policy:synthetic_product",
       "path": "examples/two-repository-product/risk-policy.json",
       "sha256": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "data": {
       "id": "data-policy:synthetic_product",
       "path": "examples/two-repository-product/data-policy.json",
       "sha256": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "evidence": {
       "id": "evidence-policy:synthetic_world_content",
       "path": "examples/two-repository-product/world.evidence-policy.json",
       "sha256": "EFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEF",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "toolRegistry": {
       "id": "tool-registry:synthetic_world_content",
       "path": "examples/two-repository-product/world.tool-registry.json",
       "sha256": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "evaluatorRegistry": {
       "id": "evaluator-registry:synthetic_world_content",
       "path": "examples/two-repository-product/world.evaluator-registry.json",
       "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     }
   },
   "artifactLanes": [

@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:risk-policy:0.4.0",
+  "$id": "urn:elad:schema:risk-policy:0.5",
   "title": "Risk Policy",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "policyId", "state", "owner", "classes"],
   "properties": {
-    "schemaVersion": { "const": "0.4.0" },
+    "schemaVersion": { "const": "0.5" },
     "policyId": { "type": "string", "pattern": "^risk-policy:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["template_inert", "inactive", "active", "superseded"] },
     "owner": { "type": "string", "minLength": 1 },

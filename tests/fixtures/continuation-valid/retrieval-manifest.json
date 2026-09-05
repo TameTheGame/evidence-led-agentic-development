@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "manifestId": "retrieval-manifest:continuation_fixture_review",
   "state": "frozen",
   "protocolBundle": {
-    "id": "protocol:elad_0.4.0",
+    "id": "protocol:elad_0.5",
     "path": "blueprint.json",
-    "sha256": "34B0279DA8BE529C30B9FD927513A120553DB6AEE09255634605F3CE86ABDC90",
-    "schemaVersion": "0.4.0"
+    "sha256": "315581BDC08AEE592876DED84E3C89D2C91796AF26E7CC8B79249573589688EE",
+    "schemaVersion": "0.5"
   },
   "subject": {
     "repositoryId": "repo:continuation_fixture",
@@ -15,14 +15,14 @@
     "projectProfile": {
       "id": "project:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/project-profile.json",
-      "sha256": "4CA30577B439DDE9E5B8945CBCAE71C2E61C05BC5ADAC525489BDB238DF4C0A4",
-      "schemaVersion": "0.4.0"
+      "sha256": "415FF7B434BEFB378CEFEBBF3AFD3BD03A114CA5AFA42412136B3B3696C0CAB3",
+      "schemaVersion": "0.5"
     },
     "authority": {
       "id": "authority:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/authority.json",
-      "sha256": "4B79D75BBE31687DD2A13BC85B33D4D6A334EECC9D7DB72698F50DBE560BB578",
-      "schemaVersion": "0.4.0"
+      "sha256": "9B08A2A22F5F2F142904D2A2D3865E8D36162BE13A84C344D52AAB130C5977C8",
+      "schemaVersion": "0.5"
     }
   },
   "framing": "elad-canonical-json-outer-sha256-v1",

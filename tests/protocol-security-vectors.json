@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "0.4.0",
-  "vectorSetId": "protocol-security-vectors:elad_0.4.0",
+  "schemaVersion": "0.5",
+  "vectorSetId": "protocol-security-vectors:elad_0.5",
   "status": "synthetic_level_0_inert",
   "authority": "none",
   "vectors": [

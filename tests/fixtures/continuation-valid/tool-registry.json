@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "registryId": "tool-registry:continuation_fixture",
   "state": "active",
   "ownerRepositoryId": "repo:continuation_fixture",
   "protocolBundle": {
-    "id": "protocol:elad_0.4.0",
+    "id": "protocol:elad_0.5",
     "path": "blueprint.json",
-    "sha256": "34B0279DA8BE529C30B9FD927513A120553DB6AEE09255634605F3CE86ABDC90",
-    "schemaVersion": "0.4.0"
+    "sha256": "315581BDC08AEE592876DED84E3C89D2C91796AF26E7CC8B79249573589688EE",
+    "schemaVersion": "0.5"
   },
   "tools": [
     {
@@ -16,16 +16,16 @@
       "entrySha256": "3F4BEFCB0CCCF847F35F85D0847D89D3D4483C8D7393041298019793B581A713",
       "effect": "read",
       "inputSchema": {
-        "id": "schema:task_packet_0.4.0",
+        "id": "schema:task_packet_0.5",
         "path": "spec/schemas/task-packet.schema.json",
-        "sha256": "C1690F7CBF1345101985C4032780F00630FCC78013BEB5C0199444AAE39CEB83",
-        "schemaVersion": "0.4.0"
+        "sha256": "85D401C1014500D49EFD3C8922DD5D2883A250D2D2D564AA21C36B22541E5FA6",
+        "schemaVersion": "0.5"
       },
       "outputSchema": {
-        "id": "schema:worker_receipt_0.4.0",
+        "id": "schema:worker_receipt_0.5",
         "path": "spec/schemas/worker-receipt.schema.json",
-        "sha256": "90C26035DD49417FD2DE1683C204FE4EBB6805700B04E353EED6198D650104BB",
-        "schemaVersion": "0.4.0"
+        "sha256": "1D8822352BEAB3F6CF020143986A31E82DBA570B00B8D99CF0B9835DF8E9D47E",
+        "schemaVersion": "0.5"
       }
     }
   ]

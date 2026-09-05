@@ -4,6 +4,6 @@
   "path": "automation/payloads/replace-with-exact-artifact.bin",
   "bytes": 0,
   "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "digestMode": "raw_bytes"
 }

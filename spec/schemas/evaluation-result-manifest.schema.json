@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:evaluation-result-manifest:0.4.0",
+  "$id": "urn:elad:schema:evaluation-result-manifest:0.5",
   "title": "Evaluation Result Manifest",
   "type": "object",
   "additionalProperties": false,
@@ -27,7 +27,7 @@
     "supersedes"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.4.0" },
+    "schemaVersion": { "const": "0.5" },
     "resultManifestId": { "type": "string", "pattern": "^evaluation-result:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["template_inert", "sealed", "superseded"] },
     "ownerRepositoryId": { "type": "string", "pattern": "^repo:[a-z0-9][a-z0-9._-]*$" },
@@ -74,7 +74,7 @@
         "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" },
         "path": { "$ref": "#/$defs/repositoryPath" },
         "sha256": { "$ref": "#/$defs/sha256" },
-        "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+        "schemaVersion": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" }
       }
     },
     "optionalImmutableReference": {
@@ -85,7 +85,7 @@
         "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]*$" },
         "path": { "$ref": "#/$defs/repositoryPath" },
         "sha256": { "$ref": "#/$defs/sha256" },
-        "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+        "schemaVersion": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" }
       }
     },
     "artifactIdentity": {

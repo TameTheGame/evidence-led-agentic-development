@@ -86,4 +86,4 @@ A capability transition is foundational work and normally uses `assured` rigor:
 
 Create maturity gates for reusable capabilities or consequential transitions, not for
 ordinary features. The exact machine requirements live in the [protocol conformance
-reference](PROTOCOL_040_CONFORMANCE.md).
+reference](PROTOCOL_05_CONFORMANCE.md).

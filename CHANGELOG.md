@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+No pending changes.
+
+## 0.5 — 2026-09-05
+
+- Adopted two-component `MAJOR.MINOR` versions and `vMAJOR.MINOR` release tags, beginning
+  with `v0.5`. Historical three-component tags remain unchanged.
+- Made version bumps, checked-in release notes, and a verified GitHub Release the default
+  completion path for authorized user-facing blueprint updates. Valid version tags
+  publish only after the full hosted conformance matrix passes.
+- Rebound all active protocol, schema, registry, template, example, vector, bundle, and
+  validator identities to exact `0.5`; preserved non-normative historical drafts and
+  existing adopter pins. Mixed-version chains remain invalid.
 - Consolidated blueprint development onto the canonical public repository and its clean
   `main` history. Retired private history and release-preparation copies remain external
   recovery material; the separate Harness Readiness Suite remains an optional companion.
@@ -9,7 +21,7 @@
   capable primary-agent delivery and explicit eligible cheaper/local routing.
   Replaced blanket local-first routing and required document preloads with conditional
   worker controls and task-selected context. Existing qualification, effect boundaries,
-  review budgets, runtime evidence, and protocol identities remain intact.
+  review budgets and runtime evidence remain intact; release identities advance together.
 - Added a dated, non-normative Astra instruction-audit note with primary attribution;
   it makes no model-superiority claim and activates no runtime or downstream adoption.
 

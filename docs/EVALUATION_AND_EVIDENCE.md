@@ -118,5 +118,5 @@ affected evidence, and stop when the claim is supported.
 
 Assured work may need exact claim identities, evidence ownership, subject binding, and a
 formal receipt that fails closed. Those contracts are reusable infrastructure, not the
-default task experience. See [Protocol 0.4 Conformance](PROTOCOL_040_CONFORMANCE.md) when
+default task experience. See [Protocol 0.5 Conformance](PROTOCOL_05_CONFORMANCE.md) when
 you are implementing or auditing that layer.

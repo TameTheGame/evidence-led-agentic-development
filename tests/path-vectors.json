@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "grammarId": "elad-repository-path-v1",
   "description": "Canonical cross-platform vectors consumed by both JSON-Schema and semantic path checks. A valid value is a forward-slash repository-relative identity, not a filesystem normalization request.",
   "vectors": [

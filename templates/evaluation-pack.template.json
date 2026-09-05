@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "packId": "evaluation-pack:template_unrun",
   "state": "template_inert",
   "ownerRepositoryId": "repo:template_target",
@@ -10,10 +10,10 @@
     "grantsPublication": false
   },
   "protocolBundle": {
-    "id": "protocol:elad_0.4.0",
+    "id": "protocol:elad_0.5",
     "path": "blueprint.json",
     "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "schemaVersion": "0.4.0"
+    "schemaVersion": "0.5"
   },
   "qualificationSubjectSha256": "0000000000000000000000000000000000000000000000000000000000000000",
   "qualificationSubject": {
@@ -30,56 +30,56 @@
       "id": "runtime:template_unqualified",
       "path": "reference/README.md",
       "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "harness": {
       "id": "harness:template_unqualified",
       "path": "adapters/README.md",
       "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "adapter": {
       "id": "adapter:template_unqualified",
       "path": "adapters/README.md",
       "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "promptTemplate": {
       "id": "template:task_brief_unqualified",
       "path": "templates/TASK_BRIEF.template.md",
       "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "contextCompiler": {
       "id": "context-compiler:template_unqualified",
       "path": "reference/README.md",
       "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "toolSchema": {
       "id": "schema:task_packet_unqualified",
       "path": "spec/schemas/task-packet.schema.json",
       "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     },
     "configuredResourceEnvelope": {
       "id": "resource-envelope:template_configured",
       "path": "templates/resource-envelope.template.json",
       "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
-      "schemaVersion": "0.4.0"
+      "schemaVersion": "0.5"
     }
   },
   "toolRegistry": {
     "id": "tool-registry:template_target",
     "path": "templates/tool-registry.template.json",
     "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
-    "schemaVersion": "0.4.0"
+    "schemaVersion": "0.5"
   },
   "evaluatorRegistry": {
     "id": "evaluator-registry:template_target",
     "path": "templates/evaluator-registry.template.json",
     "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
-    "schemaVersion": "0.4.0"
+    "schemaVersion": "0.5"
   },
   "candidateScopes": [],
   "cases": [],

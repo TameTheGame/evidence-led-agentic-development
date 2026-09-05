@@ -185,7 +185,7 @@ small task card would help. There is no mandatory JSON task-rigor decision. Use
 machine-readable rigor decisions, manifests, packets, and receipts only when routing,
 cross-context handoff, auditability, or consequence makes them useful. Their exact
 implementation lives in the [protocol conformance
-reference](PROTOCOL_040_CONFORMANCE.md), not in the everyday path.
+reference](PROTOCOL_05_CONFORMANCE.md), not in the everyday path.
 
 The goal is not the largest control plane. It is reliable engineering progress with the
 least routine supervision, context, compute, latency, cost, and risk the work requires.

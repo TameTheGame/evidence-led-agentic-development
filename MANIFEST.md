@@ -1,6 +1,6 @@
 # Repository Manifest
 
-**Version:** 0.4.0
+**Version:** 0.5
 
 ## Read first
 
@@ -26,6 +26,8 @@
 | `SECURITY.md` | Threat and reporting boundary |
 | `CONTRIBUTING.md` | Contract-change procedure |
 | `CHANGELOG.md` | Version history |
+| `docs/RELEASING.md` | Canonical two-component versioning and default release-completion policy |
+| `releases/v0.5.md` | Checked-in v0.5 GitHub Release notes |
 | `ROADMAP.md` | Future maturity capabilities |
 | `LICENSE`, `NOTICE.md` | Apache-2.0 license and attribution notice |
 
@@ -46,7 +48,7 @@
 | `docs/PATH_IDENTITY.md` | One portable repository-path grammar |
 | `docs/THREAT_MODEL.md` | Trust boundaries and failure modes |
 | `docs/RESEARCH_BASIS.md` | Research attribution, methodology translation, and dated non-normative Astra adoption note |
-| `docs/PROTOCOL_040_CONFORMANCE.md` | Exact Level 0 conformance claims and limits |
+| `docs/PROTOCOL_05_CONFORMANCE.md` | Exact Level 0 conformance claims and limits |
 | `docs/DECISIONS.md` | Durable protocol decisions |
 | `docs/LICENSING_AND_PROVENANCE.md` | Publication prerequisites |
 
@@ -60,7 +62,7 @@
 | `templates/LIGHT_TASK.template.md` | Optional small task card; existing issue/prompt may substitute |
 | `templates/BOUNDED_WORKER_PACKET.template.md` | Compact finite worker handoff; distinct from the assured JSON packet |
 | `tests/task-rigor-vectors.json` | Eleven positive and 37 malicious/contradictory cases, including per-claim evaluator and claim/effect decoupling |
-| `tools/validate_task_rigor_v040.py` | Dependency-free selector conformance |
+| `tools/validate_task_rigor_v05.py` | Dependency-free selector conformance |
 
 ## Draft schema contracts
 
@@ -92,7 +94,7 @@ not operational services.
 - `tool-registry.schema.json`
 - `evaluator-registry.schema.json`
 
-### Protocol 0.4 assurance modules
+### Protocol 0.5 assurance modules
 
 - `protocol-bundle.schema.json`
 - `core-lock.schema.json`
@@ -142,11 +144,12 @@ These are selective starting points. No adopter should copy all templates by def
 | `tools/Test-Blueprint.ps1` | Runs the six dependency-free validation slices |
 | `tools/validate_all.py` | Cross-platform Python entrypoint for all six slices |
 | `tools/validate_blueprint.py` | Main structural, path, lifecycle, continuation, and malicious checks |
-| `tools/validate_context_authority_v040.py` | Context/core-lock/maturity/authority semantics |
-| `tools/validate_protocol_security_v040.py` | Typed-reference, subject, evidence, and attack semantics |
-| `tools/validate_adoption_v040.py` | Qualification, resource, and efficacy semantics |
-| `tools/validate_task_rigor_v040.py` | Adaptive-rigor semantics |
-| `tools/validate_release_bundle_v040.py` | Explicit authenticated artifact inventory |
+| `tools/validate_context_authority_v05.py` | Context/core-lock/maturity/authority semantics |
+| `tools/validate_protocol_security_v05.py` | Typed-reference, subject, evidence, and attack semantics |
+| `tools/validate_adoption_v05.py` | Qualification, resource, and efficacy semantics |
+| `tools/validate_task_rigor_v05.py` | Adaptive-rigor semantics |
+| `tools/validate_release_bundle_v05.py` | Explicit authenticated artifact inventory |
+| `tools/validate_release.py` | Version/changelog/notes/tag agreement and in-memory negative checks |
 | `tools/build_level0_artifacts.py` | Deterministically refreshes inert registry bindings, synthetic fixture references, and release bundle |
 | `tests/path-vectors.json` | 122 portable-path cases |
 | `tests/receipt-lifecycle-vectors.json` | External 33-row closed-world table over 44,100 tuples |

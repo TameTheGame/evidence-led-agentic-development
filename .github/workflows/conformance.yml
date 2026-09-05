@@ -1,4 +1,4 @@
-name: Read-only blueprint conformance
+name: Blueprint conformance and releases
 
 on:
   push:
@@ -37,3 +37,34 @@ jobs:
 
       - name: Validate every Level-0 slice
         run: python tools/validate_all.py
+
+  release:
+    name: Publish validated version tag
+    if: startsWith(github.ref, 'refs/tags/v') && github.event_name == 'push'
+    needs: conformance
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Check out exact release tag
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Install Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Verify release identity
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: python tools/validate_release.py --tag "$RELEASE_TAG"
+
+      - name: Publish checked-in release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: gh release create "$RELEASE_TAG" --verify-tag --title "ELAD $RELEASE_TAG" --notes-file "releases/$RELEASE_TAG.md" --latest

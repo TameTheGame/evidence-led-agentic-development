@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:elad:schema:active-authority:0.4.0",
+  "$id": "urn:elad:schema:active-authority:0.5",
   "title": "Active Authority",
   "type": "object",
   "additionalProperties": false,
@@ -15,7 +15,7 @@
     "supersedes"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.4.0" },
+    "schemaVersion": { "const": "0.5" },
     "authorityId": { "type": "string", "pattern": "^authority:[a-z0-9][a-z0-9._-]*$" },
     "state": { "enum": ["template_inert", "held", "inactive", "active", "superseded"] },
     "owner": { "type": "string", "minLength": 1 },

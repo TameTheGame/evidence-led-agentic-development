@@ -11,11 +11,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 VALIDATORS = (
     "validate_blueprint.py",
-    "validate_context_authority_v040.py",
-    "validate_protocol_security_v040.py",
-    "validate_adoption_v040.py",
-    "validate_task_rigor_v040.py",
-    "validate_release_bundle_v040.py",
+    "validate_context_authority_v05.py",
+    "validate_protocol_security_v05.py",
+    "validate_adoption_v05.py",
+    "validate_task_rigor_v05.py",
+    "validate_release_bundle_v05.py",
+    "validate_release.py",
 )
 
 

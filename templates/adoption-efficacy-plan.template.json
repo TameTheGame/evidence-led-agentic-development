@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "planId": "efficacy-plan:template_unmeasured",
   "state": "template_inert",
   "ownerRepositoryId": "repo:template_target",
@@ -9,8 +9,8 @@
     "grantsPromotion": false,
     "grantsPublication": false
   },
-  "projectProfile": { "id": "project:template_target", "path": "templates/project-profile.template.json", "sha256": "1111111111111111111111111111111111111111111111111111111111111111", "schemaVersion": "0.4.0" },
-  "protocolBundle": { "id": "protocol:elad_0.4.0", "path": "blueprint.json", "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "schemaVersion": "0.4.0" },
+  "projectProfile": { "id": "project:template_target", "path": "templates/project-profile.template.json", "sha256": "1111111111111111111111111111111111111111111111111111111111111111", "schemaVersion": "0.5" },
+  "protocolBundle": { "id": "protocol:elad_0.5", "path": "blueprint.json", "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "schemaVersion": "0.5" },
   "transition": {
     "fromMaturityLevel": 0,
     "toMaturityLevel": 1

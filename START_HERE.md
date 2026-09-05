@@ -72,7 +72,7 @@ another worker, use
 | How do I compare exact local model-and-harness subjects fairly? | [Model and Harness Readiness Evaluation](docs/MODEL_HARNESS_READINESS_EVALUATION.md) |
 | What decisions should remain with me? | [Decisions You Keep](docs/HUMAN_DECISION_BOUNDARY.md) |
 | What can a project safely automate today? | [Maturity Model](docs/MATURITY_MODEL.md) |
-| How do I implement the formal protocol? | [Architecture](docs/ARCHITECTURE.md) and [Conformance](docs/PROTOCOL_040_CONFORMANCE.md) |
+| How do I implement the formal protocol? | [Architecture](docs/ARCHITECTURE.md) and [Conformance](docs/PROTOCOL_05_CONFORMANCE.md) |
 | What has ELAD actually demonstrated? | [Empirical Status](docs/EMPIRICAL_STATUS.md) |
 
 > ## Agent instructions: entering this repository

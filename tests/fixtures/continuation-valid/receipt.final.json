@@ -1,74 +1,74 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "receiptId": "receipt:continuation_fixture_final",
   "recordState": "sealed",
   "recordedAt": "2026-08-22T12:05:00Z",
   "supersedes": {
     "id": "receipt:continuation_fixture_await_human",
     "path": "tests/fixtures/continuation-valid/receipt.await-human.json",
-    "sha256": "397266D424E472AB9DA5971E1FA2A39194BEA4E865026D593599CAAD0763310F",
-    "schemaVersion": "0.4.0"
+    "sha256": "1B49FD0D37939DE4BA119FEC7621131E49C6371BDD6692798B8C2450E0FC5421",
+    "schemaVersion": "0.5"
   },
   "packet": {
     "id": "packet:continuation_fixture_review",
     "path": "tests/fixtures/continuation-valid/packet.json",
-    "sha256": "AF40C5C88F77686F1764E91E8440DDF94A7E524A97DAAF18E89F172E76065A13",
-    "schemaVersion": "0.4.0"
+    "sha256": "1ECF88DB32CCAECBC348CE46E47860BEF3DAB0CC2E92B4491347FA28A2A91B52",
+    "schemaVersion": "0.5"
   },
   "bindings": {
     "protocolBundle": {
-      "id": "protocol:elad_0.4.0",
+      "id": "protocol:elad_0.5",
       "path": "blueprint.json",
-      "sha256": "34B0279DA8BE529C30B9FD927513A120553DB6AEE09255634605F3CE86ABDC90",
-      "schemaVersion": "0.4.0"
+      "sha256": "315581BDC08AEE592876DED84E3C89D2C91796AF26E7CC8B79249573589688EE",
+      "schemaVersion": "0.5"
     },
     "intent": {
       "id": "intent:continuation_fixture_review",
       "path": "tests/fixtures/continuation-valid/intent.json",
-      "sha256": "529426DF70F218FFA4745E9D3545093CE9BF220A9DB17863D09D212E6813C287",
-      "schemaVersion": "0.4.0"
+      "sha256": "30836D235E8F8DDE7D8B984E300A4A59A2F003D49152D5B14138052D58AF6756",
+      "schemaVersion": "0.5"
     },
     "projectProfile": {
       "id": "project:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/project-profile.json",
-      "sha256": "4CA30577B439DDE9E5B8945CBCAE71C2E61C05BC5ADAC525489BDB238DF4C0A4",
-      "schemaVersion": "0.4.0"
+      "sha256": "415FF7B434BEFB378CEFEBBF3AFD3BD03A114CA5AFA42412136B3B3696C0CAB3",
+      "schemaVersion": "0.5"
     },
     "authority": {
       "id": "authority:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/authority.json",
-      "sha256": "4B79D75BBE31687DD2A13BC85B33D4D6A334EECC9D7DB72698F50DBE560BB578",
-      "schemaVersion": "0.4.0"
+      "sha256": "9B08A2A22F5F2F142904D2A2D3865E8D36162BE13A84C344D52AAB130C5977C8",
+      "schemaVersion": "0.5"
     },
     "riskPolicy": {
       "id": "risk-policy:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/risk-policy.json",
-      "sha256": "C77374A77FD2DD88F6F8F6E2CF0E59E83AD05549C379A04E635A63BC5391EA2D",
-      "schemaVersion": "0.4.0"
+      "sha256": "D3EC206D216938B697B5C4C5AC938493C60C862AA6457977E5A205FACEF01319",
+      "schemaVersion": "0.5"
     },
     "dataPolicy": {
       "id": "data-policy:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/data-policy.json",
-      "sha256": "AD53364FD7379933508218632DBDC153D372CA1591DA6767392B08825D9E5379",
-      "schemaVersion": "0.4.0"
+      "sha256": "61CD15AAC1B272B8AFCA9F225654811FB0887D1A2227A016CDC08543AC2DC844",
+      "schemaVersion": "0.5"
     },
     "evidencePolicy": {
       "id": "evidence-policy:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/evidence-policy.json",
-      "sha256": "D649269E16D84D2F92D8A7ACEE77812F7A88AAC6B9895DDE45D671BEE5D63611",
-      "schemaVersion": "0.4.0"
+      "sha256": "D1FB0B20F0C99AE7CB3237E97239579025DFF6E083ADA25307421C7036391DA3",
+      "schemaVersion": "0.5"
     },
     "toolRegistry": {
       "id": "tool-registry:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/tool-registry.json",
-      "sha256": "E1926A9A3F891AE2AE3C8BFBBDA1459A14CAB2A90E47AD8A27B9789E1A1D88A1",
-      "schemaVersion": "0.4.0"
+      "sha256": "A42CB259A40A03C9B102443AA5B71E6CFE8885D95AD2471EDD243DF8C6EE3BFA",
+      "schemaVersion": "0.5"
     },
     "evaluatorRegistry": {
       "id": "evaluator-registry:continuation_fixture",
       "path": "tests/fixtures/continuation-valid/evaluator-registry.json",
-      "sha256": "A83459DF14EC540CB2E3921F6FD7A00D5A2CAB0363D3906D4EBFD19D8548B7F2",
-      "schemaVersion": "0.4.0"
+      "sha256": "832DAD820E5AA86B8A62FFC3963BA683C06830734BE866339BB33DF8512796B1",
+      "schemaVersion": "0.5"
     }
   },
   "riskClass": "low",
@@ -82,14 +82,14 @@
     "profile": {
       "id": "writer:continuation_fixture_worker",
       "path": "tests/fixtures/continuation-valid/writer-profile.json",
-      "sha256": "4AC473FCCAF3988BD65DDEAD5A557BF2A6077A1555F6A8A8701D9AC6D8635E30",
-      "schemaVersion": "0.4.0"
+      "sha256": "1F723FC844F64D9F60812F230CE45183F090279BA0A39EA7F4EDDF209786A7C6",
+      "schemaVersion": "0.5"
     },
     "certificate": {
       "id": "certificate:continuation_fixture_worker",
       "path": "tests/fixtures/continuation-valid/capability-certificate.json",
-      "sha256": "5D51023FD9BD62E46EA8C53DD0708F1C917E276D68385D14E3A97CB7A3C6D72C",
-      "schemaVersion": "0.4.0"
+      "sha256": "FDBB5C005A8112059918DC591A9D06D4E9F13B4E3AD42623243DBDBE5BAC3DF7",
+      "schemaVersion": "0.5"
     }
   },
   "terminalStatus": "COMPLETE",
@@ -138,16 +138,16 @@
       "externalHumanReceipt": {
         "id": "human-receipt:continuation_fixture_review",
         "path": "tests/fixtures/continuation-valid/external-human-receipt.json",
-        "sha256": "E413B27CF57A8FD026CE123C156314500EDDA0C0186FF2DE58C3E0A730EFA3D8",
-        "schemaVersion": "0.4.0"
+        "sha256": "3392EB8368B5BEA877E1BDB61F79E67FE94A72BD0FA5F5897EFDBB9F8AFEC993",
+        "schemaVersion": "0.5"
       }
     }
   ],
   "evidenceManifest": {
     "id": "evidence-manifest:continuation_fixture_review",
     "path": "tests/fixtures/continuation-valid/evidence-manifest.json",
-    "sha256": "B08BC436308A4E06A8156645B0493D38A7A097ADEF23C1A2B6CB0C9120E1F1D1",
-    "schemaVersion": "0.4.0"
+    "sha256": "3FEB26E181C2EA872B87F8D3161E7CCFBE431104507AEDFB3D44E2830DF34EDB",
+    "schemaVersion": "0.5"
   },
   "openHumanClaims": [],
   "metrics": {

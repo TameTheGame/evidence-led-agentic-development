@@ -5,11 +5,12 @@ $ErrorActionPreference = 'Stop'
 
 $validators = @(
     (Join-Path $PSScriptRoot 'validate_blueprint.py'),
-    (Join-Path $PSScriptRoot 'validate_context_authority_v040.py'),
-    (Join-Path $PSScriptRoot 'validate_protocol_security_v040.py'),
-    (Join-Path $PSScriptRoot 'validate_adoption_v040.py'),
-    (Join-Path $PSScriptRoot 'validate_task_rigor_v040.py'),
-    (Join-Path $PSScriptRoot 'validate_release_bundle_v040.py')
+    (Join-Path $PSScriptRoot 'validate_context_authority_v05.py'),
+    (Join-Path $PSScriptRoot 'validate_protocol_security_v05.py'),
+    (Join-Path $PSScriptRoot 'validate_adoption_v05.py'),
+    (Join-Path $PSScriptRoot 'validate_task_rigor_v05.py'),
+    (Join-Path $PSScriptRoot 'validate_release_bundle_v05.py'),
+    (Join-Path $PSScriptRoot 'validate_release.py')
 )
 
 foreach ($validator in $validators) {

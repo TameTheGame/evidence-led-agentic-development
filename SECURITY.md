@@ -2,9 +2,11 @@
 
 ## Current surface
 
-Version 0.4.0 is non-operational and dependency-free. It parses repository-local text
+The version 0.5 reference implementation is non-operational and dependency-free. It parses repository-local text
 and JSON and runs in-memory controls. It has no network, provider, secret, target,
-mutation, lease, promotion, or publication surface.
+mutation, lease, promotion, or publication surface. Separately, the repository's own
+version-tag workflow publishes this blueprint's GitHub Releases after conformance;
+only that release job has repository-content write permission. It grants no target effects.
 
 ## Security invariants
 
@@ -42,8 +44,9 @@ mutation, lease, promotion, or publication surface.
 
 ## Supported versions
 
-Security corrections are accepted for the current `0.4.x` public release line. Version
-`0.3.0` and older lines are historical and may receive documentation only when needed to
+Security corrections are accepted for the current `0.5` public release. Fixes advance
+the two-component minor number under `docs/RELEASING.md`; there is no patch line. Version
+`0.4.0` and older lines are historical and may receive documentation only when needed to
 avoid unsafe adoption.
 
 ## Reporting a concern

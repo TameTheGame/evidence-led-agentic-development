@@ -1,18 +1,18 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "receiptId": "human-receipt:example_summary_review",
   "state": "template_inert",
   "protocolBundle": {
-    "id": "protocol:elad_0.4.0",
+    "id": "protocol:elad_0.5",
     "path": "blueprint.json",
     "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-    "schemaVersion": "0.4.0"
+    "schemaVersion": "0.5"
   },
   "packet": {
     "id": "packet:example_read_only_review",
     "path": "templates/task-packet.template.json",
     "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
-    "schemaVersion": "0.4.0"
+    "schemaVersion": "0.5"
   },
   "claimId": "claim:summary_is_useful",
   "claimClass": "claim-class:subjective_product_quality",
@@ -35,7 +35,7 @@
     "id": "review-bundle:example_summary_review",
     "path": "templates/review-bundle.template.json",
     "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
-    "schemaVersion": "0.4.0"
+    "schemaVersion": "0.5"
   },
   "reviewer": {
     "reviewerId": "human:example_owner",

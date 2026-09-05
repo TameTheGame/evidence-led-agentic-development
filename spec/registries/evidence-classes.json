@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "0.4.0",
-  "registryId": "vocabulary:elad_evidence_classes_0.4.0",
+  "schemaVersion": "0.5",
+  "registryId": "vocabulary:elad_evidence_classes_0.5",
   "status": "reference_only",
   "evidenceClasses": [
     "deterministic",

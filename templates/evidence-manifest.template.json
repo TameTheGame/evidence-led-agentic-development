@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "manifestId": "evidence-manifest:example_read_only_review",
   "state": "template_inert",
   "protocolBundle": {
-    "id": "protocol:elad_0.4.0",
+    "id": "protocol:elad_0.5",
     "path": "blueprint.json",
     "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-    "schemaVersion": "0.4.0"
+    "schemaVersion": "0.5"
   },
   "subject": {
     "kind": "candidate",

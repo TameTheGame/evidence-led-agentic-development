@@ -10,6 +10,10 @@ This repository is a **Level 0 reference blueprint**. It provides guidance, opti
 templates, synthetic examples, and dependency-free checks. It does not run a model,
 control another repository, or grant an agent permission to change anything.
 
+**Current release: [v0.5](https://github.com/TameTheGame/evidence-led-agentic-development/releases/tag/v0.5)**
+— Direct/Conserve delivery and simpler release numbering. See [release notes](releases/v0.5.md)
+and the [release policy](docs/RELEASING.md). Earlier release tags remain immutable.
+
 ## Why ELAD
 
 Coding agents are capable of more than completing isolated snippets. They can inspect a
@@ -64,7 +68,7 @@ and their limits.
 - **Adopting ELAD across a project:** use the
   [Adoption Runbook](docs/ADOPTION_RUNBOOK.md).
 - **Implementing the protocol:** begin with [Architecture](docs/ARCHITECTURE.md),
-  [Conformance](docs/PROTOCOL_040_CONFORMANCE.md), and the [manifest](MANIFEST.md).
+  [Conformance](docs/PROTOCOL_05_CONFORMANCE.md), and the [manifest](MANIFEST.md).
 - **Comparing local coding models or harnesses for repeated ELAD work:** read
   [Model and Harness Readiness Evaluation](docs/MODEL_HARNESS_READINESS_EVALUATION.md)
   and use the separately authorized
@@ -137,7 +141,7 @@ evaluators.
 | Repeated autonomous delegation | [Model and Harness Qualification](docs/MODEL_QUALIFICATION.md) |
 | A need to separate task rigor from project capability | [Maturity Model](docs/MATURITY_MODEL.md) |
 | Live, scarce, or overlapping target effects | [Architecture](docs/ARCHITECTURE.md) and [Threat Model](docs/THREAT_MODEL.md) |
-| Formal packets, receipts, or lifecycle implementation | [Conformance Contract](docs/PROTOCOL_040_CONFORMANCE.md) |
+| Formal packets, receipts, or lifecycle implementation | [Conformance Contract](docs/PROTOCOL_05_CONFORMANCE.md) |
 
 Stop reading when the next layer would not change the task, evidence, authority, or
 decision.

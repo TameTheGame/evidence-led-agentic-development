@@ -70,3 +70,11 @@ submit material you do not have the right to contribute.
 - A pull request should state what the evidence proves and what remains untested.
 - Maintainers may decline process or schema additions that do not catch a realistic
   failure or change a decision.
+
+## Completing an update
+
+Follow [Releasing](docs/RELEASING.md). Maintainer-authorized user-facing updates include
+a `MAJOR.MINOR` version increment, changelog and release notes, validation, a matching
+`vMAJOR.MINOR` tag, and verification of the published GitHub Release. Do not stop at a
+push or leave completed changes indefinitely under `Unreleased`. Drafts and unaccepted
+contributor pull requests do not authorize publication.

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "policyId": "evidence-policy:synthetic_world_content",
   "state": "inactive",
   "owner": "human:synthetic_owner",

@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "0.4.0",
+  "schemaVersion": "0.5",
   "manifestId": "evidence-manifest:synthetic_application_review",
   "state": "draft",
   "protocolBundle": {
-    "id": "protocol:elad_0.4.0",
+    "id": "protocol:elad_0.5",
     "path": "blueprint.json",
     "sha256": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-    "schemaVersion": "0.4.0"
+    "schemaVersion": "0.5"
   },
   "subject": {
     "kind": "candidate",
