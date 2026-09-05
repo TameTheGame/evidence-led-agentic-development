@@ -141,8 +141,8 @@ These are selective starting points. No adopter should copy all templates by def
 
 | Path | Purpose |
 |---|---|
-| `tools/Test-Blueprint.ps1` | Runs the six dependency-free validation slices |
-| `tools/validate_all.py` | Cross-platform Python entrypoint for all six slices |
+| `tools/Test-Blueprint.ps1` | Runs the seven dependency-free validation slices |
+| `tools/validate_all.py` | Cross-platform Python entrypoint for all seven slices |
 | `tools/validate_blueprint.py` | Main structural, path, lifecycle, continuation, and malicious checks |
 | `tools/validate_context_authority_v05.py` | Context/core-lock/maturity/authority semantics |
 | `tools/validate_protocol_security_v05.py` | Typed-reference, subject, evidence, and attack semantics |
