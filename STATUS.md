@@ -12,6 +12,11 @@ Maintain a clean, licensed, evidence-honest public Level-0 release of the adapti
 platform-neutral 0.4 blueprint. Publishing the blueprint activates no target repository,
 model, harness, runtime, evidence authority, promotion, or downstream publication.
 
+Development uses this one canonical public repository and its `main` history. Earlier
+private development history and release-preparation copies are retired recovery
+material, not a second maintained blueprint. The optional Harness Readiness Suite is a
+distinct evaluation project, not a duplicate of this repository.
+
 ## Completed surfaces
 
 - Platform-neutral build/observe/evaluate/error-analysis methodology derived from the
@@ -76,9 +81,10 @@ control platform.
 - `0.2.0`: green hardened protocol baseline and compatibility predecessor to 0.3.
 - `0.3.0`: first clean public release and compatibility predecessor to 0.4.
 
-The private development history is not part of the public repository. Its initial branch
-starts from the verified sanitized 0.3 tree; the public 0.4 line advances only that clean
-history, while the earlier design lineage remains private.
+The retired private development history is not part of the public repository. The public
+history starts from the verified sanitized 0.3 tree; the public 0.4 line advances only
+that clean history. Earlier design lineage is preserved in an external private archive,
+not a parallel development branch or publication source.
 
 ## Not implemented or authorized
 

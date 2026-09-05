@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Consolidated blueprint development onto the canonical public repository and its clean
+  `main` history. Retired private history and release-preparation copies remain external
+  recovery material; the separate Harness Readiness Suite remains an optional companion.
 - Added canonical Direct/Conserve operating-mode guidance, independent of rigor:
   capable primary-agent delivery and explicit eligible cheaper/local routing.
   Replaced blanket local-first routing and required document preloads with conditional

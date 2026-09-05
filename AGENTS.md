@@ -5,6 +5,11 @@
 This repository is a provider-neutral, target-neutral blueprint for reliable,
 proportionate, evidence-led AI software delivery. It is Level 0 and default-deny.
 
+This public repository is the canonical blueprint. Develop from its public `main`
+history; do not maintain parallel internal/public blueprint repositories or standing
+release copies. Short-lived task branches/worktrees are permitted when useful. Retired
+pre-publication history belongs in an external private archive, never a public merge.
+
 ## Task-selected context
 
 Read the current sources needed for the outcome. Check `STATUS.md` when milestone or

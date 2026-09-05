@@ -60,11 +60,13 @@ Generated artifacts are distributed under Apache-2.0 with the rest of the reposi
 
 ## Publication-history boundary
 
-The private development branch contains pre-publication terminology in its reachable
-history. The public repository was initialized instead from one clean root commit built
-from the verified sanitized tree. This is a publication boundary, not a claim that prior
-commits contained credentials. Future public development proceeds normally from that
-fresh history; the private design history remains separate.
+Pre-publication development history contained terminology excluded from the public
+source set. The public repository was initialized instead from one clean root commit
+built from the verified sanitized tree. This is a publication boundary, not a claim
+that prior commits contained credentials. Development now proceeds solely from that
+public history; there is no separately maintained internal blueprint. Earlier private
+history is retired to an external recovery archive and must not be merged into public
+branches.
 
 ## Publication record and release rule
 
