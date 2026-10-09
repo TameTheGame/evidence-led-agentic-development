@@ -15,6 +15,9 @@ public class TestInit
 		// variable set to the S&box install folder (the one containing sbox-dev.exe).
 		_app = new TestAppSystem();
 		_app.Init();
+
+		// Building any PolygonMesh needs a "default" physics surface; see TestSurfaces.
+		TestSurfaces.EnsureDefault();
 	}
 
 	[AssemblyCleanup]

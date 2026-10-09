@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sandbox;
@@ -40,6 +41,15 @@ public class EngineRungTests
 	}
 
 	[TestMethod]
+	public void S0_DefaultSurfaceSetup()
+	{
+		// Reports which route TestSurfaces used to provide the default physics surface.
+		Console.WriteLine( $"Default surface route: {TestSurfaces.Route}" );
+
+		Assert.IsFalse( TestSurfaces.Route.StartsWith( "unavailable" ), TestSurfaces.Route );
+	}
+
+	[TestMethod]
 	public void S1_EngineStartsAndCreatesScene()
 	{
 		var scene = new Scene();
@@ -51,8 +61,7 @@ public class EngineRungTests
 	[TestMethod]
 	public void S2_Diagnostic_DefaultSurfaceIsAvailable()
 	{
-		// Informational. Facepunch's own tests install a fallback surface through an internal
-		// API before tracing. If this fails but S5-S7 pass, the workaround isn't needed here.
+		// Informational. Without TestSurfaces this failed in run 1; S0 says how it was provided.
 		Assert.IsNotNull( Surface.FindByName( "default" ), "no 'default' surface is loaded" );
 	}
 

@@ -24,7 +24,8 @@ These are open questions 1–3 in [the ladder doc](../SPEC_AND_LADDER.md#open-qu
 | Path | Purpose |
 |---|---|
 | `Code/SpikeGeometry.cs` | Builds synthetic box geometry. It lives in the game code, so the tests also prove they can use project code. |
-| `UnitTests/TestInit.cs` | Starts and stops the engine once for the test run. |
+| `UnitTests/TestInit.cs` | Starts and stops the engine once for the test run, and provides a default physics surface. |
+| `UnitTests/TestSurfaces.cs` | Added after run 2: makes a `default` physics surface available, public route first. |
 | `UnitTests/EngineRungTests.cs` | Seven tests, each isolating one capability. |
 | `UnitTests/MeshDiagnosticsTests.cs` | Follow-up after run 1: three tests that locate the failing step of the mesh build. |
 
@@ -32,6 +33,7 @@ These are open questions 1–3 in [the ladder doc](../SPEC_AND_LADDER.md#open-qu
 
 | Test | Proves | If it fails |
 |---|---|---|
+| S0 default surface setup | Which route provided the `default` physics surface (printed) | No route worked: generated meshes can't be built in project tests yet |
 | S1 engine starts | `TestAppSystem` boots and a scene works | Setup problem: check `FACEPUNCH_ENGINE`, the project type, and solution generation |
 | S2 default surface (diagnostic) | Whether base surfaces are loaded | Informational only. If S5–S7 still pass, it doesn't matter |
 | S3 player lands on a box collider | Physics and `PlayerController` tick headlessly, using Facepunch's known-good pattern | The engine rung can't use player physics; stop and report |
@@ -96,7 +98,39 @@ Findings:
   versions should build the mesh when it is enabled, so the version gap alone does not
   explain S4.
 
-Next: run `MeshDiagnosticsTests` (D1–D3) to find which step fails.
+### Run 2 — mesh diagnostics
+
+Same environment as run 1. The engine's own log (`logs\testhost.log` in the S&box
+install folder) held the error the test console didn't show.
+
+| Test | Result | Note |
+|---|---|---|
+| D1 mesh rebuilds into a model | fail | `NullReferenceException` in `ModelBuilder.AddSurface(Surface)`, called from `PolygonMesh.Rebuild()` |
+| D2 component state after enable | fail | `Enabled=True Active=True ObjectActive=True HasMesh=True HasModel=False` |
+| D3 floor in an editor scene | fail | Same `AddSurface` error in an editor scene |
+
+Run 1's log shows the same exception five times as `OnEnabled on Sandbox.MeshComponent
+failed`: S&box caught it and logged it, so the tests only saw a missing model.
+
+Root cause, from `sbox-public` source:
+
+- `ModelBuilder.AddSurface( null )` falls back to `Surface.FindByName( "default" )`, then
+  reads `.Index` from the result.
+- Headless project tests load no `default` surface (S2), so that read throws.
+- The code is unchanged in current `sbox-public`, so updating S&box would not fix it.
+
+The component, the enable order, and the scene type are not the problem.
+
+Fix under test (run 3): `TestSurfaces.EnsureDefault()` runs once at startup. It first
+tries the public route, loading the engine's `surfaces/default.surface` through
+`ResourceLibrary`. If that finds nothing, it registers a stand-in surface the way
+Facepunch's own `MeshComponentBuildTests` do. That fallback uses engine internals through
+reflection, so an S&box update could break it. S0 prints which route worked.
+
+Next: run S0–S7 and D1–D3 together.
+
+When the engine catches a component error during a test, read the engine's
+`logs\testhost.log`: the error isn't in the test output.
 
 | Test | Checks | Reading |
 |---|---|---|

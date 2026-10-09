@@ -218,7 +218,9 @@ generated-mesh collision does not yet build in a project test; see its Results s
 1. **Test projects need a code project.** `Project.Solution.cs` generates a `UnitTests`
    project only for `game`, `library`, and `addon` projects, not `content` projects. A
    content-type map needs a small companion code project to host its rung-1 tests.
-2. **Traces without base content may need a surface.** The engine's own integration
+2. **Generated meshes need a default physics surface.** *(Confirmed by the spike: building
+   any `PolygonMesh` throws when no `default` surface is loaded; see the kit's Results.)*
+   **Traces without base content may need a surface.** The engine's own integration
    tests install a fallback surface before tracing because headless tests mount no base
    content (`engine/Tests/Sandbox.Test.Integration/Assembly.cs`). They do it through
    `Surface.All`, which is `internal`, so a project's tests can't copy it. Confirm whether
