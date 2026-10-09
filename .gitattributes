@@ -9,10 +9,3 @@
 .gitignore text eol=lf
 LICENSE text eol=lf
 VERSION text eol=lf
-
-# Exact-byte conformance payloads. These are hashed as raw bytes and must never be
-# rewritten by checkout-time text or end-of-line normalization.
-tests/fixtures/continuation-valid/candidate/output.txt -text
-tests/fixtures/continuation-valid/evidence/machine-evidence.txt -text
-tests/fixtures/continuation-valid/human/human-acceptance-card.md -text
-tests/fixtures/continuation-valid/retrieval/subject.txt -text
