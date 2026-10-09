@@ -193,6 +193,12 @@ A light task might touch one agreed requirement and run one engine test. A chang
 generator every area depends on might re-run every machine-rung check and get an
 independent review.
 
+## Skills that teach this method
+
+Draft agent skills live in [`skills/`](skills/README.md): `choosing-rigor`,
+`matching-evidence-to-claims`, `asking-the-owner`, and a target-specific
+`sbox-engine-reference`. That page also lists the pressure-test scenarios.
+
 ## Fit with Superpowers-style skills (non-normative)
 
 If a project also installs the Superpowers skill library:

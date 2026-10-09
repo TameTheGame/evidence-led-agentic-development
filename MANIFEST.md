@@ -174,7 +174,7 @@ authority.
 | `drafts/agentic-episode.template.json` | Preserved non-normative integrated-episode instance draft |
 | `drafts/episode-vectors.interrupted.json` | Preserved non-normative ideas from the unfinished integrated-episode draft |
 | `drafts/promotion/` | Non-executable future promotion design |
-| `drafts/spec-driven/` | Non-normative proposal: spec requirement format, evidence ladder, synthetic S&box map example, and engine-rung spike kit |
+| `drafts/spec-driven/` | Non-normative proposal: spec requirement format, evidence ladder, synthetic S&box map example, engine-rung spike kit, and draft agent skills |
 | `reference/` | Reserved for a separately authorized operational reference implementation |
 | `adapters/` | Reserved for target-owned/provider adapter guidance; none implemented |
 

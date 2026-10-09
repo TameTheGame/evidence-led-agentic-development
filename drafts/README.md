@@ -21,6 +21,6 @@ Preservation here does not make the artifacts normative or required per task.
 `spec-driven/` proposes a spec-centered alternative to per-task claim records for
 spec-driven projects: a Markdown requirement format and a cost-ordered evidence ladder
 (`SPEC_AND_LADDER.md`), plus a synthetic, target-specific S&box map example
-(`example-sbox-outpost.spec.md`), and a runnable engine-rung spike kit
-(`engine-rung-spike/`). It changes no contract, schema, or validator and grants no
+(`example-sbox-outpost.spec.md`), a runnable engine-rung spike kit
+(`engine-rung-spike/`), and draft agent skills (`skills/`). It changes no contract, schema, or validator and grants no
 authority.
