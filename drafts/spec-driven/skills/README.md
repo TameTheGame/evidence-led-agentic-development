@@ -26,7 +26,11 @@ their own skill folders. A project's `AGENTS.md` still takes precedence over any
 
 ## Pressure tests
 
-First round: [results](PRESSURE_TEST_RESULTS.md) for scenarios 2, 4, 7 and 8.
+[Results](PRESSURE_TEST_RESULTS.md):
+
+- **Round 1:** scenarios 2, 4, 7 and 8, one sample each.
+- **Round 2:** scenarios 2 and 7, three samples each, against no skills. It confirmed round
+  1's clearest finding.
 
 Each skill should change what an agent does, not just sound right. The method:
 

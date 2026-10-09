@@ -213,7 +213,7 @@ If a project also installs the Superpowers skill library:
 Put those overrides in the project's `AGENTS.md`, which Superpowers treats as taking
 precedence over its skills.
 
-The pressure test ([results](skills/PRESSURE_TEST_RESULTS.md)) backs this up:
+Round 1 of the pressure test ([results](skills/PRESSURE_TEST_RESULTS.md#round-1)) backs this up:
 
 - Unmodified Superpowers added two approval rounds and a design document to a one-line
   data change and to a request about feel.

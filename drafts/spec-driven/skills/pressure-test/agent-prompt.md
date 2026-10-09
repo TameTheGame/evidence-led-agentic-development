@@ -1,6 +1,7 @@
-# Test-agent prompt (round 1)
+# Test-agent prompt (rounds 1 and 2)
 
-Each run used this prompt with one scenario and one rules block. `<PROJECT>` is a copy
+Each run used this prompt with one scenario and one rules block. Round 2 reused it
+unchanged for scenarios A and C, with the no-skills and ELAD rules blocks only. `<PROJECT>` is a copy
 of `fixture/` placed **outside any repository**, so test agents can't read ELAD's own
 documents. `<RULES>` is a folder outside the repository holding either the four ELAD
 skill folders or a Superpowers `skills/` checkout (`obra/superpowers` v6.4.2).
