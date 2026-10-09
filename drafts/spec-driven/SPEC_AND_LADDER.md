@@ -212,6 +212,8 @@ precedence over its skills.
 These are the facts a short spike should settle for an S&box map project. References are
 to `Facepunch/sbox-public` at `3915f1a69810026e23d331581266636de89411d5`.
 [`engine-rung-spike/`](engine-rung-spike/README.md) is a ready-to-run kit for questions 1–3.
+Its first run confirmed headless engine startup and player physics, and found that
+generated-mesh collision does not yet build in a project test; see its Results section.
 
 1. **Test projects need a code project.** `Project.Solution.cs` generates a `UnitTests`
    project only for `game`, `library`, and `addon` projects, not `content` projects. A
@@ -224,8 +226,9 @@ to `Facepunch/sbox-public` at `3915f1a69810026e23d331581266636de89411d5`.
 3. **Loading the project's own saved scenes headlessly is unproven.** Building the area
    in-test with the same generator code avoids this question for most rung-1 checks.
 4. **Rung 1 is Windows-only.** `TestAppSystem` needs the installed engine
-   (`FACEPUNCH_ENGINE`) and its win64 native libraries. Cloud or Linux agents can run
-   rung 0 only.
+   (`FACEPUNCH_ENGINE`) and its win64 native libraries, and the machine needs the .NET 10
+   SDK because S&box projects target `net10.0` (confirmed by the spike's first run).
+   Cloud or Linux agents can run rung 0 only.
 5. **Automating rung 2 is optional.** A short owner card is an acceptable rung-2 check
    until automation is cheaper than the card.
 
