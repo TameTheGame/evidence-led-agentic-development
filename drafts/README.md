@@ -17,3 +17,9 @@ draft schema into structural validation is not enough to return it to `spec/`.
 Preservation here does not make the artifacts normative or required per task.
 
 `promotion/` remains a non-executable future-design boundary.
+
+`spec-driven/` proposes a spec-centered alternative to per-task claim records for
+spec-driven projects: a Markdown requirement format and a cost-ordered evidence ladder
+(`SPEC_AND_LADDER.md`), plus a synthetic, target-specific S&box map example
+(`example-sbox-outpost.spec.md`). It changes no contract, schema, or validator and grants
+no authority.
