@@ -24,7 +24,9 @@ For Claude Code, copy a skill's folder into a project's `.claude/skills/`, for e
 `.claude/skills/choosing-rigor/SKILL.md`. Other tools that support Agent Skills have
 their own skill folders. A project's `AGENTS.md` still takes precedence over any skill.
 
-## Pressure tests (next step)
+## Pressure tests
+
+First round: [results](PRESSURE_TEST_RESULTS.md) for scenarios 2, 4, 7 and 8.
 
 Each skill should change what an agent does, not just sound right. The method:
 

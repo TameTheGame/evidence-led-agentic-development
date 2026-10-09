@@ -205,13 +205,21 @@ If a project also installs the Superpowers skill library:
 
 | Superpowers skill | How it fits |
 |---|---|
-| brainstorming | writes `draft` requirements into the spec instead of a separate design document |
-| writing-plans | its tasks list requirement IDs |
-| test-driven-development | applies to rung-0 and rung-1 requirements only |
-| verification-before-completion | "verified" must name the rung reached |
+| brainstorming | Skip it when the spec already covers the change. Use it only for a genuinely new area, and have it write `draft` requirements into the spec, not a separate design document. |
+| writing-plans | Its tasks list requirement IDs. |
+| test-driven-development | Applies to rung-0 and rung-1 requirements only. |
+| verification-before-completion | Keep it. "Verified" must name the rung reached. |
 
 Put those overrides in the project's `AGENTS.md`, which Superpowers treats as taking
 precedence over its skills.
+
+The pressure test ([results](skills/PRESSURE_TEST_RESULTS.md)) backs this up:
+
+- Unmodified Superpowers added two approval rounds and a design document to a one-line
+  data change and to a request about feel.
+- Because Superpowers defers to the owner's instructions, it wrote a risky "one try, then
+  stop forever" rule into the spec without warning. `choosing-rigor` covers that gap.
+- Its verification skill did as well as the others on a test that had never failed.
 
 ## Open questions before adoption
 

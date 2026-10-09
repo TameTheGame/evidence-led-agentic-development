@@ -32,9 +32,11 @@ replaces the owner rung.
 3. **Pick the cheapest rung that can settle each claim.** If a trace can prove it, don't
    spend an owner session on it.
 4. **Write the check first.** For static and engine claims, write the check, watch it
-   fail for the right reason, then change the content or code.
-5. **Prove the check can fail.** Add a control case that must be caught, such as a player
-   placed inside a wall. A check that never fails may be blind.
+   fail for the right reason, then change the content or code. If an existing check
+   already covers the claim, use it instead of writing another.
+5. **Prove the check can fail.** A check that has never failed may be blind. Break one
+   thing on purpose and watch it go red, such as a player placed inside a wall. Redesign
+   the check only if that shows it really is blind.
 6. **Look where errors hide.** Engines and frameworks often catch errors and only log
    them. When something silently does nothing, read the engine's own log before
    theorizing.
@@ -66,6 +68,9 @@ OUT-FEEL-01   owner    draft; needs the owner to agree the requirement first
 
 Each line gives the claim ID, the rung reached, the result, and the commit. Owner cards
 come after the table.
+
+Scale the report to the change. A one-line data change gets one line per affected
+requirement. Don't create new record files until there is a result to record.
 
 ## Red flags
 
