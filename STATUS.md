@@ -18,9 +18,11 @@ non-normative.
 
 ## Evidence
 
-- **Two pressure-test rounds.** In both, the skills changed agent behavior in the expected
-  direction compared with agents without them. The tests were dry runs with small samples,
-  scored blind by a model. See [skills/evidence/](skills/evidence/PRESSURE_TEST_RESULTS.md).
+- **Two pressure-test rounds.** The clearest effect appeared in both: with the skills,
+  agents recommended a better rule than "one try, then stop forever". Round 2 confirmed it
+  with three samples per cell. Round 1 was mixed elsewhere: on one scenario the skills
+  scored lowest. The tests were dry runs with small samples, scored blind by a model. See
+  [skills/evidence/](skills/evidence/PRESSURE_TEST_RESULTS.md).
 - **One engine-rung spike.** It proved headless rung-1 checks on S&box `26.10.02`, on
   Windows.
 - **Four reference-project experiments** against v0.3.0. They are historical; see

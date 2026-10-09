@@ -80,8 +80,8 @@ merges; see [Skills](skills/README.md).
 - **Pressure tests.** The skills were tested against agents without them, and in round 1
   also against an unmodified Superpowers library. The tests were dry runs, scored blind
   against a rubric frozen beforehand.
-  - **Round 2:** with the skills, agents pushed back on a risky "one try, then stop forever"
-    rule in 2 of 3 runs, against 0 of 3 without them.
+  - **Round 2:** with the skills, agents recommended a better rule than a risky "one try,
+    then stop forever" instruction in 2 of 3 runs, against 0 of 3 without them.
   - **The east-spawn task:** they ran cheaper checks first and reported by requirement and
     rung.
   - Results are in [`skills/evidence/`](skills/evidence/PRESSURE_TEST_RESULTS.md).
