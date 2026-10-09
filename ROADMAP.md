@@ -1,121 +1,45 @@
 # Roadmap
 
-The roadmap is capability-based. A level is earned only when every required proof is
-green under an owner-approved transition. Higher-level files may be designed in advance,
-but their existence does not activate them.
+ELAD grows only when evidence shows a change helps. Each item says what would show it.
 
-Capability maturity does not select per-task rigor. Every level retains a light path;
-tasks independently select `light`, `bounded`, `evaluated`, or `assured`.
-Durable gates are reserved for reusable capabilities, consequential authority/policy
-transitions, cross-surface adoption, and difficult-to-reverse decisions—not ordinary
-features.
+## Toward 1.0
 
-## Level 0 — Blueprint (current)
+1. **Test automatic triggering in a real install.**
+   - Install the three skills in a real agent tool without telling the agent to read them.
+   - Check that each skill loads when its description matches the work, and stays out of
+     the way when it doesn't.
+   - Record the result under `skills/evidence/`.
+2. **Use ELAD on one real project.**
+   - Adopt the spec format, the ladder, and the skills on a real project, through that
+     project's own decision.
+   - Record what helped, what was ignored, and what got in the way.
+   - Bring back synthetic lessons only.
 
-Deliver:
+Both are needed for `1.0`; see [Releasing](docs/RELEASING.md).
 
-- normative design and threat boundaries;
-- adaptive task-rigor selection and a no-mandatory-artifact light path;
-- draft contracts and inert templates, including first-class retrieval/evidence
-  manifests, review bundles, continuation anchors, and immutable references;
-- synthetic examples with separate repository-owned authority/evidence policies;
-- deny-all authority;
-- dependency-free Python 3.10+ read-only validation;
-- one normative repository-path grammar and canonical schema/semantic corpus;
-- one closed-world receipt-lifecycle table independently checked by a rules-derived
-  predicate across its complete domain;
-- one independently anchored exact-byte synthetic continuation fixture;
-- configured -> measured-safe -> requested -> observed budget containment;
-- configured read-only Windows/Ubuntu/macOS conformance matrix;
-- explicit authenticated artifact inventory;
-- explicit provenance and licensing boundary;
-- a clean public first-run path and candid empirical-status boundary.
+## Skills
 
-Exit evidence: repository validator passes locally, the cross-platform matrix passes for
-the exact commit once hosted, independent design review finds no authority leak or false
-green, and active authority remains non-operational. Synthetic fixture success proves
-only conformance of the fixture. A workflow file that has not run is configuration, not
-evidence.
+- **A round-3 pressure test,** if a skill changes. Add a rubric item for leaving agreed
+  requirements unchanged until the owner agrees; round 2 showed the gap.
+- **Scenarios not yet tested:** 1 (typo), 3 (fall-through report), 5 (shared generator
+  refactor), and 6 (publishing).
 
-## Level 1 — Contracted read-only
+## Examples
 
-Candidate deliverables:
+- **A second, non-game target example,** to check that the rung names and the skills
+  carry over.
+- **S&box:** saved scenes that reference prefabs or collision models, and generated
+  geometry saved into a scene. These are still open after the
+  [spike](examples/sbox/README.md#what-the-spike-settled).
 
-- production-quality canonical digest/framing implementation for immutable references,
-  outer envelopes, trusted anchors, and review bundles;
-- composed semantic admission across registry, certificate, packet, receipt, evidence,
-  human receipt, and authority;
-- read-only packet compiler plus retrieval/evidence byte-and-hash verification;
-- qualification-subset admission across task/risk/data/artifact/effect/tool/evaluator/
-  claim/evidence classes and the complete budget chain;
-- frozen cross-platform malicious fixtures and protocol compatibility tests beyond the
-  Level 0 lexical path corpus;
-- immutable protocol bundle/releases.
+## Not planned
 
-Exit evidence: all positive/negative/holdout cases pass from a clean checkout; deliberate
-writer, path, claim, evidence, replay, and authority attacks fail closed. No mutation.
+These stay archived at the `v0.5` tag unless a real need appears:
 
-## Level 2 — Candidate-safe
+- schemas;
+- packets and receipts;
+- the lifecycle oracle; and
+- the maturity levels.
 
-Candidate deliverables:
-
-- isolated candidate manager;
-- exact changed-path and base-state admission;
-- candidate checkpoint/continuation contracts;
-- independent verifier interface;
-- no-promotion enforcement.
-
-Exit evidence: a fresh context continues from a compact receipt, exact scope is preserved,
-and candidate work cannot affect canonical or external targets.
-
-## Level 3 — Capability-routed
-
-Candidate deliverables:
-
-- qualification runner and evaluator portfolio;
-- exact model+harness+adapter certificates;
-- shadow/canary/candidate routing;
-- measured context, tool, cost, latency, and failure horizons;
-- drift and invalidation rules.
-
-Exit evidence: each cloud/local profile passes task-family positives, negatives, holdouts,
-and cold runs. Profiles do not inherit proof from model labels or other harnesses.
-
-## Level 4 — Fenced execution
-
-Candidate deliverables:
-
-- OS-backed atomic multi-resource locks;
-- monotonic fencing and replay resistance;
-- target-owned narrow executor interface;
-- owned process/data lifecycle and ambiguous-completion reconciliation.
-
-Exit evidence: contention, crash, disconnect, stale token, uncertain owner, and cleanup
-tests all fail closed. Generic mutation gateways remain absent.
-
-## Level 5 — Operational delivery
-
-Candidate deliverables:
-
-- end-to-end owner-local golden path;
-- calibrated evidence policy;
-- external human-receipt lifecycle;
-- fresh-authority promotion design and implementation;
-- retained human exception cards.
-
-Exit evidence: one real project delivers a production-shaped candidate with exact
-identity, compact continuation, separate verification, retained human claims, and
-separate promotion. Publication remains distinct.
-
-## Level 6 — Continuously calibrated
-
-Candidate deliverables:
-
-- multi-project protocol compatibility;
-- drift/requalification service;
-- reviewed failure memory and regression generation;
-- efficacy/cost/latency monitoring;
-- versioned release and supply-chain provenance.
-
-Exit evidence: failures improve evaluators/router/certificates without worker
-self-certification or authority expansion, and project owners can audit every delegation.
+A need would be repeated cross-context handoffs that plain specs and test output can't
+support.

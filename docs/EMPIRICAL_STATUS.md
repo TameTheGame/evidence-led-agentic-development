@@ -1,16 +1,65 @@
 # Empirical Status
 
-ELAD has substantial internal protocol and software validation. It has also been used in
-four deliberate development experiments on a working Python CLI, covering deterministic
-single-agent work, cold adoption, heterogeneous delegation, and semantic product
-evaluation. Those experiments provide positive empirical evidence for core parts of the
-method in a bounded software setting. ELAD has not yet been demonstrated as a production
-automation system. This document separates those claims.
+ELAD v0.6 rests on three kinds of evidence:
 
-## Demonstrated in this repository
+- two blind pressure-test rounds of its skills;
+- one engine-rung spike in a real game engine; and
+- four earlier development experiments against v0.3.0.
 
-The dependency-free Level-0 suite checks the exact repository artifacts. At the 0.3.0
-release boundary it includes:
+Together they support core parts of the method in bounded settings. ELAD has not yet been
+used on a real project at v0.6 or demonstrated as a production automation system. This
+document separates those claims.
+
+## Pressure tests of the skills (v0.6)
+
+Fresh agents received owner requests about a synthetic map project. They worked with the
+three skills, with no skills, and in round 1 with an unmodified Superpowers library.
+Responses were dry runs. They were scored blind by a separate model, against a rubric
+frozen before any response was read.
+
+- **Round 1** had one sample per cell across four scenarios. With the skills, agents
+  recommended changing a risky "one try, then stop forever" rule. The other conditions
+  didn't.
+- **Round 2** had three samples per cell, on two scenarios.
+  - **The stop rule:** with the skills, agents recommended a better rule in 2 of 3 runs,
+    against 0 of 3 without them, and ran cheaper checks first in 3 of 3 runs, against 0
+    of 3.
+  - **The east spawn:** the skills scored 7.0 against 5.8 out of 7.
+
+Results, rubrics, responses, and keys are in
+[`skills/evidence/`](../skills/evidence/PRESSURE_TEST_RESULTS.md).
+
+**Limits:**
+
+- small samples;
+- plans rather than actions;
+- one model for the agents and the scorer;
+- partial blinding; and
+- skills loaded by instruction, so automatic triggering is untested.
+
+## Engine-rung spike (v0.6)
+
+A runnable kit checked whether a project's own tests can run rung-1 checks headlessly in
+S&box (Facepunch, Source 2). Seven runs on build `26.10.02` proved collision, traces,
+spawn landing, and stuck detection against generated geometry, plus loading a simple saved
+scene. Two caveats come with that result:
+
+- the default physics surface needed test-only scaffolding; and
+- stuck detection needed a probe for concave mesh collision.
+
+See the [S&box example](../examples/sbox/README.md).
+
+**Limits:**
+
+- one engine build, on Windows only;
+- synthetic geometry; and
+- saved scenes that reference prefabs or collision models are untested.
+
+## Protocol conformance through v0.5 (archived)
+
+Through v0.5, a dependency-free Level-0 suite checked the repository's protocol
+artifacts. Those artifacts and the suite are archived at the `v0.5` tag
+([Archive](../ARCHIVE.md)). At the 0.3.0 release boundary it included:
 
 - structural and semantic checks over 29 schema/template pairs;
 - a portable path corpus with malicious and reserved-name cases;
@@ -84,9 +133,8 @@ generality, OS isolation, restricted-data safety, or production readiness.
   broad summary quality, production reliability, or model generality.
 - No external maintainer, user community, or independent organization has reported
   sustained adoption.
-- No Level-1-or-higher reference implementation, live authority service, candidate
-  manager, target adapter, lease backend, evidence-acceptance service, or promotion path
-  exists here.
+- No runtime component, live authority service, or target adapter exists here. None is
+  planned for the core.
 - No production workload, consequential autonomous mutation, target-runtime
   cross-platform matrix, or long-term efficacy study has passed.
 
@@ -104,6 +152,10 @@ ELAD does not claim to be:
 - adopted by an established ecosystem; or
 - sufficient by itself to authorize effects in another repository.
 
-The next meaningful empirical step is an independently reproducible public adoption case
-or a target-owned Level-1 read-only reference implementation—not a larger pile of inert
-schemas.
+The next meaningful empirical steps are the two conditions for `1.0` in
+[Releasing](RELEASING.md):
+
+- a test of automatic skill triggering in a real install; and
+- use of ELAD on one real project, recorded with synthetic lessons.
+
+More documents or machinery would not count.

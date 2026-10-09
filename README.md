@@ -2,166 +2,112 @@
 
 **Use the cheapest reliable evidence that can justify the next action.**
 
-Evidence-Led Agentic Development (ELAD) is a provider-neutral method for building
-software with coding agents. It helps agents do substantial work without treating model
-confidence as proof or forcing every task through the same amount of process.
+Evidence-Led Agentic Development (ELAD) is a provider-neutral method for building software
+with coding agents. It is three things:
 
-This repository is a **Level 0 reference blueprint**. It provides guidance, optional
-templates, synthetic examples, and dependency-free checks. It does not run a model,
-control another repository, or grant an agent permission to change anything.
+- **a spec format**, so each requirement names the check that proves it;
+- **an evidence ladder**, which orders checks by cost; and
+- **three agent skills**, which teach an agent to use them.
 
-**Current release: [v0.5](https://github.com/TameTheGame/evidence-led-agentic-development/releases/tag/v0.5)**
-— Direct/Conserve delivery and simpler release numbering. See [release notes](releases/v0.5.md)
-and the [release policy](docs/RELEASING.md). Earlier release tags remain immutable.
+ELAD runs nothing and grants no authority. Permission always comes from you and your
+project; see [Authority and Safety](docs/AUTHORITY_AND_SAFETY.md).
 
-## Why ELAD
+**Current version: 0.6**, a breaking reshape of v0.5. The v0.5 protocol (schemas,
+templates, and validators) is archived at the `v0.5` tag; see [Archive](ARCHIVE.md).
 
-Coding agents are capable of more than completing isolated snippets. They can inspect a
-project, plan a change, implement it, run checks, analyze failures, and try again. The
-hard part is deciding how much structure that work needs and what evidence is strong
-enough to continue.
+## Quick start
 
-Too little structure can let an agent drift beyond the request, confuse activity with
-progress, or judge its own work too generously. Too much structure can turn a small fix
-into a pile of briefs, manifests, gates, and reviews that cost more than the change.
+1. **Install the skills.** Copy the three folders in [`skills/`](skills/README.md) into
+   your agent's skill folder, for example `.claude/skills/` for Claude Code. Tools that
+   support the Agent Skills format load them when their descriptions match the work.
+2. **Write a spec** for the area you're working on, at `spec/<area>.spec.md`. The format
+   is in [Spec Format](docs/SPEC_FORMAT.md).
+3. **Point your project's `AGENTS.md` at the spec.** Your `AGENTS.md` still decides what
+   agents may do; the skills never override it.
 
-ELAD is designed for the useful middle:
+Then ask for what you want in ordinary words. The agent works out which requirements are
+affected, checks them on the cheapest rung that can settle them, and asks you only for
+decisions that are yours.
 
-- **Right-size the scaffolding.** A small deterministic fix can stay small. Uncertain or
-  consequential work earns stronger evaluation, isolation, and review only when those
-  safeguards can resolve a real risk.
-- **Enable evidence-backed autonomy.** Clear scope, trustworthy checks, and explicit stop
-  conditions let an agent plan, build, test, diagnose, and iterate without you supervising
-  every tool call.
-- **Let results guide the next step.** Evaluation happens during development, so failures
-  point to the next useful change instead of appearing only at the end.
-- **Keep authority separate from capability.** An agent may be capable of doing something
-  without being allowed to do it. Permission still comes from you and the project being
-  changed.
-- **Reuse what is expensive.** Good tests, calibrated evaluators, project rules, and
-  qualification evidence can be built once and reused instead of recreated for every
-  task.
+## The spec format
 
-This is what makes autonomous agentic development practical: the agent has room to do the
-engineering work, while evidence and explicit boundaries decide whether it should
-continue. The goal is not maximum automation or maximum process. It is reliable progress
-with less routine supervision and no more machinery than the work can justify.
+Each requirement is one observable sentence with its rung and its check:
 
-ELAD has been tested beyond its own conformance suite. In a four-part reference project,
-it guided deterministic single-agent development, cold adoption, bounded delegation to a
-different model, and a semantic feature whose evaluation caught a real defect that the
-deterministic tests missed. Those results are meaningful empirical support for the method
-in a bounded software project. They are not yet proof of production-scale automation or
-universal applicability. See [Empirical Status](docs/EMPIRICAL_STATUS.md) for the results
-and their limits.
-
-## Start here
-
-- **Choosing delivery mode:** use [Operating Modes](docs/OPERATING_MODES.md) for
-  Direct end-to-end primary-agent work or explicit Conserve routing to an eligible
-  cheaper/local subject. Mode is independent of rigor and grants no effects.
-- **Trying ELAD for the first time:** give your coding agent the
-  [First Run](docs/FIRST_RUN.md) guide.
-- **Want the short explanation:** read [Start Here](START_HERE.md).
-- **Choosing how much process a task needs:** read
-  [Adaptive Rigor](docs/ADAPTIVE_RIGOR.md).
-- **Adopting ELAD across a project:** use the
-  [Adoption Runbook](docs/ADOPTION_RUNBOOK.md).
-- **Implementing the protocol:** begin with [Architecture](docs/ARCHITECTURE.md),
-  [Conformance](docs/PROTOCOL_05_CONFORMANCE.md), and the [manifest](MANIFEST.md).
-- **Comparing local coding models or harnesses for repeated ELAD work:** read
-  [Model and Harness Readiness Evaluation](docs/MODEL_HARNESS_READINESS_EVALUATION.md)
-  and use the separately authorized
-  [ELAD Harness Readiness Suite](https://github.com/TameTheGame/elad-harness-readiness-suite).
-
-## How it works
-
-Describe the outcome you want in ordinary language—or give the agent the project and ask
-what the next useful step should be. The agent handles the ELAD loop:
-
-```text
-define the outcome and boundaries
-  -> find the most important uncertainty
-  -> choose the cheapest reliable check
-  -> make the smallest useful change
-  -> inspect the result and analyze failures
-  -> repeat, escalate, or stop
+```markdown
+### OUT-SPAWN-01 — Every spawn lands on solid ground with room to stand
+- state: agreed
+- rung: engine
+- check: OUT_SPAWN_01_EverySpawnLandsOnSolidGround
+- touches: spec/outpost.layout.json, generator code
 ```
 
-For an ordinary task, the request, existing project rules, one trustworthy test, and an
-inspected diff may be the entire process. More formal records become useful only when
-work crosses contexts, depends on fallible evaluation, affects a live system, or has
-consequences that make stronger evidence worthwhile.
+Only the owner moves a requirement from `draft` to `agreed`. Results stay out of the spec:
+machine checks report through test output, and owner checks add one line to
+`spec/ACCEPTANCE.md`.
 
-You do not complete this loop as a questionnaire. The agent derives it from your request
-and the project, then surfaces only the decisions that require your authority or judgment.
+## The evidence ladder
 
-## Use only as much rigor as the task needs
-
-| Profile | Use it when | Typical shape |
+| Rung | Runs where | Can prove |
 |---|---|---|
-| `light` | The change is confined, reversible, low-risk, and covered by a trustworthy check. | change -> check -> inspect -> finish |
-| `bounded` | The task has moderate coupling, a new regression risk, or a handoff to another context. | short brief -> focused work -> focused checks -> concise result |
-| `evaluated` | Success is semantic, stochastic, experiential, runtime-dependent, or judged by a fallible evaluator. | representative cases -> inspect outputs -> analyze errors -> iterate |
-| `assured` | The work is difficult to reverse, security/privacy sensitive, production-facing, or otherwise high-consequence. | isolated work -> independent expectations -> stronger verification -> separate approval |
+| **0 · static** | anywhere | file structure, data validity, saved-file contents |
+| **1 · engine** | the dev machine, headless | collision, physics, traces, exact program behavior |
+| **2 · editor** | the real authoring tool | save and reopen, serialization, a rendered capture |
+| **3 · session** | the product as users run it | host and remote behavior, clean installs |
+| **4 · owner** | the owner, in person | feel, look, fitness for purpose |
 
-The agent starts with `light`, moves up only when the facts require it, and moves back down
-when a reusable check has made the work predictable. You do not need to choose the label.
+**The rules that matter most:**
 
-Rigor describes how much evidence a task needs. It does not grant permission. A mature
-project can still use `light` for a typo, and a read-only decision can deserve `assured`
-review. [Adaptive Rigor](docs/ADAPTIVE_RIGOR.md) explains the distinction.
+- Settle each requirement at the cheapest rung that can prove it.
+- A lower rung never closes a higher claim.
+- A check that has never failed may be blind.
+- Ask the owner last, with a short card.
 
-## Match the evidence to the claim
+The full rules are in [Evidence Ladder](docs/EVIDENCE_LADDER.md).
 
-Use the simplest check that can reliably tell success from failure:
+## The skills
 
-1. Prefer an existing deterministic check for exact behavior.
-2. Add a focused regression when the expected result is independently known.
-3. Observe runtime behavior when the claim depends on live state.
-4. Use representative examples and a calibrated judge for semantic or stochastic
-   behavior that code cannot settle.
-5. Keep product meaning, trust, subjective quality, and consequential tradeoffs with the
-   project owner.
-
-Mixed work can use mixed evidence. A feature may need exact tests for its command-line
-contract and a small semantic evaluation for the text it generates. The uncertain part
-does not make every neighboring claim uncertain.
-
-See [Evaluation and Evidence](docs/EVALUATION_AND_EVIDENCE.md) when choosing or building
-evaluators.
-
-## Add deeper machinery only when a trigger appears
-
-| When you encounter... | Add or read... |
+| Skill | Use when |
 |---|---|
-| One small task | [First Run](docs/FIRST_RUN.md) |
-| Repeated project adoption | [Adoption Runbook](docs/ADOPTION_RUNBOOK.md) |
-| Uncertain or mixed product behavior | [Evaluation and Evidence](docs/EVALUATION_AND_EVIDENCE.md) |
-| Repeated autonomous delegation | [Model and Harness Qualification](docs/MODEL_QUALIFICATION.md) |
-| A need to separate task rigor from project capability | [Maturity Model](docs/MATURITY_MODEL.md) |
-| Live, scarce, or overlapping target effects | [Architecture](docs/ARCHITECTURE.md) and [Threat Model](docs/THREAT_MODEL.md) |
-| Formal packets, receipts, or lifecycle implementation | [Conformance Contract](docs/PROTOCOL_05_CONFORMANCE.md) |
+| [`choosing-rigor`](skills/choosing-rigor/SKILL.md) | Starting a task, or when something unexpected happens mid-task |
+| [`matching-evidence-to-claims`](skills/matching-evidence-to-claims/SKILL.md) | Deciding how to prove a change works, and before reporting done |
+| [`asking-the-owner`](skills/asking-the-owner/SKILL.md) | A decision or check needs the project owner |
 
-Stop reading when the next layer would not change the task, evidence, authority, or
-decision.
+**A skill change has to show it changes agent behavior** in a pressure test before it
+merges; see [Skills](skills/README.md).
 
-## Validate this repository
+## Evidence and limits
 
-A coding agent or CI normally runs the checks. Python 3.10 or newer is required; no
-third-party packages are installed.
+- **Pressure tests.** The skills were tested against agents without them, and in round 1
+  also against an unmodified Superpowers library. The tests were dry runs, scored blind
+  against a rubric frozen beforehand.
+  - **Round 2:** with the skills, agents pushed back on a risky "one try, then stop forever"
+    rule in 2 of 3 runs, against 0 of 3 without them.
+  - **The east-spawn task:** they ran cheaper checks first and reported by requirement and
+    rung.
+  - Results are in [`skills/evidence/`](skills/evidence/PRESSURE_TEST_RESULTS.md).
+- **Engine-rung spike.** A real game engine (S&box) ran rung-1 checks from a project's own
+  tests: collision, traces, spawn landing, stuck detection, and a saved scene. See the
+  [S&box example](examples/sbox/README.md).
+- **Limits.** The samples are small. Automatic skill triggering hasn't been tested in a
+  real install, and ELAD hasn't yet been used on a real project at this version. See
+  [Empirical Status](docs/EMPIRICAL_STATUS.md).
+
+## Example
+
+[`examples/sbox/`](examples/sbox/README.md) applies the method to a synthetic game map. It
+includes a spec, the ladder for that target, a working rung-1 test kit, and a
+target-specific skill.
+
+## Checks and license
 
 ```text
-python tools/validate_all.py
+python tools/check.py
 ```
 
-Windows users may also run `py -3 tools/validate_all.py`. A green result validates this
-repository's inert reference artifacts. It does not prove a live model, target, runtime,
-or project outcome, and it grants no authority.
+The script is dependency-free and needs Python 3.10 or newer. It lints the skills and
+checks that every relative link resolves. Passing proves the repository is well formed,
+nothing more.
 
-## License and provenance
-
-ELAD code and documentation are licensed under [Apache-2.0](LICENSE). Research influence,
-generated artifacts, dependencies, and excluded material are documented in
-[Licensing and Provenance](docs/LICENSING_AND_PROVENANCE.md) and
-[Research Basis](docs/RESEARCH_BASIS.md).
+ELAD is licensed under [Apache-2.0](LICENSE). Provenance and credits are in
+[Licensing and Provenance](docs/LICENSING_AND_PROVENANCE.md),
+[Research Basis](docs/RESEARCH_BASIS.md), and [Principles](docs/PRINCIPLES.md).

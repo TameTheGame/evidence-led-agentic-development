@@ -2,7 +2,7 @@
 
 ## Project license
 
-ELAD source code, documentation, schemas, templates, and original synthetic fixtures are
+ELAD source code, documentation, skills, and original synthetic examples and fixtures are
 licensed under the Apache License, Version 2.0. The SPDX identifier is `Apache-2.0`.
 See the repository-root `LICENSE` and `NOTICE.md` files.
 
@@ -12,14 +12,20 @@ This repository does not require copyright assignment or a contributor license a
 
 ## Original material included
 
-- original provider-neutral prose and contracts;
-- original synthetic examples;
-- original dependency-free validation code;
-- attributed paraphrase and engineering synthesis of research guidance; and
-- generated JSON artifacts produced deterministically from repository-authored sources.
+- original provider-neutral prose and agent skills;
+- original synthetic examples, including the S&box example's C# test kit. That kit is
+  written against S&box's public APIs and contains no engine source;
+- original pressure-test materials: prompts, rubrics, and agent responses produced
+  against a synthetic fixture;
+- original dependency-free check code; and
+- attributed paraphrase and engineering synthesis of research guidance.
 
 No third-party source code, research article, research image, model artifact, dataset, or
 target adapter is vendored in the repository.
+
+The skills' description style and red-flag tables follow techniques from the
+`writing-skills` skill in [obra/superpowers](https://github.com/obra/superpowers) (MIT,
+© Jesse Vincent). No text was copied, and Superpowers is not vendored.
 
 ## External CI dependencies
 
@@ -31,7 +37,7 @@ The optional GitHub Actions workflow invokes two external actions by immutable c
 | `actions/setup-python` | `v6.2.0`, `a309ff8b426b58ec0e2a45f0f869d46889d02405` | MIT | Selects the matrix Python runtime |
 
 These actions run in GitHub-hosted CI; they are not vendored or imported by ELAD's local
-validators. Continued suitability and release identity should be rechecked when their
+check. Continued suitability and release identity should be rechecked when their
 pins change.
 
 ## Material deliberately excluded
@@ -53,10 +59,9 @@ articles, images, or private target evidence are redistributed. No endorsement i
 
 ## Generated artifacts
 
-`blueprint.json`, `protocol-bundle.json`, and the synthetic continuation fixture contain
-only repository-authored data. `tools/build_level0_artifacts.py` regenerates their
-internal bindings and authenticated inventory without contacting a provider or target.
-Generated artifacts are distributed under Apache-2.0 with the rest of the repository.
+v0.6 has no generated artifacts. The v0.5 generated files (`blueprint.json`,
+`protocol-bundle.json`, and the synthetic continuation fixture) are archived at the `v0.5`
+tag under the same license; see [Archive](../ARCHIVE.md).
 
 ## Publication-history boundary
 

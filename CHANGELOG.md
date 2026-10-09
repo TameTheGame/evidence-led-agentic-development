@@ -4,6 +4,45 @@
 
 No pending changes.
 
+## 0.6 — date set at release
+
+A breaking reshape, approved through the promotion proposal; see ADR-0020 in
+`docs/DECISIONS.md`.
+
+- **The core is now three parts.**
+  - `docs/SPEC_FORMAT.md`: requirements in the project's spec, each naming its rung and
+    check.
+  - `docs/EVIDENCE_LADDER.md`: checks ordered by cost, plus the rules for climbing them.
+  - Three skills in `skills/`: `choosing-rigor`, `matching-evidence-to-claims`, and
+    `asking-the-owner`.
+- **Rationale folded in.** `ADAPTIVE_RIGOR.md`, `EVALUATION_AND_EVIDENCE.md`,
+  `HUMAN_DECISION_BOUNDARY.md`, and `OPERATIONS_AND_LEARNING.md` were folded into
+  `docs/EVIDENCE_LADDER.md`, then archived.
+- **New `docs/AUTHORITY_AND_SAFETY.md`.** It carries forward the general rules from
+  `ARCHITECTURE.md`, `THREAT_MODEL.md`, `MODEL_QUALIFICATION.md`, and the v0.5
+  `SECURITY.md`.
+- **The S&box material moved to `examples/sbox/`:** the outpost spec, the engine-rung spike
+  kit with results from seven runs, and the `sbox-engine-reference` skill.
+- **The pressure-test record moved to `skills/evidence/`.** Rounds 1 and 2, with responses,
+  rubrics, keys, and scores.
+- **Archived at `v0.5` and removed from `main`; see `ARCHIVE.md`:**
+  - all schemas and registries;
+  - all templates;
+  - the validators, vectors, and fixtures;
+  - `protocol-bundle.json` and `blueprint.json`;
+  - the episode and promotion drafts;
+  - the protocol examples;
+  - the adapter and reference placeholders;
+  - `START_HERE.md`, `MANIFEST.md`, and `docs/FIRST_RUN.md`; and
+  - the protocol documents.
+- **New checks.** `tools/check.py` replaces the validators: a skill frontmatter lint and a
+  relative-link check. CI runs it on Ubuntu and Windows with one Python version. The
+  release job checks that the tag matches `VERSION` and that the notes exist.
+- **Version policy.** `docs/RELEASING.md` now says 0.x minor releases may include breaking
+  changes. `1.0` waits for a real-install triggering test and one real project.
+- **Rewritten:** README, AGENTS.md, STATUS, ROADMAP, CONTRIBUTING, and SECURITY. GOVERNANCE
+  was trimmed to match.
+
 ## 0.5 — 2026-09-05
 
 - Adopted two-component `MAJOR.MINOR` versions and `vMAJOR.MINOR` release tags, beginning

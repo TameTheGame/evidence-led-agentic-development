@@ -20,8 +20,9 @@ well as aggregate scores. Use what they reveal to decide what changes next.
 ## Right-size the scaffolding
 
 Match process to uncertainty, coupling, reversibility, consequences, evaluator maturity,
-and delegation distance. Start with the four profiles in [Adaptive
-Rigor](ADAPTIVE_RIGOR.md). Project maturity, task rigor, and authority remain separate.
+and delegation distance. Start with the four levels in
+[`choosing-rigor`](../skills/choosing-rigor/SKILL.md). Rigor, evidence, and authority
+remain separate decisions.
 
 Before adding a mechanism, ask what realistic failure it can detect, whether a cheaper
 exact check exists, and whether its cost is one-time or recurring. Remove steps that no
@@ -30,9 +31,9 @@ longer change a decision.
 ## Give the agent only what the task needs
 
 Every task needs an observable outcome, allowed scope, a credible check, a stop or
-escalation condition, and an understanding of reversal. A prompt or issue may already
-provide them. Add typed claims, manifests, packets, budgets, receipts, or formal review
-only when the uncertainty, handoff, audit boundary, or consequence requires them.
+escalation condition, and an understanding of reversal. A prompt, an issue, or the spec may
+already provide them. Add a written brief, extra records, or formal review only when the
+uncertainty, a handoff, or the consequence requires them.
 
 Unknown authority causes a stop, never inferred permission. Surface ambiguity before an
 effect when it changes product meaning, trust, privacy, persistence, rights, publication,
@@ -44,9 +45,6 @@ Give each worker the smallest sufficient context. Keep stable authority and task
 a compact core, select larger sources on demand, and leave raw logs and transcripts
 file-backed. The orchestrator should receive a concise result and retrieve only the causal
 slices it needs.
-
-Exact manifests can bind evidence for assured cross-context work. A one-context light
-task does not need a manifest merely to prove that context existed.
 
 ## Use the simplest reliable method
 
@@ -63,9 +61,9 @@ without losing important global context.
 
 ## Qualify autonomy that will be reused
 
-Reusable capability belongs to an exact model, runtime, harness, adapter, prompt/context
-compiler, tool surface, resource envelope, and evaluated task class. Qualification is
-worthwhile for repeated autonomous delegation or elevated effects. It is not mandatory
+Reusable capability belongs to an exact model, harness, prompt, tool set, and task class,
+not to a model name. Check that exact combination before relying on it for repeated
+unsupervised work (see [Authority and Safety](AUTHORITY_AND_SAFETY.md)). It is not
 paperwork for every supervised low-risk edit.
 
 ## Avoid circular proof
@@ -85,14 +83,10 @@ record what invalidates the result, and rerun only the affected slice after drif
 
 ## Separate authority when it matters
 
-Orchestration, candidate writing, verification, target execution, acceptance, promotion,
-and publication can be separate episodes when consequence requires it. An available tool,
-qualified model, or acquired lease never grants authority absent the target project's
-permission.
-
-Use ownership and fencing on shared targets, runtime state, data, or promotion surfaces
-when overlapping writers or stale completion are realistic risks. Do not impose that
-machinery on read-only or single-writer light work.
+Writing, verifying, accepting, merging, releasing, and publishing can be separate steps
+when consequence requires it. An available tool or a qualified model never grants
+authority without the project owner's permission. See
+[Authority and Safety](AUTHORITY_AND_SAFETY.md).
 
 ## Respect authoritative formats
 

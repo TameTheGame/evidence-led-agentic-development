@@ -3,57 +3,72 @@
 ## Default completion
 
 The maintainer's September 5, 2026 decision makes a versioned GitHub Release part of
-completing an authorized user-facing blueprint update. Unless the owner explicitly
-requests draft, local-only, or unreleased work, the delivery agent owns the version bump,
-release notes, validation, push, tag, and verification that the release was published.
-Do not request the same release permission again or call a push alone completed delivery.
-Unaccepted contributor changes do not carry this permission.
+completing an authorized user-facing update. Unless the owner explicitly asks for draft,
+local-only, or unreleased work, the delivery agent owns these steps:
 
-This is limited to the canonical public ELAD blueprint. It grants no authority over
-adopting repositories, models, native resources, runtime gates, deployments, or their
-publication. Existing rights/provenance checks and the Level-0 boundary still apply.
+- the version bump;
+- the release notes;
+- the check;
+- the push and the tag; and
+- verifying that the release was published.
+
+Don't ask for the same release permission again, and don't call a push alone a completed
+delivery. Unaccepted contributor changes don't carry this permission.
+
+This permission covers this public repository only. It grants no authority over projects
+that use ELAD, their models, or their releases.
 
 ## Version numbers
 
-- Starting with this release, use `MAJOR.MINOR`: `0.5`, then `0.6`, `0.7`, and so on.
-- Git tags and GitHub Releases use the matching `v` prefix: `v0.5`, not `v0.5.0`.
-- Increment the minor number for each coherent completed update, including a fix or
-  documentation-only release. Do not make a release for each intermediate commit.
-- Reserve a major increment for a deliberately announced major compatibility or maturity
-  transition; the number itself grants no maturity or authority.
-- Use numeric components without leading zeroes. Do not add a patch component or claim
-  strict Semantic Versioning compatibility for this two-component convention.
-- Preserve old tags such as `v0.3.0` and `v0.4.0` exactly; do not rename, move, or delete
-  them. Historical draft identities and other projects' versions are not reformatted.
+- **Format.** Versions use `MAJOR.MINOR`: `0.5`, `0.6`, `0.7`, and so on. Tags and GitHub
+  Releases use a `v` prefix, as in `v0.6`, never `v0.6.0`.
+- **Minor numbers.** Increment the minor number for each coherent completed update,
+  including a fix or a documentation-only release. Don't release each intermediate commit.
+- **Breaking changes in 0.x.** A `0.x` minor release may include breaking changes; its
+  release notes say what broke and how to stay on the previous version.
+- **When 1.0 comes.** `1.0` is reserved for two conditions:
+  - automatic skill triggering has been tested in a real install; and
+  - ELAD has been used on one real project.
+
+  The number grants no maturity or authority.
+- **Number style.** Use numeric components without leading zeroes, and no patch component.
+  This is not strict Semantic Versioning.
+- **Old tags never change.** Keep `v0.3.0`, `v0.4.0`, and `v0.5` exactly as they are: never
+  rename, move, or delete a tag.
 
 ## Delivery loop
 
-1. Select the next unused version from current `VERSION` and published releases.
-2. Update `VERSION`, current status/readme/manifest, active protocol/schema/registry/
-   template/example/vector/validator identities, and their references together. Preserve
-   explicitly historical records and drafts. Regenerate the authenticated bundle and
-   synthetic continuation bindings with `tools/build_level0_artifacts.py`; reseal the
-   trusted continuation anchor after independently checking the exact changed chain.
-3. Move completed changelog entries out of `Unreleased` into the dated version section.
-   Add `releases/vMAJOR.MINOR.md` with highlights, compatibility/migration, evidence limits,
-   and rollback. Its first heading identifies the exact release.
-4. Run `python tools/validate_all.py`, `git diff --check`, the appropriate bounded review,
-   and a fresh-checkout/export validation. Review generated identity changes; unchanged
-   synthetic raw payloads and preserved drafts must remain unchanged.
-5. Commit and push the accepted source to public `main`. Wait for the full hosted
-   Windows/Ubuntu/macOS and Python matrix to pass for that exact commit.
-6. Create an annotated `vMAJOR.MINOR` tag at that exact green commit and push the tag.
-   The tag workflow validates its name against `VERSION`, repeats the conformance matrix,
-   and only then publishes `releases/vMAJOR.MINOR.md` as the latest GitHub Release.
-7. Verify the published release is neither draft nor prerelease, names the correct tag,
-   resolves to the intended commit, is marked latest, and contains the intended notes.
-   Report the release URL and final Git state. Delivery is not complete without this check.
+1. **Pick the version.** Choose the next unused version from `VERSION` and the published
+   releases.
+2. **Update the version everywhere.** That means `VERSION`, the README's version line, and
+   `STATUS.md`. Move finished changelog entries from `Unreleased` into a dated section.
+   Add `releases/vMAJOR.MINOR.md`, covering:
+   - highlights;
+   - compatibility and migration;
+   - evidence limits; and
+   - rollback.
 
-If validation or publication fails, report the precise incomplete step and repair within
-scope. Before retrying publication, inspect whether a release already exists; do not
-overwrite an existing published release or move a released tag. If hosted publication
-is unavailable, the delivery agent may publish the same verified tag and checked-in notes
-through GitHub CLI after the matrix passes, then perform the same final checks.
+   Its first heading names the exact release.
+3. **Check.** Run `python tools/check.py` and `git diff --check`, review proportionally,
+   and run the check on a fresh clone.
+4. **Push.** Commit and push the accepted source to `main`. Wait for the hosted Ubuntu and
+   Windows checks to pass for that exact commit.
+5. **Tag.** Create an annotated `vMAJOR.MINOR` tag at that commit and push it. The tag
+   workflow confirms that the tag matches `VERSION` and that the release notes exist,
+   reruns the check, and only then publishes the notes as the latest GitHub Release.
+6. **Verify.** Confirm the published release:
+   - isn't a draft or prerelease;
+   - names the right tag and commit;
+   - is marked latest; and
+   - has the intended notes.
 
-Rollback is an adopter's explicit return to a previous immutable release. This repository
-does not automatically repin a target or rewrite its historical evidence.
+   Report the release URL and the final Git state. Delivery isn't complete without this.
+
+**If validation or publication fails,** report the exact incomplete step and repair it
+within scope. Before retrying, check whether the release already exists. Never overwrite a
+published release or move a released tag. If hosted publication is unavailable, publish
+the same verified tag and notes with the GitHub CLI after the checks pass, then do the
+same final checks.
+
+**Rollback** is a project's explicit return to an earlier immutable release. This
+repository never repins a project or rewrites its history.

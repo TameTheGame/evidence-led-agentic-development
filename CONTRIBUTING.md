@@ -1,80 +1,66 @@
 # Contributing
 
-ELAD is a maintainer-led Level-0 open-source project. Contributions that improve clarity,
-portability, conformance, evidence quality, or proportionality are welcome. Contribution
-does not grant authority in an adopting project or promote this blueprint to an
-operational capability.
+ELAD is a maintainer-led open-source project. Contributions that make the method clearer,
+more portable, better evidenced, or leaner are welcome. A contribution grants no authority
+in any project that uses ELAD.
 
 ## Before changing anything
 
-1. Read `AGENTS.md`, `STATUS.md`, `blueprint.json`, and `MANIFEST.md`.
-2. State one bounded outcome, affected paths, non-goals, compatibility impact, and
-   validation plan.
-3. Preserve default-deny and non-operational posture unless an explicit owner decision
-   authorizes a maturity transition.
-4. Open an issue first for breaking protocol changes or additions that would introduce a
-   dependency, network surface, operational adapter, or new authority class.
+1. Read `AGENTS.md` and the README.
+2. State one bounded outcome, the affected files, what is out of scope, and how you'll
+   check it.
+3. Open an issue first for a change to the spec format or the ladder rules, or for
+   anything that would add a dependency or runtime machinery.
 
-## Contract changes
+## Skill changes need a pressure test
 
-Update every affected layer together:
+A skill is kept only if it changes what agents do. A pull request that changes a
+`SKILL.md`, even its wording, must include a pressure test:
 
-- normative documentation;
-- schemas and registries;
-- inert templates;
-- valid and malicious examples;
-- validator controls;
-- manifest/changelog/version; and
-- a governance decision when semantics or compatibility change.
+- **Compare:** agents with the changed skill against a baseline, on the scenarios the
+  change targets.
+- **Freeze the rubric:** write it before reading any response.
+- **Score blind:** shuffle the responses and remove anything that names the condition.
+- **Record the result:** add it to [`skills/evidence/`](skills/evidence/PRESSURE_TEST_RESULTS.md),
+  with the responses and the key.
 
-JSON Schema is not enough for composed identity, authority, containment, claim, evidence,
-review-bundle, human-receipt, continuation-anchor, lifecycle, budget, or gate semantics.
-Add semantic controls as soon as the contract depends on more than one document.
+The [skills README](skills/README.md) describes the method and lists the standing
+scenarios. Run them against the synthetic fixture, never against private project data.
 
-When protocol bytes are referenced, use the declared canonical structured-JSON framing;
-when source, evidence, or review payload bytes are referenced, hash them raw. Do not add
-a self-hash. Any new receipt state must be added to the external lifecycle oracle and
-evaluated over the complete cross-product rather than copied into validator code.
-
-## Validation
+## Checks
 
 Run:
 
 ```text
-python tools/validate_all.py
+python tools/check.py
 ```
 
-Then run `git diff --check` and inspect the exact diff, including generated counts and all
-new files. Verify all 29 schema/template pairs, the external lifecycle oracle, exact-byte
-continuation fixture, and malicious path corpus. Explain any change to a pinned digest,
-lifecycle admission, malicious vector, or release inventory. Do not weaken a negative
-control merely to make the suite green.
+Then run `git diff --check` and read the exact diff. The check lints every skill's
+frontmatter and confirms every relative link resolves.
 
 ## Scope
 
-Keep examples synthetic and dependencies absent unless the owner accepts a separately
-reviewed dependency decision. Never contribute credentials, private product source,
-external native assets, raw worker transcripts, or a generic mutation/promotion gateway.
+Keep examples synthetic. Never contribute credentials, private product source, native
+assets, raw agent transcripts from private projects, or runtime gateways. Target-specific
+material goes under `examples/` and is marked non-normative.
 
 ## Contribution license
 
-Unless explicitly marked otherwise, a contribution intentionally submitted for inclusion
-is provided under Apache-2.0, consistent with section 5 of the project license. Do not
-submit material you do not have the right to contribute.
+Unless explicitly marked otherwise, a contribution intentionally submitted for inclusion is
+provided under Apache-2.0, consistent with section 5 of the project license. Don't submit
+material you don't have the right to contribute.
 
 ## Review expectations
 
-- Small documentation and test corrections may use the light path.
-- Normative compatibility, authority, digest, or lifecycle changes require a durable
-  decision, positive and malicious cases, and independent review proportional to risk.
-- A pull request should state what the evidence proves and what remains untested.
-- Maintainers may decline process or schema additions that do not catch a realistic
-  failure or change a decision.
+- Small documentation fixes may take the light path.
+- Changes to the spec format, the ladder rules, or a skill need a recorded decision or
+  pressure test, and review proportional to their reach.
+- A pull request should say what its evidence proves and what remains untested.
+- Maintainers may decline additions that don't catch a realistic failure or change a
+  decision.
 
 ## Completing an update
 
-Follow [Releasing](docs/RELEASING.md). Maintainer-authorized user-facing updates include
-a `MAJOR.MINOR` version increment, changelog and release notes, validation, a matching
-`vMAJOR.MINOR` tag, and verification of the published GitHub Release. Do not stop at a
-push or leave completed changes indefinitely under `Unreleased`. Drafts and unaccepted
-contributor pull requests do not authorize publication.
+Follow [Releasing](docs/RELEASING.md). Maintainer-authorized user-facing updates include a
+version bump, changelog and release notes, a passing check, a matching tag, and a verified
+GitHub Release. Drafts and unaccepted pull requests don't authorize publication.

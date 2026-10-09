@@ -45,20 +45,26 @@ guidance for ELAD is:
 | Iterate from examples and errors | Build/observe/evaluate/error-analysis loop; first-causal-failure classification; next-smallest experiment |
 | Vary evaluation by project and stage | Orthogonal `light`, `bounded`, `evaluated`, and `assured` task profiles |
 | Choose code/workflow/agent deliberately | Least-adaptive-reliable routing and explicit delegation |
-| Manage agent context | Task-selected reading; precompiled slices and compact receipts for selected constrained workers |
-| Understand model limits | Exact model+harness subjects and empirical qualification for repeated autonomy |
-| Evaluation-driven development | Existing deterministic tests, runtime probes, frozen eval sets, calibrated semantic judges, adversarial review, human judgment |
-| Evaluate evaluators | Reusable calibration receipts, counterexamples, holdouts, drift-triggered reruns |
-| Operate reliably | Identity, authority, isolation, fencing when needed, observability, rollback, privacy/security, target-owned execution |
+| Manage agent context | Task-selected reading; raw logs kept in files; compact results |
+| Understand model limits | Checking the exact model-and-harness combination before relying on it unsupervised |
+| Evaluation-driven development | The evidence ladder: static checks, headless engine tests, editor and session checks, calibrated judges as advice, owner judgment |
+| Evaluate evaluators | Calibration against known-good and known-bad cases, holdouts, drift-triggered rechecks; pressure tests for the skills themselves |
+| Operate reliably | Authority from the owner, observability, rollback, privacy and security, generated output only from the generator |
 | Preserve software fundamentals | Reproducibility, versioning, testability, maintainability, regression suites, exact diffs |
 | Optimize the system | Efficacy metrics that include human attention, context, cost, latency, and recurring scaffolding |
 | Know when to prototype or slow down | Proportional task rigor and escalation/simplification rules |
 
 ## ELAD synthesis boundary
 
-The four rigor profiles, authority intersection, hash-bound assured handoff chain,
-closed-world lifecycle, fencing, and maturity model are ELAD's engineering synthesis.
-They are not presented as mechanisms prescribed verbatim by Ng.
+These are ELAD's engineering synthesis, not mechanisms prescribed verbatim by Ng:
+
+- the four rigor levels;
+- the evidence ladder;
+- the spec format; and
+- the skills.
+
+So were the v0.5 handoff chain, lifecycle, fencing, and maturity model, which are now
+archived.
 
 The blueprint also applied the iterative method to itself:
 
@@ -68,7 +74,10 @@ The blueprint also applied the iterative method to itself:
   universal;
 - the completed 0.3 design preserves the reusable machinery, adds true evaluator
   independence where cheap, and introduces adaptive rigor so process cost tracks actual
-  uncertainty and consequence.
+  uncertainty and consequence;
+- version 0.6 kept the evidence method and archived the protocol machinery at `v0.5`,
+  after blind pressure tests showed that a spec format, an evidence ladder, and three short
+  skills change agent behavior.
 
 ML training and serving are not inherent requirements for adopting ELAD. They become
 relevant when a project fine-tunes workers, builds representative datasets, measures
@@ -87,7 +96,7 @@ syndication response because direct X retrieval returned 403.
 The relevant guidance favors clear initiative and completion, task-selected context,
 narrow skill triggers, useful bounded delegation, and testing proportionate to risk.
 Stronger instruction following makes accumulated instructions worth auditing. ELAD's
-translation is the provider-neutral [Operating Modes](OPERATING_MODES.md) distinction:
+translation was the provider-neutral [Operating Modes](https://github.com/TameTheGame/evidence-led-agentic-development/blob/v0.5/docs/OPERATING_MODES.md) distinction, archived in v0.6:
 capable primary-agent Direct delivery alongside explicit Conserve routing that preserves
 different model and harness needs. No source prompts or article bytes are redistributed;
 no endorsement or comparative performance claim is implied.

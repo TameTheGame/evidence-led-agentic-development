@@ -4,8 +4,12 @@
 
 ELAD currently uses a maintainer-led model. There is no foundation, steering committee,
 formal membership, or established contributor community. Maintainers accept changes
-through reviewable commits or pull requests and are responsible for release identity,
-compatibility decisions, licensing, and the public evidence boundary.
+through reviewable commits or pull requests and are responsible for:
+
+- release identity;
+- compatibility decisions;
+- licensing; and
+- the public evidence boundary.
 
 That model may evolve if sustained external participation creates a real need. Governance
 documents should describe actual practice rather than anticipate an organization that
@@ -13,59 +17,50 @@ does not yet exist.
 
 ## Ownership model
 
-This repository owns a provider-neutral protocol, reference contracts, validation
-expectations, and adoption guidance. A target repository owns its product intent,
-authority, artifacts, adapters, gates, evidence, candidates, promotion, and publication.
+**This repository owns** the method: the spec format, the evidence ladder, the skills, the
+authority and safety rules, and synthetic examples.
 
-The shared repository is a pinned foundation, not a second operational control plane.
-Create a separate deployment/state repository only when concrete secrets, machine-global
-coordination, or deployment ownership cannot remain in target-local overlays.
+**A project that uses ELAD owns** everything else:
 
-An aggregate multi-project view is derived and read-only. It cannot close or mutate an
-owner-local gate.
+- its product intent and specs;
+- its authority and `AGENTS.md`;
+- its code and artifacts;
+- its target-specific skills; and
+- its merges and releases.
 
-## Normative changes
+ELAD is a pinned reference, not a control plane over any project.
 
-A change is normative when it alters:
+## Changes to the method
 
-- identity or digest framing;
-- authority intersection or default-deny behavior;
-- role or mutation separation;
-- packet, certificate, receipt, evidence, human-claim, lease, or gate semantics;
-- path containment/security rules;
-- evaluator acceptance or maturity requirements;
-- compatibility, promotion, or publication boundaries.
+A change is a method change when it alters any of these:
 
-Ordinary adopting-project features are not normative ELAD changes and do not inherit
-this protocol-release ceremony. They follow the target's selected task-rigor profile.
+- the spec format or its field rules;
+- the ladder's rungs or rules;
+- a skill's text;
+- the authority and safety rules; or
+- compatibility or the version policy.
 
-Normative changes require:
+**Method changes require:**
 
-1. a written decision with purpose, alternatives, compatibility, migration, failure
-   behavior, and rollback;
-2. matching schema/template/example/validator updates;
-3. positive and malicious-negative fixtures;
-4. independent review; and
-5. a version change appropriate to compatibility impact.
+1. a written decision in [Decisions](docs/DECISIONS.md), covering purpose, alternatives,
+   compatibility, and rollback;
+2. for a skill change, a pressure test that shows the intended behavior change (see
+   [Contributing](CONTRIBUTING.md));
+3. a passing `tools/check.py`; and
+4. a version change suited to the compatibility impact.
 
-Contributors may propose a normative change, but no contributor or automation system can
-activate it merely by modifying a schema, validator, or generated bundle. Maintainer
-acceptance and an exact release identity remain separate decisions.
+Contributors may propose a method change. Accepting it and releasing it remain separate
+maintainer decisions.
 
-## Activation
+## Adoption
 
-This repository cannot activate a target by being present, installed, imported, pinned,
-or successfully validated. A target owner must create an owner-local durable activation
-record that names exact protocol and implementation identities, proven maturity level,
-profiles, claim classes, gates, and rollback.
+A project never becomes bound by ELAD through its presence, installation, or a passing
+check. A project adopts a pinned version through its own owner's decision, and moves to a
+new version the same way.
 
-## Promotion and publication
+## Releases
 
-Publication of this blueprint's own source releases follows the standing maintainer
-decision in [Releasing](docs/RELEASING.md). That repository-maintenance permission is
-not an implementation of the target-promotion or target-publication capabilities below.
-
-Candidate work never carries promotion authority. A future promotion design must use a
-fresh authority episode, exact accepted candidate/evidence identity, separate fenced
-surface, divergence checks, malicious fixtures, and explicit owner review. Publication
-requires another boundary; promotion never implies redistribution rights.
+This repository's own releases follow the standing maintainer decision in
+[Releasing](docs/RELEASING.md). That permission covers this repository only. Merging,
+releasing, and publishing in any project that uses ELAD are that owner's decisions; see
+[Authority and Safety](docs/AUTHORITY_AND_SAFETY.md).

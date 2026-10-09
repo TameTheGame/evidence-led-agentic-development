@@ -1,5 +1,51 @@
 # Decisions
 
+ADR-0001 to ADR-0017 describe the v0.5 protocol design. They are kept as history; the
+artifacts they govern are archived at the `v0.5` tag (see [Archive](../ARCHIVE.md)).
+
+## ADR-0020 — Spec, ladder, and skills become the core
+
+**Status:** accepted by Josh, the owner, on 2026-10-09 for v0.6
+
+**Decision.** The core of ELAD becomes:
+
+- the spec format, in [Spec Format](SPEC_FORMAT.md);
+- the evidence ladder, in [Evidence Ladder](EVIDENCE_LADDER.md); and
+- three skills, in [skills](../skills/README.md).
+
+The S&box material is a target-specific example. The v0.5 protocol machinery leaves `main`
+and stays at the `v0.5` tag. The approved plan is the
+[promotion proposal](https://github.com/TameTheGame/evidence-led-agentic-development/blob/da84803/drafts/spec-driven/PROMOTION_PROPOSAL.md).
+
+**The owner's choices:**
+
+1. **Version.** The version is `0.6`, not `1.0`. 0.x minor releases may break
+   compatibility. `1.0` waits for two things: automatic skill triggering tested in a real
+   install, and use on one real project.
+2. **Rationale documents.** The four rationale documents on rigor, evaluation, owner
+   decisions, and operations are folded into the evidence ladder and archived.
+3. **No AGENTS template.** The README and the skills cover it.
+4. **Homes.** The S&box material lives in `examples/sbox/`, and the pressure-test record in
+   `skills/evidence/`.
+5. **CI.** It runs on Ubuntu and Windows with one Python version.
+6. **Amendment: one authority page.** Authority and safety rules stay as one short page,
+   [Authority and Safety](AUTHORITY_AND_SAFETY.md).
+7. **New rule: skill changes need a pressure test.**
+
+**Why.** Two blind pressure-test rounds showed the skills change agent behavior. The
+engine-rung spike showed the ladder's machine rungs work in a real engine. Meanwhile, the
+inert protocol ran nothing and no project used it at runtime.
+
+**Alternatives.**
+
+- Keeping the protocol on `main` beside the new core would keep two competing descriptions
+  of the method.
+- Calling the release `1.0` would overstate thin evidence.
+
+**Compatibility and rollback.** This is a breaking change for anyone using the v0.5
+artifacts from `main`. Pinned tags are unchanged, and rollback is pinning `v0.5`. No
+project is repinned by this decision.
+
 ## ADR-0019 — Versioned release closure and two-component numbering
 
 **Status:** accepted by the maintainer on 2026-09-05 for v0.5 and future blueprint updates
@@ -26,7 +72,7 @@ metadata. Failed publication is unfinished delivery, not a reason to move a publ
 
 **Status:** accepted for Level 0 guidance on 2026-09-05; released in v0.5
 
-[Operating Modes](OPERATING_MODES.md) is the canonical delivery-mode policy. Direct
+[Operating Modes](https://github.com/TameTheGame/evidence-led-agentic-development/blob/v0.5/docs/OPERATING_MODES.md) was the canonical delivery-mode policy (archived in v0.6). Direct
 supports capable primary-agent completion inside existing scope, including light and
 bounded source tasks. Conserve explicitly routes bounded work to an eligible cheaper
 or local subject. Logical roles do not require a separate agent per role, and
