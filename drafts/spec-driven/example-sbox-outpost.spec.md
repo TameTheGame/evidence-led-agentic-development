@@ -160,6 +160,8 @@ public class OutpostTests
 		using var scope = scene.Push();
 
 		OutpostGenerator.Build( scene, layout ); // PolygonMesh + MeshComponent, from data
+		// (in a game scene, create each MeshComponent disabled, set Mesh, then enable it;
+		// see engine-rung-spike/README.md)
 
 		foreach ( var spawn in layout.Spawns )
 		{

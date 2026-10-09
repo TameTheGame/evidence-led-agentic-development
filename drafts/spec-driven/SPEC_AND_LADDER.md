@@ -211,6 +211,7 @@ precedence over its skills.
 
 These are the facts a short spike should settle for an S&box map project. References are
 to `Facepunch/sbox-public` at `3915f1a69810026e23d331581266636de89411d5`.
+[`engine-rung-spike/`](engine-rung-spike/README.md) is a ready-to-run kit for questions 1–3.
 
 1. **Test projects need a code project.** `Project.Solution.cs` generates a `UnitTests`
    project only for `game`, `library`, and `addon` projects, not `content` projects. A
