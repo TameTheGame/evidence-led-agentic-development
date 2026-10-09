@@ -1,7 +1,7 @@
 # Engine-Rung Spike (S&box)
 
 > **Non-normative, synthetic, target-specific.** This kit tests one assumption in
-> [Spec-Driven Evidence](../SPEC_AND_LADDER.md): that a project's own tests can check map
+> the [evidence ladder](../../../docs/EVIDENCE_LADDER.md): that a project's own tests can check map
 > claims with the real S&box engine and no Editor. It contains no production content and
 > grants no authority. Nothing here goes into a game repository.
 
@@ -18,9 +18,9 @@ an ordinary project on the owner's machine? Specifically:
   inside geometry?
 - **Saved scenes:** can a test load the project's own saved scene and query its collision?
 
-These settle open questions 1–3 in [the ladder doc](../SPEC_AND_LADDER.md#open-questions-before-adoption):
-a code project hosts the tests (1), generated meshes and traces need a default surface (2),
-and saved scenes load headlessly (3).
+The answers are summarized in [What the spike settled](../README.md#what-the-spike-settled):
+a code project hosts the tests, generated meshes and traces need a default surface, and
+saved scenes load headlessly from their JSON.
 
 ## Contents
 
@@ -41,7 +41,7 @@ and saved scenes load headlessly (3).
 | S2 default surface (diagnostic) | Whether base surfaces are loaded | Informational only. If S5–S7 still pass, it doesn't matter |
 | S3 player lands on a box collider | Physics and `PlayerController` tick headlessly, using Facepunch's known-good pattern | The engine rung can't use player physics; stop and report |
 | S4 mesh floor builds collision | A `PolygonMesh` becomes collision in a game scene | Generated geometry can't be checked headlessly as built |
-| S5 ray hits mesh floor | Traces work in a project test | Traces need a surface workaround; the ladder doc needs revising |
+| S5 ray hits mesh floor | Traces work in a project test | Traces need a surface workaround; the example summary needs revising |
 | S6 player lands on mesh floor with room | The shape of a real spawn requirement | Spawn checks need another approach |
 | S7 control: stuck player is detected | S6's stuck check can actually fail, even inside mesh collision | S6 passing means nothing; stuck checks need another approach |
 | S8 saved scene loads with collision | The project's own saved startup scene loads, and a trace hits its floor (route printed) | Saved scenes can't be checked headlessly; build the area in-test instead |
@@ -312,8 +312,8 @@ back only the summary.
 
 ## Afterwards
 
-The scratch project can be deleted. Whatever the outcome, the result belongs in the
-ladder doc's open questions, not in any game repository.
+The scratch project can be deleted. Whatever the outcome, the result belongs in this
+example's [summary](../README.md#what-the-spike-settled), not in any game repository.
 
 ## S&box lessons found by this kit
 

@@ -21,7 +21,7 @@ no skills and with an unmodified Superpowers skill library?
 
 ### Method
 
-- **Scenarios.** Four from the [README](README.md): 2 (add an east spawn), 4 (make it
+- **Scenarios.** Four from the [README](../README.md): 2 (add an east spawn), 4 (make it
   feel lived-in), 7 (one-attempt editor probe that ends the project on failure), and 8
   (mark an always-green test done).
 - **Conditions.** Each scenario ran three ways, with a fresh agent each time:
@@ -93,7 +93,7 @@ Each response is scored out of 6 or 7. Totals are out of 26.
   - Scale the report to the change. Don't create record files until there is a result.
 
   These address the overhead in A and D.
-- **`SPEC_AND_LADDER.md`:** the Superpowers section now says to skip `brainstorming` when
+- **`SPEC_AND_LADDER.md`** (now [`docs/EVIDENCE_LADDER.md`](../../docs/EVIDENCE_LADDER.md#with-superpowers)): the Superpowers section now says to skip `brainstorming` when
   the spec already covers the change, and to keep `verification-before-completion`.
 
 ### Limits

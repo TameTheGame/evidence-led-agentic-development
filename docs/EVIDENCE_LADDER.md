@@ -1,205 +1,250 @@
-# Spec-Driven Evidence: Requirement Format and Evidence Ladder
+# Evidence Ladder
 
-> **Draft — non-normative.** This is a proposal for how ELAD could support spec-driven
-> projects. It does not change any v0.5 contract, schema, or validator. Nothing here
-> grants authority. A worked, clearly target-specific example lives in
-> [`example-sbox-outpost.spec.md`](example-sbox-outpost.spec.md).
+ELAD asks one question at every step:
 
-## Why this exists
+> What is the cheapest reliable evidence that can resolve the uncertainty that matters
+> now?
 
-ELAD already says *use the cheapest reliable evidence for each claim*
-([Evaluation and Evidence](../../docs/EVALUATION_AND_EVIDENCE.md)). Today those claims
-live in per-task records: a packet names them, a receipt reports them, and an evidence
-manifest binds the proof. That works for one-off tasks. In spec-driven work, the same
-claims come up in every task that touches the same part of the product, so they belong
-in the spec.
+The ladder orders evidence by cost. Requirements in the [spec](SPEC_FORMAT.md) name the
+rung that settles them. The three [skills](../skills/README.md) teach agents to apply
+this page; where a skill already states a rule, this page links to it instead of
+repeating it.
 
-This draft puts the claims in the spec. Each requirement carries its own ID, the rung of
-evidence that settles it, and the check that proves it. A task then becomes "make these
-requirement IDs pass." The proof is the named check passing at a known commit.
+## The rungs
 
-Two pieces:
+Lower rungs are cheaper and faster, and they can run in more places.
 
-1. **A requirement format** that people can write and agents can parse without extra
-   tooling.
-2. **An evidence ladder** that orders checks by cost, plus rules for climbing it.
+| Rung | Runs where | Can prove | Never proves by itself |
+|---|---|---|---|
+| **0 · static** | anywhere, including cloud agents | file structure, data validity, spec lint, saved-file contents | anything about runtime behavior |
+| **1 · engine** | the dev machine: the real engine or runtime, headless, no editor | collision, physics, traces, generated content building, exact program behavior | how it looks, the editor round trip, networking with real clients |
+| **2 · editor** | the real authoring tool | native save and reopen, serialization, hotload, a rendered capture | how it plays with others, how it feels |
+| **3 · session** | the product running as users run it | host and remote behavior, real-machine performance, clean installs | taste and fitness for purpose |
+| **4 · owner** | the owner, in person | feel, look, fitness for the product's purpose | technical properties |
 
-## Part 1 — The requirement format
+Projects without an editor or a networked session skip those rungs. The
+[S&box example](../examples/sbox/README.md) shows each rung for a game map, including a
+working rung-1 test kit.
 
-### Where specs live
+**A model judge is advice, not a rung.** A model can review captures against a rubric. Its
+verdict counts as evidence only for a claim class it has been calibrated on (see
+[Calibrate fallible evaluators](#calibrate-fallible-evaluators-once-then-reuse-them)), and it
+never closes an owner-rung requirement.
 
-```text
-spec/
-  <area>.spec.md        # intent and requirements (this format)
-  <area>.<data>.json    # optional project-owned data the generator reads
-  ACCEPTANCE.md         # one line per human-rung result
-```
-
-ELAD defines only the `.spec.md` requirement format and the acceptance-log line. Data
-files belong to the project and use whatever schema the project's generator needs.
-Requirements may refer to that data. For example, "every spawn in the layout lands on
-ground" applies to whatever spawns the data file lists, so checks don't hard-code values.
-
-### Spec file shape
-
-```markdown
-# <Area name>
-
-owner: <who agrees requirements>
-data: <optional path(s) to project-owned data files>
-
-## Intent
-<A few sentences in the owner's words: what this area is for and what matters.>
-
-## Out of scope
-<What this spec deliberately does not cover.>
-
-## Requirements
-
-### <ID> — <one observable sentence>
-- state: draft | agreed | retired
-- rung: static | engine | editor | session | owner
-- check: <test name, script name, or card ID>
-- target-rung: <optional cheaper rung this should move to when one exists>
-- touches: <optional paths or data keys this requirement depends on>
-- why: <optional one line>
-```
-
-### Field rules
-
-| Field | Rule |
-|---|---|
-| ID | `AREA-TOPIC-NN`. Stable forever. Never reuse a retired ID. |
-| Sentence | One observable claim. If it says "and," consider splitting it. |
-| `state` | Agents may add or edit `draft` requirements. Only the owner moves a requirement to `agreed` or `retired`. This is the human decision boundary in one field. |
-| `rung` | The **cheapest** rung that can actually settle the claim *today* (see Part 2). |
-| `check` | Machine rungs: the test or script name, which must contain the ID (for example `OUT_SPAWN_01_...`). Human rungs: a card ID defined in the spec. |
-| `target-rung` | Records evidence debt. Use it when a cheaper rung would work but isn't built yet. For example, `rung: session` with `target-rung: engine` until the engine test harness exists. |
-| `touches` | Lets a change re-open only the requirements it can affect. |
-
-### Splitting mixed claims
-
-Write mixed claims as separate requirements. "The water tower is visible from both spawns
-and the outpost feels lived-in" becomes two requirements:
-
-- an **engine**-rung line-of-sight check, which a trace can prove; and
-- an **owner**-rung judgment of feel, which only the owner can give.
-
-Splitting stops the cheap check from being skipped and the expensive one from being
-diluted.
-
-### Results stay out of the spec
-
-The spec says what must be true. It does not hold pass/fail state, which would drift.
-
-- **Machine rungs** report through test output. The ID is in the test name.
-- **Human rungs** add one line to `spec/ACCEPTANCE.md`:
-
-  ```text
-  2026-10-09 · OUT-NET-01 · GREEN · a1b2c3d · Josh · remote client collided with the gate
-  ```
-
-A requirement is **met** when its check last passed at a commit and nothing in its
-`touches` has changed since.
-
-### The only machinery
-
-One small rung-0 lint, about 50 lines of script with no dependencies, checks the spec
-files themselves:
-
-- IDs are unique and well-formed, and no retired ID has been reused;
-- `state` and `rung` use allowed values;
-- every `agreed` requirement has a `check`;
-- every machine-rung `check` name exists in the test sources; and
-- every human-rung `check` names a card defined in the spec.
-
-That lint replaces the per-task packet, receipt, evidence manifest, and review bundle
-*for spec-driven work*. Git commits supply identity. Test output and `ACCEPTANCE.md`
-supply results.
-
-## Part 2 — The evidence ladder
-
-The rungs below refine ELAD's existing claim table by adding the order in which to build
-and climb them. Lower rungs are cheaper, faster, and can run in more places.
-
-| Rung | Runs where | Can prove | Never proves by itself | S&box map example (non-normative) |
-|---|---|---|---|---|
-| **0 · static** | anywhere, including cloud agents | file structure, data validity, spec lint, saved-file contents | anything about engine behavior | layout data is valid; spawn IDs are unique; the saved `.scene` JSON contains exactly one main camera |
-| **1 · engine** | the dev machine, headless: real engine, no renderer, no editor | collision exists, physics settles, traces are clear, generated content builds | how it looks, the editor round trip, networking with real clients | a `UnitTests/` project starts the engine through `TestAppSystem`, builds the area with the same generator code, then checks collision, spawn grounding, and route traces |
-| **2 · editor** | the real authoring tool | native save, close, and reopen; serialization; hotload; a rendered capture | how it plays with others, how it feels | the generated scene survives save → close → reopen unchanged; a screenshot from a fixed camera |
-| **3 · session** | the product running as players run it | host and remote behavior, real-machine performance, clean-client delivery | taste and fitness for purpose | the remote client sees and collides with the same walls; same-machine host/remote is *not* clean-client proof |
-| **4 · owner** | the owner, in person | feel, look, fitness for the product's purpose | technical properties | "walking spawn → gate → tower feels like a frontier outpost" |
-
-**Optional advisory: calibrated judge.** A model can review rung-2 captures against a
-rubric. Treat that as advice unless the judge has been calibrated for that exact claim
-class (see [Evaluation and Evidence](../../docs/EVALUATION_AND_EVIDENCE.md#calibrate-fallible-evaluators-once-then-reuse-them)).
-It never closes an owner-rung requirement.
-
-### Ladder rules
+## Ladder rules
 
 1. **Settle each requirement at the cheapest rung that can prove it.** If a trace can
    prove it, don't spend an owner session on it.
 2. **A lower rung never closes a higher claim.**
    - Rendered geometry doesn't prove collision.
    - A headless pass doesn't prove the area looks right.
-   - Same-machine host/remote doesn't prove clean-client delivery.
+   - Same-machine host and remote don't prove clean-client delivery.
    - A model's confidence doesn't prove anything.
-3. **Build rungs cheapest-first.** Bring up rung 0, then rung 1, before investing in
-   automating rung 2 or rung 3. Never make cheap evidence wait on expensive
-   infrastructure. Until a rung exists, a requirement may temporarily use the next rung
-   up and record the cheaper one in `target-rung`.
+3. **Build rungs cheapest-first.**
+   - Bring up rung 0, then rung 1, before investing in automating rung 2 or rung 3.
+   - Never make cheap evidence wait on expensive infrastructure.
+   - Until a rung exists, a requirement may use the next rung up and record the cheaper
+     one in `target-rung`.
 4. **Check first where a check can exist.** For rung-0 and rung-1 requirements, write the
-   check, watch it fail, then change the content or generator. This is where test-first
-   coding fits. Owner-rung requirements get a card instead.
-5. **Report the rung reached.** "Done" alone is not a report. Say, for example,
-   "OUT-SPAWN-01 passed at engine, commit `a1b2c3d`; OUT-NET-01 needs a session card."
-6. **Re-check only what a change can affect.** A change re-opens the requirements whose
-   `touches` it changes. Before the owner accepts a milestone, run every machine-rung check.
-7. **Retries follow reversibility.** Rungs 0–2 on local or disposable copies are
-   reversible, so they get ELAD's ordinary default: two materially different attempts,
-   more for cheap experiments that keep teaching something
-   ([Operations and Learning](../../docs/OPERATIONS_AND_LEARNING.md)). Reserve one-shot
-   attempt limits for actions that are expensive or impossible to undo.
+   check, watch it fail for the right reason, then change the content or code. Owner-rung
+   requirements get a card instead.
+5. **Report the rung reached.** "Done" alone is not a report. For example: "OUT-SPAWN-01
+   passed at engine, commit `a1b2c3d`; OUT-NET-01 needs a session card."
+6. **Recheck only what a change can affect.** A change reopens the requirements whose
+   `touches` it changes. Before the owner accepts a milestone, run every machine-rung
+   check.
+7. **Retries follow reversibility.** See [Learn from the first causal failure](#learn-from-the-first-causal-failure).
 8. **Generated content comes from the generator.** Agents change spec data or generator
-   code, then regenerate. They never hand-edit generated or engine-owned output. This
-   restates ELAD's existing rule that authoritative serializers write opaque artifacts.
-9. **Ask the owner last and briefly.** Prepare an owner or session card only after every
-   lower-rung requirement it depends on passes. A card has numbered steps, the expected
-   result, and how to reply (`GREEN` or `RED` plus what you saw). See
-   [Decisions You Keep](../../docs/HUMAN_DECISION_BOUNDARY.md).
+   code, then regenerate. They never hand-edit generated or engine-written output.
+9. **Ask the owner last and briefly.** Prepare a card only after every lower-rung
+   requirement it depends on passes. The card format is in
+   [`asking-the-owner`](../skills/asking-the-owner/SKILL.md).
+
+## Match evidence to each claim
+
+**Split claims before choosing checks.** One feature often holds exact claims and uncertain
+ones. A command-line feature might have exact claims about its flag, exit code, and output
+format, plus a semantic claim about the summary it generates. Keep the exact claims
+deterministic, and evaluate only the semantic one.
+
+**Running a program doesn't make a claim a runtime claim.** Exact output, exit status,
+fixtures, and mocked failures stay deterministic. Live runtime evidence is needed only when
+the truth depends on something an exact comparison can't establish, such as:
+
+- timing;
+- persistence;
+- native effects; or
+- distributed state.
+
+**Evaluator maturity belongs to each claim.** A new exact regression whose expected result
+comes from an independent requirement is not a fallible evaluator just because it is new. A
+semantic judge in the same task may still be unproven.
+
+## Avoid circular proof
+
+The implementation shouldn't produce both its behavior and the expected answer. An
+independent expectation can come from:
+
+- an existing specification or test;
+- a separately written fixture, truth table, or rule;
+- an observer outside the changed component, such as the engine's own log or a trace;
+- held-out cases the implementer can't see;
+- a calibrated evaluator; or
+- an independent reviewer, when the consequence warrants it.
+
+The same agent may run a trustworthy exact test it didn't write. Stronger separation pays
+off when the evaluator is fallible, derived from the implementation, or exposed to its own
+held-out answers, or when a false green would be costly.
+
+## Calibrate fallible evaluators once, then reuse them
+
+Before relying on a rubric or a model judge, show it recognizes known-good and known-bad
+cases. Cover the failures that matter for its job:
+
+- a wrong or stale subject;
+- missing output;
+- crashes;
+- silent skips; and
+- variance across repeated runs.
+
+Record what the evaluator supports and what would invalidate that result. Then reuse it.
+Recheck only the affected slice after its model, prompt, runtime, or claim class changes,
+or after a new false-green pattern appears.
+
+Sampling the product and sampling the judge answer different questions. A few product runs
+expose unstable output, and repeated judge runs measure the judge's own variance.
+
+If a score passes while a case built to catch a real defect still fails, don't hide the
+failure inside the score. Make one cheap causal fix, rerun the affected evidence, and stop
+when the claim is supported.
+
+## Rigor, the ladder, and authority are separate
+
+Three decisions stay apart:
+
+- **Rigor:** how much process this task needs, such as its brief, review, and isolation.
+  The levels and when to move between them are in
+  [`choosing-rigor`](../skills/choosing-rigor/SKILL.md).
+- **The ladder:** what evidence each claim needs.
+- **Authority:** what the work may change, run, publish, or accept. That comes only from
+  the owner and the project; see [Authority and Safety](AUTHORITY_AND_SAFETY.md).
+
+A light task can touch one agreed requirement and run one engine test. A change to a
+generator every area depends on may rerun every machine-rung check and get an independent
+review. Neither choice grants any permission.
+
+**A durable control must pay for itself.** Add a lasting check, review, or record only when
+its lifetime cost is lower than the cost of the failure it prevents. That cost includes
+writing, running, maintaining, reviewing, and handling false alarms. A specific high
+consequence can justify more. Passing an assurance system's own tests proves it is
+consistent, not that it is worth its complexity.
+
+**Revalidate by cause.** A change invalidates only the claims and evidence it can causally
+affect, so recheck that scope and keep the rest. A full fresh review is needed only when the
+footprint can't be bounded, or when the change touches one of these:
+
+- architecture;
+- authority;
+- what evidence means;
+- security, privacy, or rights; or
+- evaluator behavior.
+
+**Use Git for identity.** For tracked files, the commit and a clean working tree identify
+what was checked. Add byte counts or hashes only for files Git doesn't track.
+
+**Extra review cycles need new evidence.** The review budgets are in
+[`choosing-rigor`](../skills/choosing-rigor/SKILL.md). An extra cycle needs unresolved
+high-consequence uncertainty plus new objective evidence, or a fresh owner decision after
+the expected cost and benefit have been reported.
+
+## What the owner keeps, and what can be automated
+
+The owner's decisions and the card format are in
+[`asking-the-owner`](../skills/asking-the-owner/SKILL.md).
+
+**Safe to automate once proven:**
+
+- path and scope checks;
+- deterministic transforms and formatting;
+- compile, unit, integration, and headless checks;
+- capturing evidence;
+- classifying failures; and
+- writing down facts the work established.
+
+**Delegating a claim class.** The owner may later delegate a narrow, objective class of
+claims to a proven evaluator. That delegation should name:
+
+- the evaluator;
+- the task class it covers;
+- its thresholds;
+- when it expires;
+- what drift reopens it; and
+- what the owner still decides.
+
+It is never a blanket transfer of product authority.
+
+## Learn from the first causal failure
+
+```text
+observe the failure
+  -> identify the first responsible layer
+  -> choose the smallest discriminating experiment
+  -> change only that layer
+  -> rerun the focused evidence
+  -> continue, stop, or escalate
+```
+
+- **Every attempt names its purpose.** It says what it tests and what changed. Never retry
+  blindly.
+- **The ordinary limit is two attempts per root cause.** Two materially different attempts,
+  then stop and report what was learned. Cheap, reversible experiments may get more while
+  each one teaches something.
+- **One-shot limits are only for actions that are hard to undo.** On a local, reversible
+  action, a single-attempt rule turns one small bug into a stopped project.
+- **Some failures stop the work at once.** Ambiguous authority, privacy, or persistence,
+  or an effect on a shared target, stops the work immediately.
+
+## Keep records and context small
+
+- **Record only what can change a decision.** A light task may need just the command, the
+  result, the changed paths, and the diff. Leave unknown measurements unknown and say why.
+- **Keep raw evidence out of the agent's context.** Logs, traces, screenshots, and
+  transcripts stay in files. Bring in only the slice that answers a causal question.
+- **Redact before sharing.** Remove secrets and private data before evidence is routed
+  anywhere wider.
+- **Keep only reusable lessons.** Write a lasting lesson only when it is new, recurring, or
+  high-impact, or when it changes a reusable check. A one-off failed test needs no incident
+  write-up.
+
+**Measure whether autonomy is helping.** Does the workflow produce more evidence-backed
+outcomes with less supervision, context, waiting, cost, and risk? Compare similar tasks.
+Treat security, privacy, authority, and evidence quality as limits, never as values traded
+away inside one score.
+
+**Simplification counts as progress.** Periodically ask:
+
+- which records are actually used;
+- which checks catch realistic failures; and
+- which reviews could go without weakening the evidence or authority.
+
+A method that only grows has stopped evaluating itself.
 
 ## How a task runs
 
 1. **Intent.** The owner says what they want. If no `agreed` requirement covers it, the
    agent drafts requirements (`state: draft`) and asks the owner to agree them. A light
    task already covered by `agreed` requirements skips this step.
-2. **Checks first.** The agent writes failing rung-0 and rung-1 checks for the requirement
-   IDs in scope.
+2. **Checks first.** The agent writes failing rung-0 and rung-1 checks for the
+   requirement IDs in scope.
 3. **Change.** The agent edits the data, the generator, or the code.
-4. **Climb.** The agent runs the ladder upward as far as it can run unattended, stopping
-   at the first failure to find its cause before changing anything else.
+4. **Climb.** The agent runs the ladder upward as far as it can run unattended. It stops at
+   the first failure to find its cause before changing anything else.
 5. **Report.** For each ID: the rung reached, pass or fail, and the commit. Then come the
    cards the owner needs to run.
-6. **Owner.** The owner replies `GREEN` or `RED`. The agent appends the line to
+6. **Owner.** The owner replies `GREEN` or `RED`, and the agent appends the line to
    `ACCEPTANCE.md`.
 
-Rigor and the ladder are separate decisions:
-
-- **Rigor** decides how much process the task needs: its brief, review, and isolation
-  ([Adaptive Rigor](../../docs/ADAPTIVE_RIGOR.md)).
-- **The ladder** decides what evidence each claim needs.
-
-A light task might touch one agreed requirement and run one engine test. A change to the
-generator every area depends on might re-run every machine-rung check and get an
-independent review.
-
-## Skills that teach this method
-
-Draft agent skills live in [`skills/`](skills/README.md): `choosing-rigor`,
-`matching-evidence-to-claims`, `asking-the-owner`, and a target-specific
-`sbox-engine-reference`. That page also lists the pressure-test scenarios.
-
-## Fit with Superpowers-style skills (non-normative)
+## With Superpowers
 
 If a project also installs the Superpowers skill library:
 
@@ -213,70 +258,13 @@ If a project also installs the Superpowers skill library:
 Put those overrides in the project's `AGENTS.md`, which Superpowers treats as taking
 precedence over its skills.
 
-Round 1 of the pressure test ([results](skills/PRESSURE_TEST_RESULTS.md#round-1)) backs this up:
+Round 1 of the pressure test ([results](../skills/evidence/PRESSURE_TEST_RESULTS.md#round-1))
+showed why:
 
-- Unmodified Superpowers added two approval rounds and a design document to a one-line
-  data change and to a request about feel.
-- Because Superpowers defers to the owner's instructions, it wrote a risky "one try, then
-  stop forever" rule into the spec without warning. `choosing-rigor` covers that gap.
-- Its verification skill did as well as the others on a test that had never failed.
-
-## Open questions before adoption
-
-These are the facts a short spike should settle for an S&box map project. References are
-to `Facepunch/sbox-public` at `3915f1a69810026e23d331581266636de89411d5`.
-[`engine-rung-spike/`](engine-rung-spike/README.md) is a ready-to-run kit for questions 1–3.
-Its runs on S&box `26.10.02` answered them; see its Results section. Headless project tests
-can check collision, traces, spawn landing, and stuck detection against generated geometry,
-with one piece of labelled test scaffolding.
-
-1. **Test projects need a code project.** *(Answered.)* `Project.Solution.cs` generates a
-   `UnitTests` project only for `game`, `library`, and `addon` projects. It returns before
-   generating anything for a `content` project. The spike's game project got its
-   `UnitTests` project and ran every test. A content-type map needs a small companion code
-   project to host its rung-1 tests. That last point comes from source; the spike didn't
-   create a content project.
-2. **Generated meshes and traces need a default physics surface.** *(Answered: yes, and only
-   test scaffolding can provide one.)*
-   - **Why:** building any `PolygonMesh` throws in `ModelBuilder.AddSurface` when no
-     `default` surface is loaded, even without collision, and headless project tests load
-     none.
-   - **No public route on this build:** `ResourceLibrary.Get` only finds registered
-     resources, and the loader that registers surfaces is internal.
-   - **The workaround:** the kit's `TestSurfaces` registers a stand-in surface through
-     reflection, as Facepunch's own integration tests do
-     (`engine/Tests/Sandbox.Test.Integration/Assembly.cs`). With it, mesh collision, traces,
-     and landing pass.
-   - **The risk:** it uses engine internals, so any S&box update can break it. Label it as
-     test scaffolding.
-   - **Stuck checks need more than `StartedSolid`.** A body wholly inside mesh collision
-     isn't reported: concave mesh collision has no interior, and traces don't see its faces
-     from behind. The kit's public-API enclosure probe closes that gap for closed meshes.
-3. **Loading the project's own saved scenes headlessly.** *(Partly answered.)*
-   - **By path, it fails:** `Scene.LoadFromFile` can't find the scene, because headless
-     tests register no project resources.
-   - **From the saved file, it works:** reading the `.scene` file and loading it through
-     the public `SceneFile.LoadFromJson` and `Scene.Load` works, and its box collider is
-     traceable.
-   - **Still open:** saved scenes whose objects reference other resources, such as prefabs
-     or collision models, and generated geometry saved into a scene.
-   - **For most rung-1 checks,** building the area in-test with the same generator code
-     still avoids the question.
-4. **Rung 1 is Windows-only.** `TestAppSystem` needs the installed engine
-   (`FACEPUNCH_ENGINE`) and its win64 native libraries, and the machine needs the .NET 10
-   SDK because S&box projects target `net10.0` (confirmed by the spike's first run).
-   Cloud or Linux agents can run rung 0 only.
-5. **Automating rung 2 is optional.** A short owner card is an acceptable rung-2 check
-   until automation is cheaper than the card.
-
-## What this would replace if adopted
-
-For spec-driven projects only, the following would reduce to spec files, test names,
-`ACCEPTANCE.md`, and Git:
-
-- the task-packet, worker-receipt, evidence-manifest, retrieval-manifest, and
-  review-bundle chain; and
-- most per-task claim bookkeeping.
-
-The assured protocol remains available for work that genuinely crosses contexts or
-owners. Adopting this draft would need its own release decision.
+- **Ceremony.** Unmodified Superpowers added two approval rounds and a design document to a
+  one-line data change and to a request about feel.
+- **The stop rule.** Because Superpowers defers to the owner's instructions, it wrote a
+  risky "one try, then stop forever" rule into the spec without warning.
+  `choosing-rigor` covers that gap.
+- **Verification.** Its verification skill did as well as the others on a test that had
+  never failed.

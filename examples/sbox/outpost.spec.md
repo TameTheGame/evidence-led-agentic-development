@@ -1,7 +1,7 @@
 # Example: Outpost (synthetic S&box map spec)
 
 > **Synthetic, target-specific, non-normative.** This example shows the
-> [requirement format and evidence ladder](SPEC_AND_LADDER.md) applied to an imaginary
+> [spec format](../../docs/SPEC_FORMAT.md) and [evidence ladder](../../docs/EVIDENCE_LADDER.md) applied to an imaginary
 > S&box map area. The outpost, its coordinates, and its owner decisions are invented.
 > The C# sketch below uses public APIs checked against `Facepunch/sbox-public` at
 > `3915f1a69810026e23d331581266636de89411d5`, but it has not been compiled or run. Confirm

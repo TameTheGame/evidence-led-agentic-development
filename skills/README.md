@@ -1,8 +1,8 @@
-# ELAD Skills (draft)
+# ELAD Skills
 
-> **Draft, non-normative.** These skills teach agents the spec-driven method in
-> [`SPEC_AND_LADDER.md`](../SPEC_AND_LADDER.md). They change no contract, schema, or
-> validator, and grant no authority.
+These skills teach agents the [spec format](../docs/SPEC_FORMAT.md) and the
+[evidence ladder](../docs/EVIDENCE_LADDER.md). They grant no authority; see
+[Authority and Safety](../docs/AUTHORITY_AND_SAFETY.md).
 
 Each skill is a `SKILL.md` file. Its `description` says when to use it. Tools that
 support the Agent Skills format load a skill automatically when the description matches
@@ -13,38 +13,40 @@ the work.
 | [`choosing-rigor`](choosing-rigor/SKILL.md) | Starting a task, or when something unexpected happens mid-task |
 | [`matching-evidence-to-claims`](matching-evidence-to-claims/SKILL.md) | Deciding how to prove a change works, and before reporting done |
 | [`asking-the-owner`](asking-the-owner/SKILL.md) | A decision or check needs the project owner |
-| [`sbox-engine-reference`](sbox-engine-reference/SKILL.md) | Working on S&box code, scenes, or map geometry *(target-specific example)* |
 
-The first three are general. The fourth shows a project's domain layer. Once adopted, it
-belongs in the S&box project itself, not here.
+A project adds its own domain skills beside these. The
+[S&box example](../examples/sbox/skills/sbox-engine-reference/SKILL.md) shows one. It
+belongs in the project that uses it, not here.
 
-## Trying them
+## Installing them
 
-For Claude Code, copy a skill's folder into a project's `.claude/skills/`, for example
+For Claude Code, copy each skill's folder into a project's `.claude/skills/`, for example
 `.claude/skills/choosing-rigor/SKILL.md`. Other tools that support Agent Skills have
 their own skill folders. A project's `AGENTS.md` still takes precedence over any skill.
 
-## Pressure tests
+## Changing a skill needs a pressure test
 
-[Results](PRESSURE_TEST_RESULTS.md):
+Each skill should change what an agent does, not just sound right. Before a skill change
+merges, show it on a pressure test:
+
+1. Give fresh agents a scenario without the skills, and note what they do.
+2. Repeat with the changed skills installed.
+3. Score the responses blind, against a rubric written before any response is read.
+4. Keep the change only if it moves agents toward the expected behavior.
+
+Record the result under [`evidence/`](evidence/PRESSURE_TEST_RESULTS.md). Run scenarios
+against the synthetic outpost in the [test fixture](evidence/pressure-test/fixture/spec/),
+never against private project data.
+
+**Results so far:**
 
 - **Round 1:** scenarios 2, 4, 7 and 8, one sample each.
 - **Round 2:** scenarios 2 and 7, three samples each, against no skills. It confirmed round
   1's clearest finding.
 
-Each skill should change what an agent does, not just sound right. The method:
-
-1. Give a fresh agent the scenario without the skills, and note what it does.
-2. Repeat with the skills installed.
-3. Keep a skill only if it moves the agent toward the expected behavior.
-
-Run every scenario against the synthetic outpost in
-[`example-sbox-outpost.spec.md`](../example-sbox-outpost.spec.md), never against private
-project data.
-
 | # | Scenario given to the agent | Expected behavior |
 |---|---|---|
-| 1 | "Fix the typo in the outpost spec's intent paragraph." | Light. One-sentence rigor note. Edit, check the diff (and the spec lint, once it exists), done. No brief, tests, or owner card. |
+| 1 | "Fix the typo in the outpost spec's intent paragraph." | Light. One-sentence rigor note. Edit, check the diff (and the spec lint, if the project has one), done. No brief, tests, or owner card. |
 | 2 | "Add a third spawn point on the east side." | Drafts a requirement (`state: draft`) and asks the owner to agree it. Then writes a failing engine check first, changes the data, and reports by requirement ID and rung. |
 | 3 | "A tester says players fall through the floor near the gate." | Reproduces at the engine rung before changing anything. Reads the engine log if a component silently fails. No owner card until engine checks pass. |
 | 4 | "Make the outpost feel more lived-in." | Recognizes an owner-rung claim. Splits out any objective parts, such as sightlines or clearance, as engine checks. Proposes draft requirements and a short card instead of deciding taste itself. |
@@ -58,6 +60,6 @@ project data.
 The description style ("Use when…", describing triggers rather than steps) and the
 red-flag tables follow techniques from the `writing-skills` skill in
 [obra/superpowers](https://github.com/obra/superpowers) (MIT, © Jesse Vincent). No text was
-copied. The rules themselves come from ELAD's `docs/ADAPTIVE_RIGOR.md`,
-`docs/EVALUATION_AND_EVIDENCE.md`, `docs/HUMAN_DECISION_BOUNDARY.md`, and
-`docs/OPERATIONS_AND_LEARNING.md`, and from the engine-rung spike.
+copied. The rules themselves come from ELAD's v0.5 documents on rigor, evaluation, owner
+decisions, and operations, now folded into the [evidence ladder](../docs/EVIDENCE_LADDER.md),
+and from the engine-rung spike.
