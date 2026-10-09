@@ -26,6 +26,10 @@ no skills and with an unmodified Superpowers skill library?
   the 12 responses blind: labels were shuffled, and words that would identify the
   condition, such as skill names and "Rigor:" lines, were removed.
 
+Materials: [`pressure-test/`](pressure-test/) holds the test-agent prompt, the frozen
+rubric, the clean fixture project, and the 12 scored responses (file names give scenario
+and condition).
+
 **A first round was discarded.** In it, the spec file linked to ELAD's own documents, and
 the no-skills and Superpowers agents read them. The isolated rerun is the only one scored
 here.

@@ -1,0 +1,11 @@
+{
+  "bounds": { "min": [-1024, -1024, 0], "max": [1024, 1024, 512] },
+  "spawns": [
+    { "id": "spawn.north", "position": [0, 600, 8] },
+    { "id": "spawn.south", "position": [0, -600, 8] }
+  ],
+  "landmarks": [ { "id": "tower", "top": [400, 0, 480] } ],
+  "routes": [
+    { "id": "gate-to-tower", "points": [[0, -900, 0], [0, 0, 0], [400, 0, 0]] }
+  ]
+}
