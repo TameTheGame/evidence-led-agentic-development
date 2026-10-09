@@ -143,6 +143,7 @@ public class TestInit
 	{
 		_app = new TestAppSystem(); // boots the engine headless; needs FACEPUNCH_ENGINE
 		_app.Init();
+		TestSurfaces.EnsureDefault(); // generated meshes need a default surface; see the spike kit
 	}
 
 	[AssemblyCleanup]
@@ -197,9 +198,13 @@ Where the pattern comes from (read these instead of guessing):
 - `engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.Trace.cs`
   for `TraceBody`.
 
-Before trusting this sketch, settle open question 2 in
-[the ladder doc](SPEC_AND_LADDER.md#open-questions-before-adoption): whether traces work
-in a project test without the engine's internal fallback surface.
+The [engine-rung spike](engine-rung-spike/README.md) ran this pattern on S&box `26.10.02`.
+It found two things this sketch needs:
+
+- **A default surface.** Building any `PolygonMesh` needs a default physics surface, which
+  only test scaffolding can provide. Copy the kit's `TestSurfaces`.
+- **A stronger stuck check.** `StartedSolid` alone misses a body wholly inside mesh
+  collision. Use the kit's `BodyStartsInsideGeometry` instead.
 
 ## What results look like
 

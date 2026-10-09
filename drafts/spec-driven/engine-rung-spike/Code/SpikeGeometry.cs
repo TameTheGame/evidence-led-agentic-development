@@ -30,9 +30,11 @@ public static class SpikeGeometry
 	}
 
 	/// <summary>
-	/// A static block with mesh collision. <paramref name="min"/> is its lowest corner in world space.
+	/// A static block, with mesh collision unless told otherwise. <paramref name="min"/> is its
+	/// lowest corner in world space.
 	/// </summary>
-	public static MeshComponent CreateBlock( Scene scene, string name, Vector3 min, Vector3 size )
+	public static MeshComponent CreateBlock( Scene scene, string name, Vector3 min, Vector3 size,
+		MeshComponent.CollisionType collision = MeshComponent.CollisionType.Mesh )
 	{
 		var go = scene.CreateObject();
 		go.Name = name;
@@ -41,7 +43,7 @@ public static class SpikeGeometry
 		// Outside an editor scene, MeshComponent builds only when it is enabled; setting Mesh
 		// afterwards does nothing. Create it disabled, assign the mesh, then enable it.
 		var block = go.Components.Create<MeshComponent>( false );
-		block.Collision = MeshComponent.CollisionType.Mesh;
+		block.Collision = collision;
 		block.Mesh = Box( size );
 		block.Enabled = true;
 

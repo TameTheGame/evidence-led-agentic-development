@@ -212,21 +212,42 @@ precedence over its skills.
 These are the facts a short spike should settle for an S&box map project. References are
 to `Facepunch/sbox-public` at `3915f1a69810026e23d331581266636de89411d5`.
 [`engine-rung-spike/`](engine-rung-spike/README.md) is a ready-to-run kit for questions 1–3.
-Its first run confirmed headless engine startup and player physics, and found that
-generated-mesh collision does not yet build in a project test; see its Results section.
+Its runs on S&box `26.10.02` answered them; see its Results section. Headless project tests
+can check collision, traces, spawn landing, and stuck detection against generated geometry,
+with one piece of labelled test scaffolding.
 
-1. **Test projects need a code project.** `Project.Solution.cs` generates a `UnitTests`
-   project only for `game`, `library`, and `addon` projects, not `content` projects. A
-   content-type map needs a small companion code project to host its rung-1 tests.
-2. **Generated meshes need a default physics surface.** *(Confirmed by the spike: building
-   any `PolygonMesh` throws when no `default` surface is loaded; see the kit's Results.)*
-   **Traces without base content may need a surface.** The engine's own integration
-   tests install a fallback surface before tracing because headless tests mount no base
-   content (`engine/Tests/Sandbox.Test.Integration/Assembly.cs`). They do it through
-   `Surface.All`, which is `internal`, so a project's tests can't copy it. Confirm whether
-   traces work in a project test, or what public route replaces it.
-3. **Loading the project's own saved scenes headlessly is unproven.** Building the area
-   in-test with the same generator code avoids this question for most rung-1 checks.
+1. **Test projects need a code project.** *(Answered.)* `Project.Solution.cs` generates a
+   `UnitTests` project only for `game`, `library`, and `addon` projects. It returns before
+   generating anything for a `content` project. The spike's game project got its
+   `UnitTests` project and ran every test. A content-type map needs a small companion code
+   project to host its rung-1 tests. That last point comes from source; the spike didn't
+   create a content project.
+2. **Generated meshes and traces need a default physics surface.** *(Answered: yes, and only
+   test scaffolding can provide one.)*
+   - **Why:** building any `PolygonMesh` throws in `ModelBuilder.AddSurface` when no
+     `default` surface is loaded, even without collision, and headless project tests load
+     none.
+   - **No public route on this build:** `ResourceLibrary.Get` only finds registered
+     resources, and the loader that registers surfaces is internal.
+   - **The workaround:** the kit's `TestSurfaces` registers a stand-in surface through
+     reflection, as Facepunch's own integration tests do
+     (`engine/Tests/Sandbox.Test.Integration/Assembly.cs`). With it, mesh collision, traces,
+     and landing pass.
+   - **The risk:** it uses engine internals, so any S&box update can break it. Label it as
+     test scaffolding.
+   - **Stuck checks need more than `StartedSolid`.** A body wholly inside mesh collision
+     isn't reported: concave mesh collision has no interior, and traces don't see its faces
+     from behind. The kit's public-API enclosure probe closes that gap for closed meshes.
+3. **Loading the project's own saved scenes headlessly.** *(Partly answered.)*
+   - **By path, it fails:** `Scene.LoadFromFile` can't find the scene, because headless
+     tests register no project resources.
+   - **From the saved file, it works:** reading the `.scene` file and loading it through
+     the public `SceneFile.LoadFromJson` and `Scene.Load` works, and its box collider is
+     traceable.
+   - **Still open:** saved scenes whose objects reference other resources, such as prefabs
+     or collision models, and generated geometry saved into a scene.
+   - **For most rung-1 checks,** building the area in-test with the same generator code
+     still avoids the question.
 4. **Rung 1 is Windows-only.** `TestAppSystem` needs the installed engine
    (`FACEPUNCH_ENGINE`) and its win64 native libraries, and the machine needs the .NET 10
    SDK because S&box projects target `net10.0` (confirmed by the spike's first run).

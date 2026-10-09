@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sandbox;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
@@ -14,7 +16,7 @@ namespace EladSpike.Tests;
 [TestClass]
 public class EngineRungTests
 {
-	static PlayerController CreatePlayer( Scene scene, Vector3 position )
+	internal static PlayerController CreatePlayer( Scene scene, Vector3 position )
 	{
 		var go = scene.CreateObject();
 		go.Name = "Spike Player";
@@ -33,12 +35,29 @@ public class EngineRungTests
 			scene.GameTick();
 	}
 
-	static bool BodyStartsInsideGeometry( PlayerController pc )
+	internal static bool BodyStartsInsideGeometry( PlayerController pc )
 	{
 		// Lifted 2 units so resting contact with the floor doesn't count as being stuck.
 		var start = pc.GameObject.WorldPosition + Vector3.Up * 2;
-		return pc.TraceBody( start, start + Vector3.Up ).StartedSolid;
+		if ( pc.TraceBody( start, start + Vector3.Up ).StartedSolid )
+			return true;
+
+		// StartedSolid misses a body wholly inside mesh collision: a concave mesh is a surface
+		// with no interior, and traces don't see its faces from behind (run 4: S7, D4-D6).
+		// So probe upward from the body's centre to the first face it can see, then trace back.
+		// Any face hit on the way back faces away from the centre, so the centre is inside a
+		// closed solid. Public trace API only.
+		var centre = start + Vector3.Up * (pc.CurrentHeight * 0.5f);
+		var outward = ProbeRay( pc, centre, centre + Vector3.Up * 16384 );
+		var back = ProbeRay( pc, outward.EndPosition - Vector3.Up * 0.5f, centre );
+		return back.Hit;
 	}
+
+	static SceneTraceResult ProbeRay( PlayerController pc, Vector3 from, Vector3 to ) =>
+		pc.Scene.Trace.Ray( from, to )
+			.IgnoreGameObjectHierarchy( pc.GameObject )
+			.WithCollisionRules( pc.Tags )
+			.Run();
 
 	[TestMethod]
 	public void S0_DefaultSurfaceSetup()
@@ -145,4 +164,40 @@ public class EngineRungTests
 
 		Assert.IsTrue( BodyStartsInsideGeometry( pc ), "a player placed inside a solid block was not detected" );
 	}
+
+	[TestMethod]
+	public void S8_ProjectSavedSceneLoadsWithCollision()
+	{
+		// Open question 3: can a test load the project's own saved scene and query its collision?
+		// Uses the startup scene S&box's new-game template creates (scenes/minimal.scene). Its
+		// "Plane" has a box collider whose top is at z = 0. Public routes only; prints which worked.
+		var scene = new Scene();
+		using var scope = scene.Push();
+
+		var route = "unavailable: no route loaded the scene";
+		if ( scene.LoadFromFile( "scenes/minimal.scene" ) )
+		{
+			route = "public: Scene.LoadFromFile by resource path";
+		}
+		else
+		{
+			var file = new SceneFile();
+			file.LoadFromJson( File.ReadAllText( Path.Combine( ProjectRoot(), "Assets", "scenes", "minimal.scene" ) ) );
+
+			if ( scene.Load( file ) )
+				route = "public: SceneFile.LoadFromJson on the saved file, then Scene.Load";
+		}
+
+		Console.WriteLine( $"Saved scene route: {route}" );
+		Assert.IsFalse( route.StartsWith( "unavailable" ), route );
+
+		var tr = scene.Trace.Ray( new Vector3( -150, -150, 100 ), new Vector3( -150, -150, -100 ) ).Run();
+
+		Assert.IsTrue( tr.Hit, "ray missed the saved scene's floor" );
+		Assert.AreEqual( "Plane", tr.GameObject?.Name, "ray hit something other than the saved floor" );
+		Assert.AreEqual( 0f, tr.EndPosition.z, 1f, "ray should stop at the saved floor's top surface" );
+	}
+
+	static string ProjectRoot( [CallerFilePath] string source = "" ) =>
+		Path.GetDirectoryName( Path.GetDirectoryName( source ) );
 }

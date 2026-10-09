@@ -16,8 +16,11 @@ an ordinary project on the owner's machine? Specifically:
   engine tests install?
 - **Stuck detection:** can a test tell whether a player is standing on ground or stuck
   inside geometry?
+- **Saved scenes:** can a test load the project's own saved scene and query its collision?
 
-These are open questions 1–3 in [the ladder doc](../SPEC_AND_LADDER.md#open-questions-before-adoption).
+These settle open questions 1–3 in [the ladder doc](../SPEC_AND_LADDER.md#open-questions-before-adoption):
+a code project hosts the tests (1), generated meshes and traces need a default surface (2),
+and saved scenes load headlessly (3).
 
 ## Contents
 
@@ -26,8 +29,8 @@ These are open questions 1–3 in [the ladder doc](../SPEC_AND_LADDER.md#open-qu
 | `Code/SpikeGeometry.cs` | Builds synthetic box geometry. It lives in the game code, so the tests also prove they can use project code. |
 | `UnitTests/TestInit.cs` | Starts and stops the engine once for the test run, and provides a default physics surface. |
 | `UnitTests/TestSurfaces.cs` | Added after run 2: makes a `default` physics surface available, public route first. |
-| `UnitTests/EngineRungTests.cs` | Seven tests, each isolating one capability. |
-| `UnitTests/MeshDiagnosticsTests.cs` | Follow-up after run 1: three tests that locate the failing step of the mesh build. |
+| `UnitTests/EngineRungTests.cs` | S0–S8, each isolating one capability, plus the shared stuck check. |
+| `UnitTests/MeshDiagnosticsTests.cs` | D1–D7: diagnostics that located the mesh-build and stuck-detection failures. |
 
 ## The tests
 
@@ -40,9 +43,38 @@ These are open questions 1–3 in [the ladder doc](../SPEC_AND_LADDER.md#open-qu
 | S4 mesh floor builds collision | A `PolygonMesh` becomes collision in a game scene | Generated geometry can't be checked headlessly as built |
 | S5 ray hits mesh floor | Traces work in a project test | Traces need a surface workaround; the ladder doc needs revising |
 | S6 player lands on mesh floor with room | The shape of a real spawn requirement | Spawn checks need another approach |
-| S7 control: stuck player is detected | S6's stuck check can actually fail | S6 passing means nothing; stuck checks need another approach |
+| S7 control: stuck player is detected | S6's stuck check can actually fail, even inside mesh collision | S6 passing means nothing; stuck checks need another approach |
+| S8 saved scene loads with collision | The project's own saved startup scene loads, and a trace hits its floor (route printed) | Saved scenes can't be checked headlessly; build the area in-test instead |
 
-Expected outcome: all seven pass. S2 may fail without changing the conclusion.
+S8 uses `scenes/minimal.scene`, the startup scene S&box's new-game template creates. Its
+`Plane` has a box collider whose top is at z = 0. Keep that scene unmodified.
+
+The stuck check (`BodyStartsInsideGeometry`) has two parts:
+
+1. **`StartedSolid`.** A body trace that starts inside convex collision, or touches a mesh
+   face, reports it.
+2. **Enclosure probe.** This catches a body wholly inside mesh collision (added after run 4).
+   - Cast a ray up from the body's centre to the first face visible from there, then a ray
+     back down.
+   - A face hit on the way back faces away from the centre, so the centre is inside a
+     closed solid.
+   - It works because traces don't see mesh faces from behind (D6). It assumes closed meshes
+     with outward-facing faces, which `PolygonMesh` boxes are.
+
+Expected outcome: S0–S8 pass. D1–D5 and D7 pass. D6 fails while mesh faces are one-sided,
+which the enclosure probe relies on. If D6 ever passes, re-check S7 and D7.
+
+## Diagnostics
+
+| Test | Checks | Reading |
+|---|---|---|
+| D1 mesh rebuilds into a model | `PolygonMesh.Rebuild()` called directly, outside any component | Fails: building the mesh itself fails headlessly, and its stack trace says why |
+| D2 component state after enable | Whether the component became active, and whether it built | `Active=False`: an enable problem. Active but no model: the build was skipped or failed silently |
+| D3 floor in an editor scene | The same floor in `Scene.CreateEditorScene()` | Passes while S4 fails: rung-1 tests can build geometry in editor scenes |
+| D4 body inside a hull block | S7's placement, with hull (convex) collision | Passes: `StartedSolid` detects bodies inside convex collision |
+| D5 body crossing a mesh face | Mesh collision, body crossing the block's top face | Passes: `StartedSolid` detects bodies that touch a mesh face |
+| D6 ray from inside a mesh block | Whether a trace sees a mesh face from behind | Fails: mesh faces are one-sided for traces. The enclosure probe relies on this |
+| D7 player under a ceiling | The enclosure probe's false-positive control | Fails: the probe flags a standing player as stuck; S6 results can't be trusted |
 
 ## How to run
 
@@ -55,7 +87,8 @@ Expected outcome: all seven pass. S2 may fail without changing the conclusion.
    folder, and copy the `UnitTests\` folder into the project root, next to the `.sbproj`.
 3. **Generate the test project.** Close and reopen the project in the Editor. S&box then
    generates the solution, including `UnitTests\<project>.unittest.csproj`. Check that the
-   Editor's console shows no compile errors, then close the Editor.
+   Editor's console shows no compile errors, then close the Editor. Later kit files dropped
+   into `UnitTests\` are picked up without reopening.
 4. **Install the .NET 10 SDK if needed.** S&box projects target `net10.0`. The .NET 10
    runtime alone isn't enough; `dotnet --list-sdks` must show a `10.0.x` SDK.
 5. **Point the tests at the engine.** Set `FACEPUNCH_ENGINE` to the S&box install folder,
@@ -67,6 +100,10 @@ Expected outcome: all seven pass. S2 may fail without changing the conclusion.
    $env:FACEPUNCH_ENGINE = "<S&box install folder>"
    dotnet test .\UnitTests\ --logger "console;verbosity=detailed" *> spike-results.txt
    ```
+
+7. **Keep the engine log.** S&box catches errors thrown inside components and writes them
+   only to `logs\testhost.log` in the install folder, which each run overwrites. Copy it
+   next to that run's `spike-results.txt`.
 
 ## Results
 
@@ -127,40 +164,172 @@ tries the public route, loading the engine's `surfaces/default.surface` through
 Facepunch's own `MeshComponentBuildTests` do. That fallback uses engine internals through
 reflection, so an S&box update could break it. S0 prints which route worked.
 
-Next: run S0–S7 and D1–D3 together.
+### Run 3 — default surface setup
 
-When the engine catches a component error during a test, read the engine's
-`logs\testhost.log`: the error isn't in the test output.
+Same environment as run 1. Kit at `e644ae1`. S0 printed the route used:
+`internal fallback: registered a stand-in default surface`.
 
-| Test | Checks | Reading |
+| Test | Result | Note |
 |---|---|---|
-| D1 mesh rebuilds into a model | `PolygonMesh.Rebuild()` called directly, outside any component | Fails: building the mesh itself fails headlessly, and its stack trace says why |
-| D2 component state after enable | Whether the component became active, and whether it built | `Active=False`: an enable problem. Active but no model: the build was skipped or failed silently |
-| D3 floor in an editor scene | The same floor in `Scene.CreateEditorScene()` | Passes while S4 fails: rung-1 tests can build geometry in editor scenes |
+| S0 default surface setup | pass | The public route found nothing; the internal fallback worked |
+| S1 engine starts | pass | |
+| S2 default surface | pass | The stand-in surface is found by name |
+| S3 player lands on box collider | pass | |
+| S4 mesh floor builds collision | pass | One collision mesh |
+| S5 ray hits mesh floor | pass | |
+| S6 player lands on mesh floor | pass | |
+| S7 stuck-player control | **fail** | `a player placed inside a solid block was not detected`: the first real failure |
+| D1–D3 | pass | D2 now prints `HasModel=True` |
+
+Findings:
+
+- **The missing surface was the only blocker** for generated-mesh collision, traces, and
+  landing (S4–S6). The engine log shows no component errors.
+- **No public route provides the surface on this build.**
+  - `ResourceLibrary.Get` only looks up resources that are already registered.
+    `core\surfaces\default.surface` is on disk, but headless test startup never registers it.
+  - `GameResource.LoadFromJson` is public but doesn't run the `PostLoad` step that registers
+    a surface.
+  - `ResourceLoader.LoadAllGameResource` is internal.
+  - Facepunch's integration tests set `Surface.All[0]` directly for the same reason
+    (`engine/Tests/Sandbox.Test.Integration/Assembly.cs`).
+  - The labelled reflection fallback stays as test scaffolding.
+- **`PolygonMesh.Rebuild()` needs a surface even without collision.** It calls
+  `AddSurface` for every submesh, and D1's render-only rebuild crashed in run 2.
+  `AddSurface` doesn't check for a null fallback, while the engine's own
+  `Surface.FindByIndex` falls back safely.
+
+### Run 4 — stuck-detection diagnostics
+
+Same environment. Kit changes:
+
+- `CreateBlock` takes an optional collision type. The default is still mesh.
+- The stuck check became `internal`, so diagnostics use the same code.
+- D4–D6 were added.
+
+| Test | Result | Note |
+|---|---|---|
+| S0–S6 | pass | As run 3 |
+| S7 stuck-player control | fail | Unchanged |
+| D1–D3 | pass | |
+| D4 body inside a hull block | pass | `StartedSolid` detects bodies inside convex collision |
+| D5 body crossing a mesh face | pass | `StartedSolid` detects bodies touching a mesh face |
+| D6 ray from inside a mesh block | fail | `Hit=False StartedSolid=False EndZ=256 Normal=0,0,0` |
+
+Root cause:
+
+- `MeshComponent.CollisionType.Mesh` is concave collision (`IsConcave`): a triangle surface
+  with no interior.
+- A body wholly inside it touches no triangle, so `StartedSolid` stays false.
+- Traces don't see mesh faces from behind (D6).
+- This is how concave mesh collision works, not an engine fault. Facepunch's own
+  `StartedSolid` test uses a `BoxCollider`, which is convex.
+
+### Run 5 — enclosure probe
+
+Same environment. Fix attempt 1:
+
+- **Enclosure probe added.** The shared stuck check keeps `StartedSolid` and adds the
+  enclosure probe described under [The tests](#the-tests). It uses the public trace API only.
+- **No assertion was changed.** S6 gets stricter.
+- **D7 added** as the probe's false-positive control.
+
+| Test | Result | Note |
+|---|---|---|
+| S0–S7 | pass | S7 now detects the player wholly inside the mesh block |
+| D1–D5 | pass | |
+| D6 ray from inside a mesh block | fail | As run 4: the one-sidedness the probe relies on |
+| D7 player under a ceiling | pass | The probe doesn't flag a ceiling |
+
+### Run 6 — saved scene
+
+Same environment. Added S8 for open question 3. S8 printed the route used:
+`public: SceneFile.LoadFromJson on the saved file, then Scene.Load`.
+
+| Test | Result | Note |
+|---|---|---|
+| S0–S8 | pass | S8: the ray hit the saved `Plane` at z ≈ 0 |
+| D1–D5, D7 | pass | |
+| D6 ray from inside a mesh block | fail | As expected |
+
+Findings:
+
+- **Loading by resource path fails headlessly.** `Scene.LoadFromFile( "scenes/minimal.scene" )`
+  logs `LoadFromFile: Couldn't find scenes/minimal.scene`. The cause is the same as for the
+  surface: headless tests register no project resources.
+- **Loading the saved file's JSON works.** Reading the `.scene` file, then
+  `SceneFile.LoadFromJson` and `Scene.Load`, are all public. The saved box collider was
+  traceable.
+- **Not covered:**
+  - saved scenes whose objects reference other resources, such as prefabs or collision
+    models; and
+  - generated mesh geometry saved inside a scene.
+
+### Run 7 — final check
+
+Same environment. This run used the kit exactly as committed; only a doc comment had
+changed since run 6. Both route lines matched run 6, and the build had no warnings or errors.
+
+| Test | Result | Note |
+|---|---|---|
+| S0–S8 | pass | |
+| D1–D5, D7 | pass | |
+| D6 ray from inside a mesh block | fail | As expected |
+
+### Final result
+
+On S&box `26.10.02`, a project's own tests can run these rung-1 checks headlessly:
+
+| Check | Status | Evidence |
+|---|---|---|
+| Engine starts from project tests | Proven | S1 |
+| Collision from generated `PolygonMesh` geometry | Proven, with default-surface scaffolding | S4, D1–D3 |
+| Traces against generated geometry | Proven, with the same scaffolding | S5 |
+| Spawn landing, with room to stand | Proven | S3 (primitive), S6 (generated) |
+| Stuck detection | Proven, with the enclosure probe | S7, D4, D5, D7 |
+| Saved project scene loads with traceable collision | Proven for primitive colliders, through the JSON route | S8 |
+
+**Still unproven:**
+
+- **A public way to provide the default surface.** None exists on this build.
+- **Saved scenes that reference other resources,** and generated meshes saved into scenes.
+- **The enclosure probe on open or inward-facing meshes.**
+- **Other S&box builds.** Source checks used `sbox-public` at `3915f1a`, which is newer than
+  the installed build.
+- **Other platforms.** The runs were on Windows only.
+- **Anything above rung 1.**
 
 ## What to report
 
-- pass or fail for each of S1–S7;
+- pass or fail for each of S0–S8 and D1–D7;
+- the route lines S0 and S8 print;
 - for each failure, its first error message and the top of its stack trace;
+- any component errors in that run's `logs\testhost.log`;
 - the S&box version or build number, and the output of `dotnet --version`.
 
-The complete `spike-results.txt` stays with the scratch project. Bring back only the
-summary.
+The complete `spike-results.txt` and `testhost.log` stay with the scratch project. Bring
+back only the summary.
 
 ## Afterwards
 
 The scratch project can be deleted. Whatever the outcome, the result belongs in the
 ladder doc's open questions, not in any game repository.
 
-## S&box lesson found while writing this kit
+## S&box lessons found by this kit
 
-Outside an editor scene, `MeshComponent` builds its model only when the component is
-enabled. `RebuildMesh()` returns early unless `Scene.IsEditor`
-(`engine/Sandbox.Engine/Scene/Components/Mesh/MeshComponent.cs`, `Facepunch/sbox-public`
-at `3915f1a69810026e23d331581266636de89411d5`). A generator that runs in a game scene must:
+1. **Outside an editor scene, `MeshComponent` builds its model only when the component is
+   enabled.** `RebuildMesh()` returns early unless `Scene.IsEditor`
+   (`engine/Sandbox.Engine/Scene/Components/Mesh/MeshComponent.cs`, `Facepunch/sbox-public`
+   at `3915f1a69810026e23d331581266636de89411d5`). A generator that runs in a game scene must:
+   1. create the component disabled;
+   2. assign `Mesh` and `Collision`; then
+   3. enable it.
 
-1. create the component disabled;
-2. assign `Mesh` and `Collision`; then
-3. enable it.
-
-Otherwise the geometry renders nothing and has no collision.
+   Otherwise the geometry renders nothing and has no collision.
+2. **Headless project tests register no game resources.** There is no `default` surface,
+   and project scenes can't be found by path. Anything that resolves a resource by path
+   needs another route.
+3. **Component errors don't reach the test output.** A component that throws during
+   `OnEnabled` is logged only to `logs\testhost.log`.
+4. **Mesh collision is a surface, not a volume.** `StartedSolid` misses a body wholly inside
+   it. Use hull collision for convex solids, or an enclosure probe.
