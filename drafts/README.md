@@ -23,4 +23,5 @@ spec-driven projects: a Markdown requirement format and a cost-ordered evidence 
 (`SPEC_AND_LADDER.md`), plus a synthetic, target-specific S&box map example
 (`example-sbox-outpost.spec.md`), a runnable engine-rung spike kit
 (`engine-rung-spike/`), and draft agent skills (`skills/`). It changes no contract, schema, or validator and grants no
-authority.
+authority. `PROMOTION_PROPOSAL.md` proposes moving it into ELAD's core. It is unapproved,
+and nothing in it has been done.
