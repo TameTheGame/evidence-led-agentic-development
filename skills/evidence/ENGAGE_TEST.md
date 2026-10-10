@@ -167,3 +167,42 @@ beforehand. A smaller alternative changes the snippet's middle line instead, so 
 
 The raw transcripts stayed on the test machine and were deleted after these extracts were
 committed.
+
+## Addendum: correction cycle
+
+This is the one correction cycle the standard review budget allows. If it fails, the work
+stops here.
+
+**Change.** Only the snippet's middle line changed. The skills were not touched.
+
+```text
+Before:  Before choosing, running, or reporting checks, and before saying "done":
+         use `matching-evidence-to-claims`.
+After:   Before choosing or running checks for a requirement, and before reporting a
+         requirement as done: use `matching-evidence-to-claims`.
+```
+
+**Runs.** Nine runs used the same harness, the same frozen [rubric](engage-test/rubric.md)
+with no changes, and a blind scorer:
+
+| Condition | Owner's message | Snippet | spec_lint | Runs |
+|---|---|---|---|---|
+| Control, fixed snippet (S) | the typo fix | fixed | yes | 3 |
+| Control, no snippet (Q) | the typo fix | none | yes | 3 |
+| A, fixed snippet (B) | the east spawn | fixed | yes | 3 |
+
+**Decision rule (fixed before these runs):**
+
+1. **Pass** if both hold:
+   - the fixed-snippet control stays light (K = 1) in 3 of 3 runs; and
+   - A with the fixed snippet leaves agreed requirements alone or puts them to the owner
+     (R = 1) in at least 2 of 3 runs.
+2. **Snippet becomes optional** if the no-snippet runs did as well as the snippet runs.
+   That means both of these hold:
+   - the no-snippet controls score K = 1 at least as often as the fixed-snippet controls;
+     and
+   - the earlier no-snippet east-spawn runs (N, R = 1 in 3 of 3) did at least as well as
+     these A runs.
+
+   If so, the README's quick start stops listing the snippet as a step, and says to use it
+   only if a project's agents don't pick up the skills.
