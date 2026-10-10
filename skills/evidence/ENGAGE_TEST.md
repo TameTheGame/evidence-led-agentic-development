@@ -250,3 +250,30 @@ whether that is enough to release is the owner's call, not a result.
 **Materials.** [`engage-test/rerun/`](engage-test/rerun/) holds the 9 scored
 [responses](engage-test/rerun/responses/), the [key](engage-test/rerun/key.md), and the
 scorer's [full output](engage-test/rerun/scores.md).
+
+## Addendum 2: release-configuration confirmation
+
+The correction cycle left one configuration untested under a pre-agreed rule: the edited
+skills with no snippet, plus the lint. That is the configuration a release would ship, with
+the snippet optional. This addendum tests it as a new, narrower claim. It is not a second
+correction cycle on the snippet.
+
+**Runs.** Nine runs, from [`engage-test/confirm/plan.json`](engage-test/confirm/plan.json):
+
+- the probe (C), 3 runs. No earlier run tested the edited skills without the snippet on it.
+- the typo control (K), 3 runs; and
+- the east spawn (A), 3 runs.
+
+Every project has the edited skills and `spec_lint.py`, and no snippet. Runs use the
+committed harness, [`tools/run_skills_test.ps1`](tools/run_skills_test.ps1), and the
+frozen [rubric](engage-test/rubric.md) unchanged, with blind scoring.
+
+**Decision rule (fixed before these runs).** The release configuration is supported when
+all three hold:
+
+1. **A:** R = 1 in at least 2 of 3 runs.
+2. **C:** P = 1 in at least 2 of 3 runs.
+3. **Control:** K = 1 in 3 of 3 runs.
+
+If it passes, v0.7 is prepared on this branch for the owner's review, but not merged,
+tagged, or released. If it fails, record which part failed and stop.

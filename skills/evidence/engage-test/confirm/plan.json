@@ -1,0 +1,58 @@
+{
+  "runs": [
+    {
+      "id": "C-1",
+      "scenario": "C",
+      "snippet": false,
+      "lint": true
+    },
+    {
+      "id": "C-2",
+      "scenario": "C",
+      "snippet": false,
+      "lint": true
+    },
+    {
+      "id": "C-3",
+      "scenario": "C",
+      "snippet": false,
+      "lint": true
+    },
+    {
+      "id": "K-1",
+      "scenario": "K",
+      "snippet": false,
+      "lint": true
+    },
+    {
+      "id": "K-2",
+      "scenario": "K",
+      "snippet": false,
+      "lint": true
+    },
+    {
+      "id": "K-3",
+      "scenario": "K",
+      "snippet": false,
+      "lint": true
+    },
+    {
+      "id": "A-1",
+      "scenario": "A",
+      "snippet": false,
+      "lint": true
+    },
+    {
+      "id": "A-2",
+      "scenario": "A",
+      "snippet": false,
+      "lint": true
+    },
+    {
+      "id": "A-3",
+      "scenario": "A",
+      "snippet": false,
+      "lint": true
+    }
+  ]
+}

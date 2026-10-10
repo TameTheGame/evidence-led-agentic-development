@@ -30,10 +30,37 @@ Both are needed for `1.0`; see [Releasing](docs/RELEASING.md).
 
 ## Skills
 
-- **A round-3 pressure test,** if a skill changes. Add a rubric item for leaving agreed
-  requirements unchanged until the owner agrees; round 2 showed the gap.
-- **Scenarios not yet tested:** 1 (typo), 3 (fall-through report), 5 (shared generator
-  refactor), and 6 (publishing).
+- **Scenarios not yet tested:** 3 (fall-through report), 5 (shared generator refactor),
+  and 6 (publishing).
+
+## S&box next steps
+
+These are the next steps for improving ELAD on S&box projects. Each one gets a rubric and
+decision rule committed before any run, and blind scoring.
+
+1. **Pressure-test the S&box domain skill.** `examples/sbox/skills/sbox-engine-reference`
+   has never been tested.
+   - **Scenarios.** Build synthetic S&box coding scenarios from the engine-rung spike kit:
+     "players fall through the floor near the gate", "write the engine test for
+     OUT-SPAWN-01", and "the generated wall has no collision in game".
+   - **Triggering.** Check whether the skill loads on its own.
+   - **Behavior.** Check whether agents follow what it teaches:
+     - read `logs\testhost.log` when a component silently fails;
+     - create a `MeshComponent` disabled, assign it, then enable it;
+     - register the stand-in default surface in test setup;
+     - use the enclosure probe, not `StartedSolid` alone; and
+     - compare the installed `.version` with the engine source.
+2. **Package a rung-1 starter.** Turn the
+   [engine-rung spike](examples/sbox/engine-rung-spike/README.md) into a copyable
+   `examples/sbox/rung1-starter/`, containing:
+   - test setup with the labelled default-surface scaffolding;
+   - player helpers;
+   - the enclosure-probe stuck check;
+   - the saved-scene JSON loader; and
+   - one test named after a requirement.
+
+   It stays unbuilt until the owner compiles it once with a short card. Then test it
+   with step 1's scenarios.
 
 ## Examples
 
