@@ -4,6 +4,7 @@ ELAD v0.7 rests on four kinds of evidence:
 
 - two blind pressure-test rounds of its skills, in dry runs;
 - a triggering test and an engagement test of the skills in real headless sessions;
+- since v0.7, a test of the S&box example's domain skill in real headless sessions;
 - one engine-rung spike in a real game engine; and
 - four earlier development experiments against v0.3.0.
 
@@ -40,6 +41,26 @@ synthetic project with the skills installed. Nothing told the agent about the sk
 - a model scorer with partial blinding;
 - runs end at the first reply; and
 - the lint's owner gate was never triggered in a live session.
+
+## The S&box domain skill (after v0.7)
+
+The [domain-skill test](../skills/evidence/SBOX_SKILL_TEST.md) gave headless sessions a
+synthetic S&box game project with two planted engine problems. Half the runs had the
+example `sbox-engine-reference` skill. It passed its pre-registered, blind-scored rule.
+
+- It loaded on its own in 9 of 9 runs.
+- With it, agents fixed the planted enable-order bug in 6 of 6 runs. Without it, none did:
+  they guessed another cause or added a collider workaround.
+- With it, 8 of 9 runs named the missing default physics surface, but none could write the
+  test scaffolding for it.
+
+**Limits:**
+
+- three runs per cell;
+- one model, on Windows only;
+- the planted problems match the skill's content;
+- no engine source or install was available, and no code was compiled; and
+- partial blinding.
 
 ## Pressure tests of the skills (v0.6)
 

@@ -70,6 +70,14 @@ never against private project data.
   - **Release-configuration check:** the edited skills with the lint, and no snippet. It
     passed its own pre-registered rule: 3 of 3 east spawn, 2 of 3 probe, and 3 of 3
     control. This is the v0.7 configuration.
+- **[S&box domain-skill test](evidence/SBOX_SKILL_TEST.md):** the example
+  `sbox-engine-reference` skill, in 18 acting sessions on a synthetic game project, with and
+  without it.
+  - It loaded on its own in 9 of 9 runs, and passed its pre-registered rule.
+  - With it, agents fixed the planted enable-order bug in 6 of 6 runs, against 0 of 6
+    without it.
+  - No run could write the default-surface test scaffolding, which supports a rung-1
+    starter.
 
 | # | Scenario given to the agent | Expected behavior |
 |---|---|---|

@@ -2,7 +2,17 @@
 
 ## Unreleased
 
-No pending changes.
+- **New evidence: `skills/evidence/SBOX_SKILL_TEST.md`.** It is the first test of the
+  example `sbox-engine-reference` skill: 18 acting sessions on a synthetic S&box game
+  project, with and without it, scored blind against a frozen rubric. The skill passed. It
+  loaded in 9 of 9 runs, and with it agents fixed the planted enable-order bug in 6 of 6
+  runs, against 0 of 6 without it. No run could write the default-surface scaffolding. No
+  skill changed.
+- **Test tools.**
+  - Added `run_sbox_skill_test.ps1`.
+  - `analyze_transcripts.py` gains `--context` and `--new-files`, and scrubs local paths
+    from diffs.
+  - `blind_extracts.ps1` gains `-Messages`, `-Fixture`, and `-HideSkills`.
 
 ## 0.7 — 2026-10-10
 

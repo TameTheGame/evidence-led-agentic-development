@@ -2,6 +2,7 @@
 """Summarizes headless Claude Code transcripts from a skills test.
 
     python analyze_transcripts.py --transcripts DIR [--runs DIR] [--extracts DIR] [--json]
+                                  [--context N] [--new-files]
 
 --transcripts  folder of <run>.jsonl files from `claude -p --output-format stream-json --verbose`
 --runs         folder of <run>/ project folders; each may be a git repository whose first
@@ -9,6 +10,8 @@
 --extracts     write one Markdown extract per run (tool calls, final reply, spec changes),
                with personal and temporary paths replaced by placeholders
 --json         print the per-run summary as JSON instead of text
+--context      lines of context around each tracked change (default 0)
+--new-files    show the contents of new untracked files, not just their names
 
 Per run it records the skills listed at startup, Skill-tool invocations, direct reads of
 SKILL.md files, spec_lint runs and their output, file edits, denied tool calls, and the
@@ -44,13 +47,24 @@ def sanitize(text: str, run_root: Path | None) -> str:
     return text
 
 
+def scrub(text: str, run_root: Path | None) -> str:
+    """Like sanitize, but keeps backslashes, for code and diffs."""
+    sep = r"[\\/]+"
+    if run_root is not None:
+        parts = [re.escape(p) for p in re.split(r"[\\/]", str(run_root.resolve()))]
+        text = re.sub(sep.join(parts) + "(?:" + sep + ")?", "./", text, flags=re.IGNORECASE)
+    text = re.sub(r"(?i)(?:[a-z]:|/[a-z])" + sep + r"users" + sep + r"[^\\/\s\"'`]+", "<home>", text)
+    text = re.sub(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", "<id>", text)
+    return text
+
+
 def tool_text(content) -> str:
     if isinstance(content, str):
         return content
     return "\n".join(c.get("text", "") for c in content or [] if isinstance(c, dict))
 
 
-def summarize(path: Path, runs_dir: Path | None) -> dict:
+def summarize(path: Path, runs_dir: Path | None, context: int = 0, new_files: bool = False) -> dict:
     run = path.stem
     root = (runs_dir / run) if runs_dir else None
     info = {"run": run, "model": None, "skills_listed": [], "skill_calls": [], "skill_reads": [],
@@ -90,22 +104,30 @@ def summarize(path: Path, runs_dir: Path | None) -> dict:
                     info["lint_runs"].append({"step": step["n"], "status": step["status"], "output": output.strip()})
                 if step["status"] == "denied":
                     info["denied"].append(step["tool"])
-    info["changes"] = diff(root) if root is not None else ""
+    info["changes"] = scrub(diff(root, context, new_files), root) if root is not None else ""
     return info
 
 
-def diff(root: Path) -> str:
+def diff(root: Path, context: int = 0, new_files: bool = False) -> str:
     try:
         first = subprocess.run(["git", "rev-list", "--max-parents=0", "HEAD"], cwd=root, capture_output=True,
                                text=True, check=True).stdout.split()[0]
-        tracked = subprocess.run(["git", "diff", "--no-color", "-U0", first, "--", "."], cwd=root,
+        tracked = subprocess.run(["git", "diff", "--no-color", f"-U{context}", first, "--", "."], cwd=root,
                                  capture_output=True, text=True, encoding="utf-8", check=True).stdout
         untracked = subprocess.run(["git", "ls-files", "--others", "--exclude-standard"], cwd=root,
                                    capture_output=True, text=True, check=True).stdout.split()
     except (OSError, subprocess.CalledProcessError, IndexError):
         return ""
     lines = [l for l in tracked.splitlines() if not l.startswith(("index ", "diff --git"))]
-    lines += [f"(new untracked file: {u})" for u in untracked]
+    for u in untracked:
+        try:
+            body = (root / u).read_text(encoding="utf-8") if new_files else None
+        except (OSError, UnicodeDecodeError):
+            body = None
+        if body is None:
+            lines.append(f"(new untracked file: {u})")
+        else:
+            lines += ["--- /dev/null", f"+++ b/{u} (new untracked file)"] + ["+" + l for l in body.splitlines()]
     return "\n".join(lines)
 
 
@@ -131,8 +153,10 @@ def main() -> None:
     parser.add_argument("--runs", type=Path)
     parser.add_argument("--extracts", type=Path)
     parser.add_argument("--json", action="store_true")
+    parser.add_argument("--context", type=int, default=0)
+    parser.add_argument("--new-files", action="store_true")
     args = parser.parse_args()
-    infos = [summarize(p, args.runs) for p in sorted(args.transcripts.glob("*.jsonl"))]
+    infos = [summarize(p, args.runs, args.context, args.new_files) for p in sorted(args.transcripts.glob("*.jsonl"))]
     if args.extracts:
         args.extracts.mkdir(parents=True, exist_ok=True)
         for info in infos:

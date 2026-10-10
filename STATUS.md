@@ -33,6 +33,10 @@ non-normative.
     back in 2 of 3, and a typo fix stayed light in 3 of 3.
 - **One engine-rung spike.** It proved headless rung-1 checks on S&box `26.10.02`, on
   Windows.
+- **The S&box domain-skill test** (after v0.7). The example `sbox-engine-reference` skill
+  loaded on its own in 9 of 9 runs and passed its pre-registered, blind-scored rule. With
+  it, agents fixed a planted engine bug in 6 of 6 runs, against 0 of 6 without it. See
+  [the test](skills/evidence/SBOX_SKILL_TEST.md).
 - **Four reference-project experiments** against v0.3.0. They are historical; see
   [Empirical Status](docs/EMPIRICAL_STATUS.md).
 
@@ -42,8 +46,8 @@ non-normative.
   installs with three runs per cell, one model, one harness, and Windows only.
 - **Not yet done:** using ELAD on one real project. This is the remaining bar for `1.0`;
   see [Releasing](docs/RELEASING.md).
-- **Next for S&box:** test the S&box domain skill, and package a rung-1 starter; see the
-  [roadmap](ROADMAP.md#sbox-next-steps).
+- **Next for S&box:** package a rung-1 starter, so agents can wire up the default physics
+  surface instead of only naming it; see the [roadmap](ROADMAP.md#sbox-next-steps).
 - **Still open in the S&box example:** saved scenes that reference prefabs or collision
   models.
 ## History
