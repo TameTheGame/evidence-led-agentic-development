@@ -4,7 +4,7 @@
 
 No pending changes.
 
-## 0.7 — date set at release
+## 0.7 — 2026-10-10
 
 The skills engage on their own in real installs, and they now leave agreed requirements to
 the owner. No breaking changes.
