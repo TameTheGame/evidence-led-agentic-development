@@ -38,7 +38,11 @@ non-normative.
     skill edits. `choosing-rigor` then loaded in 15 of 15 acting sessions, and no agreed
     requirement was changed without the owner.
   - **Its frozen decision rule failed on the control,** which got wordier in 2 of 3 runs.
-    A report-format fix is proposed.
+  - **The one allowed correction cycle failed too.** It narrowed the snippet, and the
+    control with the snippet then stayed light in 2 of 3. Without the snippet it stayed
+    light in 3 of 3, so the snippet is now optional.
+  - **Pending:** the skill edits and the snippet await the owner's decision. A
+    report-format fix is proposed but untested.
 - **Not yet done:** using ELAD on one real project at this version.
 - **Still open in the S&box example:** saved scenes that reference prefabs or collision
   models.

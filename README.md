@@ -22,10 +22,11 @@ templates, and validators) is archived at the `v0.5` tag; see [Archive](ARCHIVE.
    support the Agent Skills format load them when their descriptions match the work.
 2. **Write a spec** for the area you're working on, at `spec/<area>.spec.md`. The format
    is in [Spec Format](docs/SPEC_FORMAT.md).
-3. **Point your project's `AGENTS.md` at the spec, and paste in the
-   [skills snippet](skills/AGENTS_SNIPPET.md).** The snippet is a few lines saying which skill
-   fits which moment. Your `AGENTS.md` still decides what agents may do; the skills never
-   override it.
+3. **Point your project's `AGENTS.md` at the spec.** Your `AGENTS.md` still decides what
+   agents may do; the skills never override it.
+
+Use the [skills snippet](skills/AGENTS_SNIPPET.md) if your agents don't pick up the skills.
+It is a few lines for `AGENTS.md` saying which skill fits which moment.
 
 Then ask for what you want in ordinary words. The agent works out which requirements are
 affected, checks them on the cheapest rung that can settle them, and asks you only for

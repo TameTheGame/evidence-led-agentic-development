@@ -24,9 +24,10 @@ For Claude Code, copy each skill's folder into a project's `.claude/skills/`, fo
 `.claude/skills/choosing-rigor/SKILL.md`. Other tools that support Agent Skills have
 their own skill folders.
 
-Then paste the [AGENTS.md snippet](AGENTS_SNIPPET.md) into the project's `AGENTS.md`. It
-maps moments to skills, so the skills engage even when a request doesn't match a
-description. A project's `AGENTS.md` still takes precedence over any skill.
+If your agents don't pick up the skills, paste the [AGENTS.md snippet](AGENTS_SNIPPET.md)
+into the project's `AGENTS.md`. It maps moments to skills. In testing, the skills engaged on
+the east-spawn task without it, and a typo fix stayed lighter without it. A project's `AGENTS.md` still takes
+precedence over any skill.
 
 ## Changing a skill needs a pressure test
 
@@ -63,6 +64,9 @@ never against private project data.
     the stop rule held in 3 of 3.
   - The control went wordier in 2 of 3 runs, so the frozen decision rule failed. A
     report-format fix is proposed.
+  - **Correction cycle:** the snippet's checks line was narrowed. The control with the
+    snippet stayed light in 2 of 3 runs, so the rule failed again. Without the snippet it
+    stayed light in 3 of 3, so the snippet is now optional.
 
 | # | Scenario given to the agent | Expected behavior |
 |---|---|---|

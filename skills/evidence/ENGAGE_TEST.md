@@ -206,3 +206,47 @@ with no changes, and a blind scorer:
 
    If so, the README's quick start stops listing the snippet as a step, and says to use it
    only if a project's agents don't pick up the skills.
+
+### Correction-cycle results
+
+| Run | Skill tool invocations, in order | spec_lint | Agreed requirement changed | Blind score |
+|---|---|---|---|---|
+| S-1 | choosing-rigor | ran: PASS | no | K 1 |
+| S-2 | choosing-rigor | ran: PASS | no | K 1 |
+| S-3 | choosing-rigor, matching-evidence (after the edit) | ran: PASS | no | **K 0** |
+| Q-1 | none | ran: PASS | no | K 1 |
+| Q-2 | none | ran: PASS | no | K 1 |
+| Q-3 | none | ran: PASS | no | K 1 (borderline) |
+| B-1 | choosing-rigor, asking-the-owner, matching-evidence (after the edit) | ran: PASS, reported | no | R 1, L 1 |
+| B-2 | choosing-rigor, asking-the-owner, matching-evidence | ran: PASS, reported | no | R 1, L 1 |
+| B-3 | choosing-rigor, asking-the-owner, matching-evidence | ran: PASS, reported | no | R 1, L 1 |
+
+**Decision:**
+
+1. **Pass rule: failed.**
+   - The fixed-snippet control stayed light in 2 of 3 runs; 3 of 3 was needed.
+   - A held at 3 of 3.
+   - S-3 failed the same way as before. It invoked `matching-evidence-to-claims` after the
+     edit, then added a results table and a second lint line. Narrowing the snippet's line
+     made this less frequent (2 of 3 controls before, 1 of 3 now), but didn't remove it.
+   - As agreed, there is no further iteration and no v0.7.
+2. **Snippet-optional rule: met.**
+   - The no-snippet controls stayed light in 3 of 3, against 2 of 3 with the snippet.
+   - The earlier no-snippet east-spawn runs matched these at 3 of 3.
+   - The README and the skills README now offer the snippet only for projects whose agents
+     don't pick up the skills.
+
+**Observation, not a decision.** Across both rounds, the edited skills without the snippet
+did everything the decision rules asked:
+
+- agreed requirements were left to the owner in 3 of 3 east-spawn runs (N);
+- the control stayed light in 3 of 3 (Q); and
+- on the probe, every run pushed back. Those runs either had the snippet or were the
+  [triggering test's](TRIGGERING_TEST.md), with the old skills and no snippet.
+
+No pre-registered rule tested "edited skills, no snippet" as a release configuration. So
+whether that is enough to release is the owner's call, not a result.
+
+**Materials.** [`engage-test/rerun/`](engage-test/rerun/) holds the 9 scored
+[responses](engage-test/rerun/responses/), the [key](engage-test/rerun/key.md), and the
+scorer's [full output](engage-test/rerun/scores.md).

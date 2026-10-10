@@ -14,10 +14,12 @@ ELAD grows only when evidence shows a change helps. Each item says what would sh
    - **Second run done** ([engagement test](skills/evidence/ENGAGE_TEST.md)), with the
      snippet and the skill edits. `choosing-rigor` triggered on the probe in 3 of 3 runs,
      but the control got wordier in 2 of 3.
-   - **Next:** pressure-test the proposed report-format fix in
-     `matching-evidence-to-claims` on the control, with the east spawn as a regression
-     check. Success means the control stays light in 3 of 3 and the east-spawn result
-     holds.
+   - **Correction cycle done** ([addendum](skills/evidence/ENGAGE_TEST.md#addendum-correction-cycle)).
+     With the snippet narrowed, the control stayed light in 2 of 3 runs. Without the
+     snippet it stayed light in 3 of 3, so the snippet became optional.
+   - **Owner decision pending:** whether to release the skill edits without the snippet,
+     or first pressure-test the proposed report-format fix in
+     `matching-evidence-to-claims`.
 2. **Use ELAD on one real project.**
    - Adopt the spec format, the ladder, and the skills on a real project, through that
      project's own decision.

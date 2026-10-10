@@ -1,8 +1,11 @@
 # AGENTS.md snippet
 
-Paste this into your project's `AGENTS.md`, after installing the three skills. It tells the
-agent which skill fits which moment, so the skills engage even when nothing in the request
-names them.
+Use this if your agents don't pick up the three skills on their own: paste it into your
+project's `AGENTS.md`. It tells the agent which skill fits which moment.
+
+It is optional. In the [engagement test](evidence/ENGAGE_TEST.md#addendum-correction-cycle),
+the skills engaged on the east-spawn task without it, and a typo fix stayed lighter without
+it. No probe run tested the edited skills without it.
 
 ```markdown
 ## Skills

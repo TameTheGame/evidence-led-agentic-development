@@ -10,9 +10,11 @@
   - The typo control added no process.
   - All three east-spawn runs edited an agreed requirement before asking the owner.
   - Description and red-flag changes are proposed, not applied. They need a pressure test.
-- **Added `skills/AGENTS_SNIPPET.md`.** It is a short block a project pastes into its
-  `AGENTS.md`, mapping moments to skills. It is linked from the README's quick start and the
-  skills README.
+- **Added `skills/AGENTS_SNIPPET.md`.** It is an optional short block for `AGENTS.md`,
+  mapping moments to skills, for projects whose agents don't pick up the skills.
+  - Its checks line was narrowed in the correction cycle, to checks "for a requirement".
+  - The README offers it as optional, not as a quick-start step, because the no-snippet
+    runs did at least as well.
 - **Added `examples/sbox/tools/spec_lint.py`.** It is an example rung-0 spec lint, with
   fixtures and `test_spec_lint.py`.
   - Its format checks fail the run.
@@ -31,6 +33,9 @@
   - Pushback on the stop rule held in 3 of 3.
   - The control stayed light in only 1 of 3, so the decision rule failed.
   - A report-format fix is proposed, not applied.
+  - **Correction-cycle addendum.** With the narrowed snippet, the control stayed light in
+    2 of 3 runs and the east spawn held at 3 of 3, so the rule failed again. Without the
+    snippet, the control stayed light in 3 of 3.
 - **Added `skills/evidence/tools/analyze_transcripts.py`,** the transcript analyzer used by
   both tests.
 
