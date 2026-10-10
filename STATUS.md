@@ -30,7 +30,11 @@ non-normative.
 
 ## Gaps
 
-- **Untested:** automatic skill triggering in a real install.
+- **Partly working:** automatic skill triggering in a real install. The
+  [first test](skills/evidence/TRIGGERING_TEST.md) found the skills used in every working
+  run, but loaded through the skill mechanism in only 4 of 6. `choosing-rigor` didn't
+  trigger on the one-shot probe. A description change is proposed and needs a pressure
+  test.
 - **Not yet done:** using ELAD on one real project at this version.
 - **Still open in the S&box example:** saved scenes that reference prefabs or collision
   models.

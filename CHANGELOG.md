@@ -2,7 +2,14 @@
 
 ## Unreleased
 
-No pending changes.
+- **Added `skills/evidence/TRIGGERING_TEST.md`.** Nine headless Claude Code sessions tested
+  whether the skills load on their own.
+  - The skills were used in all six working runs, but invoked through the skill mechanism
+    in only four.
+  - `choosing-rigor` never triggered on the one-shot probe.
+  - The typo control added no process.
+  - All three east-spawn runs edited an agreed requirement before asking the owner.
+  - Description and red-flag changes are proposed, not applied. They need a pressure test.
 
 ## 0.6 — 2026-10-09
 

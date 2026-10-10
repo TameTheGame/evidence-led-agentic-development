@@ -9,6 +9,11 @@ ELAD grows only when evidence shows a change helps. Each item says what would sh
    - Check that each skill loads when its description matches the work, and stays out of
      the way when it doesn't.
    - Record the result under `skills/evidence/`.
+   - **First run done** ([results](skills/evidence/TRIGGERING_TEST.md)). It found partial
+     triggering.
+   - **Next:** pressure-test the proposed `choosing-rigor` description, then rerun the
+     probe and control scenarios. Success means it triggers on the probe in at least 2 of
+     3 runs, with no added process on the control.
 2. **Use ELAD on one real project.**
    - Adopt the spec format, the ladder, and the skills on a real project, through that
      project's own decision.

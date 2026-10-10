@@ -47,6 +47,12 @@ never against private project data.
 - **Round 1:** scenarios 2, 4, 7 and 8, one sample each.
 - **Round 2:** scenarios 2 and 7, three samples each, against no skills. It confirmed round
   1's clearest finding.
+- **[Triggering test](evidence/TRIGGERING_TEST.md):** scenarios 1, 2 and 7, three real
+  headless sessions each, with no mention of the skills.
+  - Agents used the skills in every working run, but loaded them through the skill
+    mechanism in only 4 of 6.
+  - `choosing-rigor` didn't trigger on scenario 7. Description changes are proposed, not
+    applied.
 
 | # | Scenario given to the agent | Expected behavior |
 |---|---|---|
