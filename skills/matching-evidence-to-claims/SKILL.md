@@ -1,6 +1,6 @@
 ---
 name: matching-evidence-to-claims
-description: Use when deciding how to prove a change works, when writing or choosing tests and checks, and before reporting any task as done.
+description: Use when deciding how to prove a change works, when writing, choosing, or running tests and checks, and before reporting any task as done.
 ---
 
 # Matching evidence to claims

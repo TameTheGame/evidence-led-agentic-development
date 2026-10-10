@@ -1,6 +1,6 @@
 ---
 name: choosing-rigor
-description: Use when starting a coding task or change request, before planning or editing, and again whenever something unexpected happens mid-task.
+description: Use when starting a coding task, a change request, or a request to run a check, before planning or editing; when a request sets an attempt limit or a stop condition; and again whenever something unexpected happens mid-task.
 ---
 
 # Choosing rigor

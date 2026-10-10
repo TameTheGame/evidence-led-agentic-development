@@ -78,4 +78,5 @@ the requirement depends on reopens it.
 | "I'll send the card now and fix the tests meanwhile." | A card on a moving target wastes the owner's time. Finish the checks first. |
 | "The owner said GREEN last week, so it's still fine." | Only if nothing it depends on has changed since that commit. |
 | "I'll pick a sensible product direction myself." | Product intent is the owner's. Offer options with a recommendation and ask. |
+| "It's only a wording change that follows from what they asked." | Changing an agreed requirement's text is the owner's decision. Propose the new wording and wait. |
 | "A model reviewed the screenshots, so it's accepted." | Model review is advice. Acceptance is the owner's. |
