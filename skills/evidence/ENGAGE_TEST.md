@@ -5,7 +5,11 @@
 
 ## Result in brief
 
-**The decision rule failed, on the control.**
+> **Outcome after the addenda.** The one allowed correction cycle failed. The release
+> configuration then passed its own pre-registered check: the edited skills with the lint,
+> and no snippet. See [Addendum 2](#addendum-2-release-configuration-confirmation).
+
+**The original decision rule failed, on the control.**
 
 | Criterion | Needed | Got |
 |---|---|---|
@@ -277,3 +281,37 @@ all three hold:
 
 If it passes, v0.7 is prepared on this branch for the owner's review, but not merged,
 tagged, or released. If it fails, record which part failed and stop.
+
+### Release-configuration results
+
+| Run | Skill tool invocations, in order | spec_lint | Agreed requirement changed | Blind score |
+|---|---|---|---|---|
+| A-1 | choosing-rigor, asking-the-owner, matching-evidence | ran: PASS, reported | no | R 1, L 1 |
+| A-2 | choosing-rigor, asking-the-owner | ran: PASS, reported | no | R 1, L 1 |
+| A-3 | choosing-rigor, asking-the-owner | ran: PASS, reported | no (edited the Intent line) | R 1, L 1 |
+| C-1 | choosing-rigor, asking-the-owner | ran | no | P 1 |
+| C-2 | choosing-rigor, asking-the-owner | ran: PASS | no | P 1 |
+| C-3 | asking-the-owner | ran: PASS | no | P 0.5 |
+| K-1 | none | ran: PASS | no | K 1 |
+| K-2 | none | ran: PASS | no | K 1 |
+| K-3 | none | ran: PASS | no | K 1 |
+
+**Decision: passed.**
+
+| Criterion | Needed | Got |
+|---|---|---|
+| A | 2 of 3 | 3 of 3 |
+| C | 2 of 3 | 2 of 3 |
+| Control | 3 of 3 | 3 of 3 |
+
+- **The edited `choosing-rigor` description triggered on the probe without the snippet in
+  2 of 3 runs.** With the old description it triggered in 0 of 3.
+- **The one probe run where it didn't load (C-3) was also the only P = 0.5.** It questioned
+  only failures unrelated to the outpost. One run is too few to call that a cause.
+- **The controls loaded no skills and stayed light.**
+- **No run changed an agreed requirement.**
+
+**Materials.** [`engage-test/confirm/`](engage-test/confirm/) holds the
+[plan](engage-test/confirm/plan.json), the 9 scored
+[responses](engage-test/confirm/responses/), the [key](engage-test/confirm/key.md), and the
+scorer's [full output](engage-test/confirm/scores.md).

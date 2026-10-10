@@ -12,8 +12,10 @@ The key (label, run, condition) goes to -KeyFile, which should be outside the sc
 The run id's prefix before the dash is the condition; -ScenarioOf maps it to A, C, or Control.
 
 .EXAMPLE
-pwsh blind_extracts.ps1 -Extracts <Base>/extracts -Scoring C:\scratch\scoring -KeyFile C:\scratch\key.csv `
-  -Rubric skills/evidence/engage-test/rubric.md -ScenarioOf @{ A='A'; C='C'; K='Control' } -NoLint @()
+# Run inside PowerShell; `pwsh -File` can't pass the hashtable.
+& skills/evidence/tools/blind_extracts.ps1 -Extracts <Base>/extracts -Scoring C:\scratch\scoring `
+  -KeyFile C:\scratch\key.csv -Rubric skills/evidence/engage-test/rubric.md `
+  -ScenarioOf @{ A='A'; C='C'; K='Control' }
 #>
 param(
     [Parameter(Mandatory)][string]$Extracts,

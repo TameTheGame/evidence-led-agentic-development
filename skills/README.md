@@ -67,6 +67,9 @@ never against private project data.
   - **Correction cycle:** the snippet's checks line was narrowed. The control with the
     snippet stayed light in 2 of 3 runs, so the rule failed again. Without the snippet it
     stayed light in 3 of 3, so the snippet is now optional.
+  - **Release-configuration check:** the edited skills with the lint, and no snippet. It
+    passed its own pre-registered rule: 3 of 3 east spawn, 2 of 3 probe, and 3 of 3
+    control. This is the v0.7 configuration.
 
 | # | Scenario given to the agent | Expected behavior |
 |---|---|---|
