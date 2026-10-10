@@ -4,29 +4,18 @@ ELAD grows only when evidence shows a change helps. Each item says what would sh
 
 ## Toward 1.0
 
-1. **Test automatic triggering in a real install.**
-   - Install the three skills in a real agent tool without telling the agent to read them.
-   - Check that each skill loads when its description matches the work, and stays out of
-     the way when it doesn't.
-   - Record the result under `skills/evidence/`.
-   - **First run done** ([results](skills/evidence/TRIGGERING_TEST.md)). It found partial
-     triggering.
-   - **Second run done** ([engagement test](skills/evidence/ENGAGE_TEST.md)), with the
-     snippet and the skill edits. `choosing-rigor` triggered on the probe in 3 of 3 runs,
-     but the control got wordier in 2 of 3.
-   - **Correction cycle done** ([addendum](skills/evidence/ENGAGE_TEST.md#addendum-correction-cycle)).
-     With the snippet narrowed, the control stayed light in 2 of 3 runs. Without the
-     snippet it stayed light in 3 of 3, so the snippet became optional.
-   - **Owner decision pending:** whether to release the skill edits without the snippet,
-     or first pressure-test the proposed report-format fix in
-     `matching-evidence-to-claims`.
+1. **Test automatic triggering in a real install.** *Done in v0.7, in real headless
+   installs.* See the [triggering](skills/evidence/TRIGGERING_TEST.md) and
+   [engagement](skills/evidence/ENGAGE_TEST.md) tests.
+   - **Repeat it** on another model or harness, or on a non-Windows machine, before
+     claiming the result more widely.
 2. **Use ELAD on one real project.**
    - Adopt the spec format, the ladder, and the skills on a real project, through that
      project's own decision.
    - Record what helped, what was ignored, and what got in the way.
    - Bring back synthetic lessons only.
 
-Both are needed for `1.0`; see [Releasing](docs/RELEASING.md).
+Item 2 is the remaining condition for `1.0`; see [Releasing](docs/RELEASING.md).
 
 ## Skills
 

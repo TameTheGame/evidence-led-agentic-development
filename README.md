@@ -12,7 +12,7 @@ with coding agents. It is three things:
 ELAD runs nothing and grants no authority. Permission always comes from you and your
 project; see [Authority and Safety](docs/AUTHORITY_AND_SAFETY.md).
 
-**Current version: 0.6**, a breaking reshape of v0.5. The v0.5 protocol (schemas,
+**Current version: 0.7.** v0.6 was a breaking reshape of v0.5. The v0.5 protocol (schemas,
 templates, and validators) is archived at the `v0.5` tag; see [Archive](ARCHIVE.md).
 
 ## Quick start
@@ -92,9 +92,18 @@ only the check. See [Skills](skills/README.md).
 - **Engine-rung spike.** A real game engine (S&box) ran rung-1 checks from a project's own
   tests: collision, traces, spawn landing, stuck detection, and a saved scene. See the
   [S&box example](examples/sbox/README.md).
-- **Limits.** The samples are small. Automatic skill triggering hasn't been tested in a
-  real install, and ELAD hasn't yet been used on a real project at this version. See
-  [Empirical Status](docs/EMPIRICAL_STATUS.md).
+- **Real headless installs.** In acting Claude Code sessions, told nothing about the skills:
+  - the skills loaded on their own;
+  - agents left agreed requirements to the owner; and
+  - a typo fix stayed light.
+
+  See the [triggering](skills/evidence/TRIGGERING_TEST.md) and
+  [engagement](skills/evidence/ENGAGE_TEST.md) tests.
+- **Limits.**
+  - The samples are small: three runs per cell, with one model, one harness, on Windows.
+  - ELAD hasn't yet been used on a real project.
+
+  See [Empirical Status](docs/EMPIRICAL_STATUS.md).
 
 ## Example
 

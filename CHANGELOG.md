@@ -2,43 +2,46 @@
 
 ## Unreleased
 
-- **Added `skills/evidence/TRIGGERING_TEST.md`.** Nine headless Claude Code sessions tested
-  whether the skills load on their own.
-  - The skills were used in all six working runs, but invoked through the skill mechanism
-    in only four.
-  - `choosing-rigor` never triggered on the one-shot probe.
-  - The typo control added no process.
-  - All three east-spawn runs edited an agreed requirement before asking the owner.
-  - Description and red-flag changes are proposed, not applied. They need a pressure test.
-- **Added `skills/AGENTS_SNIPPET.md`.** It is an optional short block for `AGENTS.md`,
-  mapping moments to skills, for projects whose agents don't pick up the skills.
-  - Its checks line was narrowed in the correction cycle, to checks "for a requirement".
-  - The README offers it as optional, not as a quick-start step, because the no-snippet
-    runs did at least as well.
+No pending changes.
+
+## 0.7 — date set at release
+
+The skills engage on their own in real installs, and they now leave agreed requirements to
+the owner. No breaking changes.
+
+- **Skill edits.** All three were tested in acting headless sessions; see
+  `skills/evidence/ENGAGE_TEST.md`.
+  - The `choosing-rigor` description now also covers requests to run a check, and
+    requests that set an attempt limit or a stop condition.
+  - The `matching-evidence-to-claims` description adds "running" tests and checks.
+  - `asking-the-owner` gains a red flag: a "wording change" to an agreed requirement is
+    still the owner's decision.
+- **Added `skills/AGENTS_SNIPPET.md`.** It is an optional block for `AGENTS.md` mapping
+  moments to skills, for projects whose agents don't pick up the skills. Testing found the
+  skills engaged without it, and a typo fix stayed lighter without it, so it is not a
+  quick-start step.
 - **Added `examples/sbox/tools/spec_lint.py`.** It is an example rung-0 spec lint, with
   fixtures and `test_spec_lint.py`.
   - Its format checks fail the run.
-  - Its owner gate reports any change to an agreed requirement since `HEAD` as
+  - Its owner gate reports any change to an agreed requirement since the last commit as
     `NEEDS OWNER`, without blocking.
-  - `docs/SPEC_FORMAT.md` now points to it.
-- **Skill edits (on the `skills-engage` branch, pending the owner):**
-  - the `choosing-rigor` description now covers requests to run a check, and requests that
-    set an attempt limit or stop condition;
-  - the `matching-evidence-to-claims` description adds "running" checks; and
-  - `asking-the-owner` gains a red flag: a "wording change" to an agreed requirement is
-    still the owner's decision.
-- **Added `skills/evidence/ENGAGE_TEST.md`.** It reports 15 acting sessions, scored blind
-  against a rubric frozen beforehand.
-  - Agreed requirements were left to the owner in 9 of 9 east-spawn runs.
-  - Pushback on the stop rule held in 3 of 3.
-  - The control stayed light in only 1 of 3, so the decision rule failed.
-  - A report-format fix is proposed, not applied.
-  - **Correction-cycle addendum.** With the narrowed snippet, the control stayed light in
-    2 of 3 runs and the east spawn held at 3 of 3, so the rule failed again. Without the
-    snippet, the control stayed light in 3 of 3.
-- **Added `skills/evidence/tools/analyze_transcripts.py`,** the transcript analyzer used by
-  both tests.
-
+  - `docs/SPEC_FORMAT.md` now recommends an owner gate and points to this example.
+- **New evidence in `skills/evidence/`.**
+  - `TRIGGERING_TEST.md`: 9 sessions with the v0.6 skills. They were used in every working
+    run but loaded through the skill mechanism in only 4 of 6, and all three east-spawn
+    runs edited an agreed requirement.
+  - `ENGAGE_TEST.md`: 33 acting sessions scored blind against frozen rules.
+    - The original rule and its one correction cycle failed on a wordier typo control with
+      the snippet.
+    - The release configuration (edited skills, the lint, no snippet) then passed its own
+      check: 3 of 3 east spawn, 2 of 3 probe, and 3 of 3 control.
+- **Test tools in `skills/evidence/tools/`.** These are `analyze_transcripts.py`,
+  `run_skills_test.ps1`, and `blind_extracts.ps1`, so each skill change can be pressure-
+  tested cheaply.
+- **Docs.**
+  - `README.md` and `docs/EMPIRICAL_STATUS.md` now report the headless-install evidence.
+  - `ROADMAP.md` lists the next S&box steps: testing the S&box domain skill, and a rung-1
+    starter.
 ## 0.6 — 2026-10-09
 
 A breaking reshape, approved through the promotion proposal; see ADR-0020 in

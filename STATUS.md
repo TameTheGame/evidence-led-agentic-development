@@ -1,6 +1,6 @@
 # Status
 
-**Current version:** `0.6`
+**Current version:** `0.7`
 
 **What ELAD is:**
 
@@ -23,6 +23,14 @@ non-normative.
   with three samples per cell. Round 1 was mixed elsewhere: on one scenario the skills
   scored lowest. The tests were dry runs with small samples, scored blind by a model. See
   [skills/evidence/](skills/evidence/PRESSURE_TEST_RESULTS.md).
+- **Real headless installs.** These were acting Claude Code sessions, told nothing about
+  the skills.
+  - **The [triggering test](skills/evidence/TRIGGERING_TEST.md)** found gaps in the v0.6
+    skills.
+  - **The [engagement test](skills/evidence/ENGAGE_TEST.md)** confirmed the v0.7
+    configuration in a pre-registered, blind-scored check. The skills loaded on their own,
+    agreed requirements were left to the owner in 3 of 3 east-spawn runs, the probe pushed
+    back in 2 of 3, and a typo fix stayed light in 3 of 3.
 - **One engine-rung spike.** It proved headless rung-1 checks on S&box `26.10.02`, on
   Windows.
 - **Four reference-project experiments** against v0.3.0. They are historical; see
@@ -30,25 +38,14 @@ non-normative.
 
 ## Gaps
 
-- **Partly working:** automatic skill triggering in a real install. The
-  [first test](skills/evidence/TRIGGERING_TEST.md) found the skills used in every working
-  run, but loaded through the skill mechanism in only 4 of 6. `choosing-rigor` didn't
-  trigger on the one-shot probe.
-  - **The [engagement test](skills/evidence/ENGAGE_TEST.md)** tried the snippet and the
-    skill edits. `choosing-rigor` then loaded in 15 of 15 acting sessions, and no agreed
-    requirement was changed without the owner.
-  - **Its frozen decision rule failed on the control,** which got wordier in 2 of 3 runs.
-  - **The one allowed correction cycle failed too.** It narrowed the snippet, and the
-    control with the snippet then stayed light in 2 of 3. Without the snippet it stayed
-    light in 3 of 3, so the snippet is now optional.
-  - **Pending:** the skill edits and the snippet await the owner's decision. A
-    report-format fix is proposed but untested.
-- **Not yet done:** using ELAD on one real project at this version.
+- **Tested, within limits:** automatic skill triggering. It was tested in real headless
+  installs with three runs per cell, one model, one harness, and Windows only.
+- **Not yet done:** using ELAD on one real project. This is the remaining bar for `1.0`;
+  see [Releasing](docs/RELEASING.md).
+- **Next for S&box:** test the S&box domain skill, and package a rung-1 starter; see the
+  [roadmap](ROADMAP.md#sbox-next-steps).
 - **Still open in the S&box example:** saved scenes that reference prefabs or collision
   models.
-
-Closing the first two is the bar for `1.0`; see [Releasing](docs/RELEASING.md).
-
 ## History
 
 Through v0.5, ELAD was a protocol blueprint, with schemas, templates, validators, and an

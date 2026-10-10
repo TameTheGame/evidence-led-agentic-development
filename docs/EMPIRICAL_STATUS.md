@@ -1,14 +1,45 @@
 # Empirical Status
 
-ELAD v0.6 rests on three kinds of evidence:
+ELAD v0.7 rests on four kinds of evidence:
 
-- two blind pressure-test rounds of its skills;
+- two blind pressure-test rounds of its skills, in dry runs;
+- a triggering test and an engagement test of the skills in real headless sessions;
 - one engine-rung spike in a real game engine; and
 - four earlier development experiments against v0.3.0.
 
 Together they support core parts of the method in bounded settings. ELAD has not yet been
-used on a real project at v0.6 or demonstrated as a production automation system. This
-document separates those claims.
+used on a real project, or demonstrated as a production automation system. This document
+separates those claims.
+
+## Skills in real headless sessions (v0.7)
+
+Headless Claude Code sessions (CLI `2.1.237`, `claude-opus-5`) each started in a fresh
+synthetic project with the skills installed. Nothing told the agent about the skills.
+
+- **[Triggering test](../skills/evidence/TRIGGERING_TEST.md).** With the v0.6 skills, they
+  were used in every working run, but loaded through the skill mechanism in only 4 of 6.
+  `choosing-rigor` never loaded on the one-shot probe. All three east-spawn runs edited an
+  agreed requirement before asking the owner.
+- **[Engagement test](../skills/evidence/ENGAGE_TEST.md).** This tested the v0.7
+  configuration: two description edits, one red flag, an optional snippet, and an example
+  spec lint. All runs were acting sessions, scored blind against frozen rules.
+  - **The original rule and its one correction cycle failed,** on a typo control that got
+    wordier with the snippet.
+  - **The release configuration then passed its own pre-registered check:** the edited
+    skills with the lint, and no snippet.
+    - The east spawn left agreed requirements to the owner in 3 of 3 runs.
+    - The probe pushed back in 2 of 3.
+    - The control stayed light in 3 of 3.
+  - **Across every engagement run, no agreed requirement was changed without the owner.**
+
+**Limits:**
+
+- three runs per cell;
+- one model and one harness, on Windows only;
+- a synthetic fixture;
+- a model scorer with partial blinding;
+- runs end at the first reply; and
+- the lint's owner gate was never triggered in a live session.
 
 ## Pressure tests of the skills (v0.6)
 
@@ -35,7 +66,8 @@ Results, rubrics, responses, and keys are in
 - plans rather than actions;
 - one model for the agents and the scorer;
 - partial blinding; and
-- skills loaded by instruction, so automatic triggering is untested.
+- skills loaded by instruction. Automatic triggering was tested later, in the headless
+  sessions above.
 
 ## Engine-rung spike (v0.6)
 
@@ -152,10 +184,11 @@ ELAD does not claim to be:
 - adopted by an established ecosystem; or
 - sufficient by itself to authorize effects in another repository.
 
-The next meaningful empirical steps are the two conditions for `1.0` in
-[Releasing](RELEASING.md):
+`1.0` has two conditions in [Releasing](RELEASING.md):
 
-- a test of automatic skill triggering in a real install; and
-- use of ELAD on one real project, recorded with synthetic lessons.
+- **Automatic skill triggering tested in a real install.** This has now been tested in real
+  headless installs, within the limits above.
+- **Use on one real project,** recorded with synthetic lessons. This is still open, and it
+  is the next meaningful empirical step.
 
 More documents or machinery would not count.
