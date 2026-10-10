@@ -10,8 +10,8 @@ the work.
 
 | Skill | Use when |
 |---|---|
-| [`choosing-rigor`](choosing-rigor/SKILL.md) | Starting a task, or when something unexpected happens mid-task |
-| [`matching-evidence-to-claims`](matching-evidence-to-claims/SKILL.md) | Deciding how to prove a change works, and before reporting done |
+| [`choosing-rigor`](choosing-rigor/SKILL.md) | Starting a task or a request to run a check, when a request sets an attempt limit or stop rule, or when something unexpected happens mid-task |
+| [`matching-evidence-to-claims`](matching-evidence-to-claims/SKILL.md) | Deciding how to prove a change works, running checks, and before reporting done |
 | [`asking-the-owner`](asking-the-owner/SKILL.md) | A decision or check needs the project owner |
 
 A project adds its own domain skills beside these. The
@@ -22,7 +22,11 @@ belongs in the project that uses it, not here.
 
 For Claude Code, copy each skill's folder into a project's `.claude/skills/`, for example
 `.claude/skills/choosing-rigor/SKILL.md`. Other tools that support Agent Skills have
-their own skill folders. A project's `AGENTS.md` still takes precedence over any skill.
+their own skill folders.
+
+Then paste the [AGENTS.md snippet](AGENTS_SNIPPET.md) into the project's `AGENTS.md`. It
+maps moments to skills, so the skills engage even when a request doesn't match a
+description. A project's `AGENTS.md` still takes precedence over any skill.
 
 ## Changing a skill needs a pressure test
 
@@ -53,6 +57,12 @@ never against private project data.
     mechanism in only 4 of 6.
   - `choosing-rigor` didn't trigger on scenario 7. Description changes are proposed, not
     applied.
+- **[Engagement test](evidence/ENGAGE_TEST.md):** 15 acting sessions with the snippet, the
+  example spec lint, and three skill edits.
+  - Agreed requirements were left to the owner in 9 of 9 east-spawn runs, and pushback on
+    the stop rule held in 3 of 3.
+  - The control went wordier in 2 of 3 runs, so the frozen decision rule failed. A
+    report-format fix is proposed.
 
 | # | Scenario given to the agent | Expected behavior |
 |---|---|---|

@@ -10,6 +10,29 @@
   - The typo control added no process.
   - All three east-spawn runs edited an agreed requirement before asking the owner.
   - Description and red-flag changes are proposed, not applied. They need a pressure test.
+- **Added `skills/AGENTS_SNIPPET.md`.** It is a short block a project pastes into its
+  `AGENTS.md`, mapping moments to skills. It is linked from the README's quick start and the
+  skills README.
+- **Added `examples/sbox/tools/spec_lint.py`.** It is an example rung-0 spec lint, with
+  fixtures and `test_spec_lint.py`.
+  - Its format checks fail the run.
+  - Its owner gate reports any change to an agreed requirement since `HEAD` as
+    `NEEDS OWNER`, without blocking.
+  - `docs/SPEC_FORMAT.md` now points to it.
+- **Skill edits (on the `skills-engage` branch, pending the owner):**
+  - the `choosing-rigor` description now covers requests to run a check, and requests that
+    set an attempt limit or stop condition;
+  - the `matching-evidence-to-claims` description adds "running" checks; and
+  - `asking-the-owner` gains a red flag: a "wording change" to an agreed requirement is
+    still the owner's decision.
+- **Added `skills/evidence/ENGAGE_TEST.md`.** It reports 15 acting sessions, scored blind
+  against a rubric frozen beforehand.
+  - Agreed requirements were left to the owner in 9 of 9 east-spawn runs.
+  - Pushback on the stop rule held in 3 of 3.
+  - The control stayed light in only 1 of 3, so the decision rule failed.
+  - A report-format fix is proposed, not applied.
+- **Added `skills/evidence/tools/analyze_transcripts.py`,** the transcript analyzer used by
+  both tests.
 
 ## 0.6 — 2026-10-09
 

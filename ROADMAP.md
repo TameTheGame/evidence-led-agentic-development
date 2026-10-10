@@ -11,9 +11,13 @@ ELAD grows only when evidence shows a change helps. Each item says what would sh
    - Record the result under `skills/evidence/`.
    - **First run done** ([results](skills/evidence/TRIGGERING_TEST.md)). It found partial
      triggering.
-   - **Next:** pressure-test the proposed `choosing-rigor` description, then rerun the
-     probe and control scenarios. Success means it triggers on the probe in at least 2 of
-     3 runs, with no added process on the control.
+   - **Second run done** ([engagement test](skills/evidence/ENGAGE_TEST.md)), with the
+     snippet and the skill edits. `choosing-rigor` triggered on the probe in 3 of 3 runs,
+     but the control got wordier in 2 of 3.
+   - **Next:** pressure-test the proposed report-format fix in
+     `matching-evidence-to-claims` on the control, with the east spawn as a regression
+     check. Success means the control stays light in 3 of 3 and the east-spawn result
+     holds.
 2. **Use ELAD on one real project.**
    - Adopt the spec format, the ladder, and the skills on a real project, through that
      project's own decision.

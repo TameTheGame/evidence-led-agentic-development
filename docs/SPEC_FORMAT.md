@@ -95,6 +95,13 @@ checks its spec files:
 - every machine-rung `check` name exists in the test sources; and
 - every human-rung `check` names a card defined in the spec.
 
-ELAD doesn't ship this lint; each project writes its own against its own layout. With it,
-spec-driven work needs no per-task records. Git commits supply identity, and test output
-and `ACCEPTANCE.md` supply results.
+**An owner gate is worth adding.** It compares each `agreed` requirement with the last
+commit and reports any change to its sentence, state, rung, or check as needing the owner.
+It reports and never blocks, because the owner may already have agreed the change.
+
+The core doesn't ship a lint; each project owns its own. A worked example is
+[`examples/sbox/tools/spec_lint.py`](../examples/sbox/tools/spec_lint.py). It covers the
+format checks and the owner gate, with fixtures.
+
+With a lint like this, spec-driven work needs no per-task records. Git commits supply
+identity, and test output and `ACCEPTANCE.md` supply results.

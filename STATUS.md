@@ -33,8 +33,12 @@ non-normative.
 - **Partly working:** automatic skill triggering in a real install. The
   [first test](skills/evidence/TRIGGERING_TEST.md) found the skills used in every working
   run, but loaded through the skill mechanism in only 4 of 6. `choosing-rigor` didn't
-  trigger on the one-shot probe. A description change is proposed and needs a pressure
-  test.
+  trigger on the one-shot probe.
+  - **The [engagement test](skills/evidence/ENGAGE_TEST.md)** tried the snippet and the
+    skill edits. `choosing-rigor` then loaded in 15 of 15 acting sessions, and no agreed
+    requirement was changed without the owner.
+  - **Its frozen decision rule failed on the control,** which got wordier in 2 of 3 runs.
+    A report-format fix is proposed.
 - **Not yet done:** using ELAD on one real project at this version.
 - **Still open in the S&box example:** saved scenes that reference prefabs or collision
   models.

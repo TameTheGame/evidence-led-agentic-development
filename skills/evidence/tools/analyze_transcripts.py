@@ -32,12 +32,14 @@ def sanitize(text: str, run_root: Path | None) -> str:
         root = run_root.resolve().as_posix()
         for form in {root, root.lower(), "/" + root[0].lower() + root[2:] if root[1:2] == ":" else root}:
             text = re.sub(re.escape(form) + "/?", "./", text, flags=re.IGNORECASE)
-    text = re.sub(r"(?i)[a-z]:/users/[^/\s\"'`]+/appdata/local/temp/claude/[^/\s\"'`]+/[0-9a-f-]{36}/scratchpad",
+    # Windows and Git Bash forms of the same paths: C:/Users/<name>/... and /c/Users/<name>/...
+    home = r"(?:[a-z]:|/[a-z])/users/[^/\s\"'`]+"
+    text = re.sub(r"(?i)" + home + r"/appdata/local/temp/claude/[^/\s\"'`]+/[0-9a-f-]{36}/scratchpad",
                   "<session scratchpad>", text)
-    text = re.sub(r"(?i)\$env:temp/claude/[^/\s\"'`]+/[0-9a-f-]{36}/scratchpad", "<session scratchpad>", text)
-    text = re.sub(r"(?i)[a-z]:/users/[^/\s\"'`]+/\.claude/projects/[^/\s\"'`]+", "<session memory dir>", text)
-    text = re.sub(r"(?i)/c/users/[^/\s\"'`]+", "<home>", text)
-    text = re.sub(r"(?i)[a-z]:/users/[^/\s\"'`]+", "<home>", text)
+    text = re.sub(r"(?i)\$(?:env:)?temp/claude/[^/\s\"'`]+/[0-9a-f-]{36}/scratchpad", "<session scratchpad>", text)
+    text = re.sub(r"(?i)" + home + r"/\.claude/projects/[^/\s\"'`]+", "<session memory dir>", text)
+    text = re.sub(r"(?i)" + home, "<home>", text)
+    text = re.sub(r"(?i)[a-z]--users-[^/\s\"'`]+", "<encoded dir>", text)  # folder names that embed a path
     text = re.sub(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", "<id>", text)
     return text
 
