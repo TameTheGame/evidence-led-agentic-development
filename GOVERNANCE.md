@@ -36,7 +36,7 @@ A change is a method change when it alters any of these:
 
 - the spec format or its field rules;
 - the ladder's rungs or rules;
-- a skill's text;
+- what a skill tells an agent to do (its instructions, description, or red flags);
 - the authority and safety rules; or
 - compatibility or the version policy.
 

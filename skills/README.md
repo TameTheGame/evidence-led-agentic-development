@@ -26,13 +26,17 @@ their own skill folders. A project's `AGENTS.md` still takes precedence over any
 
 ## Changing a skill needs a pressure test
 
-Each skill should change what an agent does, not just sound right. Before a skill change
-merges, show it on a pressure test:
+Each skill should change what an agent does, not just sound right. Before a change to what a
+skill tells an agent to do (its instructions, description, or red flags) merges, show it on
+a pressure test:
 
 1. Give fresh agents a scenario without the skills, and note what they do.
 2. Repeat with the changed skills installed.
 3. Score the responses blind, against a rubric written before any response is read.
 4. Keep the change only if it moves agents toward the expected behavior.
+
+Mechanical fixes that don't change meaning (paths, links, typos) need only `tools/check.py`
+and a CHANGELOG line.
 
 Record the result under [`evidence/`](evidence/PRESSURE_TEST_RESULTS.md). Run scenarios
 against the synthetic outpost in the [test fixture](evidence/pressure-test/fixture/spec/),

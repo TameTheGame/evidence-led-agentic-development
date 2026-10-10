@@ -36,11 +36,11 @@ Read the README, then only the document, skill, or example the task touches. Che
 
 ## Changing a skill
 
-A skill change needs a pressure test before it merges. It must show the change moves agents
-toward the expected behavior compared with a baseline. The test is scored blind, against a
-rubric written before any response is read. Record the result under
-[`skills/evidence/`](skills/evidence/PRESSURE_TEST_RESULTS.md). This applies to wording
-fixes too, because small wording changes can change behavior.
+A change to what a skill tells an agent to do (its instructions, description, or red flags)
+needs a pressure test before it merges, scored blind against a rubric written beforehand,
+recorded under [`skills/evidence/`](skills/evidence/PRESSURE_TEST_RESULTS.md). Mechanical
+fixes that don't change meaning (paths, links, typos) need only `tools/check.py` and a
+CHANGELOG line.
 
 ## Changing anything else
 

@@ -4,7 +4,7 @@
 
 No pending changes.
 
-## 0.6 — date set at release
+## 0.6 — 2026-10-09
 
 A breaking reshape, approved through the promotion proposal; see ADR-0020 in
 `docs/DECISIONS.md`.
@@ -42,6 +42,13 @@ A breaking reshape, approved through the promotion proposal; see ADR-0020 in
   changes. `1.0` waits for a real-install triggering test and one real project.
 - **Rewritten:** README, AGENTS.md, STATUS, ROADMAP, CONTRIBUTING, and SECURITY. GOVERNANCE
   was trimmed to match.
+- **The skill-change rule.** A change to what a skill tells an agent to do (its
+  instructions, description, or red flags) needs a blind pressure test. Mechanical fixes
+  that don't change meaning (paths, links, typos) need only `tools/check.py` and a
+  CHANGELOG line. The rule is stated in AGENTS.md and mirrored in CONTRIBUTING, the skills
+  README, the README, GOVERNANCE, and ADR-0020.
+- **Mechanical fix:** `sbox-engine-reference` now points to the spike kit at
+  `examples/sbox/engine-rung-spike/` instead of its old drafts path.
 
 ## 0.5 — 2026-09-05
 

@@ -8,7 +8,7 @@ description: Use when writing, testing, or debugging S&box (Facepunch, Source 2)
 > **Target-specific, non-normative.** This skill is drafted in ELAD as an example of a
 > project's domain layer. Once adopted, it belongs in the S&box project that uses it.
 > Facts marked *(spike)* were verified on S&box `26.10.02` by the engine-rung spike in
-> `drafts/spec-driven/engine-rung-spike/`. Facts marked *(source)* come from reading
+> `examples/sbox/engine-rung-spike/`. Facts marked *(source)* come from reading
 > `Facepunch/sbox-public` and were not run.
 
 ## The engine source is ground truth

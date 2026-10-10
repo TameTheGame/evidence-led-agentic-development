@@ -30,7 +30,10 @@ and stays at the `v0.5` tag. The approved plan is the
 5. **CI.** It runs on Ubuntu and Windows with one Python version.
 6. **Amendment: one authority page.** Authority and safety rules stay as one short page,
    [Authority and Safety](AUTHORITY_AND_SAFETY.md).
-7. **New rule: skill changes need a pressure test.**
+7. **New rule: pressure tests for skill changes.**
+   - A change to what a skill tells an agent to do needs a pressure test.
+   - Mechanical fixes that don't change meaning need only `tools/check.py` and a CHANGELOG
+     line.
 
 **Why.** Two blind pressure-test rounds showed the skills change agent behavior. The
 engine-rung spike showed the ladder's machine rungs work in a real engine. Meanwhile, the

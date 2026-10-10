@@ -72,8 +72,9 @@ The full rules are in [Evidence Ladder](docs/EVIDENCE_LADDER.md).
 | [`matching-evidence-to-claims`](skills/matching-evidence-to-claims/SKILL.md) | Deciding how to prove a change works, and before reporting done |
 | [`asking-the-owner`](skills/asking-the-owner/SKILL.md) | A decision or check needs the project owner |
 
-**A skill change has to show it changes agent behavior** in a pressure test before it
-merges; see [Skills](skills/README.md).
+**A change to what a skill tells agents to do has to show it changes their behavior** in a
+pressure test before it merges. Mechanical fixes, such as paths, links, and typos, need
+only the check. See [Skills](skills/README.md).
 
 ## Evidence and limits
 

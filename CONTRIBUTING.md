@@ -14,8 +14,9 @@ in any project that uses ELAD.
 
 ## Skill changes need a pressure test
 
-A skill is kept only if it changes what agents do. A pull request that changes a
-`SKILL.md`, even its wording, must include a pressure test:
+A skill is kept only if it changes what agents do. A pull request that changes what a skill
+tells an agent to do (its instructions, description, or red flags) must include a pressure
+test:
 
 - **Compare:** agents with the changed skill against a baseline, on the scenarios the
   change targets.
@@ -23,6 +24,9 @@ A skill is kept only if it changes what agents do. A pull request that changes a
 - **Score blind:** shuffle the responses and remove anything that names the condition.
 - **Record the result:** add it to [`skills/evidence/`](skills/evidence/PRESSURE_TEST_RESULTS.md),
   with the responses and the key.
+
+Mechanical fixes that don't change meaning (paths, links, typos) need only `tools/check.py`
+and a CHANGELOG line.
 
 The [skills README](skills/README.md) describes the method and lists the standing
 scenarios. Run them against the synthetic fixture, never against private project data.
@@ -53,8 +57,8 @@ material you don't have the right to contribute.
 ## Review expectations
 
 - Small documentation fixes may take the light path.
-- Changes to the spec format, the ladder rules, or a skill need a recorded decision or
-  pressure test, and review proportional to their reach.
+- Changes to the spec format, the ladder rules, or what a skill tells an agent to do need a
+  recorded decision or pressure test, and review proportional to their reach.
 - A pull request should say what its evidence proves and what remains untested.
 - Maintainers may decline additions that don't catch a realistic failure or change a
   decision.
