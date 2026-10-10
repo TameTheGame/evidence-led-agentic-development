@@ -23,7 +23,7 @@ import re
 import subprocess
 from pathlib import Path
 
-SKILLS = ("choosing-rigor", "matching-evidence-to-claims", "asking-the-owner")
+SKILLS = ("choosing-rigor", "matching-evidence-to-claims", "asking-the-owner", "sbox-engine-reference")
 
 
 def sanitize(text: str, run_root: Path | None) -> str:

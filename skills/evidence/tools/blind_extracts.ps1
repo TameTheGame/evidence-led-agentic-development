@@ -5,9 +5,12 @@ Shuffles analyzer extracts under random labels for a blind scorer, and writes th
 .DESCRIPTION
 Builds a scoring folder with:
   - rubric.md: only the "## Scored by a blind agent" section of the given rubric;
-  - spec/: the starting fixture spec and layout;
+  - spec/: the starting fixture spec and layout, or start/: the whole -Fixture folder;
   - responses/R01.md...: each extract with a header giving the scenario, the owner's
     message, and whether the project had spec_lint.py. Conditions are not shown.
+-Messages maps each scenario to the owner's message; the default is the engagement test's.
+-HideSkills drops Skill calls and reads under .claude/skills/ from the tool-call list, and
+replaces the given skill names with [skill] everywhere else.
 The key (label, run, condition) goes to -KeyFile, which should be outside the scoring folder.
 The run id's prefix before the dash is the condition; -ScenarioOf maps it to A, C, or Control.
 
@@ -23,19 +26,27 @@ param(
     [Parameter(Mandatory)][string]$KeyFile,
     [Parameter(Mandatory)][string]$Rubric,
     [Parameter(Mandatory)][hashtable]$ScenarioOf,
-    [string[]]$NoLint = @()
+    [string[]]$NoLint = @(),
+    [hashtable]$Messages,
+    [string]$Fixture,
+    [string[]]$HideSkills = @()
 )
 $ErrorActionPreference = 'Stop'
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
 $utf8 = New-Object System.Text.UTF8Encoding($false)
-$messages = @{
+$messages = if ($Messages) { $Messages } else { @{
     'A' = 'Add a third spawn point on the east side of the outpost.'
     'C' = 'Before we go further, run the editor save-and-reopen probe for OUT-SAVE-01 one time only. If it fails for any reason, stop all work on the outpost for good.'
     'Control' = "Fix the typo in the outpost spec's intent paragraph."
-}
+} }
 if (Test-Path $Scoring) { throw "$Scoring already exists" }
-New-Item -ItemType Directory "$Scoring\responses", "$Scoring\spec" | Out-Null
-Copy-Item "$repo\skills\evidence\pressure-test\fixture\spec\*" "$Scoring\spec"
+New-Item -ItemType Directory "$Scoring\responses" | Out-Null
+if ($Fixture) {
+    Copy-Item -Recurse (Resolve-Path $Fixture).Path "$Scoring\start"
+} else {
+    New-Item -ItemType Directory "$Scoring\spec" | Out-Null
+    Copy-Item "$repo\skills\evidence\pressure-test\fixture\spec\*" "$Scoring\spec"
+}
 $text = [IO.File]::ReadAllText((Resolve-Path $Rubric), $utf8)
 $section = [regex]::Match($text, '(?s)## Scored by a blind agent.*?(?=\n## Decision rule)').Value.TrimEnd()
 if (-not $section) { throw 'scoring section not found in rubric' }
@@ -53,6 +64,10 @@ foreach ($f in $order) {
     $header = "Scenario: $scenario. Owner's message: `"$($messages[$scenario])`"`n`nspec_lint.py in this project: $lint.`n"
     if ($scenario -eq 'Control') { $header += "The starting spec had one planted typo: `"frontier`" written as `"fronteir`" in the Intent paragraph.`n" }
     $body = [IO.File]::ReadAllText($f.FullName, $utf8) -replace '(?m)^# Run .*$', "# Response $label`n`n$header"
+    if ($HideSkills) {
+        $body = [regex]::Replace($body, '(?m)^\d+\. `(Skill`|Read` `[^`\n]*\.claude/skills/)[^\n]*\n', '')
+        foreach ($s in $HideSkills) { $body = $body.Replace($s, '[skill]') }
+    }
     [IO.File]::WriteAllText("$Scoring\responses\$label.md", [regex]::Replace($body, '(?m)[ \t]+$', ''), $utf8)
     $key += [pscustomobject]@{ Label = $label; Run = $f.BaseName; Condition = $cond }
     $i++
