@@ -46,8 +46,9 @@ non-normative.
   installs with three runs per cell, one model, one harness, and Windows only.
 - **Not yet done:** using ELAD on one real project. This is the remaining bar for `1.0`;
   see [Releasing](docs/RELEASING.md).
-- **Next for S&box:** package a rung-1 starter, so agents can wire up the default physics
-  surface instead of only naming it; see the [roadmap](ROADMAP.md#sbox-next-steps).
+- **Next for S&box:** retest the domain-skill scenarios live, in a compiled project with the
+  [rung-1 starter](examples/sbox/rung1-starter/README.md); see the
+  [roadmap](ROADMAP.md#sbox-next-steps).
 - **Still open in the S&box example:** saved scenes that reference prefabs or collision
   models.
 ## History

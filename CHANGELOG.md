@@ -13,6 +13,17 @@
   - `analyze_transcripts.py` gains `--context` and `--new-files`, and scrubs local paths
     from diffs.
   - `blind_extracts.ps1` gains `-Messages`, `-Fixture`, and `-HideSkills`.
+- **Added `examples/sbox/rung1-starter/`.** It is a copyable starting point for a project's
+  engine tests, packaged from the engine-rung spike:
+  - the default-surface scaffolding;
+  - player and stuck-check helpers;
+  - the saved-scene loader;
+  - one requirement test with its control case; and
+  - `tools/run_engine_tests.ps1`. It saves the engine log with each run, lists the
+    component errors the engine caught, and makes concurrent runs wait.
+
+  Verified on S&box `26.10.02`: 5 of 5 passed. In a control run with the default surface
+  disabled, the runner reported the hidden `MeshComponent` error at `ModelBuilder.AddSurface`.
 
 ## 0.7 — 2026-10-10
 

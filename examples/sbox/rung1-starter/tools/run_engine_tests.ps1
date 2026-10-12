@@ -54,30 +54,69 @@ try {
     $started = Get-Date
     $arguments = @('test', $tests, '--logger', 'console;verbosity=detailed')
     if ($Filter) { $arguments += @('--filter', $Filter) }
-    & dotnet @arguments 2>&1 | ForEach-Object { "$_" } | Tee-Object -FilePath (Join-Path $Out 'results.txt') | Out-Null
+    # dotnet writes failures to stderr; don't let that stop the script before the log is saved.
+    $ErrorActionPreference = 'Continue'
+    $output = @(& dotnet @arguments 2>&1 | ForEach-Object { "$_" })
     $code = $LASTEXITCODE
+    $ErrorActionPreference = 'Stop'
+    [IO.File]::WriteAllLines((Join-Path $Out 'results.txt'), [string[]]$output)
 
-    $logNote = 'not updated by this run'
-    $errors = @()
+    $logLines = $null
     if ((Test-Path $log) -and (Get-Item $log).LastWriteTime -ge $started) {
         Copy-Item $log (Join-Path $Out 'testhost.log')
-        $errors = @(Select-String -Path (Join-Path $Out 'testhost.log') -Pattern '\b(error|exception|failed)\b' |
-            ForEach-Object { $_.Line.Trim() })
-        $logNote = "$($errors.Count) error line(s)"
+        $logLines = @(Get-Content (Join-Path $Out 'testhost.log'))
     }
 } finally {
     $lock.ReleaseMutex()
 }
 
-$results = Get-Content (Join-Path $Out 'results.txt')
-$summary = @($results | Select-String -Pattern '^\s*(Passed!|Failed!)|Test summary:|error CS\d+' | ForEach-Object { $_.Line.Trim() })
+# Component errors: the engine catches exceptions thrown in component callbacks such as
+# OnEnabled and logs them as "OnEnabled on Sandbox.MeshComponent failed ...". Group them by
+# message, with the first stack frame that names the cause.
+$component = [ordered]@{}
+$other = 0
+if ($logLines) {
+    for ($i = 0; $i -lt $logLines.Count; $i++) {
+        $line = $logLines[$i]
+        if ($line -match '\]\s+(On\w+ on \S+ failed.*)$') {
+            $message = $Matches[1].Trim()
+            if (-not $component.Contains($message)) {
+                # The entry's first stacks are the engine's dispatcher. The cause is the first
+                # frame of the innermost exception, after the last "--->" in the entry.
+                $frame = $null; $outer = $null; $pending = $false
+                for ($j = $i + 1; $j -lt $logLines.Count -and $logLines[$j] -notmatch '^\d{4}/\d\d/\d\d '; $j++) {
+                    if ($logLines[$j] -match '^\s*--->\s') { $pending = $true }
+                    elseif ($logLines[$j] -match '^\s+at ') {
+                        if ($pending) { $frame = $logLines[$j].Trim(); $pending = $false }
+                        if (-not $outer) { $outer = $logLines[$j].Trim() }
+                    }
+                }
+                $component[$message] = @{ Hits = 0; Frame = $(if ($frame) { $frame } else { $outer }) }
+            }
+            $component[$message].Hits++
+        } elseif ($line -match '^\d{4}/\d\d/\d\d .*\b(error|exception|failed)\b') {
+            $other++
+        }
+    }
+}
+
+$results = $output
+$summary = @($results | Select-String -Pattern '^\s*(Passed!|Failed!)|Test summary:|Test Run (Successful|Failed|Aborted)|^\s*(Total tests|Passed|Failed|Skipped):\s*\d|error CS\d+|Build FAILED' |
+    ForEach-Object { $_.Line.Trim() })
 $failed = @($results | Select-String -Pattern '^\s*Failed\s+\S' | ForEach-Object { $_.Line.Trim() })
 
 Write-Host "Engine:     S&box $version ($Engine)"
 Write-Host "Tests:      $(if ($summary) { $summary -join ' | ' } else { "no summary line; see results.txt (exit $code)" })"
 foreach ($f in $failed) { Write-Host "  $f" }
-Write-Host "Engine log: $logNote"
-foreach ($e in ($errors | Select-Object -First 20)) { Write-Host "  $e" }
-if ($errors.Count -gt 20) { Write-Host "  ... $($errors.Count - 20) more in testhost.log" }
+if ($null -eq $logLines) {
+    Write-Host 'Engine log: not updated by this run'
+} else {
+    Write-Host "Engine log: $(@($component.Keys).Count) distinct component error(s), not shown in the test output"
+    foreach ($m in $component.Keys) {
+        Write-Host "  $($component[$m].Hits)x $m"
+        if ($component[$m].Frame) { Write-Host "      $($component[$m].Frame)" }
+    }
+    Write-Host "            $other other error line(s); headless start-up logs some, such as missing shaders, even when every test passes"
+}
 Write-Host "Saved:      $Out"
 exit $code

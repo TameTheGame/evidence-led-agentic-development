@@ -32,18 +32,16 @@ decision rule committed before any run, and blind scoring.
    [domain-skill test](skills/evidence/SBOX_SKILL_TEST.md).* The skill loaded on its own and
    passed its rule. Agents knew a default physics surface was needed, but none could write
    the scaffolding without the spike kit's code.
-2. **Package a rung-1 starter.** Turn the
-   [engine-rung spike](examples/sbox/engine-rung-spike/README.md) into a copyable
-   `examples/sbox/rung1-starter/`, containing:
-   - test setup with the labelled default-surface scaffolding;
-   - player helpers;
-   - the enclosure-probe stuck check;
-   - the saved-scene JSON loader; and
-   - one test named after a requirement.
-
-   It stays unbuilt until the owner compiles it once with a short card. Then rerun step
-   1's scenarios with it, with step 1's results as the baseline. Success means agents wire
-   up the default surface instead of only naming it.
+2. **Package a rung-1 starter.** *Done; see the
+   [rung-1 starter](examples/sbox/rung1-starter/README.md).* It passed 5 of 5 on S&box
+   `26.10.02`. Its runner surfaced the engine's hidden component error in a control run.
+3. **Retest live with the starter.** Rerun step 1's scenarios in a real compiled project
+   that has the starter, with agents allowed to run its runner.
+   - Use step 1's results as the baseline.
+   - Add scenario 5 (shared generator refactor).
+   - Runs go one at a time, because the engine log is shared.
+   - Success means agents wire up the default surface instead of only naming it, and get
+     a test to fail before they fix.
 
 ## Examples
 

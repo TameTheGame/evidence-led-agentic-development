@@ -65,4 +65,20 @@ should print the route `internal fallback: registered a stand-in default surface
 
 ## Results
 
-Not run yet.
+Verified on 2026-10-12, on S&box `26.10.02` with .NET SDK `10.0.401` on Windows, in a new
+**Game - Empty** project. The editor reported no compile errors.
+
+| Run | Result |
+|---|---|
+| Clean | All 5 passed. The route was `internal fallback: registered a stand-in default surface`, and `Setup_SavedSceneLoads` passed on the template's `minimal.scene`. |
+| Control, with `TestSurfaces.EnsureDefault()` commented out | 3 failed: `Setup_GeneratedMeshBuildsCollision` and both STARTER-SPAWN-01 tests. The test output showed only missing models. The runner listed `4x OnEnabled on Sandbox.MeshComponent failed`, at `Sandbox.ModelBuilder.AddSurface`, from the engine log. |
+| Two runs started together | The second waited for the first. Both passed, each with its own engine log. |
+
+- **Both shells.** Runs used Windows PowerShell 5.1 and PowerShell 7.
+- **Start-up noise.** Every run logged 14 other error lines, passing ones included, such as
+  missing shaders and mount plugins. The runner counts them separately from component errors.
+- **A runner bug found and fixed first.** The first control run found it: in Windows
+  PowerShell, dotnet's stderr stopped the script before it saved the engine log.
+
+**Not covered:** other engine builds, projects that build their area with a real
+generator, and saved scenes that reference prefabs or models.
