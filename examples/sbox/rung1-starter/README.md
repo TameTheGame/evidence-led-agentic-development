@@ -20,18 +20,21 @@ is that code, ready to copy.
 | `UnitTests/StarterGeometry.cs` | Stand-in box geometry, built in the order a game scene needs: create the `MeshComponent` disabled, assign the mesh, then enable it. Replace it with your own generator. |
 | `UnitTests/StarterTests.cs` | Three setup checks, and one requirement written as project tests should be: named after its check, with a control case that must fail |
 | `tools/run_engine_tests.ps1` | Runs the tests and saves the engine's own log with the results, because engine errors appear only there |
+| `tools/sync_engine_source.ps1` | Moves a local clone of `Facepunch/sbox-public` to the release that is installed, so agents read the source of the engine they run. The runner calls it first. |
 
 ## Using it
 
 1. **Use a code project.** S&box generates a test project only for `game`, `library`, and
    `addon` projects. A `content` (map) project needs a small companion code project.
 2. **Copy the starter in.** Copy `UnitTests\` into the project root, next to the `.sbproj`,
-   and copy `tools\run_engine_tests.ps1` into the project's `tools\`.
+   and copy both scripts in `tools\` into the project's `tools\`.
 3. **Generate the test project.** Open the project in the S&box Editor, check the console
    for compile errors, and close it. S&box generates `UnitTests\<project>.unittest.csproj`.
 4. **Set up the machine.** Rung 1 needs Windows, the .NET 10 SDK (`dotnet --list-sdks` must
    show `10.x`), and `FACEPUNCH_ENGINE` set to the S&box install folder, the one containing
-   `sbox-dev.exe`.
+   `sbox-dev.exe`. If agents read engine source from a local clone of
+   `Facepunch/sbox-public`, also set `SBOX_PUBLIC` to that clone; see
+   [Matching the engine source](#matching-the-engine-source).
 5. **Run the tests.** From the project root:
 
    ```powershell
@@ -44,6 +47,31 @@ is that code, ready to copy.
 6. **Tell agents.** Add a line to the project's `AGENTS.md`, such as: "Run engine tests with
    `powershell -File tools\run_engine_tests.ps1`. Read its engine-log lines when a test fails
    without an exception."
+
+## Matching the engine source
+
+Agents read engine source from a clone of `Facepunch/sbox-public`, but they run the engine
+Steam installed, and the two drift apart. Facepunch tags each public Steam release in that
+repository, such as `26.10.02`, or `26.07.08b` for a hotfix. The install names its release
+on the first line of its `.version` file.
+
+`tools/sync_engine_source.ps1` reads that release and checks the matching tag out in the
+clone, fetching the tag first if the clone lacks it. It prints one line and always exits 0:
+
+| Line | Meaning |
+|---|---|
+| `MATCH` | The clone is already at the installed release. |
+| `SYNCED` | The script moved the clone to the installed release. Engine facts read earlier may be stale. |
+| `UNKNOWN` | The install is a staging build, which has no public tag. |
+| `NOT SYNCED` | The script left the clone where it was, with the reason. Most often the clone has local changes; read the release with `git show <tag>:<path>`. |
+| `NOT CHECKED` | No install or clone was given. |
+
+- **The runner calls it before each run** when `SBOX_PUBLIC` or `-Source` names the clone,
+  and prints the result as its `Source:` line.
+- **It changes nothing else in the clone.** It leaves branches alone and doesn't commit or
+  push. The checkout is a detached HEAD; `git switch master` returns to the latest source.
+- **Run it after anything that can update S&box,** such as a launch through Steam. A
+  project can also run it at the start of each agent session.
 
 ## Writing a requirement's test
 
@@ -82,3 +110,17 @@ Verified on 2026-10-12, on S&box `26.10.02` with .NET SDK `10.0.401` on Windows,
 
 **Not covered:** other engine builds, projects that build their area with a real
 generator, and saved scenes that reference prefabs or models.
+
+### Source check
+
+Verified on the same day, on a shallow clone of `Facepunch/sbox-public` that was on
+`master`, 74 commits past `26.10.02`:
+
+| Run | Result |
+|---|---|
+| The script, on the real clone | `SYNCED`: it checked out `26.10.02` in under a second. `master` stayed where it was, and the clone had no changes. |
+| The script again | `MATCH`. |
+| The runner, in both shells | All 5 tests passed, with `Source: MATCH` in Windows PowerShell 5.1. With the clone put back on `master`, PowerShell 7 printed `Source: SYNCED`. |
+| A throwaway repository, in both shells | It fetched a tag the clone lacked, including a hotfix tag. It reported `UNKNOWN` for a staging version and `NOT SYNCED` for a missing tag, for local changes, and for a fetch that timed out, and left the clone where it was each time. Two runs started together gave one `SYNCED` and one `MATCH`. |
+
+**Not covered:** fetching a real new release from GitHub, because none had shipped yet.

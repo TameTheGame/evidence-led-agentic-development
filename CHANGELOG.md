@@ -24,6 +24,11 @@
 
   Verified on S&box `26.10.02`: 5 of 5 passed. In a control run with the default surface
   disabled, the runner reported the hidden `MeshComponent` error at `ModelBuilder.AddSurface`.
+- **Added `sync_engine_source.ps1` to the rung-1 starter.** It reads the installed S&box
+  release from `.version` and checks the matching tag out in a local clone of
+  `Facepunch/sbox-public`, so agents read the source of the engine they run. It refuses a
+  clone with local changes and changes no branch. The runner calls it before each run when
+  `SBOX_PUBLIC` names the clone. Verified on a real clone, 74 commits past `26.10.02`.
 
 ## 0.7 — 2026-10-10
 

@@ -6,10 +6,12 @@ Runs a project's headless S&box engine tests and keeps the engine's own log with
 S&box catches errors thrown inside components and writes them only to logs\testhost.log in
 the install folder, which every run overwrites. This script:
   1. checks the machine: Windows, a .NET 10 SDK, and an S&box install;
-  2. runs `dotnet test` on the project's UnitTests folder, holding a lock so that only one
+  2. if given a clone of Facepunch/sbox-public (SBOX_PUBLIC or -Source), moves it to the
+     installed release with sync_engine_source.ps1, so agents read the source they run;
+  3. runs `dotnet test` on the project's UnitTests folder, holding a lock so that only one
      run at a time uses the engine log;
-  3. saves the test output, the engine log, and the engine version in test-results\<time>\;
-  4. prints the test summary and any error lines the engine logged.
+  4. saves the test output, the engine log, and the engine version in test-results\<time>\;
+  5. prints the test summary, the source check, and any error lines the engine logged.
 Exit code: dotnet test's, or 2 when the machine or project isn't set up.
 
 .EXAMPLE
@@ -19,6 +21,7 @@ powershell -File tools\run_engine_tests.ps1 -Filter "Name~SPAWN"
 param(
     [string]$Project = '.',
     [string]$Engine = $env:FACEPUNCH_ENGINE,
+    [string]$Source = $env:SBOX_PUBLIC,
     [string]$Filter,
     [string]$Out
 )
@@ -34,6 +37,11 @@ $tests = Join-Path $Project 'UnitTests'
 if (-not (Get-ChildItem $tests -Filter *.csproj -ErrorAction SilentlyContinue)) {
     Stop-Setup "no test project in $tests. Open the project once in the S&box Editor so it generates one."
 }
+
+# Steam can update the engine at any launch; keep the source agents read on the same release.
+$sync = Join-Path $PSScriptRoot 'sync_engine_source.ps1'
+$sourceCheck = if (Test-Path $sync) { "$(& $sync -Engine $Engine -Source $Source)" -replace '^S&box source: ' }
+               else { 'NOT CHECKED - sync_engine_source.ps1 is not next to this script.' }
 
 $version = (Get-Content (Join-Path $Engine '.version') -TotalCount 1 -ErrorAction SilentlyContinue)
 if (-not $Out) { $Out = Join-Path $Project ('test-results\' + (Get-Date -Format 'yyyyMMdd-HHmmss')) }
@@ -106,6 +114,7 @@ $summary = @($results | Select-String -Pattern '^\s*(Passed!|Failed!)|Test summa
 $failed = @($results | Select-String -Pattern '^\s*Failed\s+\S' | ForEach-Object { $_.Line.Trim() })
 
 Write-Host "Engine:     S&box $version ($Engine)"
+Write-Host "Source:     $sourceCheck"
 Write-Host "Tests:      $(if ($summary) { $summary -join ' | ' } else { "no summary line; see results.txt (exit $code)" })"
 foreach ($f in $failed) { Write-Host "  $f" }
 if ($null -eq $logLines) {
