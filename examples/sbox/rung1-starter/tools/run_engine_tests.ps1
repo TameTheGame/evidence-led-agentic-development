@@ -40,8 +40,10 @@ if (-not (Get-ChildItem $tests -Filter *.csproj -ErrorAction SilentlyContinue)) 
 
 # Steam can update the engine at any launch; keep the source agents read on the same release.
 $sync = Join-Path $PSScriptRoot 'sync_engine_source.ps1'
-$sourceCheck = if (Test-Path $sync) { "$(& $sync -Engine $Engine -Source $Source)" -replace '^S&box source: ' }
-               else { 'NOT CHECKED - sync_engine_source.ps1 is not next to this script.' }
+$sourceCheck = try {
+    if (Test-Path $sync) { "$(& $sync -Engine $Engine -Source $Source)" -replace '^S&box source: ' }
+    else { 'NOT CHECKED - sync_engine_source.ps1 is not next to this script.' }
+} catch { "NOT SYNCED - the check failed: $($_.Exception.Message)" }
 
 $version = (Get-Content (Join-Path $Engine '.version') -TotalCount 1 -ErrorAction SilentlyContinue)
 if (-not $Out) { $Out = Join-Path $Project ('test-results\' + (Get-Date -Format 'yyyyMMdd-HHmmss')) }

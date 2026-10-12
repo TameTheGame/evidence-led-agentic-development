@@ -25,6 +25,9 @@ param(
     [int]$FetchSeconds = 120
 )
 $ErrorActionPreference = 'Stop'
+# Windows PowerShell passes -Source "C:\path\" through with its closing quote; no path has one.
+$Engine = "$Engine".Trim().Trim('"')
+$Source = "$Source".Trim().Trim('"')
 
 function Invoke-Git {
     # Windows PowerShell stops on a native command's stderr when the preference is Stop.
@@ -43,7 +46,8 @@ function Get-Position {
 function Get-Tag([string]$Tag) {
     $info = New-Object System.Diagnostics.ProcessStartInfo
     $info.FileName = 'git'
-    $info.Arguments = "-C `"$Source`" fetch --no-tags origin refs/tags/${Tag}:refs/tags/${Tag}"
+    $info.WorkingDirectory = $Source
+    $info.Arguments = "fetch --no-tags origin refs/tags/${Tag}:refs/tags/${Tag}"
     $info.UseShellExecute = $false
     $info.RedirectStandardOutput = $true
     $info.RedirectStandardError = $true
@@ -52,6 +56,9 @@ function Get-Tag([string]$Tag) {
     $errors = $process.StandardError.ReadToEndAsync()
     $null = $process.StandardOutput.ReadToEndAsync()
     if (-not $process.WaitForExit($FetchSeconds * 1000)) {
+        # Stop git's helpers too, such as git-remote-https; Kill() alone leaves them running.
+        $ErrorActionPreference = 'Continue'
+        & taskkill.exe /T /F /PID $process.Id 2>&1 | Out-Null
         try { $process.Kill() } catch { }
         return "the fetch took longer than $FetchSeconds s"
     }
@@ -64,7 +71,9 @@ function Sync {
         return 'NOT CHECKED - no S&box install with a .version file; set FACEPUNCH_ENGINE or pass -Engine.'
     }
     if (-not $Source) { return 'NOT CHECKED - no sbox-public clone given; set SBOX_PUBLIC or pass -Source.' }
-    if (-not (Test-Path (Join-Path $Source '.git'))) { return "NOT CHECKED - $Source is not a git clone." }
+    if (-not (Test-Path -LiteralPath (Join-Path $Source '.git'))) { return "NOT CHECKED - $Source is not a git clone." }
+    # One absolute path for every git call, without a trailing backslash to break its quoting.
+    $script:Source = (Resolve-Path -LiteralPath $Source).ProviderPath -replace '(?<=[^:])\\+$'
 
     $release = "$(Get-Content (Join-Path $Engine '.version') -TotalCount 1)".Trim()
     $before = Get-Position
@@ -89,11 +98,11 @@ function Sync {
     return "SYNCED - moved sbox-public from $before to $release, the installed S&box release."
 }
 
-# Two sessions starting at once must not check out at the same time.
-$lock = New-Object System.Threading.Mutex($false, 'sbox-public-source-sync')
 $saved = @{ SBOX_SKIP_HOOKS = $env:SBOX_SKIP_HOOKS; GIT_TERMINAL_PROMPT = $env:GIT_TERMINAL_PROMPT }
 $held = $false
 try {
+    # Two sessions starting at once must not check out at the same time.
+    $lock = New-Object System.Threading.Mutex($false, 'sbox-public-source-sync')
     try { $held = $lock.WaitOne([TimeSpan]::FromSeconds($FetchSeconds + 30)) } catch [System.Threading.AbandonedMutexException] { $held = $true }
     # sbox-public's optional git hooks download engine artifacts after a checkout; skip them.
     $env:SBOX_SKIP_HOOKS = '1'
@@ -104,7 +113,7 @@ try {
 } finally {
     $env:SBOX_SKIP_HOOKS = $saved.SBOX_SKIP_HOOKS
     $env:GIT_TERMINAL_PROMPT = $saved.GIT_TERMINAL_PROMPT
-    if ($held) { $lock.ReleaseMutex() }
+    if ($held) { try { $lock.ReleaseMutex() } catch { } }
 }
 Write-Output "S&box source: $line"
 exit 0

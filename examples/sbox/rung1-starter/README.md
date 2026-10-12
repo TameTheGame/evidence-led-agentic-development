@@ -120,7 +120,7 @@ Verified on the same day, on a shallow clone of `Facepunch/sbox-public` that was
 |---|---|
 | The script, on the real clone | `SYNCED`: it checked out `26.10.02` in under a second. `master` stayed where it was, and the clone had no changes. |
 | The script again | `MATCH`. |
-| The runner, in both shells | All 5 tests passed, with `Source: MATCH` in Windows PowerShell 5.1. With the clone put back on `master`, PowerShell 7 printed `Source: SYNCED`. |
-| A throwaway repository, in both shells | It fetched a tag the clone lacked, including a hotfix tag. It reported `UNKNOWN` for a staging version and `NOT SYNCED` for a missing tag, for local changes, and for a fetch that timed out, and left the clone where it was each time. Two runs started together gave one `SYNCED` and one `MATCH`. |
+| The runner, in both shells | All 5 tests passed in each shell, and the `Source:` line read `SYNCED` when the clone started on `master` and `MATCH` otherwise. `SBOX_PUBLIC` ended in a backslash for one run. |
+| A throwaway repository, in both shells | It fetched a tag the clone lacked, including a hotfix tag. It reported `UNKNOWN` for a staging version and `NOT SYNCED` for a missing tag, for local changes, and for a fetch that timed out, and left the clone where it was each time. The timeout left no git process running. Two runs started together gave one `SYNCED` and one `MATCH`. A clone path with a space, a trailing backslash, or a relative form worked. |
 
 **Not covered:** fetching a real new release from GitHub, because none had shipped yet.
