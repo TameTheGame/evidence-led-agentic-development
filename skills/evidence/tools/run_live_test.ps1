@@ -69,7 +69,7 @@ if ($Phase -eq 'reference') {
         Copy-Item $probe "$dir\UnitTests\EladReferenceProbes.cs"
         Push-Location $dir
         try {
-            & powershell -NoProfile -File $engineRunner -Project $dir -Engine $Engine -Out"$Data\reference\$($r.id)" | Out-Null
+            & powershell -NoProfile -File $engineRunner -Project $dir -Engine $Engine -Out "$Data\reference\$($r.id)" | Out-Null
             "{0}: exit {1}" -f $r.id, $LASTEXITCODE
         } finally {
             Pop-Location

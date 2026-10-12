@@ -78,6 +78,14 @@ never against private project data.
     without it.
   - No run could write the default-surface test scaffolding, which supports a rung-1
     starter.
+- **[S&box live retest](evidence/LIVE_TEST.md):** the same scenarios plus scenario 5, in 24
+  acting sessions in compiled projects with the rung-1 starter, where agents could run the
+  engine tests.
+  - Every geometry test had a default surface, and tests failed before fixes in 11 of 12
+    runs.
+  - The planted bug was fixed in 12 of 12 runs, with or without the domain skill.
+  - It failed its rule on scenario 5: the project had one area, so agents asked which
+    refactor was meant.
 
 | # | Scenario given to the agent | Expected behavior |
 |---|---|---|

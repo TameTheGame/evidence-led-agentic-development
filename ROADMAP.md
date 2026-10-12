@@ -20,8 +20,11 @@ Item 2 is the remaining condition for `1.0`; see [Releasing](docs/RELEASING.md).
 ## Skills
 
 - **Scenarios not yet tested:** 5 (shared generator refactor) and 6 (publishing). Scenario 3
-  (fall-through report) has only been run inside the
-  [S&box domain-skill test](skills/evidence/SBOX_SKILL_TEST.md), with a planted engine bug.
+  (fall-through report) has only been run inside the S&box
+  [domain-skill test](skills/evidence/SBOX_SKILL_TEST.md) and
+  [live retest](skills/evidence/LIVE_TEST.md), with a planted engine bug. The live retest
+  tried scenario 5, but its project had only one area, so agents asked which refactor was
+  meant instead of refactoring.
 
 ## S&box next steps
 
@@ -35,13 +38,15 @@ decision rule committed before any run, and blind scoring.
 2. **Package a rung-1 starter.** *Done; see the
    [rung-1 starter](examples/sbox/rung1-starter/README.md).* It passed 5 of 5 on S&box
    `26.10.02`. Its runner surfaced the engine's hidden component error in a control run.
-3. **Retest live with the starter.** Rerun step 1's scenarios in a real compiled project
-   that has the starter, with agents allowed to run its runner.
-   - Use step 1's results as the baseline.
-   - Add scenario 5 (shared generator refactor).
-   - Runs go one at a time, because the engine log is shared.
-   - Success means agents wire up the default surface instead of only naming it, and get
-     a test to fail before they fix.
+3. **Retest live with the starter.** *Done; see the
+   [live retest](skills/evidence/LIVE_TEST.md).* It failed its rule on the refactor
+   scenario alone, which didn't test refactoring. Every geometry test had a default
+   surface (18 of 18), and tests failed before fixes in 11 of 12 runs, so the "watch it
+   fail first" fallback isn't needed. Without the domain skill, agents fixed the planted
+   bug too, guided by the starter's own code.
+4. **Retest scenario 5 on its own.** Use a project whose generator two areas really share,
+   and a request that names the change. Success means agents run the shared checks before
+   and after the change.
 
 ## Examples
 

@@ -8,10 +8,18 @@
   loaded in 9 of 9 runs, and with it agents fixed the planted enable-order bug in 6 of 6
   runs, against 0 of 6 without it. No run could write the default-surface scaffolding. No
   skill changed.
+- **New evidence: `skills/evidence/LIVE_TEST.md`.** It reran those scenarios in 24 acting
+  sessions in compiled S&box projects with the rung-1 starter, where agents could run the
+  engine tests, and added the shared-generator refactor. It failed its frozen rule on the
+  refactor scenario alone: the project had one area, so agents asked which refactor was
+  meant. Every geometry test had a default surface, tests failed before fixes in 11 of 12
+  runs, and reference probes confirmed the fix in 12 of 12, with or without the domain
+  skill. No skill changed.
 - **Test tools.**
-  - Added `run_sbox_skill_test.ps1`.
+  - Added `run_sbox_skill_test.ps1` and `run_live_test.ps1`.
   - `analyze_transcripts.py` gains `--context` and `--new-files`, and scrubs local paths
-    from diffs.
+    from diffs. It also captures engine-runner output, and marks a non-zero exit apart from
+    a permission refusal.
   - `blind_extracts.ps1` gains `-Messages`, `-Fixture`, and `-HideSkills`.
 - **Added `examples/sbox/rung1-starter/`.** It is a copyable starting point for a project's
   engine tests, packaged from the engine-rung spike:

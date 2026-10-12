@@ -37,6 +37,12 @@ non-normative.
   loaded on its own in 9 of 9 runs and passed its pre-registered, blind-scored rule. With
   it, agents fixed a planted engine bug in 6 of 6 runs, against 0 of 6 without it. See
   [the test](skills/evidence/SBOX_SKILL_TEST.md).
+- **The S&box live retest** (after v0.7). The same scenarios ran in compiled projects with
+  the [rung-1 starter](examples/sbox/rung1-starter/README.md), and agents could run the
+  engine tests. Every geometry test had a default surface, tests failed before fixes in 11
+  of 12 runs, and reference probes confirmed the fix in 12 of 12, with or without the
+  domain skill. The rule failed only on a refactor scenario that didn't fit its project.
+  See [the retest](skills/evidence/LIVE_TEST.md).
 - **Four reference-project experiments** against v0.3.0. They are historical; see
   [Empirical Status](docs/EMPIRICAL_STATUS.md).
 
@@ -46,9 +52,8 @@ non-normative.
   installs with three runs per cell, one model, one harness, and Windows only.
 - **Not yet done:** using ELAD on one real project. This is the remaining bar for `1.0`;
   see [Releasing](docs/RELEASING.md).
-- **Next for S&box:** retest the domain-skill scenarios live, in a compiled project with the
-  [rung-1 starter](examples/sbox/rung1-starter/README.md); see the
-  [roadmap](ROADMAP.md#sbox-next-steps).
+- **Next for S&box:** retest the shared-generator refactor in a project where two areas
+  share the generator; see the [roadmap](ROADMAP.md#sbox-next-steps).
 - **Still open in the S&box example:** saved scenes that reference prefabs or collision
   models.
 ## History

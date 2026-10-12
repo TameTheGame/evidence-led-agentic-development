@@ -4,7 +4,8 @@ ELAD v0.7 rests on four kinds of evidence:
 
 - two blind pressure-test rounds of its skills, in dry runs;
 - a triggering test and an engagement test of the skills in real headless sessions;
-- since v0.7, a test of the S&box example's domain skill in real headless sessions;
+- since v0.7, a test of the S&box example's domain skill in real headless sessions, and a
+  live retest in compiled S&box projects;
 - one engine-rung spike in a real game engine; and
 - four earlier development experiments against v0.3.0.
 
@@ -61,6 +62,29 @@ example `sbox-engine-reference` skill. It passed its pre-registered, blind-score
 - the planted problems match the skill's content;
 - no engine source or install was available, and no code was compiled; and
 - partial blinding.
+
+## The S&box live retest (after v0.7)
+
+The [live retest](../skills/evidence/LIVE_TEST.md) reran those scenarios in 24 sessions in
+compiled S&box projects with the
+[rung-1 starter](../examples/sbox/rung1-starter/README.md). Agents could run the engine
+tests, and reference probes checked each final state on the engine.
+
+- Every geometry test ran with a default surface (18 of 18, against 0 of 18 before).
+- In 11 of 12 fall-through and wall runs, a test failed on the engine before the fix and
+  passed after.
+- The planted bug was fixed in 12 of 12 of those runs, with or without the domain skill.
+  The starter's own code shows the enable-order rule, and agents without the skill found it
+  there.
+- It failed its pre-registered rule on one criterion: in the refactor scenario, agents
+  asked which refactor was meant, because the project had only one area.
+
+**Limits:**
+
+- three runs per cell, one model, Windows only;
+- the condition without the domain skill still had the starter's S&box knowledge;
+- no engine source clone was available; and
+- a model scorer.
 
 ## Pressure tests of the skills (v0.6)
 
