@@ -1,0 +1,124 @@
+{
+  "runs": [
+    {
+      "id": "SF-1",
+      "scenario": "F",
+      "domain": true
+    },
+    {
+      "id": "NF-1",
+      "scenario": "F",
+      "domain": false
+    },
+    {
+      "id": "SW-1",
+      "scenario": "W",
+      "domain": true
+    },
+    {
+      "id": "NW-1",
+      "scenario": "W",
+      "domain": false
+    },
+    {
+      "id": "ST-1",
+      "scenario": "T",
+      "domain": true
+    },
+    {
+      "id": "NT-1",
+      "scenario": "T",
+      "domain": false
+    },
+    {
+      "id": "SG-1",
+      "scenario": "G",
+      "domain": true
+    },
+    {
+      "id": "NG-1",
+      "scenario": "G",
+      "domain": false
+    },
+    {
+      "id": "SF-2",
+      "scenario": "F",
+      "domain": true
+    },
+    {
+      "id": "NF-2",
+      "scenario": "F",
+      "domain": false
+    },
+    {
+      "id": "SW-2",
+      "scenario": "W",
+      "domain": true
+    },
+    {
+      "id": "NW-2",
+      "scenario": "W",
+      "domain": false
+    },
+    {
+      "id": "ST-2",
+      "scenario": "T",
+      "domain": true
+    },
+    {
+      "id": "NT-2",
+      "scenario": "T",
+      "domain": false
+    },
+    {
+      "id": "SG-2",
+      "scenario": "G",
+      "domain": true
+    },
+    {
+      "id": "NG-2",
+      "scenario": "G",
+      "domain": false
+    },
+    {
+      "id": "SF-3",
+      "scenario": "F",
+      "domain": true
+    },
+    {
+      "id": "NF-3",
+      "scenario": "F",
+      "domain": false
+    },
+    {
+      "id": "SW-3",
+      "scenario": "W",
+      "domain": true
+    },
+    {
+      "id": "NW-3",
+      "scenario": "W",
+      "domain": false
+    },
+    {
+      "id": "ST-3",
+      "scenario": "T",
+      "domain": true
+    },
+    {
+      "id": "NT-3",
+      "scenario": "T",
+      "domain": false
+    },
+    {
+      "id": "SG-3",
+      "scenario": "G",
+      "domain": true
+    },
+    {
+      "id": "NG-3",
+      "scenario": "G",
+      "domain": false
+    }
+  ]
+}

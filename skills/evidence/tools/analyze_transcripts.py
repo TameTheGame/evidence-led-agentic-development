@@ -14,7 +14,8 @@
 --new-files    show the contents of new untracked files, not just their names
 
 Per run it records the skills listed at startup, Skill-tool invocations, direct reads of
-SKILL.md files, spec_lint runs and their output, file edits, denied tool calls, and the
+SKILL.md files, spec_lint and run_engine_tests runs with their output, file edits, tool calls
+refused by permissions (a non-zero exit is marked exit≠0, not denied), and the
 final reply. Dependency-free; Python 3.10 or newer; git is needed only for diffs.
 """
 
@@ -68,7 +69,7 @@ def summarize(path: Path, runs_dir: Path | None, context: int = 0, new_files: bo
     run = path.stem
     root = (runs_dir / run) if runs_dir else None
     info = {"run": run, "model": None, "skills_listed": [], "skill_calls": [], "skill_reads": [],
-            "lint_runs": [], "edits": [], "denied": [], "steps": [], "final": "", "turns": None}
+            "lint_runs": [], "engine_runs": [], "edits": [], "denied": [], "steps": [], "final": "", "turns": None}
     calls: dict[str, dict] = {}
     first_edit = None
     for line in path.read_text(encoding="utf-8").splitlines():
@@ -98,10 +99,16 @@ def summarize(path: Path, runs_dir: Path | None, context: int = 0, new_files: bo
                     info["edits"].append(step["target"])
             elif block.get("type") == "tool_result" and block.get("tool_use_id") in calls:
                 step = calls[block["tool_use_id"]]
-                step["status"] = "denied" if block.get("is_error") else "ok"
-                if step["tool"] in ("Bash", "PowerShell") and "spec_lint" in step["target"]:
-                    output = sanitize(tool_text(block.get("content")), root)
-                    info["lint_runs"].append({"step": step["n"], "status": step["status"], "output": output.strip()})
+                text = tool_text(block.get("content"))
+                # A non-zero exit is also an error result; only a permission refusal is "denied".
+                refused = re.search(r"(?i)requires approval|permission|not allowed|was denied|haven't granted"
+                                    r"|cannot be validated", text)
+                step["status"] = ("denied" if refused else "exit≠0") if block.get("is_error") else "ok"
+                if step["tool"] in ("Bash", "PowerShell"):
+                    for key, marker in (("lint_runs", "spec_lint"), ("engine_runs", "run_engine_tests")):
+                        if marker in step["target"]:
+                            output = sanitize(text, root)
+                            info[key].append({"step": step["n"], "status": step["status"], "output": output.strip()})
                 if step["status"] == "denied":
                     info["denied"].append(step["tool"])
     info["changes"] = scrub(diff(root, context, new_files), root) if root is not None else ""
@@ -138,10 +145,11 @@ def extract(info: dict) -> str:
         target = target if len(target) <= 160 else target[:157] + "..."
         flag = " (denied)" if step["status"] == "denied" else ""
         out.append(f"{step['n']}. `{step['tool']}` " + (f"`{target.replace('`', chr(39))}`" if target else "") + flag)
-    if info["lint_runs"]:
-        out += ["", "## spec_lint output", ""]
-        for lint in info["lint_runs"]:
-            out += [f"Step {lint['step']} ({lint['status']}):", "", "```text", lint["output"], "```", ""]
+    for key, title in (("lint_runs", "spec_lint output"), ("engine_runs", "Engine test runs")):
+        if info[key]:
+            out += ["", f"## {title}", ""]
+            for run in info[key]:
+                out += [f"Step {run['step']} ({run['status']}):", "", "```text", run["output"], "```", ""]
     out += ["", "## Final reply", "", sanitize(info["final"], None).strip(), "", "## Changes since the starting commit", ""]
     out += (["```diff", info["changes"], "```"] if info["changes"] else ["None."]) + [""]
     return "\n".join(out)
@@ -169,11 +177,15 @@ def main() -> None:
                           for c in i["skill_calls"]) or "none"
         lints = "; ".join(f"step {l['step']} {l['status']}: " + (l["output"].splitlines() or [""])[-1][:80]
                           for l in i["lint_runs"]) or "none"
+        engine = "; ".join(f"step {e['step']} {e['status']}: " + next(
+            (l.strip()[:70] for l in e["output"].splitlines() if l.strip().startswith("Tests:")), "no summary")
+            for e in i["engine_runs"]) or "none"
         print(f"== {i['run']}  model={i['model']}  turns={i['turns']}")
         print(f"   listed: {', '.join(i['skills_listed']) or 'NONE'}")
         print(f"   Skill calls: {calls}")
         print(f"   SKILL.md reads: {', '.join(i['skill_reads']) or 'none'}")
         print(f"   spec_lint: {lints}")
+        print(f"   engine runs: {engine}")
         print(f"   edits: {', '.join(i['edits']) or 'none'}   denied: {', '.join(i['denied']) or 'none'}")
 
 
