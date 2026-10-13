@@ -86,6 +86,21 @@ tests, and reference probes checked each final state on the engine.
 - no engine source clone was available; and
 - a model scorer.
 
+## The S&box refactor rerun (after v0.7)
+
+The [refactor rerun](../skills/evidence/REFACTOR_TEST.md) tested the refactor scenario alone,
+in 6 sessions. The project's two areas share the generator, and the request named the
+change.
+
+- All 6 runs moved the code, then ran every shared check, which passed. Reference probes
+  confirmed the build in 6 of 6.
+- No run ran the shared checks before the change, so it failed its pre-registered rule.
+  Agents rated the move light, and at light `choosing-rigor` doesn't ask for a baseline.
+- With and without the domain skill, runs scored the same.
+
+**Limits:** three runs per condition, one model, Windows only, a model scorer, and no run
+met a failing check, which is when a baseline would matter.
+
 ## Pressure tests of the skills (v0.6)
 
 Fresh agents received owner requests about a synthetic map project. They worked with the

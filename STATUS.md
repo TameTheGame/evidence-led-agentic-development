@@ -43,6 +43,10 @@ non-normative.
   of 12 runs, and reference probes confirmed the fix in 12 of 12, with or without the
   domain skill. The rule failed only on a refactor scenario that didn't fit its project.
   See [the retest](skills/evidence/LIVE_TEST.md).
+- **The S&box refactor rerun** (after v0.7). With two areas sharing the generator and a
+  named change, all 6 runs refactored and reran every shared check afterwards, and
+  reference probes confirmed the build in 6 of 6. The rule failed because no run ran those
+  checks before the change. See [the rerun](skills/evidence/REFACTOR_TEST.md).
 - **Four reference-project experiments** against v0.3.0. They are historical; see
   [Empirical Status](docs/EMPIRICAL_STATUS.md).
 

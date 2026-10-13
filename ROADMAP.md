@@ -19,12 +19,12 @@ Item 2 is the remaining condition for `1.0`; see [Releasing](docs/RELEASING.md).
 
 ## Skills
 
-- **Scenarios not yet tested:** 5 (shared generator refactor) and 6 (publishing). Scenario 3
-  (fall-through report) has only been run inside the S&box
-  [domain-skill test](skills/evidence/SBOX_SKILL_TEST.md) and
-  [live retest](skills/evidence/LIVE_TEST.md), with a planted engine bug. The live retest
-  tried scenario 5, but its project had only one area, so agents asked which refactor was
-  meant instead of refactoring.
+- **Scenario not yet tested:** 6 (publishing). Scenario 3 (fall-through report) has only
+  been run inside the S&box [domain-skill test](skills/evidence/SBOX_SKILL_TEST.md) and
+  [live retest](skills/evidence/LIVE_TEST.md), with a planted engine bug. Scenario 5 (shared
+  generator refactor) was tested in the [refactor rerun](skills/evidence/REFACTOR_TEST.md):
+  agents reran every shared check after the change but none before, and rated it light
+  rather than raising rigor.
 
 ## S&box next steps
 
@@ -44,9 +44,11 @@ decision rule committed before any run, and blind scoring.
    surface (18 of 18), and tests failed before fixes in 11 of 12 runs, so the "watch it
    fail first" fallback isn't needed. Without the domain skill, agents fixed the planted
    bug too, guided by the starter's own code.
-4. **Retest scenario 5 on its own.** Use a project whose generator two areas really share,
-   and a request that names the change. Success means agents run the shared checks before
-   and after the change.
+4. **Retest scenario 5 on its own.** *Done; see the
+   [refactor rerun](skills/evidence/REFACTOR_TEST.md).* In a project whose two areas share
+   the generator, with a request that names the change, all 6 runs refactored and reran
+   every shared check afterwards. None ran them before, so it failed its rule. A
+   "baseline first" rule for shared surfaces is proposed, but untested.
 
 ## Examples
 

@@ -15,11 +15,17 @@
   meant. Every geometry test had a default surface, tests failed before fixes in 11 of 12
   runs, and reference probes confirmed the fix in 12 of 12, with or without the domain
   skill. No skill changed.
+- **New evidence: `skills/evidence/REFACTOR_TEST.md`.** It reran the shared-generator
+  refactor alone, in 6 acting sessions in a compiled project whose two areas share the
+  generator, with a request that names the change. Every run refactored and reran every
+  shared check afterwards, and reference probes confirmed the build in 6 of 6. It failed its
+  frozen rule because no run ran those checks before the change. No skill changed.
 - **Test tools.**
-  - Added `run_sbox_skill_test.ps1` and `run_live_test.ps1`.
+  - Added `run_sbox_skill_test.ps1` and `run_live_test.ps1`. The live runner also builds
+    the two-area refactor project (scenario `G2`) and has a build-only phase.
   - `analyze_transcripts.py` gains `--context` and `--new-files`, and scrubs local paths
-    from diffs. It also captures engine-runner output, and marks a non-zero exit apart from
-    a permission refusal.
+    from diffs. It also captures engine-runner output, including runs started in the
+    background, and marks a non-zero exit apart from a permission refusal.
   - `blind_extracts.ps1` gains `-Messages`, `-Fixture`, and `-HideSkills`.
 - **Added `examples/sbox/rung1-starter/`.** It is a copyable starting point for a project's
   engine tests, packaged from the engine-rung spike:

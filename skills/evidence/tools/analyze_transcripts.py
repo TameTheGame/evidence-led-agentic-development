@@ -16,7 +16,8 @@
 Per run it records the skills listed at startup, Skill-tool invocations, direct reads of
 SKILL.md files, spec_lint and run_engine_tests runs with their output, file edits, tool calls
 refused by permissions (a non-zero exit is marked exit≠0, not denied), and the
-final reply. Dependency-free; Python 3.10 or newer; git is needed only for diffs.
+final reply. An engine run started in the background takes its output from the agent's
+later read of it. Dependency-free; Python 3.10 or newer; git is needed only for diffs.
 """
 
 from __future__ import annotations
@@ -71,6 +72,7 @@ def summarize(path: Path, runs_dir: Path | None, context: int = 0, new_files: bo
     info = {"run": run, "model": None, "skills_listed": [], "skill_calls": [], "skill_reads": [],
             "lint_runs": [], "engine_runs": [], "edits": [], "denied": [], "steps": [], "final": "", "turns": None}
     calls: dict[str, dict] = {}
+    backgrounded: dict[str, dict] = {}
     first_edit = None
     for line in path.read_text(encoding="utf-8").splitlines():
         if not line.startswith("{"):
@@ -109,6 +111,14 @@ def summarize(path: Path, runs_dir: Path | None, context: int = 0, new_files: bo
                         if marker in step["target"]:
                             output = sanitize(text, root)
                             info[key].append({"step": step["n"], "status": step["status"], "output": output.strip()})
+                            background = re.search(r"running in background with ID: (\w+)", text)
+                            if background:
+                                backgrounded[background.group(1)] = info[key][-1]
+                # A run started in the background prints its output to a file the agent reads later.
+                read = re.search(r"tasks/(\w+)\.output$", step["target"]) if step["tool"] == "Read" else None
+                if read and read.group(1) in backgrounded and "exited with code" in text:
+                    output = re.sub(r"(?m)^\s*\d+\t", "", sanitize(text, root)).strip()
+                    backgrounded[read.group(1)]["output"] = f"(ran in the background; output read at step {step['n']})\n{output}"
                 if step["status"] == "denied":
                     info["denied"].append(step["tool"])
     info["changes"] = scrub(diff(root, context, new_files), root) if root is not None else ""

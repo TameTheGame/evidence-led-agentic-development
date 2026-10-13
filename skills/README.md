@@ -86,6 +86,12 @@ never against private project data.
   - The planted bug was fixed in 12 of 12 runs, with or without the domain skill.
   - It failed its rule on scenario 5: the project had one area, so agents asked which
     refactor was meant.
+- **[S&box refactor rerun](evidence/REFACTOR_TEST.md):** scenario 5 alone, with a named
+  change, in 6 acting sessions in a compiled project whose two areas share the generator.
+  - Every run refactored, then reran every shared check, which passed. Reference probes
+    confirmed the build in 6 of 6.
+  - It failed its rule because no run ran the shared checks before the change. Agents
+    rated the move light, and the skill doesn't ask for a baseline at light.
 
 | # | Scenario given to the agent | Expected behavior |
 |---|---|---|
