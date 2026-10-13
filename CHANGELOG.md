@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+No pending changes.
+
+## 0.8 — 2026-10-13
+
+The S&box example gains a rung-1 starter and an engine-source sync, and three tests in
+acting sessions checked them and the example's domain skill. No skill changed, and nothing
+breaks.
+
 - **New evidence: `skills/evidence/SBOX_SKILL_TEST.md`.** It is the first test of the
   example `sbox-engine-reference` skill: 18 acting sessions on a synthetic S&box game
   project, with and without it, scored blind against a frozen rubric. The skill passed. It
@@ -43,6 +51,8 @@
   `Facepunch/sbox-public`, so agents read the source of the engine they run. It refuses a
   clone with local changes and changes no branch. The runner calls it before each run when
   `SBOX_PUBLIC` names the clone. Verified on a real clone, 74 commits past `26.10.02`.
+- **Docs.** `README.md`, `STATUS.md`, and `docs/EMPIRICAL_STATUS.md` now report the S&box
+  tests. `STATUS.md` no longer lists the refactor rerun as the next S&box step.
 
 ## 0.7 — 2026-10-10
 

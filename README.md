@@ -12,7 +12,7 @@ with coding agents. It is three things:
 ELAD runs nothing and grants no authority. Permission always comes from you and your
 project; see [Authority and Safety](docs/AUTHORITY_AND_SAFETY.md).
 
-**Current version: 0.7.** v0.6 was a breaking reshape of v0.5. The v0.5 protocol (schemas,
+**Current version: 0.8.** v0.6 was a breaking reshape of v0.5. The v0.5 protocol (schemas,
 templates, and validators) is archived at the `v0.5` tag; see [Archive](ARCHIVE.md).
 
 ## Quick start
@@ -92,6 +92,13 @@ only the check. See [Skills](skills/README.md).
 - **Engine-rung spike.** A real game engine (S&box) ran rung-1 checks from a project's own
   tests: collision, traces, spawn landing, stuck detection, and a saved scene. See the
   [S&box example](examples/sbox/README.md).
+- **S&box tests.** In acting sessions on synthetic S&box projects, the example domain skill
+  loaded on its own and helped agents fix a planted engine bug. With the
+  [rung-1 starter](examples/sbox/rung1-starter/README.md), agents ran the engine tests and
+  watched them fail before fixing. See the
+  [domain-skill test](skills/evidence/SBOX_SKILL_TEST.md),
+  [live retest](skills/evidence/LIVE_TEST.md), and
+  [refactor rerun](skills/evidence/REFACTOR_TEST.md).
 - **Real headless installs.** In acting Claude Code sessions, told nothing about the skills:
   - the skills loaded on their own;
   - agents left agreed requirements to the owner; and

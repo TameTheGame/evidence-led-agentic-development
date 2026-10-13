@@ -1,6 +1,6 @@
 # Status
 
-**Current version:** `0.7`
+**Current version:** `0.8`
 
 **What ELAD is:**
 
@@ -33,17 +33,17 @@ non-normative.
     back in 2 of 3, and a typo fix stayed light in 3 of 3.
 - **One engine-rung spike.** It proved headless rung-1 checks on S&box `26.10.02`, on
   Windows.
-- **The S&box domain-skill test** (after v0.7). The example `sbox-engine-reference` skill
+- **The S&box domain-skill test** (v0.8). The example `sbox-engine-reference` skill
   loaded on its own in 9 of 9 runs and passed its pre-registered, blind-scored rule. With
   it, agents fixed a planted engine bug in 6 of 6 runs, against 0 of 6 without it. See
   [the test](skills/evidence/SBOX_SKILL_TEST.md).
-- **The S&box live retest** (after v0.7). The same scenarios ran in compiled projects with
+- **The S&box live retest** (v0.8). The same scenarios ran in compiled projects with
   the [rung-1 starter](examples/sbox/rung1-starter/README.md), and agents could run the
   engine tests. Every geometry test had a default surface, tests failed before fixes in 11
   of 12 runs, and reference probes confirmed the fix in 12 of 12, with or without the
   domain skill. The rule failed only on a refactor scenario that didn't fit its project.
   See [the retest](skills/evidence/LIVE_TEST.md).
-- **The S&box refactor rerun** (after v0.7). With two areas sharing the generator and a
+- **The S&box refactor rerun** (v0.8). With two areas sharing the generator and a
   named change, all 6 runs refactored and reran every shared check afterwards, and
   reference probes confirmed the build in 6 of 6. The rule failed because no run ran those
   checks before the change. See [the rerun](skills/evidence/REFACTOR_TEST.md).
@@ -56,10 +56,12 @@ non-normative.
   installs with three runs per cell, one model, one harness, and Windows only.
 - **Not yet done:** using ELAD on one real project. This is the remaining bar for `1.0`;
   see [Releasing](docs/RELEASING.md).
-- **Next for S&box:** retest the shared-generator refactor in a project where two areas
-  share the generator; see the [roadmap](ROADMAP.md#sbox-next-steps).
+- **S&box next steps:** all four on the [roadmap](ROADMAP.md#sbox-next-steps) are done.
+  The refactor rerun proposed two "baseline first" rules for shared checks. Each needs its
+  own pressure test before any skill changes.
 - **Still open in the S&box example:** saved scenes that reference prefabs or collision
   models.
+
 ## History
 
 Through v0.5, ELAD was a protocol blueprint, with schemas, templates, validators, and an

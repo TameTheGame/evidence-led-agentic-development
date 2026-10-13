@@ -1,11 +1,11 @@
 # Empirical Status
 
-ELAD v0.7 rests on four kinds of evidence:
+ELAD v0.8 rests on five kinds of evidence:
 
 - two blind pressure-test rounds of its skills, in dry runs;
 - a triggering test and an engagement test of the skills in real headless sessions;
-- since v0.7, a test of the S&box example's domain skill in real headless sessions, and a
-  live retest in compiled S&box projects;
+- three S&box tests in real headless sessions: one of the example's domain skill, then a
+  live retest and a refactor rerun in compiled S&box projects;
 - one engine-rung spike in a real game engine; and
 - four earlier development experiments against v0.3.0.
 
@@ -43,7 +43,7 @@ synthetic project with the skills installed. Nothing told the agent about the sk
 - runs end at the first reply; and
 - the lint's owner gate was never triggered in a live session.
 
-## The S&box domain skill (after v0.7)
+## The S&box domain skill (v0.8)
 
 The [domain-skill test](../skills/evidence/SBOX_SKILL_TEST.md) gave headless sessions a
 synthetic S&box game project with two planted engine problems. Half the runs had the
@@ -63,7 +63,7 @@ example `sbox-engine-reference` skill. It passed its pre-registered, blind-score
 - no engine source or install was available, and no code was compiled; and
 - partial blinding.
 
-## The S&box live retest (after v0.7)
+## The S&box live retest (v0.8)
 
 The [live retest](../skills/evidence/LIVE_TEST.md) reran those scenarios in 24 sessions in
 compiled S&box projects with the
@@ -86,7 +86,7 @@ tests, and reference probes checked each final state on the engine.
 - no engine source clone was available; and
 - a model scorer.
 
-## The S&box refactor rerun (after v0.7)
+## The S&box refactor rerun (v0.8)
 
 The [refactor rerun](../skills/evidence/REFACTOR_TEST.md) tested the refactor scenario alone,
 in 6 sessions. The project's two areas share the generator, and the request named the
