@@ -1,0 +1,10 @@
+{
+  "runs": [
+    { "id": "SR-1", "scenario": "G2", "domain": true },
+    { "id": "NR-1", "scenario": "G2", "domain": false },
+    { "id": "SR-2", "scenario": "G2", "domain": true },
+    { "id": "NR-2", "scenario": "G2", "domain": false },
+    { "id": "SR-3", "scenario": "G2", "domain": true },
+    { "id": "NR-3", "scenario": "G2", "domain": false }
+  ]
+}

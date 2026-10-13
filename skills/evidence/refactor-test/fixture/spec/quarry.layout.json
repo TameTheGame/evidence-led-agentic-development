@@ -1,0 +1,16 @@
+{
+  "bounds": { "min": [-1024, -1024, -64], "max": [1024, 1024, 512] },
+  "ground": { "min": [-640, -640, -32], "max": [640, 640, 0] },
+  "blocks": [
+    { "id": "cliff.north", "min": [-640, 576, 0], "size": [1280, 64, 256] },
+    { "id": "cliff.west", "min": [-640, -640, 0], "size": [64, 1216, 256] },
+    { "id": "cliff.east", "min": [576, -640, 0], "size": [64, 1216, 256] },
+    { "id": "loading.dock", "min": [-192, -896, -32], "size": [384, 256, 32] },
+    { "id": "crusher", "min": [128, 128, 0], "size": [128, 128, 160] }
+  ],
+  "spawns": [
+    { "id": "spawn.dock", "position": [0, -768, 8] },
+    { "id": "spawn.pit", "position": [-256, 0, 8] }
+  ],
+  "landmarks": [ { "id": "crusher", "top": [192, 192, 160] } ]
+}
