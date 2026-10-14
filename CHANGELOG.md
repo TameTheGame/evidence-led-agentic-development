@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+No pending changes.
+
+## 0.9 — 2026-10-14
+
+The S&box example's editor rung runs unattended, and the older skill-test runners keep the
+test machine's own settings out of test sessions. No skill changed, and nothing breaks.
+
 - **The two older skill-test runners load project settings only.** `run_skills_test.ps1` and
   `run_sbox_skill_test.ps1` now pass `--setting-sources project,local`, as `run_live_test.ps1`
   already did, so skills and instructions installed for the test machine's user stay out of

@@ -12,7 +12,7 @@ with coding agents. It is three things:
 ELAD runs nothing and grants no authority. Permission always comes from you and your
 project; see [Authority and Safety](docs/AUTHORITY_AND_SAFETY.md).
 
-**Current version: 0.8.** v0.6 was a breaking reshape of v0.5. The v0.5 protocol (schemas,
+**Current version: 0.9.** v0.6 was a breaking reshape of v0.5. The v0.5 protocol (schemas,
 templates, and validators) is archived at the `v0.5` tag; see [Archive](ARCHIVE.md).
 
 ## Quick start
