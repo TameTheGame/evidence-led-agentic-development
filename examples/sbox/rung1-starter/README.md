@@ -72,6 +72,9 @@ clone, fetching the tag first if the clone lacks it. It prints one line and alwa
   push. The checkout is a detached HEAD; `git switch master` returns to the latest source.
 - **Run it after anything that can update S&box,** such as a launch through Steam. A
   project can also run it at the start of each agent session.
+- **Run it on a schedule too.** Steam updates S&box only when S&box starts, so a session
+  that is already open doesn't see an update from a launch made by hand. An hourly Windows
+  scheduled task closes that gap.
 
 ## Writing a requirement's test
 
@@ -122,5 +125,8 @@ Verified on the same day, on a shallow clone of `Facepunch/sbox-public` that was
 | The script again | `MATCH`. |
 | The runner, in both shells | All 5 tests passed in each shell, and the `Source:` line read `SYNCED` when the clone started on `master` and `MATCH` otherwise. `SBOX_PUBLIC` ended in a backslash for one run. |
 | A throwaway repository, in both shells | It fetched a tag the clone lacked, including a hotfix tag. It reported `UNKNOWN` for a staging version and `NOT SYNCED` for a missing tag, for local changes, and for a fetch that timed out, and left the clone where it was each time. The timeout left no git process running. Two runs started together gave one `SYNCED` and one `MATCH`. A clone path with a space, a trailing backslash, or a relative form worked. |
+
+On 2026-10-14 an hourly Windows scheduled task ran the script through `conhost --headless`,
+so no window opened. It printed `MATCH`, and the task returned 0.
 
 **Not covered:** fetching a real new release from GitHub, because none had shipped yet.

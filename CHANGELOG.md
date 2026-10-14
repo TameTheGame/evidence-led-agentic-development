@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- **The rung-1 starter suggests running the engine-source sync on a schedule.** Steam
+  updates S&box only when S&box starts, so an open session misses an update from a launch
+  made by hand. An hourly Windows scheduled task covers it; one was checked on 2026-10-14.
 - **Removed the Harness Readiness Suite section** from `docs/EMPIRICAL_STATUS.md`. The
   owner retired that companion repository. Nothing in ELAD used it, and it was not part of
   the evidence this document lists. Older tags still mention it.
