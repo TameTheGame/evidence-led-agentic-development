@@ -74,7 +74,11 @@ diluted.
 
 The spec says what must be true. It doesn't hold pass or fail state, which would drift.
 
-- **Machine rungs** report through test output. The ID is in the test name.
+- **Machine rungs** report through test output. The ID is in the test name, or next to
+  the script's name in the `check` field, such as `editor-check OUT-SAVE-01`. When one
+  script run settles several requirements, it prints one result line per ID, such as
+  `OUT-SAVE-01 PASS` or `OUT-SAVE-01 FAIL - the second save changed the file`, and exits
+  non-zero if any line fails.
 - **Human rungs** add one line to `spec/ACCEPTANCE.md`:
 
   ```text

@@ -2,7 +2,10 @@
 
 ## Unreleased
 
-No pending changes.
+- **Script checks report one line per requirement.** `docs/SPEC_FORMAT.md` now says where a
+  script check's requirement ID goes, and that a script run settling several
+  requirements prints one PASS or FAIL line per ID and fails if any line fails. A first
+  real project found the format named script checks only by example.
 
 ## 0.9 — 2026-10-14
 
