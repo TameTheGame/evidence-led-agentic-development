@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **The S&box example's editor rung runs unattended.** S&box `26.10.13` added `sbox-cli`,
+  which drives the Editor over a local named pipe. The new `examples/sbox/tools/editor_check.ps1`
+  uses it to save a scene, close the Editor, reopen it, and check that nothing changed, with a
+  screenshot from a fixed camera. The outpost spec's OUT-SAVE-01 now names that check, and its
+  owner card SAVE-1 is gone. Verified on `26.10.13`: a scratch scene passed, and a control
+  scene that changes itself on load failed.
 - **The rung-1 starter suggests running the engine-source sync on a schedule.** Steam
   updates S&box only when S&box starts, so an open session misses an update from a launch
   made by hand. An hourly Windows scheduled task covers it; one was checked on 2026-10-14.

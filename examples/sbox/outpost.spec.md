@@ -69,8 +69,8 @@ Interiors, lighting mood, ambient audio, NPCs.
 ### OUT-SAVE-01 — The generated scene survives save, close, and reopen unchanged
 - state: agreed
 - rung: editor
-- check: card SAVE-1
-- target-rung: editor (automated) once an Editor tool can save and reopen unattended
+- check: editor-check OUT-SAVE-01
+- why: runs unattended through tools/editor_check.ps1; it needs S&box 26.10.13 or later
 
 ### OUT-NET-01 — A remote client sees and collides with the same walls and gate
 - state: agreed
@@ -84,12 +84,6 @@ Interiors, lighting mood, ambient audio, NPCs.
 - why: draft until the owner confirms this is the feeling they want
 
 ## Cards
-
-### SAVE-1 (editor)
-1. Open the outpost scene in the Editor.
-2. Save, close the Editor, and reopen the scene.
-3. Expect: no prompts or errors, and the outpost looks the same.
-Reply: GREEN, or RED plus what changed.
 
 ### NET-1 (session)
 1. Host the map. Join from a second client.
@@ -217,7 +211,7 @@ OUT-COLL-01   engine   pass   a1b2c3d
 OUT-SPAWN-01  engine   pass   a1b2c3d
 OUT-ROUTE-01  engine   FAIL   a1b2c3d  gate-to-tower blocked at segment 2; diagnosing
 OUT-SIGHT-01  engine   pass   a1b2c3d
-OUT-SAVE-01   editor   card SAVE-1 ready
+OUT-SAVE-01   editor   pass   a1b2c3d
 OUT-NET-01    session  waiting on OUT-ROUTE-01 before sending card NET-1
 OUT-FEEL-01   owner    draft; needs the owner to agree the requirement first
 ```
@@ -225,6 +219,5 @@ OUT-FEEL-01   owner    draft; needs the owner to agree the requirement first
 `spec/ACCEPTANCE.md` after the owner runs the cards:
 
 ```text
-2026-10-09 · OUT-SAVE-01 · GREEN · d4e5f6a · Owner · no prompts on reopen
 2026-10-09 · OUT-NET-01  · GREEN · d4e5f6a · Owner · client blocked by north wall, gate passable
 ```
