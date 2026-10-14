@@ -2,7 +2,9 @@
 
 ## Unreleased
 
-No pending changes.
+- **Removed the Harness Readiness Suite section** from `docs/EMPIRICAL_STATUS.md`. The
+  owner retired that companion repository. Nothing in ELAD used it, and it was not part of
+  the evidence this document lists. Older tags still mention it.
 
 ## 0.8 — 2026-10-13
 
