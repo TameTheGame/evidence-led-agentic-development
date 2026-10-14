@@ -86,7 +86,9 @@ $runs | ForEach-Object -ThrottleLimit $Parallel -TimeoutSeconds 2400 -Parallel {
     [Console]::OutputEncoding = [Text.UTF8Encoding]::new()
     Set-Location "$base\runs\$($r.id)"
     $started = Get-Date
+    # Project settings only, so the machine's user-level skills and CLAUDE.md stay out.
     & claude -p $prompt --output-format stream-json --verbose --permission-mode acceptEdits `
+        --setting-sources project,local `
         --allowedTools Skill 'Bash(py -3 tools/spec_lint.py)' 'Bash(py -3 tools/spec_lint.py:*)' `
         'PowerShell(py -3 tools/spec_lint.py)' 'PowerShell(py -3 tools/spec_lint.py:*)' `
         --strict-mcp-config --no-session-persistence `

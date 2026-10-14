@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **The two older skill-test runners load project settings only.** `run_skills_test.ps1` and
+  `run_sbox_skill_test.ps1` now pass `--setting-sources project,local`, as `run_live_test.ps1`
+  already did, so skills and instructions installed for the test machine's user stay out of
+  test sessions. Checked on Claude Code `2.1.237`: with the setting, a session saw the
+  project's skill but none of the user's. Earlier results are unchanged.
 - **The S&box example's editor rung runs unattended.** S&box `26.10.13` added `sbox-cli`,
   which drives the Editor over a local named pipe. The new `examples/sbox/tools/editor_check.ps1`
   uses it to save a scene, close the Editor, reopen it, and check that nothing changed, with a
