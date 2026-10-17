@@ -95,4 +95,27 @@ public class StarterTests
 		Assert.AreEqual( "Plane", tr.GameObject?.Name, "ray hit something other than the saved floor" );
 		Assert.AreEqual( 0f, tr.EndPosition.z, 1f, "ray should stop at the saved floor's top surface" );
 	}
+
+	[TestMethod]
+	public void Setup_SavedSceneSimulates()
+	{
+		// A loaded scene must finish loading before it simulates. If this fails while
+		// Setup_SavedSceneLoads passes, traces work but a player test on a saved scene can't.
+		const string path = "Assets/scenes/minimal.scene";
+		if ( !File.Exists( Path.Combine( EngineTestHelpers.ProjectRoot(), path ) ) )
+			Assert.Inconclusive( $"{path} not found; point this test at one of your scenes" );
+
+		var scene = new Scene();
+		using var scope = scene.Push();
+
+		Assert.IsTrue( EngineTestHelpers.LoadSavedScene( scene, path ), $"could not load {path}" );
+		Assert.IsFalse( scene.IsLoading, "the saved scene is still loading, so GameTick won't simulate it" );
+
+		var pc = EngineTestHelpers.CreatePlayer( scene, new Vector3( -150, -150, 10 ) );
+		var landed = EngineTestHelpers.TickUntilGrounded( scene, pc );
+
+		var z = pc.GameObject.WorldPosition.z;
+		Assert.IsTrue( landed, $"never landed on the saved floor: z = {z}" );
+		Assert.IsTrue( z > -1f && z < 2f, $"landed at the wrong height: z = {z}" );
+	}
 }

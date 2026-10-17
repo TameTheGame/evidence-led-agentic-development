@@ -11,6 +11,11 @@
   such as a map, which has nothing to compile. It now waits for a compile only when the
   project or one of its libraries has a `Code` or `Editor` folder. A first real project
   found it.
+- **Saved scenes simulate in the rung-1 starter.** Its `LoadSavedScene` now loads without a
+  loading screen, as S&box's own scene tests do. Before, a saved scene stayed in its loading
+  phase in headless tests and `GameTick` skipped it, so a player in it never moved. The new
+  `Setup_SavedSceneSimulates` lands a player on the saved scene's floor. A first real project
+  found it.
 
 ## 0.9 — 2026-10-14
 

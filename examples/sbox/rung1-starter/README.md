@@ -18,7 +18,7 @@ is that code, ready to copy.
 | `UnitTests/TestSurfaces.cs` | The default-surface scaffolding. **Test-only:** it uses engine internals through reflection when no public route works, and an engine update may break it. It records which route worked. |
 | `UnitTests/EngineTestHelpers.cs` | A headless player, a bounded tick-until-grounded loop, the stuck check with its enclosure probe, and the saved-scene loader |
 | `UnitTests/StarterGeometry.cs` | Stand-in box geometry, built in the order a game scene needs: create the `MeshComponent` disabled, assign the mesh, then enable it. Replace it with your own generator. |
-| `UnitTests/StarterTests.cs` | Three setup checks, and one requirement written as project tests should be: named after its check, with a control case that must fail |
+| `UnitTests/StarterTests.cs` | Four setup checks, and one requirement written as project tests should be: named after its check, with a control case that must fail |
 | `tools/run_engine_tests.ps1` | Runs the tests and saves the engine's own log with the results, because engine errors appear only there |
 | `tools/sync_engine_source.ps1` | Moves a local clone of `Facepunch/sbox-public` to the release that is installed, so agents read the source of the engine they run. The runner calls it first. |
 
@@ -90,9 +90,10 @@ clone, fetching the tag first if the clone lacks it. It prints one line and alwa
 
 ## Expected results
 
-On S&box `26.10.02` all five tests should pass, and `Setup_DefaultSurfaceIsAvailable`
-should print the route `internal fallback: registered a stand-in default surface`.
-`Setup_SavedSceneLoads` is inconclusive if the project has no `Assets/scenes/minimal.scene`.
+All six tests should pass, and `Setup_DefaultSurfaceIsAvailable` should print the route
+`internal fallback: registered a stand-in default surface`. `Setup_SavedSceneLoads` and
+`Setup_SavedSceneSimulates` are inconclusive if the project has no
+`Assets/scenes/minimal.scene`.
 
 ## Results
 

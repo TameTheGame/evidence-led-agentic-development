@@ -69,12 +69,19 @@ static class EngineTestHelpers
 	/// "Assets/scenes/minimal.scene". Scene.LoadFromFile fails headlessly, because project
 	/// resources aren't registered, so this reads the JSON instead. Tested only on scenes whose
 	/// objects don't reference prefabs or models.
+	/// It loads without a loading screen, as S&box's own scene tests do (SceneLoadSave.cs).
+	/// With one, the scene waits for a loading task that nothing runs headlessly, stays
+	/// <see cref="Scene.IsLoading"/>, and <see cref="Scene.GameTick"/> skips it, so a player in
+	/// it never moves. Without one, load events' tasks aren't awaited and AfterLoad doesn't fire.
 	/// </summary>
 	public static bool LoadSavedScene( Scene scene, string relativePath )
 	{
 		var file = new SceneFile();
 		file.LoadFromJson( File.ReadAllText( Path.Combine( ProjectRoot(), relativePath ) ) );
-		return scene.Load( file );
+
+		var options = new SceneLoadOptions { ShowLoadingScreen = false };
+		options.SetScene( file );
+		return scene.Load( options );
 	}
 
 	/// <summary>
