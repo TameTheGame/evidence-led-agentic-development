@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **A guide for projects that already have gates.** `docs/EXISTING_GATES.md` says how to
+  move a project's own gates, sign-offs, and permission files onto specs: map each gate to
+  a requirement, retire it with a reason, or postpone it to a named spec. A first real
+  project found ELAD said nothing about this. The S&box example also gains "A map with no
+  code", on testing and playing a content project, from the same project on S&box
+  `26.10.13a`.
 - **Script checks report one line per requirement.** `docs/SPEC_FORMAT.md` now says where a
   script check's requirement ID goes, and that a script run settling several
   requirements prints one PASS or FAIL line per ID and fails if any line fails. A first

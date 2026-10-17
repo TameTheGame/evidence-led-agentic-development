@@ -25,6 +25,9 @@ templates, and validators) is archived at the `v0.5` tag; see [Archive](ARCHIVE.
 3. **Point your project's `AGENTS.md` at the spec.** Your `AGENTS.md` still decides what
    agents may do; the skills never override it.
 
+If your project already has gates, sign-off steps, or permission files, map them onto the
+spec first; see [Projects That Already Have Gates](docs/EXISTING_GATES.md).
+
 Use the [skills snippet](skills/AGENTS_SNIPPET.md) if your agents don't pick up the skills.
 It is a few lines for `AGENTS.md` saying which skill fits which moment.
 

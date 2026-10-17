@@ -94,3 +94,29 @@ each time it loads failed on the second save, and passed once that object was re
 On `26.10.13a`, a content project with no `Code` or `Editor` folder passed in both shells.
 The previous version of the script stopped on it with `NOT RUN: the project has 0 compile
 error(s)`. A new project made from the new-game template passed too.
+
+## A map with no code
+
+A first real project kept its map in a content project, with no code of its own. On S&box
+`26.10.13a` it found:
+
+- **Engine tests run from a companion code project.** S&box generates no test project for a
+  content project (point 1 under [What the spike settled](#what-the-spike-settled)). A
+  small game project's tests read the map's saved scene from its file and passed.
+- **Play the map in its own editor.** A content project can't run as a game, but its
+  editor has play mode. Nothing in the map spawns a player, so the project's play check
+  starts play mode with `sbox-cli`'s `play_start`, then runs a committed `run_csharp`
+  script that places a `PlayerController` at a spawn point and checks it lands.
+  - The script stops unless `Game.IsPlaying` is true and `Game.ActiveScene` isn't the
+    editor scene, because `run_csharp` has no undo.
+  - Checking the scene alone isn't enough: outside play mode, `Game.ActiveScene` can be an
+    empty runtime scene.
+- **Another local project can't load the map yet.** The Editor loads the open project, the
+  library projects in that project's own `Libraries\` folder
+  (`26.10.13:engine/Sandbox.Tools/Editor/LibrarySystem/LibrarySystem.cs`), and built-in
+  content. A reference to another local project, such as `local.outpost`, finds only
+  packages already loaded
+  (`26.10.13:engine/Sandbox.Engine/Services/Packages/PackageManager/PackageManager.cs`).
+  - So a separate game project can't use the map's files through a package reference.
+  - Placing the map in the game's `Libraries\` folder wasn't tested.
+  - Testing the map inside a game is a later requirement, with its own check.

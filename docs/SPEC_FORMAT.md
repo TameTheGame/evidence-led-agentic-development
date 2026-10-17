@@ -6,7 +6,9 @@ of evidence that settles it, and the check that proves it. A task then becomes "
 requirement IDs pass", and the proof is the named check passing at a known commit.
 
 The rungs are defined in [Evidence Ladder](EVIDENCE_LADDER.md). A worked, target-specific
-example is the [S&box outpost spec](../examples/sbox/outpost.spec.md).
+example is the [S&box outpost spec](../examples/sbox/outpost.spec.md). A project that
+already has gates maps them onto its first spec; see
+[Projects That Already Have Gates](EXISTING_GATES.md).
 
 ## Where specs live
 
