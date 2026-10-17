@@ -6,6 +6,11 @@
   script check's requirement ID goes, and that a script run settling several
   requirements prints one PASS or FAIL line per ID and fails if any line fails. A first
   real project found the format named script checks only by example.
+- **The editor check runs on projects without code.** `examples/sbox/tools/editor_check.ps1`
+  read a missing compile result as a failed compile, so it stopped on a content project,
+  such as a map, which has nothing to compile. It now waits for a compile only when the
+  project or one of its libraries has a `Code` or `Editor` folder. A first real project
+  found it.
 
 ## 0.9 — 2026-10-14
 

@@ -77,6 +77,9 @@ powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
 - **Saves are forced.** The Editor skips a save when nothing changed, so the script adds a
   marker object and undoes it first. The content stays the same, and the Editor writes the
   scene out from what it loaded.
+- **A project without code works too.** A project with code must report a finished,
+  successful compile. A content project, such as a map, has no `Code` or `Editor` folder
+  and never compiles, so the check doesn't wait for a compile result.
 - **The screenshot is a record.** `-Camera` and `-Angles` fix the view. The script reports
   how much the two captures differ but doesn't score it, because the byte-identical save
   already proves the scene came back unchanged.

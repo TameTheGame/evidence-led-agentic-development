@@ -21,6 +21,10 @@ The editor skips a save when nothing changed, which would make step 4's comparis
 each save first adds a marker object and undoes it: the content is unchanged, but the editor
 writes the scene out again from what it loaded.
 
+A project with code must report a finished, successful compile. A project with no Code or
+Editor folder, in it or in its libraries, such as a content map, never compiles: editor_status
+then reports no compile result, and the check doesn't wait for one.
+
 The project must be closed in every editor first, because the check closes and reopens it.
 Editors accept sbox-cli unless Project Settings > AI > Enable MCP Communication is off.
 
@@ -55,6 +59,9 @@ $version = Get-Content (Join-Path $Engine '.version') -TotalCount 1 -ErrorAction
 $dir = (Resolve-Path $Project).Path
 if ($dir -like '*.sbproj') { $dir = Split-Path $dir }
 if (-not (Get-ChildItem $dir -Filter *.sbproj)) { Stop-Setup "no .sbproj in $dir." }
+# S&box compiles the Code and Editor folders of the project and of each library in Libraries\.
+$codeRoots = @($dir) + @(Get-ChildItem (Join-Path $dir 'Libraries') -Directory -ErrorAction SilentlyContinue | ForEach-Object FullName)
+$hasCode = [bool]($codeRoots | Where-Object { (Test-Path (Join-Path $_ 'Code')) -or (Test-Path (Join-Path $_ 'Editor')) })
 $Scene = $Scene.Replace('\', '/').TrimStart('/')
 $sceneFile = Join-Path $dir ('Assets\' + $Scene.Replace('/', '\'))
 if (-not (Test-Path $sceneFile)) { Stop-Setup "no scene at $sceneFile; pass -Scene as the asset path, such as scenes/outpost.scene." }
@@ -95,7 +102,8 @@ function Test-Open {
     return $false
 }
 
-# Opens the project in an editor owned by a sbox-cli process, and waits for a finished compile.
+# Opens the project in an editor owned by a sbox-cli process, and waits for a finished compile
+# if the project has code. Without code, editor_status reports LastCompileSucceeded as null.
 function Start-Editor {
     $info = New-Object System.Diagnostics.ProcessStartInfo
     $info.FileName = $cli
@@ -113,7 +121,9 @@ function Start-Editor {
         $r = Invoke-SboxCli @('--connect', $dir, '--call', 'editor_status')
         if ($r.Code -eq 0) {
             $status = $r.Out | ConvertFrom-Json
-            if (-not $status.IsCompiling) { return @{ Owner = $owner; Status = $status } }
+            if (-not $status.IsCompiling -and ($null -ne $status.LastCompileSucceeded -or -not $hasCode)) {
+                return @{ Owner = $owner; Status = $status }
+            }
         }
         Start-Sleep -Seconds 3
     }
@@ -208,7 +218,7 @@ $editor = $null
 try {
     # First session: open, save, record.
     $editor = Start-Editor
-    if (-not $editor.Status.LastCompileSucceeded) { Stop-Setup "the project has $($editor.Status.LastCompileErrors) compile error(s); fix them first." }
+    if ($editor.Status.LastCompileSucceeded -eq $false) { Stop-Setup "the project has $($editor.Status.LastCompileErrors) compile error(s); fix them first." }
     Call 'open_scene' @{ path = $Scene } | Out-Null
     $saved = Save-Scene 'saved-first.scene'
     if ($saved -ne (Get-FileHash -InputStream ([IO.MemoryStream]::new($original)) -Algorithm SHA256).Hash.ToLower()) {
