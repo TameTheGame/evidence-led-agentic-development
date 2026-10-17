@@ -90,3 +90,7 @@ powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
 Verified on S&box `26.10.13`, in Windows PowerShell 5.1 and PowerShell 7. A scratch scene
 passed in about a minute. A control scene with a component that changes its own saved value
 each time it loads failed on the second save, and passed once that object was removed.
+
+On `26.10.13a`, a content project with no `Code` or `Editor` folder passed in both shells.
+The previous version of the script stopped on it with `NOT RUN: the project has 0 compile
+error(s)`. A new project made from the new-game template passed too.

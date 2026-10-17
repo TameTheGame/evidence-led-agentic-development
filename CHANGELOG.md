@@ -10,12 +10,14 @@
   read a missing compile result as a failed compile, so it stopped on a content project,
   such as a map, which has nothing to compile. It now waits for a compile only when the
   project or one of its libraries has a `Code` or `Editor` folder. A first real project
-  found it.
+  found it. Checked on S&box `26.10.13a`: a content project passed, where the previous
+  script stopped, and a game project still passed.
 - **Saved scenes simulate in the rung-1 starter.** Its `LoadSavedScene` now loads without a
   loading screen, as S&box's own scene tests do. Before, a saved scene stayed in its loading
   phase in headless tests and `GameTick` skipped it, so a player in it never moved. The new
   `Setup_SavedSceneSimulates` lands a player on the saved scene's floor. A first real project
-  found it.
+  found it. Checked on S&box `26.10.13a`: all 6 starter tests passed, and with the old
+  loader only the new test failed.
 
 ## 0.9 — 2026-10-14
 

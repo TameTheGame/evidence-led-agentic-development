@@ -115,6 +115,22 @@ Verified on 2026-10-12, on S&box `26.10.02` with .NET SDK `10.0.401` on Windows,
 **Not covered:** other engine builds, projects that build their area with a real
 generator, and saved scenes that reference prefabs or models.
 
+### Saved scenes that simulate
+
+Verified on 2026-10-17, on S&box `26.10.13a` (Steam build 25964806) with .NET SDK
+`10.0.401`, in a new project made from the new-game template:
+
+| Run | Result |
+|---|---|
+| Clean | All 6 passed. |
+| Control, with `LoadSavedScene` calling `scene.Load( file )` as before | 1 failed: `Setup_SavedSceneSimulates`, on its check that the scene had finished loading. The other 5 passed. |
+| Clean again | All 6 passed. |
+
+- **A copied file can hide a change.** `dotnet test` rebuilds only when a source file is
+  newer than the last build. Restoring the fixed file by copying kept its old date, so the
+  first rerun still used the control build and failed. It passed once the file's date
+  changed.
+
 ### Source check
 
 Verified on the same day, on a shallow clone of `Facepunch/sbox-public` that was on
