@@ -1,6 +1,6 @@
 # Empirical Status
 
-ELAD v0.9 rests on five kinds of evidence:
+ELAD v0.10 rests on five kinds of evidence:
 
 - two blind pressure-test rounds of its skills, in dry runs;
 - a triggering test and an engagement test of the skills in real headless sessions;

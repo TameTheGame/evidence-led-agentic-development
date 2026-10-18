@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+No pending changes.
+
+## 0.10 — 2026-10-18
+
+A first real project found gaps, and this release fills them: a guide for projects that
+already have gates, clearer spec-format and ladder rules, a stricter example spec lint,
+and S&box tools and lessons that hold up on a real map. No skill changed, and nothing in
+the core breaks.
+
 - **Five S&box lessons from a world build.** `examples/sbox/README.md` gains "Lessons from a
   world build": read scene-load errors from editor start; don't end a scene string in a
   file extension, which S&box takes as a file reference; check the `.sbproj` out the way
