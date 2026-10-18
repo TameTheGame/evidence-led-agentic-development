@@ -22,6 +22,12 @@ A small fenced yard with one gate and two spawn points.
 - rung: owner
 - check: card FEEL-1
 
+### YARD-GATE-01 — The gate opens inward
+- state: retired
+- rung: engine
+- check: YARD_GATE_01_GateOpensInward
+- why: the owner chose a gate that slides
+
 ## Cards
 
 ### FEEL-1 (owner)

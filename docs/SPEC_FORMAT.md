@@ -24,6 +24,10 @@ files belong to the project and use whatever schema the project's generator need
 Requirements may refer to that data. For example, "every spawn in the layout lands on
 ground" applies to whatever spawns the data file lists, so checks don't hard-code values.
 
+A spec can name a data file before it exists. Write `(not written yet)` after its path on
+the `data:` line, and drop the note when the file is committed. Until then, requirements
+that read it can't be met.
+
 ## Spec file shape
 
 ```markdown
@@ -92,8 +96,8 @@ A requirement is **met** when its check last passed at a commit and nothing in i
 
 ## A spec lint for projects
 
-A project may add one small rung-0 lint, about 50 lines of dependency-free script, that
-checks its spec files:
+A project may add one small rung-0 lint, a dependency-free script, that checks its spec
+files:
 
 - IDs are unique and well-formed, and no retired ID has been reused;
 - `state` and `rung` use allowed values;
@@ -101,13 +105,18 @@ checks its spec files:
 - every machine-rung `check` name exists in the test sources; and
 - every human-rung `check` names a card defined in the spec.
 
+**Report a missing machine check; don't fail on it.** A check is written after the owner
+agrees its requirement, so a newly agreed requirement has no check yet. The other items
+fail the lint.
+
 **An owner gate is worth adding.** It compares each `agreed` requirement with the last
 commit and reports any change to its sentence, state, rung, or check as needing the owner.
 It reports and never blocks, because the owner may already have agreed the change.
 
 The core doesn't ship a lint; each project owns its own. A worked example is
-[`examples/sbox/tools/spec_lint.py`](../examples/sbox/tools/spec_lint.py). It covers the
-format checks and the owner gate, with fixtures.
+[`examples/sbox/tools/spec_lint.py`](../examples/sbox/tools/spec_lint.py). It covers every
+item above and the owner gate, with fixtures. It looks for check names in the folders
+passed with `--sources`.
 
 With a lint like this, spec-driven work needs no per-task records. Git commits supply
 identity, and test output and `ACCEPTANCE.md` supply results.

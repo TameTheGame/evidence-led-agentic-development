@@ -16,7 +16,7 @@ Lower rungs are cheaper and faster, and they can run in more places.
 
 | Rung | Runs where | Can prove | Never proves by itself |
 |---|---|---|---|
-| **0 · static** | anywhere, including cloud agents | file structure, data validity, spec lint, saved-file contents | anything about runtime behavior |
+| **0 · static** | anywhere, including cloud agents | file structure, data validity, spec lint, saved-file contents, that code compiles | anything about runtime behavior |
 | **1 · engine** | the dev machine: the real engine or runtime, headless, no editor | collision, physics, traces, generated content building, exact program behavior | how it looks, the editor round trip, networking with real clients |
 | **2 · editor** | the real authoring tool | native save and reopen, serialization, hotload, a rendered capture | how it plays with others, how it feels |
 | **3 · session** | the product running as users run it | host and remote behavior, real-machine performance, clean installs | taste and fitness for purpose |
@@ -25,6 +25,10 @@ Lower rungs are cheaper and faster, and they can run in more places.
 Projects without an editor or a networked session skip those rungs. The
 [S&box example](../examples/sbox/README.md) shows each rung for a game map, including a
 working rung-1 test kit.
+
+**A compile is a static check.** It runs nothing, so it settles names and signatures but
+never behavior. Some compiles need files only the dev machine has, such as an installed
+engine's libraries. They still start nothing and take seconds, so run them before rung 1.
 
 **A model judge is advice, not a rung.** A model can review captures against a rubric. Its
 verdict counts as evidence only for a claim class it has been calibrated on (see

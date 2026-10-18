@@ -23,7 +23,9 @@ templates, and validators) is archived at the `v0.5` tag; see [Archive](ARCHIVE.
 2. **Write a spec** for the area you're working on, at `spec/<area>.spec.md`. The format
    is in [Spec Format](docs/SPEC_FORMAT.md).
 3. **Point your project's `AGENTS.md` at the spec.** Your `AGENTS.md` still decides what
-   agents may do; the skills never override it.
+   agents may do; the skills never override it. Let agents run the project's checks
+   without asking, including starting the engine or editor for a test, and keep the
+   ask-first list for actions that are hard to undo.
 
 If your project already has gates, sign-off steps, or permission files, map them onto the
 spec first; see [Projects That Already Have Gates](docs/EXISTING_GATES.md).
@@ -55,7 +57,7 @@ machine checks report through test output, and owner checks add one line to
 
 | Rung | Runs where | Can prove |
 |---|---|---|
-| **0 · static** | anywhere | file structure, data validity, saved-file contents |
+| **0 · static** | anywhere | file structure, data validity, saved-file contents, compiling |
 | **1 · engine** | the dev machine, headless | collision, physics, traces, exact program behavior |
 | **2 · editor** | the real authoring tool | save and reopen, serialization, a rendered capture |
 | **3 · session** | the product as users run it | host and remote behavior, clean installs |

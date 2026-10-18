@@ -10,7 +10,7 @@
 | [`rung1-starter/`](rung1-starter/README.md) | A copyable starting point for a project's engine tests: the default-surface scaffolding, helpers, a requirement test with its control, a runner that keeps the engine log, and a script that keeps a local `sbox-public` clone on the installed release |
 | [`skills/sbox-engine-reference/`](skills/sbox-engine-reference/SKILL.md) | An example of a project's domain skill: verified S&box behavior and where to look in the engine source. Tested in the [domain-skill test](../../skills/evidence/SBOX_SKILL_TEST.md) |
 | [`tools/editor_check.ps1`](tools/editor_check.ps1) | A rung-2 check that runs unattended: it saves a scene in the Editor, closes it, reopens it, and checks that nothing changed, with a screenshot from a fixed camera before and after. Needs S&box `26.10.13` or later. See [The editor check](#the-editor-check) |
-| [`tools/spec_lint.py`](tools/spec_lint.py) | A rung-0 spec lint: format checks that fail the run, and an owner gate that reports any change to an agreed requirement since the last commit. Run `python tools/test_spec_lint.py` to check it against its fixtures. |
+| [`tools/spec_lint.py`](tools/spec_lint.py) | A rung-0 spec lint: format and card checks that fail the run, a lookup that reports checks not found in the test and script folders, and an owner gate that reports any change to an agreed requirement since the last commit. Run `python tools/test_spec_lint.py` to check it against its fixtures. |
 
 ## The ladder for a map
 
@@ -77,6 +77,11 @@ powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
 - **Saves are forced.** The Editor skips a save when nothing changed, so the script adds a
   marker object and undoes it first. The content stays the same, and the Editor writes the
   scene out from what it loaded.
+  - Setting the session's `HasUnsavedChanges` to true would force a save too; it has a
+    public setter (`26.10.13:engine/Sandbox.Tools/Scene/Session/SceneEditorSession.cs`).
+    But only `run_csharp` can set it, and this check uses `sbox-cli`'s own tools. A build
+    script that already runs through `run_csharp` may find the setter simpler. That is
+    from the source and untested.
 - **A project without code works too.** A project with code must report a finished,
   successful compile. A content project, such as a map, has no `Code` or `Editor` folder
   and never compiles, so the check doesn't wait for a compile result.

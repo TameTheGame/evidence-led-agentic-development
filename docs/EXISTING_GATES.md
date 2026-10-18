@@ -26,7 +26,7 @@ A synthetic outpost map moving seven gates into `spec/outpost.spec.md`:
 | Old gate | Now |
 |---|---|
 | G-00 gate-tool conformance | Retired: it checked the gate tooling this move replaces. The spec lint takes its place. |
-| G-01 editor command allowlist | Retired: `AGENTS.md` now lists what needs the owner first. |
+| G-01 editor command allowlist | Retired: `AGENTS.md` now lists what needs the owner first. Opening the editor for a check isn't on it. |
 | G-02 collision fixture | OUT-COLL-01 |
 | G-03 save and reopen | OUT-SAVE-01 |
 | G-04 safe rebuild | OUT-REBUILD-01 covers rerunning a build that stopped halfway. The rest is retired: it checked the old job queue, which nothing uses now. |
@@ -64,6 +64,9 @@ A synthetic outpost map moving seven gates into `spec/outpost.spec.md`:
 
 - **Keep the old records unchanged,** and stop running them. Don't delete them, and don't
   edit them to fit the new format. A small rung-0 check that they never change is cheap.
+- **Pin them by Git identity, not file bytes.** Compare each record's blob ID
+  (`git rev-parse HEAD:<path>`) and require a clean working tree. A hash of the checked-out
+  file breaks on a fresh checkout whose line-ending settings differ, though nothing changed.
 - **They don't count as results for new requirements.** A requirement is met only when its
   own check passes at a commit. Rerun the machine checks, and ask the owner again only for
   what is theirs.
@@ -77,6 +80,11 @@ what agents may do; see [Authority and Safety](AUTHORITY_AND_SAFETY.md).
 - **Move each permission rule or retire it.** A rule that still matters becomes a plain line
   in `AGENTS.md`, such as a list of actions that need the owner first. The rest is retired
   in the table.
+- **Keep routine checks off that list.** List actions that are hard to undo or reach
+  outside the project, such as publishing, deleting, force-pushing, or spending money.
+  Running the project's own checks is the agent's job, including starting the engine or
+  editor for a test and closing it after. A rule that makes the agent ask first stops the
+  ladder at that rung every time.
 - **Mark the old permission files as history.** Two sources of permission disagree sooner
   or later.
 

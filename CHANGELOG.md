@@ -2,6 +2,32 @@
 
 ## Unreleased
 
+- **The example spec lint checks everything the spec format lists.**
+  `examples/sbox/tools/spec_lint.py` now also fails on an ID not shaped `AREA-TOPIC-NN`, a
+  retired ID used again, an owner-rung check that isn't a card, and a card the spec doesn't
+  define. With `--sources` it looks up each agreed requirement's check in the test and
+  script folders, and reports any it can't find without failing, because checks are
+  written after the owner agrees. `docs/SPEC_FORMAT.md` says which items fail and which are
+  reported. Its output now uses plain hyphens, because a Windows console showed its dashes
+  as a replacement character. A first real project found the lint did less than the format
+  described.
+- **A spec can name a data file before it exists.** `docs/SPEC_FORMAT.md` says to mark it
+  `(not written yet)` on the `data:` line. A first real project had no wording for it.
+- **Compiling is a static check.** `docs/EVIDENCE_LADDER.md` and the README list it on
+  rung 0. A compile against an installed engine's libraries runs only on the dev machine,
+  but it starts nothing, so it runs before rung 1. The `matching-evidence-to-claims` skill
+  already said this; a first real project found the ladder didn't.
+- **Routine checks stay off the ask-first list.** The quick start and
+  `docs/EXISTING_GATES.md` say to let agents run the project's checks, including starting
+  the engine or editor for a test, and to keep the owner's ask-first list for actions that
+  are hard to undo. A first real project put engine runs on that list, and its agent
+  stopped before each one.
+- **Old gate records are pinned by Git identity.** `docs/EXISTING_GATES.md` says to compare
+  blob IDs, not hashes of checked-out files, which break when a checkout's line endings
+  differ. A first real project's old evidence broke that way.
+- **Why the editor check forces saves with a marker.** The S&box example notes that the
+  session's public `HasUnsavedChanges` setter would also force a save, but only through
+  `run_csharp`, which the check doesn't use.
 - **A private-word check.** `tools/check.py` now fails when a tracked file, a file name, or
   a commit message contains a listed private word, such as a private project's name. The
   repository holds only SHA-256 fingerprints, in `tools/private-words.sha256`; the readable
