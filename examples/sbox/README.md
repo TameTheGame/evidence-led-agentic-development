@@ -178,7 +178,7 @@ A first real project kept its map in a content project, with no code of its own.
 
 ## Lessons from a world build
 
-The same project's world work on S&box `26.10.13a` turned up five more. Each is read from the
+The same project's world work on S&box `26.10.13a` turned up six more. Each is read from the
 engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 - **Read scene-load errors from editor start.** The Editor loads its startup scene before a
@@ -221,3 +221,14 @@ engine source at `26.10.13`, which is approximate for `26.10.13a`.
   tells joining clients so, and they skip that lookup
   (`26.10.13:engine/Sandbox.Engine/Systems/Networking/System/NetworkSystem.Handshake.cs`,
   line 73). So the session rung for an unpublished game runs against an Editor host.
+- **A dedicated server doesn't mount a library's assets.** Started with a project's
+  `.sbproj`, a dedicated server adds each project in `Libraries\` but puts only the game's
+  own `Assets` folder on its search path
+  (`26.10.13:engine/Sandbox.GameInstance/GameInstanceDll.cs`, lines 962-985; the mount is
+  line 970). Only the Editor mounts a library's `Assets`
+  (`26.10.13:engine/Sandbox.Tools/Editor/LibrarySystem/LibrarySystem.cs`, lines 287-306).
+  So content that lives only in a library loads in the Editor, and the server reports it
+  not found. Keep what the server needs in the game's own `Assets`, or link it there; a
+  link fixed it on `26.10.13a`.
+  - The same code runs when local automation starts a game with `-mcp`. That is from the
+    source and untested.

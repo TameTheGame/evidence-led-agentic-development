@@ -2,7 +2,11 @@
 
 ## Unreleased
 
-No pending changes.
+- **A sixth S&box lesson: a dedicated server doesn't mount a library's assets.**
+  `examples/sbox/README.md` adds it to "Lessons from a world build": content that lives only
+  in a `Libraries\` project loads in the Editor but is not found on a dedicated server, so
+  keep it in the game's own `Assets` or link it there. It cites the `26.10.13` source. A
+  first real project found it, and a link fixed it on S&box `26.10.13a`.
 
 ## 0.10 — 2026-10-18
 
