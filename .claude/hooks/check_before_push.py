@@ -45,7 +45,10 @@ def main() -> int:
         "permissionDecision": "deny",
         "permissionDecisionReason": "Push blocked: tools/check.py failed. Fix the problems, "
                                     "commit, and push again. A private word must be removed from "
-                                    "the file or reworded out of the commit message.\n" + report,
+                                    "the file or reworded out of the commit message. A commit "
+                                    "that credits an AI tool needs the right author and message "
+                                    "before it is pushed; rewriting one that is already pushed "
+                                    "needs the owner's yes.\n" + report,
     }}))
     return 0
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""ELAD repository checks: a skill lint, a relative-link check, and a private-word check.
+"""ELAD repository checks: a skill lint, a relative-link check, a private-word check, and an
+AI-attribution check.
 
-Dependency-free; Python 3.10 or newer, and git for the private-word check. Run from anywhere:
+Dependency-free; Python 3.10 or newer, and git for the last two checks. Run from anywhere:
 
     python tools/check.py
 
@@ -13,6 +14,11 @@ message contains a word or phrase whose fingerprint is in tools/private-words.sh
 readable list is kept outside the repository; to regenerate the fingerprints from it:
 
     python tools/check.py --hash-words <list> > tools/private-words.sha256
+
+The AI-attribution check fails when a commit reachable from HEAD credits an AI coding tool:
+an author or committer whose name or email names one, a trailer such as Co-authored-by
+naming one, a trailer named for one such as Claude-Session, or a line such as "Generated
+with Claude Code". Ordinary mentions in a message, such as "Add a Claude Code hook", pass.
 """
 
 from __future__ import annotations
@@ -49,6 +55,18 @@ MAX_PHRASE_WORDS = 3
 FINGERPRINT = re.compile(r"^[0-9a-f]{64}$")
 # Prefixed so the fingerprints don't match generic SHA-256 lookup tables.
 FINGERPRINT_PREFIX = b"elad-private-word:"
+
+# Words and phrases of up to three words that name an AI coding tool or its maker. They are
+# matched as whole words, and only in commit identities and attribution lines.
+AI_TOOLS = {
+    "aider", "amazon q developer", "anthropic", "chatgpt", "claude", "codeium", "codex",
+    "copilot", "cursor", "cursoragent", "devin ai", "gemini", "google labs jules", "openai",
+    "tabnine", "windsurf",
+}
+TRAILER = re.compile(r"^\s*([A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)\s*:\s*(\S.*)$")
+# "Generated with ..." at the start of a line; the group holds the rest of its clause.
+CREDIT_LINE = re.compile(r"^\W*(?:generated|created|written|authored|made)\s+(?:with|by|using)\b"
+                         r"(.*?)(?:[;!?]|\.(?:\s|$)|$)", re.IGNORECASE)
 
 
 def rel(path: Path) -> str:
@@ -338,6 +356,49 @@ def hash_words(source: Path) -> int:
     return 0
 
 
+# --- AI-attribution check --------------------------------------------------------------
+
+def names_ai_tool(text: str) -> bool:
+    tokens = words(text)
+    return any(" ".join(tokens[start:start + count]) in AI_TOOLS
+               for start in range(len(tokens)) for count in range(1, MAX_PHRASE_WORDS + 1))
+
+
+def ai_credit_lines(message: str) -> list[int]:
+    """Line numbers of trailers and "Generated with" lines that credit an AI tool."""
+    found = []
+    for number, line in enumerate(message.splitlines(), start=1):
+        trailer = TRAILER.match(line)
+        if trailer:
+            key, value = trailer.groups()
+            if "-" in key and names_ai_tool(key):  # Claude-Session: ...
+                found.append(number)
+                continue
+            if key.lower().endswith(("-by", "-with")) and names_ai_tool(value):  # Co-authored-by: ...
+                found.append(number)
+                continue
+        credit = CREDIT_LINE.match(line)
+        if credit and names_ai_tool(credit.group(1)):
+            found.append(number)
+    return found
+
+
+def check_ai_attribution() -> tuple[list[str], str]:
+    log = git_output("log", "--format=%H%x00%an <%ae>%x00%cn <%ce>%x00%B%x1e", "HEAD")
+    if log is None:
+        return ["AI-attribution check needs a git checkout of this repository with a commit"], ""
+    problems: list[str] = []
+    commits = [entry.strip("\n") for entry in log.split("\x1e") if entry.strip("\n")]
+    for entry in commits:
+        commit, author, committer, message = entry.split("\0", 3)
+        for role, identity in (("author", author), ("committer", committer)):
+            if names_ai_tool(identity):
+                problems.append(f"commit {commit[:7]}: {role} {identity} names an AI tool")
+        for number in ai_credit_lines(message):
+            problems.append(f"commit {commit[:7]}: message line {number} credits an AI tool")
+    return problems, f"none of {len(commits)} commits credits an AI tool"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="ELAD repository checks.")
     parser.add_argument("--hash-words", type=Path, metavar="LIST",
@@ -350,14 +411,15 @@ def main() -> int:
     files = markdown_files()
     link_problems, link_count = check_links(files)
     word_problems, word_summary = check_private_words()
-    problems = skill_problems + link_problems + word_problems
+    ai_problems, ai_summary = check_ai_attribution()
+    problems = skill_problems + link_problems + word_problems + ai_problems
     for problem in problems:
         print(f"FAIL  {problem}")
     if problems:
         print(f"FAIL — {len(problems)} problem(s).")
         return 1
     print(f"PASS — {skill_count} skills linted; {link_count} relative links in {len(files)} Markdown files resolve; "
-          f"{word_summary}.")
+          f"{word_summary}; {ai_summary}.")
     return 0
 
 

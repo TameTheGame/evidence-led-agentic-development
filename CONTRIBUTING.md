@@ -49,7 +49,17 @@ fingerprints of them; the owner keeps the readable list outside the repository. 
 check flags a line, remove or reword it; if it flags a commit message, reword that commit
 before pushing. A short word's fingerprint can be found by trying every short word, so the
 list keeps words out of the repository but doesn't keep them secret.
-`python tools/test_check.py` tests the check with made-up words.
+
+It also fails when a commit reachable from `HEAD` credits an AI coding tool, such as Claude,
+Cursor, or Copilot: an author or committer whose name or email names one, a trailer such as
+`Co-authored-by:` or `Assisted-by:` naming one, a trailer named for one such as
+`Claude-Session:`, or a line such as "Generated with Claude Code". Ordinary mentions pass,
+such as "Add a Claude Code hook". The tools it knows are `AI_TOOLS` in `tools/check.py`; a
+person whose name contains one, such as Claude, is flagged too. If it flags a commit that
+isn't pushed yet, fix that commit's author or message before pushing. A pushed one can only
+be fixed by rewriting history and force-pushing, which needs the owner's yes.
+
+`python tools/test_check.py` tests both checks with made-up words and identities.
 
 In a Claude Code session started in this repository, a hook in `.claude/settings.json`
 runs the check before every `git push` and blocks the push if it fails. It needs `py -3` on

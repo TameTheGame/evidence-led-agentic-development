@@ -130,9 +130,10 @@ python tools/check.py
 ```
 
 The script is dependency-free and needs Python 3.10 or newer, and git. It lints the
-skills, checks that every relative link resolves, and checks that no private word appears
-in the repository (see [Contributing](CONTRIBUTING.md#checks)). Passing proves the
-repository is well formed, nothing more.
+skills, checks that every relative link resolves, checks that no private word appears in
+the repository, and checks that no commit credits an AI tool (see
+[Contributing](CONTRIBUTING.md#checks)). Passing proves the repository is well formed,
+nothing more.
 
 ELAD is licensed under [Apache-2.0](LICENSE). Provenance and credits are in
 [Licensing and Provenance](docs/LICENSING_AND_PROVENANCE.md),

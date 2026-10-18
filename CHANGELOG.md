@@ -12,6 +12,13 @@
   set and `IsLoading` false before a scene opens, so a check also waits for `ActiveScene`.
   It cites the `26.10.13` source. A first real project found it on S&box `26.10.13a`, where
   a server check that didn't wait started a second early and failed.
+- **An AI-attribution check.** `tools/check.py` now fails when a commit reachable from
+  `HEAD` credits an AI coding tool, such as Claude, Cursor, or Copilot: an author or
+  committer naming one, a trailer such as `Co-authored-by:` naming one, a trailer such as
+  `Claude-Session:`, or a "Generated with" line naming one. Ordinary mentions in a message
+  pass. Both push hooks run it with the rest of the check. CI now checks out the full
+  history, because its shallow checkout let the commit checks read only the newest commit.
+  `tools/test_check.py` adds ten cases. Every commit on `main` passes.
 
 ## 0.10 — 2026-10-18
 

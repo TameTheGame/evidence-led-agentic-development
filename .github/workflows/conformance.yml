@@ -25,6 +25,8 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
+          # The commit checks read every commit reachable from HEAD, not only the newest.
+          fetch-depth: 0
 
       - name: Install Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
@@ -34,7 +36,7 @@ jobs:
       - name: Lint skills and check links
         run: python tools/check.py
 
-      - name: Test the private-word check and push hooks
+      - name: Test the private-word and AI-attribution checks and push hooks
         run: python tools/test_check.py
 
   release:
