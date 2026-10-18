@@ -9,13 +9,12 @@ ELAD grows only when evidence shows a change helps. Each item says what would sh
    [engagement](skills/evidence/ENGAGE_TEST.md) tests.
    - **Repeat it** on another model or harness, or on a non-Windows machine, before
      claiming the result more widely.
-2. **Use ELAD on one real project.**
-   - Adopt the spec format, the ladder, and the skills on a real project, through that
-     project's own decision.
-   - Record what helped, what was ignored, and what got in the way.
-   - Bring back synthetic lessons only.
+2. **Use ELAD on one real project.** *Done in v1.0, on a private S&box project.* See
+   [A first real project](docs/EMPIRICAL_STATUS.md#a-first-real-project-v10).
+   - **Repeat it** on a project whose owner doesn't maintain ELAD, and record whether the
+     skills are used, before claiming more.
 
-Item 2 is the remaining condition for `1.0`; see [Releasing](docs/RELEASING.md).
+Both conditions for `1.0` in [Releasing](docs/RELEASING.md) are met.
 
 ## Skills
 

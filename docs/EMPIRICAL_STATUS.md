@@ -1,7 +1,8 @@
 # Empirical Status
 
-ELAD v0.10 rests on five kinds of evidence:
+ELAD v1.0 rests on six kinds of evidence:
 
+- its use on one real project, a private S&box project;
 - two blind pressure-test rounds of its skills, in dry runs;
 - a triggering test and an engagement test of the skills in real headless sessions;
 - three S&box tests in real headless sessions: one of the example's domain skill, then a
@@ -9,9 +10,86 @@ ELAD v0.10 rests on five kinds of evidence:
 - one engine-rung spike in a real game engine; and
 - four earlier development experiments against v0.3.0.
 
-Together they support core parts of the method in bounded settings. ELAD is now in use on
-its first real project, but that use isn't yet written up as evidence, and ELAD hasn't been
-demonstrated as a production automation system. This document separates those claims.
+Together they support core parts of the method in bounded settings. One real project has
+used it, but ELAD hasn't been demonstrated as a production automation system. This document
+separates those claims.
+
+## A first real project (v1.0)
+
+ELAD's first real project is a private S&box project: a game world built by its owner with
+coding agents. It had run on ELAD's archived v0.3 protocol, with its gates and receipts, and
+chose to move to v0.9, then to v0.10. At the owner's request, its agents kept dated notes on
+what helped, what was ignored, and what got in the way. Only synthetic lessons come back
+here; the project's files and data stay private.
+
+**What it did with ELAD,** over five days in October 2026:
+
+- It replaced a longer milestone plan with one-page specs of one-sentence requirements,
+  each naming its rung and its check.
+- An authoring pilot passed its checks, and the owner gave it GO.
+- A first world slice, an untextured blockout, passed all 18 of its agreed machine checks:
+  5 static, 5 engine, 6 editor, and 2 session. Its owner then approved it.
+
+**What helped:**
+
+- **The spec format.** The pilot fit on one page.
+- **The cheapest rung.** Collision and ground-height checks moved from traces run in the
+  editor to headless engine tests.
+- **Small, fast routine checks.** The project's routine suite went from about 100 seconds
+  to under 2, once a spec lint and a few record checks replaced its older governance
+  checks. Each new check was broken once to show it can fail.
+- **Breaking a check on purpose.** It showed that one requirement had failed only for the
+  wrong reason.
+- **The attempt limit.** After two wrong fixes for one requirement, the limit of two
+  attempts per root cause turned the work into diagnosis, which found the cause.
+- **Requirements that follow a layout file.** World requirements written against whatever
+  a layout file lists covered each new slice, and the pilot's checks carried over almost
+  unchanged.
+- **Cheap upgrades.** Moving to v0.10 took little work: no skill changed, and the release
+  notes named each changed file and the one new word a script had to accept.
+
+**What was ignored:**
+
+- **The three skills.** They were installed, and the project's `AGENTS.md` says when to use
+  each. But its notes record no task where an agent used one, and no session logged
+  whether they loaded. So this project is evidence for the spec format and the ladder, and
+  adds nothing to the skill evidence below.
+
+**What got in the way,** and where ELAD answered it:
+
+- **Existing gates.** Nothing said how to move a project's own gates, sign-offs, and
+  permission files onto specs. v0.10 added
+  [Projects That Already Have Gates](EXISTING_GATES.md).
+- **Reporting.** Nothing said how one check script reports several requirements. v0.10
+  added one PASS or FAIL line per ID.
+- **A compile with no rung.** A compile against the engine's libraries fit no rung. v0.10
+  put it on rung 0.
+- **Asking too often.** The project's own rule to ask the owner before every engine start
+  stopped a run the owner had asked for. v0.10 says to let agents run the project's checks
+  and keep the ask-first list for actions that are hard to undo.
+- **S&box tools and engine behavior.** The editor check read a content project's empty
+  compile result as a failure and hid why an editor didn't start. A saved scene in a
+  headless test never finished loading, so tests passed or failed by run order. An
+  untagged engine hotfix left the source sync with no tag to check out, and the test runner
+  found the engine source only through a variable the machine didn't set. v0.10 fixed each
+  of these, and the world build's eight engine lessons are in the
+  [S&box example](../examples/sbox/README.md#lessons-from-a-world-build).
+
+**Still in the way:**
+
+- **Adapted copies get no patch.** The project had adapted two of the example's scripts, so
+  v0.10's fixes to them were carried over by hand. The release notes describe each change
+  but give an adapted copy nothing to apply.
+
+**Limits:**
+
+- one project, one owner, one engine, one Windows machine, and five days;
+- it isn't independent: the project's owner also maintains ELAD, and one fix, a saved-scene
+  loader, reached the project from ELAD's unreleased work at the owner's request before
+  v0.10 shipped it (the project logs such help separately);
+- the notes were kept by the agents doing the work, not by an outside observer; and
+- the slice's session checks ran on one machine, which doesn't show that a player on
+  another machine or a clean install can join.
 
 ## Skills in real headless sessions (v0.7)
 
@@ -226,8 +304,8 @@ ELAD does not claim to be:
 
 - **Automatic skill triggering tested in a real install.** This has now been tested in real
   headless installs, within the limits above.
-- **Use on one real project,** recorded with synthetic lessons. This is under way: ELAD is
-  in use on its first real project, and v0.10 holds the fixes that use prompted. The owner
-  decides when the condition is met.
+- **Use on one real project,** recorded with synthetic lessons. This is met; see
+  [A first real project](#a-first-real-project-v10). Its owner approved the first world
+  slice built under ELAD on October 18, 2026.
 
 More documents or machinery would not count.

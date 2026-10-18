@@ -12,7 +12,7 @@ with coding agents. It is three things:
 ELAD runs nothing and grants no authority. Permission always comes from you and your
 project; see [Authority and Safety](docs/AUTHORITY_AND_SAFETY.md).
 
-**Current version: 0.10.** v0.6 was a breaking reshape of v0.5. The v0.5 protocol (schemas,
+**Current version: 1.0.** v0.6 was a breaking reshape of v0.5. The v0.5 protocol (schemas,
 templates, and validators) is archived at the `v0.5` tag; see [Archive](ARCHIVE.md).
 
 ## Quick start
@@ -86,6 +86,10 @@ only the check. See [Skills](skills/README.md).
 
 ## Evidence and limits
 
+- **A first real project.** A private S&box project used the spec format and the ladder
+  through a pilot and a first world slice, which passed all 18 machine checks and its
+  owner's review. Its records show no use of the skills. See
+  [Empirical Status](docs/EMPIRICAL_STATUS.md#a-first-real-project-v10).
 - **Pressure tests.** The skills were tested against agents without them, and in round 1
   also against an unmodified Superpowers library. The tests were dry runs, scored blind
   against a rubric frozen beforehand.
@@ -113,7 +117,7 @@ only the check. See [Skills](skills/README.md).
   [engagement](skills/evidence/ENGAGE_TEST.md) tests.
 - **Limits.**
   - The samples are small: three runs per cell, with one model, one harness, on Windows.
-  - ELAD is in use on its first real project, but that use isn't yet written up as evidence.
+  - One real project used it, and its owner also maintains ELAD.
 
   See [Empirical Status](docs/EMPIRICAL_STATUS.md).
 

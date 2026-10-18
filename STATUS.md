@@ -1,6 +1,6 @@
 # Status
 
-**Current version:** `0.10`
+**Current version:** `1.0`
 
 **What ELAD is:**
 
@@ -18,6 +18,10 @@ non-normative.
 
 ## Evidence
 
+- **A first real project** (v1.0). A private S&box project used the spec format and the
+  ladder through a pilot and a first world slice, which passed all 18 machine checks and
+  its owner's review. Its records show no use of the skills. See
+  [Empirical Status](docs/EMPIRICAL_STATUS.md#a-first-real-project-v10).
 - **Two pressure-test rounds.** The clearest effect appeared in both: with the skills,
   agents recommended a better rule than "one try, then stop forever". Round 2 confirmed it
   with three samples per cell. Round 1 was mixed elsewhere: on one scenario the skills
@@ -54,9 +58,9 @@ non-normative.
 
 - **Tested, within limits:** automatic skill triggering. It was tested in real headless
   installs with three runs per cell, one model, one harness, and Windows only.
-- **Under way:** using ELAD on one real project, the remaining bar for `1.0`. ELAD is in use
-  on its first real project, and v0.10 holds the fixes that use prompted. The owner decides
-  when the bar is met; see [Releasing](docs/RELEASING.md).
+- **Met for `1.0`:** use on one real project. It's one project, owned by ELAD's
+  maintainer, so it isn't independent adoption, and its records show no use of the skills.
+  See [Releasing](docs/RELEASING.md).
 - **S&box next steps:** all four on the [roadmap](ROADMAP.md#sbox-next-steps) are done.
   The refactor rerun proposed two "baseline first" rules for shared checks. Each needs its
   own pressure test before any skill changes.

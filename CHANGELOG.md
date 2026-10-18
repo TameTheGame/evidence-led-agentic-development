@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+No pending changes.
+
+## 1.0 — 2026-10-18
+
+ELAD's two conditions for `1.0` are met: the skills load on their own in real installs
+(v0.7), and a first real project, a private S&box project, has used the method from a pilot
+to a first world slice its owner approved. This release records that use and adds three
+S&box lessons from it, plus an AI-attribution check. No skill changed, and nothing in the
+core breaks.
+
+- **A write-up of the first real project.** `docs/EMPIRICAL_STATUS.md` gains "A first real
+  project": what helped, what was ignored, and what got in the way, in synthetic terms, with
+  its limits. The project's records show no use of the skills, and its owner also maintains
+  ELAD. The roadmap marks the item done, and the status pages say the bar for `1.0` is met.
 - **A sixth S&box lesson: a dedicated server doesn't mount a library's assets.**
   `examples/sbox/README.md` adds it to "Lessons from a world build": content that lives only
   in a `Libraries\` project loads in the Editor but is not found on a dedicated server, so
