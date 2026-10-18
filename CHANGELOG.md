@@ -25,6 +25,9 @@
   and only the query port is bound. So a port check asks the server for its settings and
   checks the query port and the server's `status` instead. It cites the `26.10.13` source.
   A first real project found it on S&box `26.10.13a`.
+- **The checks print plain hyphens.** `tools/check.py` and `tools/test_check.py` put an em
+  dash in their result lines, which the Windows CI log showed as a replacement character.
+  They now print a plain hyphen, as the example spec lint does.
 
 ## 0.10 — 2026-10-18
 

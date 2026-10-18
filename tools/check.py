@@ -416,9 +416,9 @@ def main() -> int:
     for problem in problems:
         print(f"FAIL  {problem}")
     if problems:
-        print(f"FAIL — {len(problems)} problem(s).")
+        print(f"FAIL - {len(problems)} problem(s).")
         return 1
-    print(f"PASS — {skill_count} skills linted; {link_count} relative links in {len(files)} Markdown files resolve; "
+    print(f"PASS - {skill_count} skills linted; {link_count} relative links in {len(files)} Markdown files resolve; "
           f"{word_summary}; {ai_summary}.")
     return 0
 

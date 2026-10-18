@@ -187,7 +187,7 @@ def main() -> int:
         if not ok:
             print(f"      exit {got_code} (expected {code}); missing {missing}; unwanted {unwanted}")
             print("      " + output.replace("\n", "\n      "))
-    print(f"{'FAIL' if failures else 'PASS'} — {len(CASES) - failures} of {len(CASES)} cases passed.")
+    print(f"{'FAIL' if failures else 'PASS'} - {len(CASES) - failures} of {len(CASES)} cases passed.")
     return 1 if failures else 0
 
 
