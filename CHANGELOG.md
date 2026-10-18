@@ -19,6 +19,12 @@
   pass. Both push hooks run it with the rest of the check. CI now checks out the full
   history, because its shallow checkout let the commit checks read only the newest commit.
   `tools/test_check.py` adds ten cases. Every commit on `main` passes.
+- **An eighth S&box lesson: a hidden dedicated server doesn't listen on its game port.**
+  `examples/sbox/README.md` adds it to "Lessons from a world build": with
+  `net_hide_address` on, which is the default, the game socket goes through a Steam FakeIP
+  and only the query port is bound. So a port check asks the server for its settings and
+  checks the query port and the server's `status` instead. It cites the `26.10.13` source.
+  A first real project found it on S&box `26.10.13a`.
 
 ## 0.10 — 2026-10-18
 

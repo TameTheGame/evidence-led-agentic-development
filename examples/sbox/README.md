@@ -178,7 +178,7 @@ A first real project kept its map in a content project, with no code of its own.
 
 ## Lessons from a world build
 
-The same project's world work on S&box `26.10.13a` turned up seven more. Each is read from
+The same project's world work on S&box `26.10.13a` turned up eight more. Each is read from
 the engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 - **Read scene-load errors from editor start.** The Editor loads its startup scene before a
@@ -244,3 +244,20 @@ the engine source at `26.10.13`, which is approximate for `26.10.13a`.
   until `ActiveScene` is set too. On `26.10.13a`, a dedicated-server check that didn't wait
   started about a second before the scene opened and failed; with the wait, it found the
   scene.
+- **With its address hidden, a dedicated server doesn't listen on its game port.**
+  `net_hide_address` is on by default
+  (`26.10.13:engine/Sandbox.Engine/Systems/Networking/Networking.cs`, lines 142-143). The
+  server then asks Steam for a FakeIP, and opens its game socket through Steam with that
+  setting
+  (`26.10.13:engine/Sandbox.Engine/Systems/Networking/System/GameNetworkSystem/GameNetworkSystem.Static.cs`,
+  lines 264-269;
+  `26.10.13:engine/Sandbox.Engine/Systems/Networking/Transports/SteamNetworkSockets/SteamSockets.cs`,
+  line 39). On `26.10.13a`, nothing bound the `port` setting (27015 by default) as a plain
+  UDP socket, and only the query port, `net_query_port` (27016 by default), was bound. So a
+  check that waits for UDP on the game port fails every time.
+  - Check what the server reports instead: ask it for `port`, `net_query_port`, and
+    `net_hide_address`. With hiding on, confirm the query port is held and that the
+    server's `status` lists a Steam socket under "Socket Information"
+    (`26.10.13:engine/Sandbox.Engine/Systems/Networking/System/NetworkConsoleCommands.cs`,
+    lines 137-156).
+  - A check that wanted the game port failed on every run, and one built this way passed.
