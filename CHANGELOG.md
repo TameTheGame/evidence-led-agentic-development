@@ -131,6 +131,10 @@ the core breaks.
   cleared in the shell, the runner found the install through the user's `FACEPUNCH_ENGINE`.
   `NOT CHECKED` and `NEAREST` ended with the warning, and `MATCH` and `SYNCED` didn't. The
   user-level `SBOX_PUBLIC` wasn't tested, because the test machine doesn't set it.
+- **The status docs say ELAD is in use.** `README.md`, `STATUS.md`, and
+  `docs/EMPIRICAL_STATUS.md` said ELAD hadn't been used on a real project. They now say it is
+  in use on its first real project, that the use isn't yet written up as evidence, and that
+  the owner decides when it meets the bar for `1.0`.
 
 ## 0.9 — 2026-10-14
 

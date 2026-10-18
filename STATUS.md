@@ -54,8 +54,9 @@ non-normative.
 
 - **Tested, within limits:** automatic skill triggering. It was tested in real headless
   installs with three runs per cell, one model, one harness, and Windows only.
-- **Not yet done:** using ELAD on one real project. This is the remaining bar for `1.0`;
-  see [Releasing](docs/RELEASING.md).
+- **Under way:** using ELAD on one real project, the remaining bar for `1.0`. ELAD is in use
+  on its first real project, and v0.10 holds the fixes that use prompted. The owner decides
+  when the bar is met; see [Releasing](docs/RELEASING.md).
 - **S&box next steps:** all four on the [roadmap](ROADMAP.md#sbox-next-steps) are done.
   The refactor rerun proposed two "baseline first" rules for shared checks. Each needs its
   own pressure test before any skill changes.

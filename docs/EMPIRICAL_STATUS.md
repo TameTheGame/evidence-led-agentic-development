@@ -9,9 +9,9 @@ ELAD v0.10 rests on five kinds of evidence:
 - one engine-rung spike in a real game engine; and
 - four earlier development experiments against v0.3.0.
 
-Together they support core parts of the method in bounded settings. ELAD has not yet been
-used on a real project, or demonstrated as a production automation system. This document
-separates those claims.
+Together they support core parts of the method in bounded settings. ELAD is now in use on
+its first real project, but that use isn't yet written up as evidence, and ELAD hasn't been
+demonstrated as a production automation system. This document separates those claims.
 
 ## Skills in real headless sessions (v0.7)
 
@@ -226,7 +226,8 @@ ELAD does not claim to be:
 
 - **Automatic skill triggering tested in a real install.** This has now been tested in real
   headless installs, within the limits above.
-- **Use on one real project,** recorded with synthetic lessons. This is still open, and it
-  is the next meaningful empirical step.
+- **Use on one real project,** recorded with synthetic lessons. This is under way: ELAD is
+  in use on its first real project, and v0.10 holds the fixes that use prompted. The owner
+  decides when the condition is met.
 
 More documents or machinery would not count.

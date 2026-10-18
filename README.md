@@ -113,7 +113,7 @@ only the check. See [Skills](skills/README.md).
   [engagement](skills/evidence/ENGAGE_TEST.md) tests.
 - **Limits.**
   - The samples are small: three runs per cell, with one model, one harness, on Windows.
-  - ELAD hasn't yet been used on a real project.
+  - ELAD is in use on its first real project, but that use isn't yet written up as evidence.
 
   See [Empirical Status](docs/EMPIRICAL_STATUS.md).
 
