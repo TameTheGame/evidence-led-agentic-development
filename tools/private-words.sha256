@@ -1,0 +1,10 @@
+# Fingerprints of words that must not appear in this repository, read by tools/check.py.
+# Each is the SHA-256 of a prefix and one to three lowercase words; see check.py.
+# The readable list is kept outside the repository.
+17c99804b408816813de94c96377688e6886a247ea35e382ff60d016ddeb4937
+2dc7260e98b1435402e2de6962cb1a49eb8aa0dc0d72fef8cf443eb6154ce2d2
+724a1a9383232e81a7cee88a5e3fc4430e3bb25d965497ed90a42e5062009e46
+a97037050eb41a4f6e92f477dd70f8e457fbd7ccc3cd5424988a5407d9ae9237
+b6cc0c7b646561b7731521908ef4682824ef09171a805518946cb16adaa88ff3
+d77535149dc25babcd1b83a24f480154223f05e005cc23ff826859b4343e8d19
+f07ebdb66afcfc97b6e80d4a7d9bb0d1b0caa74e19b900ca85f472a98f9e5192

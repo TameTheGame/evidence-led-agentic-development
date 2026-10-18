@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py -3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/check_before_push.py\" 2>/dev/null || python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/check_before_push.py\"",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}

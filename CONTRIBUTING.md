@@ -42,6 +42,25 @@ python tools/check.py
 Then run `git diff --check` and read the exact diff. The check lints every skill's
 frontmatter and confirms every relative link resolves.
 
+It also fails when a tracked file, a file name, or a commit message contains a private
+word: a word or a phrase of up to three words, such as a private project's name, that must
+never appear in this public repository. `tools/private-words.sha256` holds only SHA-256
+fingerprints of them; the owner keeps the readable list outside the repository. If the
+check flags a line, remove or reword it; if it flags a commit message, reword that commit
+before pushing. A short word's fingerprint can be found by trying every short word, so the
+list keeps words out of the repository but doesn't keep them secret.
+`python tools/test_check.py` tests the check with made-up words.
+
+In a Claude Code session started in this repository, a hook in `.claude/settings.json`
+runs the check before every `git push` and blocks the push if it fails. It needs `py -3` on
+Windows or `python3` elsewhere. A session started in a parent folder, such as a cloud
+session with several repositories, doesn't load that hook. For those, and for pushes from
+outside Claude Code, turn on the git hook in `.githooks/` once per clone:
+
+```text
+git config core.hooksPath .githooks
+```
+
 ## Scope
 
 Keep examples synthetic. Never contribute credentials, private product source, native

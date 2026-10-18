@@ -3,7 +3,8 @@
 ## Current surface
 
 ELAD is documentation, agent skills, synthetic examples, and one read-only check script
-(`tools/check.py`). There is no runtime, no network access, no secrets handling, and no
+(`tools/check.py`), which a Claude Code hook in `.claude/` and a git hook in `.githooks/`
+run before a `git push` from this repository. There is no runtime, no network access, no secrets handling, and no
 dependency to install. The S&box example's C# code runs only inside a project that copies
 it, on that project owner's machine.
 

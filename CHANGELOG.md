@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- **A private-word check.** `tools/check.py` now fails when a tracked file, a file name, or
+  a commit message contains a listed private word, such as a private project's name. The
+  repository holds only SHA-256 fingerprints, in `tools/private-words.sha256`; the readable
+  list stays with the owner. A Claude Code hook runs the check before every `git push` from
+  a session started in this repository and blocks the push if it fails. A git hook in
+  `.githooks/` does the same for any push once a clone turns it on, which covers cloud
+  sessions with several repositories, since those don't load a repository's hooks.
+  `tools/test_check.py` tests the check and both hooks with made-up words, and CI runs it
+  on Linux and Windows. Checked with Claude Code `2.1.237` on Windows and `2.1.302` on
+  Linux: the Claude Code hook blocked a planted push and let a clean one through.
 - **A guide for projects that already have gates.** `docs/EXISTING_GATES.md` says how to
   move a project's own gates, sign-offs, and permission files onto specs: map each gate to
   a requirement, retire it with a reason, or postpone it to a named spec. A first real

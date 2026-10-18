@@ -1,0 +1,9 @@
+#!/bin/sh
+# Runs tools/check.py before every push from this clone and stops the push if it fails.
+# Turn it on once per clone: git config core.hooksPath .githooks
+root=$(git rev-parse --show-toplevel) || exit 1
+if command -v py >/dev/null 2>&1; then
+    py -3 "$root/tools/check.py"
+else
+    python3 "$root/tools/check.py"
+fi

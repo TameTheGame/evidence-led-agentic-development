@@ -1,17 +1,26 @@
 #!/usr/bin/env python3
-"""ELAD repository checks: a skill lint and a relative-link check.
+"""ELAD repository checks: a skill lint, a relative-link check, and a private-word check.
 
-Dependency-free; Python 3.10 or newer. Run from anywhere:
+Dependency-free; Python 3.10 or newer, and git for the private-word check. Run from anywhere:
 
     python tools/check.py
 
 Exit code 0 means every check passed. It proves the repository's skills and links are
-well formed, nothing more.
+well formed and that no listed private word appears in it, nothing more.
+
+The private-word check fails when a tracked text file, a tracked file name, or a commit
+message contains a word or phrase whose fingerprint is in tools/private-words.sha256. The
+readable list is kept outside the repository; to regenerate the fingerprints from it:
+
+    python tools/check.py --hash-words <list> > tools/private-words.sha256
 """
 
 from __future__ import annotations
 
+import argparse
+import hashlib
 import re
+import subprocess
 import sys
 import unicodedata
 from pathlib import Path
@@ -33,6 +42,13 @@ FENCE = re.compile(r"^\s{0,3}(```|~~~)")
 INLINE_CODE = re.compile(r"`+[^`]*`+")
 HEADING = re.compile(r"^\s{0,3}#{1,6}\s+(.*?)\s*#*\s*$")
 SCHEME = re.compile(r"^[a-zA-Z][a-zA-Z0-9+.-]*:")
+
+PRIVATE_WORDS = ROOT / "tools" / "private-words.sha256"
+WORD = re.compile(r"[a-z0-9]+")
+MAX_PHRASE_WORDS = 3
+FINGERPRINT = re.compile(r"^[0-9a-f]{64}$")
+# Prefixed so the fingerprints don't match generic SHA-256 lookup tables.
+FINGERPRINT_PREFIX = b"elad-private-word:"
 
 
 def rel(path: Path) -> str:
@@ -207,17 +223,141 @@ def check_links(files: list[Path]) -> tuple[list[str], int]:
     return problems, checked
 
 
+# --- Private-word check -----------------------------------------------------------------
+
+def words(text: str) -> list[str]:
+    """Lowercase ASCII letter-and-digit runs; everything else separates words."""
+    return WORD.findall(text.lower())
+
+
+def fingerprint(phrase: str) -> str:
+    return hashlib.sha256(FINGERPRINT_PREFIX + phrase.encode("ascii")).hexdigest()
+
+
+def load_fingerprints() -> tuple[set[str], str | None]:
+    where = rel(PRIVATE_WORDS)
+    if not PRIVATE_WORDS.is_file():
+        return set(), f"{where}: missing"
+    found: set[str] = set()
+    for number, line in enumerate(PRIVATE_WORDS.read_text(encoding="utf-8").splitlines(), start=1):
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if not FINGERPRINT.match(line):
+            return set(), f"{where}:{number}: expected a lowercase SHA-256 hex digest"
+        found.add(line)
+    if not found:
+        return set(), f"{where}: no fingerprints"
+    return found, None
+
+
+class PrivateWords:
+    """Finds every run of one to three words whose fingerprint is listed."""
+
+    def __init__(self, fingerprints: set[str]):
+        self.fingerprints = fingerprints
+        self.known: dict[str, bool] = {}
+
+    def is_private(self, phrase: str) -> bool:
+        if phrase not in self.known:
+            self.known[phrase] = fingerprint(phrase) in self.fingerprints
+        return self.known[phrase]
+
+    def lines(self, text: str) -> list[int]:
+        """Line numbers on which a private word or phrase starts."""
+        lowered = text.lower()
+        matches = list(WORD.finditer(lowered))
+        tokens = [match.group() for match in matches]
+        found = []
+        for start in range(len(tokens)):
+            for count in range(1, MAX_PHRASE_WORDS + 1):
+                if start + count > len(tokens):
+                    break
+                if self.is_private(" ".join(tokens[start:start + count])):
+                    found.append(lowered.count("\n", 0, matches[start].start()) + 1)
+                    break
+        return sorted(set(found))
+
+
+def git_output(*args: str) -> str | None:
+    try:
+        result = subprocess.run(["git", "-C", str(ROOT), *args], capture_output=True)
+    except OSError:
+        return None
+    if result.returncode != 0:
+        return None
+    return result.stdout.decode("utf-8", errors="replace")
+
+
+def check_private_words() -> tuple[list[str], str]:
+    fingerprints, error = load_fingerprints()
+    if error:
+        return [error], ""
+    listed = git_output("ls-files", "-z")
+    if listed is None:
+        return ["private-word check needs a git checkout of this repository"], ""
+    matcher = PrivateWords(fingerprints)
+    problems: list[str] = []
+    paths = [path for path in listed.split("\0") if path]
+    for path in paths:
+        if matcher.lines(path):
+            problems.append(f"{path}: file name contains a private word")
+        file = ROOT / path
+        if not file.is_file():
+            continue
+        data = file.read_bytes()
+        if b"\0" in data:
+            continue  # binary
+        for number in matcher.lines(data.decode("utf-8", errors="replace")):
+            problems.append(f"{path}:{number}: contains a private word")
+    log = git_output("log", "--format=%H%x00%B%x1e", "HEAD")
+    commits = [entry.strip("\n") for entry in (log or "").split("\x1e") if entry.strip("\n")]
+    for entry in commits:
+        commit, _, message = entry.partition("\0")
+        for number in matcher.lines(message):
+            problems.append(f"commit {commit[:7]}: message line {number} contains a private word")
+    return problems, f"no private words in {len(paths)} tracked files, their names, or {len(commits)} commit messages"
+
+
+def hash_words(source: Path) -> int:
+    """Print the fingerprint file for a readable list: one word or phrase per line, # comments."""
+    fingerprints = set()
+    for number, line in enumerate(source.read_text(encoding="utf-8").splitlines(), start=1):
+        phrase = words(line.partition("#")[0])
+        if not phrase:
+            continue
+        if len(phrase) > MAX_PHRASE_WORDS:
+            print(f"{source}:{number}: more than {MAX_PHRASE_WORDS} words", file=sys.stderr)
+            return 1
+        fingerprints.add(fingerprint(" ".join(phrase)))
+    print("# Fingerprints of words that must not appear in this repository, read by tools/check.py.")
+    print("# Each is the SHA-256 of a prefix and one to three lowercase words; see check.py.")
+    print("# The readable list is kept outside the repository.")
+    for value in sorted(fingerprints):
+        print(value)
+    return 0
+
+
 def main() -> int:
+    parser = argparse.ArgumentParser(description="ELAD repository checks.")
+    parser.add_argument("--hash-words", type=Path, metavar="LIST",
+                        help="print the fingerprint file for a readable word list, then exit")
+    options = parser.parse_args()
+    if options.hash_words:
+        return hash_words(options.hash_words)
+
     skill_problems, skill_count = check_skills()
     files = markdown_files()
     link_problems, link_count = check_links(files)
-    problems = skill_problems + link_problems
+    word_problems, word_summary = check_private_words()
+    problems = skill_problems + link_problems + word_problems
     for problem in problems:
         print(f"FAIL  {problem}")
     if problems:
         print(f"FAIL — {len(problems)} problem(s).")
         return 1
-    print(f"PASS — {skill_count} skills linted; {link_count} relative links in {len(files)} Markdown files resolve.")
+    print(f"PASS — {skill_count} skills linted; {link_count} relative links in {len(files)} Markdown files resolve; "
+          f"{word_summary}.")
     return 0
 
 
