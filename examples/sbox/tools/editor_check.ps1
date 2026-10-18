@@ -14,7 +14,9 @@ Runs unattended through sbox-cli, which ships with S&box 26.10.13 and later
      that every saved object comes back with the same name, parent, enabled state, and
      components, and that saving again writes a byte-identical file;
   5. takes the same screenshot, and reports how much it differs as a record, not a score;
-  6. puts the scene file back as it was, so the check leaves the working tree unchanged.
+  6. puts the scene file and the project's .sbproj back as they were, so the check leaves the
+     working tree unchanged. The editor writes the .sbproj again when it starts if the file's
+     text differs from what S&box writes, such as LF line endings on Windows.
 Results go to test-results\editor-<time>\, with each editor's sbox-cli output and editor log.
 On a failure it also prints the last lines of both. Exit code: 0 pass, 1 fail, 2 not run.
 
@@ -263,6 +265,9 @@ function Save-Scene([string]$Name) {
 if (Test-Open) { Stop-Setup "an editor has $dir open. Close it first; this check closes and reopens the editor." }
 
 $original = [IO.File]::ReadAllBytes($sceneFile)
+# The editor may rewrite the .sbproj when it starts (26.10.13:engine/Sandbox.Tools/Utility/Utility.Projects.cs).
+$projectFiles = @{}
+foreach ($f in Get-ChildItem $dir -Filter *.sbproj) { $projectFiles[$f.FullName] = [IO.File]::ReadAllBytes($f.FullName) }
 $checks = [ordered]@{}
 $notes = New-Object System.Collections.Generic.List[string]
 $editor = $null
@@ -308,7 +313,15 @@ try {
     # An editor that failed to start never reached $editor; make sure its sbox-cli is gone too.
     foreach ($s in $sessions) { if (-not $s.Owner.HasExited) { try { Stop-Editor $s.Owner } catch { $s.Owner.Kill() } } }
     try { Save-SessionLogs } catch { $notes.Add("couldn't save the sbox-cli output: $($_.Exception.Message)") }
-    if ($null -ne $original -and -not (Test-Open)) { [IO.File]::WriteAllBytes($sceneFile, $original) }
+    if (-not (Test-Open)) {
+        if ($null -ne $original) { [IO.File]::WriteAllBytes($sceneFile, $original) }
+        foreach ($f in $projectFiles.Keys) {
+            if ([Convert]::ToBase64String([IO.File]::ReadAllBytes($f)) -ne [Convert]::ToBase64String($projectFiles[$f])) {
+                [IO.File]::WriteAllBytes($f, $projectFiles[$f])
+                $notes.Add("the editor rewrote $(Split-Path $f -Leaf); the original is restored")
+            }
+        }
+    }
 }
 
 $failed = @($checks.Values | Where-Object { $_ -like 'FAIL*' }).Count

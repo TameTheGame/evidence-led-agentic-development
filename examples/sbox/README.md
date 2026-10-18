@@ -20,7 +20,7 @@
 | **0 · static** | The layout data is valid, spawn IDs are unique, and the saved `.scene` JSON has exactly one main camera. The project's code and its `run_csharp` scripts compile against the installed engine. |
 | **1 · engine** | A `UnitTests/` project starts the engine through `TestAppSystem` and builds the area with the same generator code. It then checks collision, spawn grounding, and route traces. |
 | **2 · editor** | The generated scene survives save, close, and reopen unchanged. A screenshot from a fixed camera. |
-| **3 · session** | A remote client sees and collides with the same walls. Same-machine host and client is not clean-client proof. |
+| **3 · session** | A remote client sees and collides with the same walls. Same-machine host and client is not clean-client proof. Until the game is published, host from the Editor; see [Lessons from a world build](#lessons-from-a-world-build). |
 | **4 · owner** | Walking from spawn to gate to tower feels like a frontier outpost. |
 
 ## What the spike settled
@@ -125,9 +125,10 @@ powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
 - **The screenshot is a record.** `-Camera` and `-Angles` fix the view. The script reports
   how much the two captures differ but doesn't score it, because the byte-identical save
   already proves the scene came back unchanged.
-- **It leaves no trace.** It puts the scene file back as it was, and saves results in
-  `test-results\editor-<time>\`: both captures, both saved files, the object lists, and the
-  console errors.
+- **It leaves no trace.** It puts the scene file and the project's `.sbproj` back as they
+  were, and saves results in `test-results\editor-<time>\`: both captures, both saved files,
+  the object lists, and the console errors. The Editor can rewrite the `.sbproj` when it
+  starts; see [Lessons from a world build](#lessons-from-a-world-build).
 - **It keeps each editor's own account.** It saves the output of the `sbox-cli` process that
   owns each editor, and the editor log from `<engine>\logs\`, with the results. On a failure
   it prints the last lines of both, so a failed start says why.
@@ -174,3 +175,49 @@ A first real project kept its map in a content project, with no code of its own.
   - So a separate game project can't use the map's files through a package reference.
   - Placing the map in the game's `Libraries\` folder wasn't tested.
   - Testing the map inside a game is a later requirement, with its own check.
+
+## Lessons from a world build
+
+The same project's world work on S&box `26.10.13a` turned up five more. Each is read from the
+engine source at `26.10.13`, which is approximate for `26.10.13a`.
+
+- **Read scene-load errors from editor start.** The Editor loads its startup scene before a
+  check can mark the log, and opening a scene that is already open logs nothing new. So a
+  check that reads the console only after a mark, or only after opening the scene, misses
+  load errors. `read_console` keeps the last 2,000 events from editor start
+  (`26.10.13:engine/Sandbox.Engine/Systems/Mcp/LogBuffer.cs`). The editor check reads that
+  buffer without a `since` cursor, so it sees them. A start that logs more than 2,000 events
+  would push the earliest out; the editor log saved with the results keeps everything.
+- **Don't end a scene string in a file extension.** When S&box compiles a scene, it treats
+  any string value that ends in a known asset extension as a file reference
+  (`26.10.13:engine/Sandbox.Tools/Assets/ResourceCompile/ResourceCompileContextImp.cs`,
+  lines 252-290). An object named `outpost.terrain` makes S&box look for a compiled
+  `outpost.terrain_c` that doesn't exist. Keep object names free of such endings, or have
+  the layout lint reject them.
+- **Check the `.sbproj` out the way S&box writes it.** Each time the Editor opens a project,
+  it writes the project's `.sbproj` again if the file's text differs from what S&box would
+  write (`26.10.13:engine/Sandbox.Tools/StartupLoadProject.cs`, line 190;
+  `26.10.13:engine/Sandbox.Tools/Utility/Utility.Projects.cs`, line 12;
+  `26.10.13:engine/Sandbox.Engine/Systems/Project/Project/Project.cs`, lines 395-420). On
+  Windows it writes CRLF line endings. So a `.sbproj` that Git checks out with LF endings is
+  rewritten on every editor start, and `git status` then lists it as modified though
+  `git diff` shows nothing. A check that needs a clean working tree fails.
+  - When line endings are the only difference, checking the file out with CRLF endings
+    (`*.sbproj text eol=crlf` in `.gitattributes`) stops the rewrite.
+  - Otherwise, put the file back after each editor run. The editor check does this, as it
+    does for the scene.
+- **A dedicated server reaches outside the project.** It always logs on to Steam and
+  advertises itself on Steam's server list while it runs. A hidden setting only adds a tag
+  that server browsers can filter on
+  (`26.10.13:engine/Sandbox.Engine/Systems/Networking/System/GameNetworkSystem/GameNetworkSystem.Static.cs`,
+  lines 246-366). So an agent-run dedicated-server check is an external effect, and it
+  belongs on the owner's ask-first list, unlike the project's other checks.
+- **A dedicated server can't host an unpublished game.** A client joining a dedicated server
+  looks up the game's package, and a `local.` game has none, so the join fails
+  (`26.10.13:engine/Sandbox.Engine/Services/Packages/Package.Static.cs`, lines 153-157;
+  `26.10.13:engine/Sandbox.GameInstance/GameInstance.cs`, lines 181-186). An Editor host is
+  a developer host
+  (`26.10.13:engine/Sandbox.Engine/Systems/Networking/System/NetworkSystem.cs`, line 49) and
+  tells joining clients so, and they skip that lookup
+  (`26.10.13:engine/Sandbox.Engine/Systems/Networking/System/NetworkSystem.Handshake.cs`,
+  line 73). So the session rung for an unpublished game runs against an Editor host.

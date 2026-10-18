@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+- **Five S&box lessons from a world build.** `examples/sbox/README.md` gains "Lessons from a
+  world build": read scene-load errors from editor start; don't end a scene string in a
+  file extension, which S&box takes as a file reference; check the `.sbproj` out the way
+  S&box writes it, or the Editor rewrites it on every start; a dedicated server is listed
+  on Steam, so checking with one needs the owner's yes; and an unpublished game can't run
+  on a dedicated server, so its session rung uses an Editor host. Each cites the
+  `26.10.13` source. A first real project found them. The editor check already read errors
+  from editor start.
+- **The editor check puts the `.sbproj` back.** The Editor writes a project's `.sbproj`
+  again on each start when its text differs from what S&box writes, such as LF line endings
+  on Windows, so the check could leave a modified file behind. `editor_check.ps1` now
+  restores the `.sbproj` along with the scene, and adds a note when the Editor rewrote it.
+  A first real project found it. Checked on S&box `26.10.13a`, in both shells: with the
+  `.sbproj` checked out with LF endings, the previous script passed but left it modified
+  with CRLF endings, and the new one passed, restored it, and said so. Checked out with
+  CRLF endings, it wasn't rewritten.
 - **The example spec lint checks everything the spec format lists.**
   `examples/sbox/tools/spec_lint.py` now also fails on an ID not shaped `AREA-TOPIC-NN`, a
   retired ID used again, an owner-rung check that isn't a card, and a card the spec doesn't
