@@ -178,8 +178,8 @@ A first real project kept its map in a content project, with no code of its own.
 
 ## Lessons from a world build
 
-The same project's world work on S&box `26.10.13a` turned up six more. Each is read from the
-engine source at `26.10.13`, which is approximate for `26.10.13a`.
+The same project's world work on S&box `26.10.13a` turned up seven more. Each is read from
+the engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 - **Read scene-load errors from editor start.** The Editor loads its startup scene before a
   check can mark the log, and opening a scene that is already open logs nothing new. So a
@@ -232,3 +232,15 @@ engine source at `26.10.13`, which is approximate for `26.10.13a`.
   link fixed it on `26.10.13a`.
   - The same code runs when local automation starts a game with `-mcp`. That is from the
     source and untested.
+- **Wait for an active scene, not just for loading to end.** While a game or dedicated
+  server loads, `instance_status` can report `Game` set and `IsLoading` false before any
+  scene is open. The game's ident is set during the load
+  (`26.10.13:engine/Sandbox.GameInstance/GameInstance.cs`, line 190), and `IsLoading` reads
+  false while no game instance is current
+  (`26.10.13:engine/Sandbox.Engine/Systems/Mcp/InstanceTools.cs`, lines 22-25). The
+  instance becomes current only after its load returns, and the startup scene opens after
+  that (`26.10.13:engine/Sandbox.GameInstance/GameInstanceDll.cs`, lines 748, 793, and
+  808). So a check that waits only for `IsLoading` can start before the scene exists. Wait
+  until `ActiveScene` is set too. On `26.10.13a`, a dedicated-server check that didn't wait
+  started about a second before the scene opened and failed; with the wait, it found the
+  scene.

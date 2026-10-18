@@ -7,6 +7,11 @@
   in a `Libraries\` project loads in the Editor but is not found on a dedicated server, so
   keep it in the game's own `Assets` or link it there. It cites the `26.10.13` source. A
   first real project found it, and a link fixed it on S&box `26.10.13a`.
+- **A seventh S&box lesson: wait for an active scene.** `examples/sbox/README.md` adds it to
+  "Lessons from a world build": while a game loads, `instance_status` can report the game
+  set and `IsLoading` false before a scene opens, so a check also waits for `ActiveScene`.
+  It cites the `26.10.13` source. A first real project found it on S&box `26.10.13a`, where
+  a server check that didn't wait started a second early and failed.
 
 ## 0.10 — 2026-10-18
 
