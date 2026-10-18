@@ -18,7 +18,7 @@ is that code, ready to copy.
 | `UnitTests/TestSurfaces.cs` | The default-surface scaffolding. **Test-only:** it uses engine internals through reflection when no public route works, and an engine update may break it. It records which route worked. |
 | `UnitTests/EngineTestHelpers.cs` | A headless player, a bounded tick-until-grounded loop, the stuck check with its enclosure probe, and the saved-scene loader |
 | `UnitTests/StarterGeometry.cs` | Stand-in box geometry, built in the order a game scene needs: create the `MeshComponent` disabled, assign the mesh, then enable it. Replace it with your own generator. |
-| `UnitTests/StarterTests.cs` | Four setup checks, and one requirement written as project tests should be: named after its check, with a control case that must fail |
+| `UnitTests/StarterTests.cs` | Five setup checks, and one requirement written as project tests should be: named after its check, with a control case that must fail |
 | `tools/run_engine_tests.ps1` | Runs the tests and saves the engine's own log with the results, because engine errors appear only there |
 | `tools/sync_engine_source.ps1` | Moves a local clone of `Facepunch/sbox-public` to the release that is installed, so agents read the source of the engine they run. The runner calls it first. |
 
@@ -34,7 +34,8 @@ is that code, ready to copy.
    show `10.x`), and `FACEPUNCH_ENGINE` set to the S&box install folder, the one containing
    `sbox-dev.exe`. If agents read engine source from a local clone of
    `Facepunch/sbox-public`, also set `SBOX_PUBLIC` to that clone; see
-   [Matching the engine source](#matching-the-engine-source).
+   [Matching the engine source](#matching-the-engine-source). Set both for the user. The
+   scripts read the user's values when a shell started before they were set.
 5. **Run the tests.** From the project root:
 
    ```powershell
@@ -62,12 +63,15 @@ clone, fetching the tag first if the clone lacks it. It prints one line and alwa
 |---|---|
 | `MATCH` | The clone is already at the installed release. |
 | `SYNCED` | The script moved the clone to the installed release. Engine facts read earlier may be stale. |
+| `NEAREST` | The installed hotfix has no tag yet, so the clone is at the nearest tagged release before it. |
 | `UNKNOWN` | The install is a staging build, which has no public tag. |
 | `NOT SYNCED` | The script left the clone where it was, with the reason. Most often the clone has local changes; read the release with `git show <tag>:<path>`. |
 | `NOT CHECKED` | No install or clone was given. |
 
 - **The runner calls it before each run** when `SBOX_PUBLIC` or `-Source` names the clone,
-  and prints the result as its `Source:` line.
+  and prints the result as its `Source:` line. Unless that line says `MATCH` or `SYNCED`,
+  the runner ends with a `Warning:` line, because engine facts read from the clone may not
+  match the engine that ran.
 - **It changes nothing else in the clone.** It leaves branches alone and doesn't commit or
   push. The checkout is a detached HEAD; `git switch master` returns to the latest source.
 - **Run it after anything that can update S&box,** such as a launch through Steam. A
@@ -75,6 +79,45 @@ clone, fetching the tag first if the clone lacks it. It prints one line and alwa
 - **Run it on a schedule too.** Steam updates S&box only when S&box starts, so a session
   that is already open doesn't see an update from a launch made by hand. An hourly Windows
   scheduled task closes that gap.
+- **Have each agent session run it first,** so no agent has to remember to. In Claude Code,
+  a `SessionStart` hook in the project's `.claude/settings.json` puts the line in the
+  session's context:
+
+  ```json
+  {
+    "hooks": {
+      "SessionStart": [
+        { "hooks": [ { "type": "command", "command": "powershell -NoProfile -File tools/sync_engine_source.ps1" } ] }
+      ]
+    }
+  }
+  ```
+
+  It needs `FACEPUNCH_ENGINE` and `SBOX_PUBLIC` set for the user.
+
+### A hotfix without a tag
+
+Facepunch can ship a hotfix, such as `26.10.13a`, hours or days before it tags it in
+`sbox-public`. Until the tag appears, the script checks out the nearest tagged release
+before the hotfix, usually the release it patches, and prints `NEAREST`. Every later run
+looks for the tag again and prints `SYNCED` once it is there.
+
+While the line says `NEAREST`:
+
+- **Say engine facts are approximate.** Cite the tag the line names, such as
+  `26.10.13:<path>`, and say the installed hotfix may differ.
+- **Suspect the hotfix when the source doesn't explain a result.** If an engine test fails
+  in a way the nearest source can't explain, record that and check again once the tag
+  appears.
+
+### After a new release
+
+When the line says `SYNCED`, the engine changed under the project:
+
+- **Rerun the machine checks** before trusting earlier results: the engine tests, and the
+  editor check if the project has one.
+- **Recheck the engine facts the project relies on.** For each source path its notes or
+  domain skill cite, read what changed with `git diff <old>..<new> -- <path>`.
 
 ## Writing a requirement's test
 
@@ -90,10 +133,12 @@ clone, fetching the tag first if the clone lacks it. It prints one line and alwa
 
 ## Expected results
 
-All six tests should pass, and `Setup_DefaultSurfaceIsAvailable` should print the route
+All seven tests should pass, and `Setup_DefaultSurfaceIsAvailable` should print the route
 `internal fallback: registered a stand-in default surface`. `Setup_SavedSceneLoads` and
 `Setup_SavedSceneSimulates` are inconclusive if the project has no
-`Assets/scenes/minimal.scene`.
+`Assets/scenes/minimal.scene`. `Setup_SavedSceneKeepsMeshData` saves its own scene to a
+temporary folder, so it runs in any project. It is inconclusive only if the engine's save
+internals moved.
 
 ## Results
 
@@ -147,3 +192,34 @@ On 2026-10-14 an hourly Windows scheduled task ran the script through `conhost -
 so no window opened. It printed `MATCH`, and the task returned 0.
 
 **Not covered:** fetching a real new release from GitHub, because none had shipped yet.
+
+### Saved mesh data
+
+Verified on 2026-10-18, on S&box `26.10.13a` with .NET SDK `10.0.401`, in a scratch game
+project with the template's `minimal.scene`:
+
+| Run | Result |
+|---|---|
+| Clean, in PowerShell 7 | All 7 passed. |
+| Control, with `ReadSceneFile` ignoring the `_d` file, in Windows PowerShell | 1 failed: `Setup_SavedSceneKeepsMeshData`, with `ray missed the saved block`. The other 6 passed. |
+| Clean again, in Windows PowerShell, after changing the restored file's date | All 7 passed. |
+| A scene the Editor saved | A `run_csharp` script added a mesh block to a new scene, and `save_scene` wrote a `_d` file beside it. A test that loaded the scene with `LoadSavedScene` hit the block's top. With the control loader, the ray missed. |
+
+**Not covered:** scene files in KeyValues3 form, which start with `<`. The Editor's reader
+unwraps them (`26.10.13:engine/Sandbox.Tools/Scene/SceneSource.cs`, approximate for
+`26.10.13a`); the starter's loader doesn't.
+
+### Untagged hotfix and the runner's warning
+
+Verified on 2026-10-18, with S&box `26.10.13a` installed and no `26.10.13a` tag in
+`Facepunch/sbox-public` yet. Every script run used Windows PowerShell 5.1 and PowerShell 7.
+
+| Run | Result |
+|---|---|
+| The script, on the real clone | `NEAREST` at `26.10.13`. The clone had no changes, and `master` didn't move. |
+| A throwaway repository | With only `26.10.13` tagged, an installed `26.10.13a` gave `NEAREST` and moved the clone there; a rerun said it was already there. Once `26.10.13a` was tagged, `SYNCED`. An installed `26.10.13b` gave `NEAREST` at `26.10.13a`. A missing `26.10.20` gave `NOT SYNCED` with `origin has no tag 26.10.20 yet`. Local changes gave `NOT SYNCED` on the release path and the nearest-tag path, and left the clone and the change alone. |
+| The `SessionStart` hook | In a scratch project with the hook above, and `SBOX_PUBLIC` set for that session, `claude -p --setting-sources project,local` quoted the `NEAREST` line from its context. Without the hook, it found no such line. |
+| The runner, with `FACEPUNCH_ENGINE` and `SBOX_PUBLIC` cleared in the shell | It found the install through the user's `FACEPUNCH_ENGINE`. `NOT CHECKED`, with no clone and with a folder that isn't a clone, ended with the `Warning:` line, and so did `NEAREST` on the real clone. `MATCH` and `SYNCED`, on throwaway clones at and behind the installed tag, didn't. |
+
+**Not covered:** the user-level `SBOX_PUBLIC` fallback, because the test machine doesn't set
+it for the user, and a hotfix tag appearing on GitHub.

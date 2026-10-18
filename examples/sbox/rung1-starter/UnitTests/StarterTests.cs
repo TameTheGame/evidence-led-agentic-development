@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sandbox;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
@@ -117,5 +118,57 @@ public class StarterTests
 		var z = pc.GameObject.WorldPosition.z;
 		Assert.IsTrue( landed, $"never landed on the saved floor: z = {z}" );
 		Assert.IsTrue( z > -1f && z < 2f, $"landed at the wrong height: z = {z}" );
+	}
+
+	[TestMethod]
+	public void Setup_SavedSceneKeepsMeshData()
+	{
+		// A saved scene keeps mesh and terrain data in a "<scene>_d" file beside it. If this
+		// fails, saved meshes load empty in tests and traces pass through them.
+		var folder = Path.Combine( Path.GetTempPath(), $"starter-scene-{Guid.NewGuid():N}" );
+		Directory.CreateDirectory( folder );
+		try
+		{
+			var path = Path.Combine( folder, "block.scene" );
+			var saved = new Scene();
+			using ( saved.Push() )
+			{
+				StarterGeometry.CreateBlock( saved, "Saved Block", new Vector3( -64, -64, -32 ), new Vector3( 128, 128, 32 ) );
+				SaveLikeTheEditor( saved, path );
+			}
+			Assert.IsTrue( File.Exists( path + "_d" ), "the save wrote no _d file, so this test checks nothing" );
+
+			var scene = new Scene();
+			using var scope = scene.Push();
+
+			Assert.IsTrue( EngineTestHelpers.LoadSavedScene( scene, path ), $"could not load {path}" );
+
+			var tr = scene.Trace.Ray( new Vector3( 0, 0, 100 ), new Vector3( 0, 0, -100 ) ).Run();
+
+			Assert.IsTrue( tr.Hit, "ray missed the saved block: its mesh loaded without its _d data" );
+			Assert.AreEqual( "Saved Block", tr.GameObject?.Name, "ray hit something other than the saved block" );
+			Assert.AreEqual( 0f, tr.EndPosition.z, 1f, "ray should stop at the saved block's top surface" );
+		}
+		finally
+		{
+			Directory.Delete( folder, true );
+		}
+	}
+
+	/// <summary>
+	/// Writes a scene the way the editor's save does: the JSON, and the binary data in "_d".
+	/// Only this self-test uses it; the editor saves a project's own scenes. Scene.CreateSceneFile
+	/// and GameResource.SaveToDisk are internal, so it uses reflection.
+	/// </summary>
+	static void SaveLikeTheEditor( Scene scene, string path )
+	{
+		var create = typeof( Scene ).GetMethod( "CreateSceneFile", BindingFlags.Instance | BindingFlags.NonPublic );
+		var save = typeof( GameResource ).GetMethod( "SaveToDisk", BindingFlags.Instance | BindingFlags.NonPublic,
+			null, new[] { typeof( string ), typeof( string ) }, null );
+		if ( create is null || save is null )
+			Assert.Inconclusive( $"engine internals not found (CreateSceneFile={create is not null}, SaveToDisk={save is not null})" );
+
+		var file = (SceneFile)create.Invoke( scene, null );
+		save.Invoke( file, new object[] { path, file.Serialize().ToJsonString() } );
 	}
 }

@@ -60,6 +60,52 @@
   `Setup_SavedSceneSimulates` lands a player on the saved scene's floor. A first real project
   found it. Checked on S&box `26.10.13a`: all 6 starter tests passed, and with the old
   loader only the new test failed.
+- **Engine source follows a hotfix before it is tagged.** The rung-1 starter's
+  `sync_engine_source.ps1` checks out the nearest tagged release before an untagged hotfix,
+  such as `26.10.13` for `26.10.13a`, and prints `NEAREST`; a later run picks up the tag.
+  Before, it printed `NOT SYNCED` and left the clone wherever it was. The starter README
+  says how to cite engine facts while the line says `NEAREST`, what to rerun after
+  `SYNCED`, and how to run the script at the start of each agent session. A first real
+  project found it. Checked on S&box `26.10.13a`, in both shells: the real clone printed
+  `NEAREST` at `26.10.13` and was left clean with `master` in place. A throwaway repository
+  gave `NEAREST`, then `SYNCED` once the hotfix was tagged, `NEAREST` at an earlier hotfix,
+  and `NOT SYNCED` for a missing release tag and for local changes. The `SessionStart` hook
+  put the line in a new session's context.
+- **Saved scenes keep their mesh data in the rung-1 starter.** S&box saves editable mesh
+  and terrain data in a `<scene>_d` file beside the scene, and `LoadSavedScene` dropped it,
+  so saved meshes loaded empty and traces passed through them. It now reads the `_d` file
+  the way the editor does, and the new `Setup_SavedSceneKeepsMeshData` checks that a saved
+  block stops a trace. A first real project found it. Checked on S&box `26.10.13a`: all 7
+  starter tests passed, and with the loader ignoring the `_d` file only the new test failed.
+  A scene the Editor saved with a mesh block got a `_d` file, and a test that loaded it hit
+  the block.
+- **A compile check for `run_csharp` scripts.** `examples/sbox/tools/compile_check.ps1`
+  builds them against the installed engine's assemblies without starting S&box, so a wrong
+  name fails in seconds instead of in the Editor. A first real project had no check on
+  these scripts before they ran. Checked on S&box `26.10.13a`, in both shells: a script using
+  real APIs passed, and the same script with one misspelled member failed at its own file
+  and line. A script using a helper passed with `-Include` and failed without it, and a
+  wrong `-Engine` stopped with `NOT RUN`. No S&box process started. The first run found that
+  scripts using `Log` failed, because `run_csharp` also brings in the game's global names.
+  The check now does too, for scripts and included code, with `run_csharp`'s compiler
+  settings.
+- **The editor check says why an editor didn't start.** `editor_check.ps1` saves each
+  editor's `sbox-cli` output and editor log with its results, and prints their last lines
+  on a failure. It stops with `NOT RUN` when Steam isn't running. Before, a failed start
+  said only that `sbox-cli` stopped. A first real project found it. Checked on S&box
+  `26.10.13a`, in both shells: a scratch scene passed with both editors' `sbox-cli` output
+  and logs saved. With a 5-second limit the check failed with `wasn't ready`, printed the
+  last lines of both files, and left no S&box process. Windows PowerShell garbled the log's
+  non-ASCII text until the script read it as UTF-8. Steam stayed open, so the `NOT RUN`
+  branch was read, not run.
+- **The engine-test runner flags source it didn't match.** `run_engine_tests.ps1` and
+  `sync_engine_source.ps1` read `FACEPUNCH_ENGINE` and `SBOX_PUBLIC` from the user's settings
+  when the shell started without them, and the runner ends with a warning unless the source
+  line says `MATCH` or `SYNCED`. A first real project's run said `NOT CHECKED` on a line
+  that was easy to miss. Checked on S&box `26.10.13a`, in both shells: with both variables
+  cleared in the shell, the runner found the install through the user's `FACEPUNCH_ENGINE`.
+  `NOT CHECKED` and `NEAREST` ended with the warning, and `MATCH` and `SYNCED` didn't. The
+  user-level `SBOX_PUBLIC` wasn't tested, because the test machine doesn't set it.
 
 ## 0.9 — 2026-10-14
 

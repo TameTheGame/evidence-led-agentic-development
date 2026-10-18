@@ -9,6 +9,7 @@
 | [`engine-rung-spike/`](engine-rung-spike/README.md) | A runnable kit that proved rung 1 works for a project's own tests, with results from seven runs |
 | [`rung1-starter/`](rung1-starter/README.md) | A copyable starting point for a project's engine tests: the default-surface scaffolding, helpers, a requirement test with its control, a runner that keeps the engine log, and a script that keeps a local `sbox-public` clone on the installed release |
 | [`skills/sbox-engine-reference/`](skills/sbox-engine-reference/SKILL.md) | An example of a project's domain skill: verified S&box behavior and where to look in the engine source. Tested in the [domain-skill test](../../skills/evidence/SBOX_SKILL_TEST.md) |
+| [`tools/compile_check.ps1`](tools/compile_check.ps1) | A rung-0 check that compiles `run_csharp` scripts against the installed engine's assemblies without starting S&box. See [The compile check](#the-compile-check) |
 | [`tools/editor_check.ps1`](tools/editor_check.ps1) | A rung-2 check that runs unattended: it saves a scene in the Editor, closes it, reopens it, and checks that nothing changed, with a screenshot from a fixed camera before and after. Needs S&box `26.10.13` or later. See [The editor check](#the-editor-check) |
 | [`tools/spec_lint.py`](tools/spec_lint.py) | A rung-0 spec lint: format and card checks that fail the run, a lookup that reports checks not found in the test and script folders, and an owner gate that reports any change to an agreed requirement since the last commit. Run `python tools/test_spec_lint.py` to check it against its fixtures. |
 
@@ -16,7 +17,7 @@
 
 | Rung | Example check |
 |---|---|
-| **0 · static** | The layout data is valid, spawn IDs are unique, and the saved `.scene` JSON has exactly one main camera. |
+| **0 · static** | The layout data is valid, spawn IDs are unique, and the saved `.scene` JSON has exactly one main camera. The project's code and its `run_csharp` scripts compile against the installed engine. |
 | **1 · engine** | A `UnitTests/` project starts the engine through `TestAppSystem` and builds the area with the same generator code. It then checks collision, spawn grounding, and route traces. |
 | **2 · editor** | The generated scene survives save, close, and reopen unchanged. A screenshot from a fixed camera. |
 | **3 · session** | A remote client sees and collides with the same walls. Same-machine host and client is not clean-client proof. |
@@ -48,11 +49,47 @@ collision, traces, spawn landing, and stuck detection against generated geometry
    - `Scene.LoadFromFile` fails headlessly.
    - Reading the `.scene` file through `SceneFile.LoadFromJson` and `Scene.Load` works, and
      its box collider is traceable.
+   - Found later, on `26.10.13a`: a scene with editable meshes or terrain keeps their data
+     in a `<scene>_d` file beside it. `LoadFromJson` drops that data, so those meshes load
+     empty and traces pass through them. The starter's loader reads the `_d` file through
+     the internal `SceneFile.FromSource` the editor uses
+     (`26.10.13:engine/Sandbox.Tools/Scene/SceneSource.cs`, approximate: `26.10.13a` has
+     no source tag yet), and `Setup_SavedSceneKeepsMeshData` checks it.
 5. **Rung 1 is Windows-only.** It needs the installed engine (`FACEPUNCH_ENGINE`) and the
    .NET 10 SDK. Cloud or Linux agents can run rung 0 only.
 
 Still open: saved scenes that reference prefabs or collision models, and generated geometry
 saved into a scene. See the [roadmap](../../ROADMAP.md).
+
+## The compile check
+
+A `run_csharp` script is the body of an async method, not a C# file, so nothing compiles it
+until the Editor runs it. `tools/compile_check.ps1` wraps each script the way `run_csharp`
+does and builds it against the installed engine's assemblies, without starting S&box:
+
+```powershell
+powershell -File tools\compile_check.ps1 -Scripts tools\place_player.cs
+```
+
+- **It proves names, not behavior.** A pass means every type, member, and signature the
+  script uses exists in the installed build. It runs nothing, so it is a rung-0 check.
+- **It needs the dev machine, but only for seconds.** It reads
+  `<engine>\bin\managed\*.dll` and needs the .NET 10 SDK. It starts nothing, so run it
+  before any check that starts the engine or the Editor.
+- **Errors point at the script.** Each error names the script's own file and line.
+- **The project's own code compiles through its test project.** `dotnet build UnitTests`
+  builds the code and the tests S&box generated, without starting the engine.
+
+Verified on S&box `26.10.13a`, in Windows PowerShell 5.1 and PowerShell 7. A script using
+engine and editor APIs passed in about two seconds. The same script with one misspelled
+member failed with `CS1061` at the script's own file and line. A script calling a helper
+class passed with `-Include` on the helper's folder and failed without it. A script using a
+component whose code calls `Log` passed with `-Include` on that `Code` folder. A wrong
+`-Engine` stopped with `NOT RUN` and exit 2. No S&box process started during these runs or
+during `dotnet build UnitTests`. The first run found that a script using `Log` failed, because
+`run_csharp` also brings in the game's global names
+(`26.10.13:engine/Sandbox.Engine/Systems/Mcp/ScriptTools.cs`, approximate for `26.10.13a`).
+The check now does too, for scripts and for included code, as a project's own build does.
 
 ## The editor check
 
@@ -91,6 +128,11 @@ powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
 - **It leaves no trace.** It puts the scene file back as it was, and saves results in
   `test-results\editor-<time>\`: both captures, both saved files, the object lists, and the
   console errors.
+- **It keeps each editor's own account.** It saves the output of the `sbox-cli` process that
+  owns each editor, and the editor log from `<engine>\logs\`, with the results. On a failure
+  it prints the last lines of both, so a failed start says why.
+- **Steam must be running.** S&box starts through Steam. The check stops with `NOT RUN`
+  when Steam isn't running, and doesn't start it, because a Steam start can update S&box.
 
 Verified on S&box `26.10.13`, in Windows PowerShell 5.1 and PowerShell 7. A scratch scene
 passed in about a minute. A control scene with a component that changes its own saved value
@@ -99,6 +141,13 @@ each time it loads failed on the second save, and passed once that object was re
 On `26.10.13a`, a content project with no `Code` or `Editor` folder passed in both shells.
 The previous version of the script stopped on it with `NOT RUN: the project has 0 compile
 error(s)`. A new project made from the new-game template passed too.
+
+Also verified on `26.10.13a`, in both shells: a scratch scene passed in about a minute, and
+its results held both editors' `sbox-cli` output and editor logs. The Editor writes its log
+to `<engine>\logs\sbox-dev.log` and keeps earlier ones under dated names. With
+`-TimeoutSeconds 5`, the check failed with `the editor wasn't ready`, printed the last lines
+of both files, and left no S&box process. Steam stayed open throughout, so the `NOT RUN`
+branch for a closed Steam was read, not run.
 
 ## A map with no code
 

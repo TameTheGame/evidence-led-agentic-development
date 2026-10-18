@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using Sandbox;
 
@@ -66,9 +68,9 @@ static class EngineTestHelpers
 
 	/// <summary>
 	/// Loads a saved scene from its file, given a path relative to the project root such as
-	/// "Assets/scenes/minimal.scene". Scene.LoadFromFile fails headlessly, because project
-	/// resources aren't registered, so this reads the JSON instead. Tested only on scenes whose
-	/// objects don't reference prefabs or models.
+	/// "Assets/scenes/minimal.scene", or an absolute path. Scene.LoadFromFile fails headlessly,
+	/// because project resources aren't registered, so this reads the file instead. Tested only
+	/// on scenes whose objects don't reference prefabs or models.
 	/// It loads without a loading screen, as S&box's own scene tests do (SceneLoadSave.cs).
 	/// With one, the scene waits for a loading task that nothing runs headlessly, stays
 	/// <see cref="Scene.IsLoading"/>, and <see cref="Scene.GameTick"/> skips it, so a player in
@@ -76,12 +78,40 @@ static class EngineTestHelpers
 	/// </summary>
 	public static bool LoadSavedScene( Scene scene, string relativePath )
 	{
-		var file = new SceneFile();
-		file.LoadFromJson( File.ReadAllText( Path.Combine( ProjectRoot(), relativePath ) ) );
-
 		var options = new SceneLoadOptions { ShowLoadingScreen = false };
-		options.SetScene( file );
+		options.SetScene( ReadSceneFile( Path.Combine( ProjectRoot(), relativePath ), relativePath ) );
 		return scene.Load( options );
+	}
+
+	/// <summary>
+	/// Reads a saved scene with its binary data. S&box saves mesh and terrain data beside the
+	/// scene, in "&lt;file&gt;_d", and the scene's JSON only refers to it. The public
+	/// <see cref="GameResource.LoadFromJson"/> drops that data, so meshes would load empty and
+	/// traces would pass through them. When a "_d" file exists, this calls the internal
+	/// SceneFile.FromSource the editor itself uses (Sandbox.Tools/Scene/SceneSource.cs).
+	/// Test-only: it uses reflection, and an engine update may break it.
+	/// </summary>
+	static SceneFile ReadSceneFile( string path, string relativePath )
+	{
+		var json = File.ReadAllText( path );
+		var data = path + "_d";
+		if ( !File.Exists( data ) )
+		{
+			var file = new SceneFile();
+			file.LoadFromJson( json );
+			return file;
+		}
+
+		var fromSource = typeof( SceneFile ).GetMethod( "FromSource", BindingFlags.Static | BindingFlags.NonPublic,
+			null, new[] { typeof( string ), typeof( Guid ), typeof( string ), typeof( byte[] ) }, null )
+			?? throw new InvalidOperationException( "SceneFile.FromSource( string, Guid, string, byte[] ) is gone in this engine build, so a scene's _d data can't be loaded; find the editor's new route in Sandbox.Tools/Scene/SceneSource.cs" );
+
+		// The editor passes the asset path, relative to Assets.
+		var assetPath = relativePath.Replace( '\\', '/' );
+		if ( assetPath.StartsWith( "Assets/", StringComparison.OrdinalIgnoreCase ) )
+			assetPath = assetPath["Assets/".Length..];
+
+		return (SceneFile)fromSource.Invoke( null, new object[] { assetPath, Guid.Empty, json, File.ReadAllBytes( data ) } );
 	}
 
 	/// <summary>

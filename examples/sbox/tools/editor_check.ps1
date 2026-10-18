@@ -15,7 +15,8 @@ Runs unattended through sbox-cli, which ships with S&box 26.10.13 and later
      components, and that saving again writes a byte-identical file;
   5. takes the same screenshot, and reports how much it differs as a record, not a score;
   6. puts the scene file back as it was, so the check leaves the working tree unchanged.
-Results go to test-results\editor-<time>\. Exit code: 0 pass, 1 fail, 2 not run.
+Results go to test-results\editor-<time>\, with each editor's sbox-cli output and editor log.
+On a failure it also prints the last lines of both. Exit code: 0 pass, 1 fail, 2 not run.
 
 The editor skips a save when nothing changed, which would make step 4's comparison empty. So
 each save first adds a marker object and undoes it: the content is unchanged, but the editor
@@ -26,7 +27,9 @@ Editor folder, in it or in its libraries, such as a content map, never compiles:
 then reports no compile result, and the check doesn't wait for one.
 
 The project must be closed in every editor first, because the check closes and reopens it.
-Editors accept sbox-cli unless Project Settings > AI > Enable MCP Communication is off.
+Steam must be running, because S&box starts through it; the check doesn't start Steam, which
+can update S&box. Editors accept sbox-cli unless Project Settings > AI > Enable MCP
+Communication is off.
 
 .EXAMPLE
 powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
@@ -55,6 +58,10 @@ if (-not $Engine -or -not (Test-Path (Join-Path $Engine 'sbox-dev.exe'))) {
 $cli = Join-Path $Engine 'bin\managed\sbox-cli.exe'
 if (-not (Test-Path $cli)) { Stop-Setup "no sbox-cli in $Engine\bin\managed; it ships with S&box 26.10.13 and later." }
 $version = Get-Content (Join-Path $Engine '.version') -TotalCount 1 -ErrorAction SilentlyContinue
+# Without Steam the editor never starts, and sbox-cli gives up with little to go on.
+if (-not (Get-Process steam -ErrorAction SilentlyContinue)) {
+    Stop-Setup 'Steam is not running, and S&box needs it. Start Steam (for example: Start-Process steam://open/main), wait for it to sign in, and rerun.'
+}
 
 $dir = (Resolve-Path $Project).Path
 if ($dir -like '*.sbproj') { $dir = Split-Path $dir }
@@ -87,14 +94,42 @@ function Invoke-SboxCli([string[]]$Arguments) {
 # Calls one editor tool on this project's editor; throws if it fails.
 function Call([string]$Tool, [hashtable]$Arguments = @{}) {
     $r = Invoke-SboxCli @('--connect', $dir, '--call', $Tool, ($Arguments | ConvertTo-Json -Compress))
-    if ($r.Code -ne 0) { throw "$Tool failed: $($r.Err)" }
+    if ($r.Code -ne 0) { throw "$Tool failed: $(if ($r.Err) { $r.Err } else { $r.Out })" }
     return $r.Out
 }
+
+# The sbox-cli process that owns an editor prints why it stopped, such as a failed start, and
+# nothing else keeps that output. This collects it from .NET's own threads, which can't run
+# PowerShell script blocks.
+if (-not ('EditorCheckOutput' -as [type])) {
+    Add-Type -TypeDefinition @'
+using System.Collections.Concurrent;
+using System.Diagnostics;
+public static class EditorCheckOutput {
+    public static ConcurrentQueue<string> Attach(Process process) {
+        var lines = new ConcurrentQueue<string>();
+        DataReceivedEventHandler keep = (sender, e) => {
+            if (e.Data == null) return;
+            lines.Enqueue(e.Data);
+            string dropped;
+            while (lines.Count > 5000) lines.TryDequeue(out dropped);
+        };
+        process.OutputDataReceived += keep;
+        process.ErrorDataReceived += keep;
+        return lines;
+    }
+}
+'@
+}
+$editorLog = Join-Path $Engine 'logs\sbox-dev.log'
+$sessions = New-Object System.Collections.Generic.List[object]
 
 function Test-Open {
     $r = Invoke-SboxCli @('--list')
     if ($r.Code -ne 0 -or -not $r.Out) { return $false }
-    foreach ($i in @($r.Out | ConvertFrom-Json)) {
+    # Windows PowerShell's ConvertFrom-Json passes a JSON array on as one object; the
+    # parentheses make foreach walk its items in both shells.
+    foreach ($i in ($r.Out | ConvertFrom-Json)) {
         $p = "$($i.project)"
         if ($p -like '*.sbproj') { $p = Split-Path $p }
         if ($p -and $p.TrimEnd('\') -eq $dir.TrimEnd('\')) { return $true }
@@ -113,11 +148,15 @@ function Start-Editor {
     $info.RedirectStandardInput = $true
     $info.RedirectStandardOutput = $true
     $info.RedirectStandardError = $true
+    $started = Get-Date
     $owner = [Diagnostics.Process]::Start($info)
+    $n = $sessions.Count + 1
+    $sessions.Add([pscustomobject]@{ Owner = $owner; Started = $started; Lines = [EditorCheckOutput]::Attach($owner)
+        Output = Join-Path $Out "sbox-cli-$n.txt"; Log = Join-Path $Out "sbox-dev-$n.log"; Saved = $false })
     $owner.BeginOutputReadLine(); $owner.BeginErrorReadLine()
     $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
     while ((Get-Date) -lt $deadline) {
-        if ($owner.HasExited) { throw "sbox-cli stopped before the editor was ready (exit $($owner.ExitCode))" }
+        if ($owner.HasExited) { throw "sbox-cli stopped before the editor was ready (exit $($owner.ExitCode)); see sbox-cli-$n.txt" }
         $r = Invoke-SboxCli @('--connect', $dir, '--call', 'editor_status')
         if ($r.Code -eq 0) {
             $status = $r.Out | ConvertFrom-Json
@@ -127,7 +166,18 @@ function Start-Editor {
         }
         Start-Sleep -Seconds 3
     }
-    throw "the editor wasn't ready after $TimeoutSeconds s"
+    throw "the editor wasn't ready after $TimeoutSeconds s; see sbox-cli-$n.txt and sbox-dev-$n.log"
+}
+
+# Saves each stopped editor's sbox-cli output, and the editor log it wrote, once.
+function Save-SessionLogs {
+    foreach ($s in $sessions) {
+        if ($s.Saved -or -not $s.Owner.HasExited) { continue }
+        $s.Owner.WaitForExit()   # without a time limit, this also waits for the last output lines
+        [IO.File]::WriteAllLines($s.Output, [string[]]$s.Lines.ToArray())
+        if ((Test-Path $editorLog) -and (Get-Item $editorLog).LastWriteTime -ge $s.Started) { Copy-Item $editorLog $s.Log }
+        $s.Saved = $true
+    }
 }
 
 # Quits the editor the way a person closes it, then makes sure it is gone.
@@ -139,6 +189,7 @@ function Stop-Editor($owner) {
         if (-not $owner.WaitForExit(30000)) { $owner.Kill() }
     }
     for ($i = 0; $i -lt 20 -and (Test-Open); $i++) { Start-Sleep -Seconds 1 }
+    Save-SessionLogs
 }
 
 # One line per saved object: parent, id, name, enabled state, and component types. Editor-only
@@ -254,6 +305,9 @@ try {
     $checks['Run'] = "FAIL - $($_.Exception.Message)"
 } finally {
     if ($editor) { try { Stop-Editor $editor.Owner } catch { if (-not $editor.Owner.HasExited) { $editor.Owner.Kill() } } }
+    # An editor that failed to start never reached $editor; make sure its sbox-cli is gone too.
+    foreach ($s in $sessions) { if (-not $s.Owner.HasExited) { try { Stop-Editor $s.Owner } catch { $s.Owner.Kill() } } }
+    try { Save-SessionLogs } catch { $notes.Add("couldn't save the sbox-cli output: $($_.Exception.Message)") }
     if ($null -ne $original -and -not (Test-Open)) { [IO.File]::WriteAllBytes($sceneFile, $original) }
 }
 
@@ -266,6 +320,16 @@ if ($shotBefore -and $shotAfter) {
     Write-Host "Screenshot: before.png and after.png from $Camera at $Angles; mean difference $(if ($null -ne $d) { "$d%" } else { 'not measured' }) (a record, not scored)"
 }
 foreach ($n in $notes) { Write-Host "Note:       $n" }
+# On a failure, show the last editor's own account of it.
+if (($failed -or -not $checks.Count) -and $sessions.Count) {
+    $last = $sessions[$sessions.Count - 1]
+    foreach ($file in @($last.Output, $last.Log)) {
+        if (-not (Test-Path $file)) { continue }
+        Write-Host "Last lines: $(Split-Path $file -Leaf)"
+        # Both files are UTF-8 without a byte order mark, which Windows PowerShell reads as ANSI.
+        Get-Content $file -Tail 15 -Encoding UTF8 | ForEach-Object { Write-Host "  $_" }
+    }
+}
 Write-Host "Result:     $(if ($failed -or -not $checks.Count) { 'FAIL' } else { 'PASS' })"
 Write-Host "Saved:      $Out"
 exit $(if ($failed -or -not $checks.Count) { 1 } else { 0 })

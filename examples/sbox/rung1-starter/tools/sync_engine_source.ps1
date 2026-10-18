@@ -10,8 +10,10 @@ release on the first line of its .version file. This script:
   1. reads the installed release;
   2. fetches that release's tag into the clone, only if the clone doesn't have it yet;
   3. checks the tag out as a detached HEAD, unless the clone has local changes; and
-  4. prints one line: MATCH, SYNCED, UNKNOWN (a staging build, which has no public tag),
-     NOT SYNCED with the reason, or NOT CHECKED when the install or clone isn't given.
+  4. prints one line: MATCH, SYNCED, NEAREST, UNKNOWN (a staging build, which has no public
+     tag), NOT SYNCED with the reason, or NOT CHECKED when the install or clone isn't given.
+A hotfix can ship before Facepunch tags it. Until the tag appears, the script checks out the
+nearest tagged release before the hotfix and says NEAREST; a later run picks up the tag.
 It changes nothing else in the clone: no branches, commits, or pushes. Run
 "git switch master" in the clone to go back to the latest source.
 It always exits 0, so a session start or test run never stops on it. Read the line.
@@ -25,6 +27,9 @@ param(
     [int]$FetchSeconds = 120
 )
 $ErrorActionPreference = 'Stop'
+# A shell started before these were set for the user lacks them, so read the user's values too.
+if (-not $Engine) { $Engine = [Environment]::GetEnvironmentVariable('FACEPUNCH_ENGINE', 'User') }
+if (-not $Source) { $Source = [Environment]::GetEnvironmentVariable('SBOX_PUBLIC', 'User') }
 # Windows PowerShell passes -Source "C:\path\" through with its closing quote; no path has one.
 $Engine = "$Engine".Trim().Trim('"')
 $Source = "$Source".Trim().Trim('"')
@@ -42,12 +47,13 @@ function Get-Position {
     if ($branch.Code -eq 0) { "$where on $($branch.Text)" } else { $where }
 }
 
-# git fetch can hang on a bad network, so it runs with a time limit.
-function Get-Tag([string]$Tag) {
+# git fetch and ls-remote can hang on a bad network, so they run with a time limit. Code is
+# git's exit code, or -1 when it ran out of time; Problem is the last error line.
+function Invoke-TimedGit([string]$Arguments) {
     $info = New-Object System.Diagnostics.ProcessStartInfo
     $info.FileName = 'git'
     $info.WorkingDirectory = $Source
-    $info.Arguments = "fetch --no-tags origin refs/tags/${Tag}:refs/tags/${Tag}"
+    $info.Arguments = $Arguments
     $info.UseShellExecute = $false
     $info.RedirectStandardOutput = $true
     $info.RedirectStandardError = $true
@@ -60,10 +66,69 @@ function Get-Tag([string]$Tag) {
         $ErrorActionPreference = 'Continue'
         & taskkill.exe /T /F /PID $process.Id 2>&1 | Out-Null
         try { $process.Kill() } catch { }
-        return "the fetch took longer than $FetchSeconds s"
+        return [pscustomobject]@{ Code = -1; Problem = "the fetch took longer than $FetchSeconds s" }
     }
-    if ($process.ExitCode -ne 0) { return @($errors.Result.Trim() -split "`n")[-1].Trim() }
-    return $null
+    $process.WaitForExit()
+    # git's first fatal line names the problem; the lines after it are advice.
+    $lines = @($errors.Result.Trim() -split "`n" | ForEach-Object { $_.Trim() })
+    $problem = @($lines | Where-Object { $_ -match '^(fatal|error):' }) + $lines[-1]
+    [pscustomobject]@{ Code = $process.ExitCode; Problem = $problem[0] }
+}
+
+# Fetches a tag into the clone. Returns $null once it is there, 'missing' when origin has no
+# such tag, or why the fetch failed.
+function Get-Tag([string]$Tag) {
+    $fetch = Invoke-TimedGit "fetch --no-tags origin refs/tags/${Tag}:refs/tags/${Tag}"
+    if ($fetch.Code -eq 0) { return $null }
+    if ($fetch.Code -ne -1) {
+        # git's fetch error is worded for people; ls-remote exits 2 when the tag isn't there.
+        if ((Invoke-TimedGit "ls-remote --exit-code --tags origin refs/tags/$Tag").Code -eq 2) { return 'missing' }
+    }
+    return $fetch.Problem
+}
+
+# The tag's commit, fetching the tag first if the clone lacks it. Problem is 'missing', why the
+# fetch failed, or $null.
+function Resolve-Tag([string]$Tag) {
+    $found = Invoke-Git rev-parse --verify --quiet "refs/tags/$Tag^{commit}"
+    if ($found.Code -ne 0) {
+        $problem = Get-Tag $Tag
+        if ($problem) { return [pscustomobject]@{ Commit = $null; Problem = $problem } }
+        $found = Invoke-Git rev-parse --verify --quiet "refs/tags/$Tag^{commit}"
+        if ($found.Code -ne 0) { return [pscustomobject]@{ Commit = $null; Problem = 'missing' } }
+    }
+    [pscustomobject]@{ Commit = $found.Text; Problem = $null }
+}
+
+# Checks the tag out unless the clone is already there or has local changes. Returns 'here',
+# 'moved', 'changes', or why the checkout failed.
+function Set-Clone([string]$Tag, [string]$Commit) {
+    if ((Invoke-Git rev-parse HEAD).Text -eq $Commit) { return 'here' }
+    if ((Invoke-Git status --porcelain).Text) { return 'changes' }
+    $moved = Invoke-Git -c advice.detachedHead=false checkout --quiet --detach "refs/tags/$Tag"
+    if ($moved.Code -ne 0) { return "git checkout failed ($(@($moved.Text -split "`n")[-1]))" }
+    return 'moved'
+}
+
+# A hotfix shipped before its tag: use the nearest tagged release before it, the earlier
+# hotfixes of the same release first, then the release itself.
+function Sync-Nearest([string]$Release, [string]$Before) {
+    $base = $Release.Substring(0, 8)
+    $letter = [int][char]$Release[8]
+    $earlier = @(for ($c = $letter - 1; $c -ge [int][char]'a'; $c--) { $base + [char]$c }) + $base
+    foreach ($candidate in $earlier) {
+        $near = Resolve-Tag $candidate
+        if ($near.Problem -eq 'missing') { continue }
+        if ($near.Problem) { return "NOT SYNCED - origin has no tag $Release yet, and fetching $candidate failed ($($near.Problem)). The clone was left at $Before." }
+        $why = "origin has no tag $Release yet, so engine source is approximate; a later run picks up the tag"
+        switch (Set-Clone $candidate $near.Commit) {
+            'here' { return "NEAREST - sbox-public is at $candidate, the nearest tagged release before $Release; $why." }
+            'moved' { return "NEAREST - moved sbox-public from $Before to $candidate, the nearest tagged release before $Release; $why." }
+            'changes' { return "NOT SYNCED - origin has no tag $Release yet, and sbox-public has local changes, so it was left at $Before. Read the nearest release with: git show ${candidate}:<path>" }
+            default { return "NOT SYNCED - origin has no tag $Release yet, and moving to $candidate failed: $_. The clone was left at $Before." }
+        }
+    }
+    return "NOT SYNCED - origin has no tag $Release yet, nor any earlier tag of $base. The clone was left at $Before."
 }
 
 function Sync {
@@ -81,21 +146,17 @@ function Sync {
         return "UNKNOWN - installed S&box $release is not a public release, so sbox-public has no tag for it. The clone was left at $before."
     }
 
-    $tag = Invoke-Git rev-parse --verify --quiet "refs/tags/$release^{commit}"
-    if ($tag.Code -ne 0) {
-        $problem = Get-Tag $release
-        if ($problem) { return "NOT SYNCED - could not fetch tag $release from origin ($problem). The clone was left at $before." }
-        $tag = Invoke-Git rev-parse --verify --quiet "refs/tags/$release^{commit}"
-        if ($tag.Code -ne 0) { return "NOT SYNCED - origin has no tag $release. The clone was left at $before." }
-    }
+    $found = Resolve-Tag $release
+    if ($found.Problem -eq 'missing' -and $release.Length -eq 9) { return Sync-Nearest $release $before }
+    if ($found.Problem -eq 'missing') { return "NOT SYNCED - origin has no tag $release yet; a later run picks it up. The clone was left at $before." }
+    if ($found.Problem) { return "NOT SYNCED - could not fetch tag $release from origin ($($found.Problem)). The clone was left at $before." }
 
-    if ((Invoke-Git rev-parse HEAD).Text -eq $tag.Text) { return "MATCH - sbox-public is at $release, the installed S&box release." }
-    if ((Invoke-Git status --porcelain).Text) {
-        return "NOT SYNCED - sbox-public has local changes, so it was left at $before. Read the installed release with: git show ${release}:<path>"
+    switch (Set-Clone $release $found.Commit) {
+        'here' { return "MATCH - sbox-public is at $release, the installed S&box release." }
+        'moved' { return "SYNCED - moved sbox-public from $before to $release, the installed S&box release." }
+        'changes' { return "NOT SYNCED - sbox-public has local changes, so it was left at $before. Read the installed release with: git show ${release}:<path>" }
+        default { return "NOT SYNCED - $_. The clone was left at $before." }
     }
-    $moved = Invoke-Git -c advice.detachedHead=false checkout --quiet --detach "refs/tags/$release"
-    if ($moved.Code -ne 0) { return "NOT SYNCED - git checkout failed ($(@($moved.Text -split "`n")[-1])). The clone was left at $before." }
-    return "SYNCED - moved sbox-public from $before to $release, the installed S&box release."
 }
 
 $saved = @{ SBOX_SKIP_HOOKS = $env:SBOX_SKIP_HOOKS; GIT_TERMINAL_PROMPT = $env:GIT_TERMINAL_PROMPT }

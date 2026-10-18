@@ -11,7 +11,9 @@ the install folder, which every run overwrites. This script:
   3. runs `dotnet test` on the project's UnitTests folder, holding a lock so that only one
      run at a time uses the engine log;
   4. saves the test output, the engine log, and the engine version in test-results\<time>\;
-  5. prints the test summary, the source check, and any error lines the engine logged.
+  5. prints the test summary, the source check, and any error lines the engine logged, and
+     a warning when the source isn't matched to the installed release.
+FACEPUNCH_ENGINE and SBOX_PUBLIC are read from the user's settings when the shell lacks them.
 Exit code: dotnet test's, or 2 when the machine or project isn't set up.
 
 .EXAMPLE
@@ -29,6 +31,9 @@ $ErrorActionPreference = 'Stop'
 function Stop-Setup($message) { Write-Host "NOT RUN: $message"; exit 2 }
 
 if ([Environment]::OSVersion.Platform -ne 'Win32NT') { Stop-Setup 'S&box engine tests run on Windows only.' }
+# A shell started before these were set for the user lacks them, so read the user's values too.
+if (-not $Engine) { $Engine = [Environment]::GetEnvironmentVariable('FACEPUNCH_ENGINE', 'User') }
+if (-not $Source) { $Source = [Environment]::GetEnvironmentVariable('SBOX_PUBLIC', 'User') }
 if (-not $Engine -or -not (Test-Path (Join-Path $Engine 'sbox-dev.exe'))) {
     Stop-Setup 'set FACEPUNCH_ENGINE (or pass -Engine) to the S&box install folder, the one containing sbox-dev.exe.'
 }
@@ -130,4 +135,8 @@ if ($null -eq $logLines) {
     Write-Host "            $other other error line(s); headless start-up logs some, such as missing shaders, even when every test passes"
 }
 Write-Host "Saved:      $Out"
+# An agent may cite engine source for these results, so say plainly when it isn't the release that ran.
+if ($sourceCheck -match '^(NOT CHECKED|NOT SYNCED|NEAREST|UNKNOWN)') {
+    Write-Host "Warning:    engine source is $($Matches[1]), not matched to S&box $version. Say so before citing sbox-public for this run; the Source line says why."
+}
 exit $code
