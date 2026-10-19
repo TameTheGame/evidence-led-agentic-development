@@ -16,6 +16,14 @@ core breaks.
   project": what helped, what was ignored, and what got in the way, in synthetic terms, with
   its limits. The project's records show no use of the skills, and its owner also maintains
   ELAD. The roadmap marks the item done, and the status pages say the bar for `1.0` is met.
+- **A rewritten README.** It now says who ELAD is for, where it has been used, and how
+  to adapt it to another kind of project; what goes wrong without it; how a task runs;
+  what ELAD is not; and where things are in the repository. The evidence section is a
+  summary with links. The quick start now says the agent does the setup: the owner asks
+  for it in one line, and the agent installs the skills, drafts the first spec, and asks
+  the owner to approve it and the `AGENTS.md` change. Parts written for agents are set
+  apart in quoted blocks marked "For agents". The spec format, the ladder, the skills
+  table, and the 1.0 facts are unchanged.
 - **A sixth S&box lesson: a dedicated server doesn't mount a library's assets.**
   `examples/sbox/README.md` adds it to "Lessons from a world build": content that lives only
   in a `Libraries\` project loads in the Editor but is not found on a dedicated server, so
