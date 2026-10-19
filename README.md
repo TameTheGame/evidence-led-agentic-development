@@ -89,11 +89,12 @@ the decisions that are yours.
 >    with every requirement as `draft`. If the project already has gates or sign-off
 >    steps, map them first, as [Projects That Already Have Gates](docs/EXISTING_GATES.md)
 >    shows.
-> 3. **Propose a change to `AGENTS.md`.** Point it to the spec. Suggest that agents run the
->    project's checks without asking, including starting the engine or editor for a test,
->    and ask the owner first only for actions that are hard to undo. `AGENTS.md` decides
->    what agents may do, and the skills never override it, so the owner approves this
->    change.
+> 3. **Propose a change to `AGENTS.md`.** Point it to the spec, and name the ELAD release
+>    the skills came from, by version and commit, so a later move knows where it starts.
+>    Suggest that agents run the project's checks without asking, including starting the
+>    engine or editor for a test, and ask the owner first only for actions that are hard
+>    to undo. `AGENTS.md` decides what agents may do, and the skills never override it, so
+>    the owner approves this change.
 > 4. **Ask the owner to agree the requirements.** Show the draft and ask which to make
 >    `agreed`. Only the owner can.
 >

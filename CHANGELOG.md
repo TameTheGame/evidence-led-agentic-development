@@ -7,9 +7,11 @@
   the notes for every release since then, takes the changed files, updates every place the
   project names its pin, runs the project's checks, and records the move.
   `docs/RELEASING.md` now says a release's compatibility notes always tell projects that
-  name their pinned version to update it, even when nothing else needs to change. A first
-  real project's move to v1.0 showed the gap: the README covered first setup only, and the
-  release notes didn't say to update a pin.
+  name their pinned version to update it, even when nothing else needs to change. Setup
+  step 3 now has the agent name the ELAD release in `AGENTS.md`, by version and commit, so
+  a later move knows where it starts. A first real project's move to v1.0 showed the gap:
+  the README covered first setup only, setup recorded no pin, and the release notes didn't
+  say to update one.
 
 ## 1.0 — 2026-10-18
 
