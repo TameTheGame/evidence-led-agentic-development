@@ -100,6 +100,37 @@ the decisions that are yours.
 > If the skills don't load on their own, add the [skills snippet](skills/AGENTS_SNIPPET.md)
 > to `AGENTS.md`. It is a few lines saying which skill fits which moment.
 
+## Moving to a new release
+
+A project stays on the ELAD release it pinned until you decide to move. To move, tell your
+agent:
+
+```text
+Move this project to the latest ELAD release
+```
+
+> **For agents: moving to a new release**
+>
+> 1. **Find the release the project pins.** Its `AGENTS.md` or decision log usually names
+>    it. If nothing does, compare the project's copied skills with
+>    [`skills/`](skills/README.md) at each release tag.
+> 2. **Read the notes for every release since then,** in [`releases/`](releases/). Each
+>    one's "Compatibility and migration" section says what changed and what a project must
+>    do.
+> 3. **Take the changed files.** Replace each copied file that changed, such as a skill or
+>    an example script. Where the project adapted a copy, carry the change into its version
+>    by hand, and say which copies you changed that way.
+> 4. **Update every place the project names its pin,** even when nothing else changed,
+>    such as the version line in `AGENTS.md`, source lines on copied files, and any check
+>    that compares the copies with a release. Search the project for the old version and
+>    commit to find them all.
+> 5. **Run the project's checks,** and fix what the move broke.
+> 6. **Record the move** where the project records decisions: the old and new versions and
+>    the new release's commit. If a release suggests a change to what agents may do,
+>    propose it in `AGENTS.md` for the owner to approve, as at setup.
+>
+> To go back to an earlier release, follow the same steps toward it.
+
 ## How a task runs
 
 1. **Intent.** You say what you want. If no `agreed` requirement covers it, the agent

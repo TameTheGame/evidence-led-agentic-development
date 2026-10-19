@@ -44,7 +44,9 @@ that use ELAD, their models, or their releases.
    `STATUS.md`. Move finished changelog entries from `Unreleased` into a dated section.
    Add `releases/vMAJOR.MINOR.md`, covering:
    - highlights;
-   - compatibility and migration;
+   - compatibility and migration, which always tells projects that name their pinned
+     version to update it, even when nothing else needs to change (see
+     [Moving to a new release](../README.md#moving-to-a-new-release));
    - evidence limits; and
    - rollback.
 

@@ -2,7 +2,14 @@
 
 ## Unreleased
 
-No pending changes.
+- **Steps for moving to a new release.** The README gains "Moving to a new release". The
+  owner asks for the move in one line. The agent finds the release the project pins, reads
+  the notes for every release since then, takes the changed files, updates every place the
+  project names its pin, runs the project's checks, and records the move.
+  `docs/RELEASING.md` now says a release's compatibility notes always tell projects that
+  name their pinned version to update it, even when nothing else needs to change. A first
+  real project's move to v1.0 showed the gap: the README covered first setup only, and the
+  release notes didn't say to update a pin.
 
 ## 1.0 — 2026-10-18
 
