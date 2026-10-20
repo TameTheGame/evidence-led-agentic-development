@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **Four S&box lessons from importing old content.** `examples/sbox/README.md` gains
+  "Lessons from importing old content". Convert SMD models to FBX, OBJ, or DMX first. Set
+  simple properties, such as an enum, `int`, `bool`, or `float`, in a constructor when their
+  value isn't a constant, because the code generator copies initializers into
+  `[DefaultValue]`. A mesh marked HideInGame still renders in the editor scene and its
+  screenshots. `Material.Load` returns an error material, not null, for a missing file, so
+  editor code checks `AssetSystem.FindByPath`. Each cites the `26.10.13` source. A first
+  real project found them on S&box `26.10.13a`.
 - **Steps for moving to a new release.** The README gains "Moving to a new release". The
   owner asks for the move in one line. The agent finds the release the project pins, reads
   the notes for every release since then, takes the changed files, updates every place the
