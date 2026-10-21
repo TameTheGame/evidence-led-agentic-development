@@ -2,7 +2,15 @@
 
 ## Unreleased
 
-No pending changes.
+- **Releases come in batches.** `docs/RELEASING.md` gains "Release cadence", and ADR-0021
+  records it. Finished changes collect on `tamethegame/next-release`, each with a
+  changelog line under `Unreleased` and no version bump, and `main` moves only at release
+  time. A release is due when the batch has something a user would notice: a new or
+  changed skill, a new guide or example, a fix a project needs, or a breaking change.
+  Typos and small tidies wait. It goes out on one GREEN from the owner, in the evening and
+  not every day. An urgent fix lands on the branch too and ships the batch early.
+  `AGENTS.md`, `CONTRIBUTING.md`, and the README now say the same. From `v1.01` to
+  `v1.03`, each update was its own release.
 
 ## 1.03 — 2026-10-21
 

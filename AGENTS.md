@@ -12,9 +12,9 @@ agents. It has three parts:
 It runs nothing and grants no authority; see
 [Authority and Safety](docs/AUTHORITY_AND_SAFETY.md).
 
-This public repository is the only maintained copy. Develop on `main` with short-lived task
-branches. Retired pre-publication history stays in an external private archive and is never
-merged.
+This public repository is the only maintained copy. Develop on short-lived task branches;
+finished changes collect on `tamethegame/next-release` until a release. Retired
+pre-publication history stays in an external private archive and is never merged.
 
 ## Context
 
@@ -49,9 +49,10 @@ CHANGELOG line.
 3. Run `python tools/check.py` and read the exact diff.
 4. Record a decision in [`docs/DECISIONS.md`](docs/DECISIONS.md) only for lasting changes
    to compatibility, authority, or the method itself.
-5. Close authorized user-facing updates through [Releasing](docs/RELEASING.md): a version
-   bump, notes, a validated commit, a tag, and a verified GitHub Release. That is the
-   default, unless the owner asks for draft or local-only work.
+5. Close authorized user-facing updates through [Releasing](docs/RELEASING.md): a
+   changelog line under `Unreleased` and a validated commit on `tamethegame/next-release`.
+   A later release carries it, with a version bump, notes, a tag, and a verified GitHub
+   Release.
 
 The release permission covers this repository only. It grants no authority over any
 project that uses ELAD.

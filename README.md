@@ -313,8 +313,9 @@ repository is well formed, nothing more. See [Contributing](CONTRIBUTING.md#chec
 - Versions are `MAJOR.MINOR`, tags are `vMAJOR.MINOR`, and a released tag never moves. See
   [Releasing](docs/RELEASING.md). Each release has notes in [`releases/`](releases/) and a
   dated section in the [changelog](CHANGELOG.md).
-- From `1.0` on, the minor number has two digits: `1.01`, `1.02`, and so on. Each update
-  that lands on `main` is released with the next number.
+- From `1.0` on, the minor number has two digits: `1.01`, `1.02`, and so on. Finished
+  changes collect between releases and ship together; see
+  [Release cadence](docs/RELEASING.md#release-cadence).
 - `1.0` marks the first time coding agents built something real under the method. On a
   private S&box project, they built the first slice of a game world, checked it at every
   rung, and its owner approved it. The two formal conditions for `1.0`, skills that trigger

@@ -6,19 +6,28 @@ artifacts they govern are archived at the `v0.5` tag (see [Archive](../ARCHIVE.m
 ## ADR-0021 — Version numbers and releases after 1.0
 
 **Status:** accepted by Josh, the owner, on 2026-10-21 for v1.01; the rule for breaking
-changes accepted by him on 2026-10-21 for v1.03
+changes accepted by him on 2026-10-21 for v1.03; batched releases asked for by him on
+2026-10-21, after v1.03
 
 After `1.0`, five updates reached `main` without a release, so a project had no version to
 pin them by. The owner asked for versioning to resume, numbered `1.01`, `1.02`, and so on.
 The policy also said what a breaking change does only in `0.x`; the owner chose a new major
-number for one after `1.0`.
+number for one after `1.0`. After `v1.03`, the owner found a release for each update too
+frequent, and asked to hold changes until there is enough for a new version, then release
+them together in the evening, not every day.
 
 **Decision.**
 
 - From `1.0` on, the minor number has two digits: `1.01`, `1.02`, through `1.09` and on to
   `1.10`. Tags keep the `v` prefix and two components, as in `v1.01`.
-- Each coherent update that lands on `main` ships as the next release, with a changelog
-  section, release notes, and a tag, so `main` doesn't sit ahead of the latest tag.
+- Finished changes collect on one long-lived branch, `tamethegame/next-release`, each with
+  a changelog line under `Unreleased` and no version bump. `main` moves only at release
+  time, so it never sits ahead of the latest tag.
+- A release is due when the batch has something a user would notice: a new or changed
+  skill, a new guide or example, a fix a project needs, or a breaking change. Typos and
+  small tidies wait. It goes out on one GREEN, in the evening and not every day. An urgent
+  fix for something broken lands on the branch like any change, and its release ships the
+  whole batch early.
 - Each release waits for the owner's typed GREEN before it reaches `main` and is tagged,
   as `v1.0` did. One GREEN covers that release's push and tag.
 - A release that breaks existing projects takes the next major number: the first after
@@ -31,8 +40,14 @@ number for one after `1.0`.
 
 - `1.1`, `1.2` under the old rule of no leading zeroes. Version tools parse those without
   trouble, but it isn't the form the owner chose.
-- Releasing in batches. That leaves updates on `main` with no version to pin, which is what
+- Batching on `main`. That leaves updates on `main` with no version to pin, which is what
   happened after `1.0`.
+- A release for each update, as `v1.01` to `v1.03` did. It released more often than the
+  owner wanted.
+- A fixed schedule, such as weekly. A quiet week would make a release with little in it.
+- Releasing an urgent fix on its own from a branch off `main`. Bringing it back into
+  `tamethegame/next-release` would take a merge, which would reach `main` at the next
+  release, and the owner keeps history linear.
 - Breaking changes on the minor number, as in `0.x`. Then the number wouldn't tell a
   project whether a move needs work beyond its pin.
 
@@ -40,8 +55,8 @@ number for one after `1.0`.
 claimed. Nothing in this repository parses versions: the release job compares the tag with
 `VERSION` as text. Python's `packaging` reads `1.01` as `1.1`, so a one-digit minor number
 must never follow: `1.1` would collide with `1.01` there. Old tags don't change, `v1.0`
-included. Rolling back means a later decision that changes the numbering from its next
-release on.
+included. Projects pin released tags, so batching changes nothing for them. Rolling back
+means a later decision that changes the numbering or the cadence from its next release on.
 
 ## ADR-0020 — Spec, ladder, and skills become the core
 

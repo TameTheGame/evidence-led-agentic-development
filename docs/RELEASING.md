@@ -2,9 +2,12 @@
 
 ## Default completion
 
-The maintainer's September 5, 2026 decision makes a versioned GitHub Release part of
-completing an authorized user-facing update. Unless the owner explicitly asks for draft,
-local-only, or unreleased work, the delivery agent owns these steps:
+A finished update is complete when it is on the `tamethegame/next-release` branch with a
+changelog line under `Unreleased`, and the hosted checks pass there. A versioned GitHub
+Release then carries a batch of finished updates; see [Release cadence](#release-cadence).
+This replaces the maintainer's September 5, 2026 rule, which released each update on its
+own. Unless the owner explicitly asks for draft or local-only work, the delivery agent owns
+these release steps:
 
 - the version bump;
 - the release notes;
@@ -14,11 +17,33 @@ local-only, or unreleased work, the delivery agent owns these steps:
 
 Each release waits for the owner's typed GREEN before it reaches `main` and is tagged. Ask
 for it once per release; it covers that release's push and tag. Don't ask again for each
-step, and don't call a push alone a completed delivery. Unaccepted contributor changes
-don't carry this permission.
+step, and don't call a push alone a completed delivery. Pushing a finished update to
+`tamethegame/next-release` needs no GREEN. Unaccepted contributor changes don't carry this
+permission.
 
 This permission covers this public repository only. It grants no authority over projects
 that use ELAD, their models, or their releases.
+
+## Release cadence
+
+- **One branch collects finished changes.** `tamethegame/next-release` starts from `main`
+  at the latest release. Each finished change is committed there and pushed, so the hosted
+  checks run on it. Its changelog line goes under `Unreleased`, and the version doesn't
+  change. `main` moves only at release time, so it never sits ahead of the latest tag.
+- **A release is due when the batch has something a user would notice:** a new or changed
+  skill, a new guide or example, a fix a project needs, or a breaking change. Typos and
+  small tidies wait for a release that has one of those.
+- **When it goes out.** The delivery agent proposes the release, and the owner gives one
+  GREEN. A release goes out after the owner's working hours, such as in the evening, and
+  not every day. The [delivery loop](#delivery-loop) then makes the release commit on the
+  branch, fast-forwards `main` to it, and tags it, so the branch equals `main` and starts
+  collecting the next batch.
+- **Urgent fixes.** A fix for something broken lands on `tamethegame/next-release` like
+  any other change, and its release ships the whole batch early. Everything on the branch
+  is finished and checked, so the batch can always be released. There are no side
+  branches or merges, so history stays linear.
+
+See ADR-0021 in [Decisions](DECISIONS.md).
 
 ## Version numbers
 
@@ -28,11 +53,8 @@ that use ELAD, their models, or their releases.
   through `1.09` and on to `1.10`; after `2.0` come `2.01`, `2.02`, and so on. Never write
   a one-digit minor number after a major release: some version tools read `1.01` as `1.1`,
   so `1.1` would collide with it. See ADR-0021 in [Decisions](DECISIONS.md).
-- **Minor numbers.** Increment the minor number for each coherent completed update that
-  doesn't break existing projects, including a fix or a documentation-only release. Don't
-  release each intermediate commit, but don't leave `main` ahead of the latest tag either:
-  each coherent update that lands on `main` ships as the next release, with its changelog
-  section, notes, and tag.
+- **Minor numbers.** Each release that doesn't break existing projects takes the next
+  minor number, including one that carries only fixes or documentation.
 - **Breaking changes in 0.x.** A `0.x` minor release may include breaking changes; its
   release notes say what broke and how to stay on the previous version.
 - **Breaking changes from 1.0 on.** A release that breaks existing projects takes the next
@@ -71,8 +93,9 @@ that use ELAD, their models, or their releases.
    Its first heading names the exact release.
 3. **Check.** Run `python tools/check.py` and `git diff --check`, review proportionally,
    and run the check on a fresh clone.
-4. **Push.** Commit and push the accepted source to `main`. Wait for the hosted Ubuntu and
-   Windows checks to pass for that exact commit.
+4. **Push.** Commit the release on `tamethegame/next-release` and push it. Wait for the
+   hosted Ubuntu and Windows checks to pass for that exact commit, then fast-forward `main`
+   to it and push `main`.
 5. **Tag.** Create an annotated `vMAJOR.MINOR` tag at that commit and push it. The tag
    workflow confirms that the tag matches `VERSION` and that the release notes exist,
    reruns the check, and only then publishes the notes as the latest GitHub Release.
@@ -83,6 +106,8 @@ that use ELAD, their models, or their releases.
    - has the intended notes.
 
    Report the release URL and the final Git state. Delivery isn't complete without this.
+7. **Carry on.** `tamethegame/next-release` now equals `main`, with `No pending changes.`
+   under `Unreleased`, and collects the next batch.
 
 **If validation or publication fails,** report the exact incomplete step and repair it
 within scope. Before retrying, check whether the release already exists. Never overwrite a

@@ -94,6 +94,7 @@ material you don't have the right to contribute.
 
 ## Completing an update
 
-Follow [Releasing](docs/RELEASING.md). Maintainer-authorized user-facing updates include a
-version bump, changelog and release notes, a passing check, a matching tag, and a verified
-GitHub Release. Drafts and unaccepted pull requests don't authorize publication.
+Follow [Releasing](docs/RELEASING.md). A maintainer-authorized user-facing update lands on
+`tamethegame/next-release` with a changelog line and a passing check. Releases gather those
+updates, each with a version bump, release notes, a matching tag, and a verified GitHub
+Release. Drafts and unaccepted pull requests don't authorize publication.
