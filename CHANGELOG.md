@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Two more S&box lessons from a world build.** `examples/sbox/README.md` adds them to
+  "Lessons from a world build". A `GameObjectSystem` runs in every scene, so a player
+  spawner written as one also runs in scenes that spawn players through a `NetworkHelper`,
+  and should skip them. A test can walk a `PlayerController` without a keyboard by turning
+  `UseInputControls` off and setting `WishVelocity`. Each cites the `26.10.13` source. A
+  first real project found them on S&box `26.10.13a`.
 - **Four S&box lessons from importing old content.** `examples/sbox/README.md` gains
   "Lessons from importing old content". Convert SMD models to FBX, OBJ, or DMX first. Set
   simple properties, such as an enum, `int`, `bool`, or `float`, in a constructor when their

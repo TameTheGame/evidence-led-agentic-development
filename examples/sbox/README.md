@@ -178,7 +178,7 @@ A first real project kept its map in a content project, with no code of its own.
 
 ## Lessons from a world build
 
-The same project's world work on S&box `26.10.13a` turned up eight more. Each is read from
+The same project's world work on S&box `26.10.13a` turned up ten more. Each is read from
 the engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 - **Read scene-load errors from editor start.** The Editor loads its startup scene before a
@@ -261,6 +261,30 @@ the engine source at `26.10.13`, which is approximate for `26.10.13a`.
     (`26.10.13:engine/Sandbox.Engine/Systems/Networking/System/NetworkConsoleCommands.cs`,
     lines 137-156).
   - A check that wanted the game port failed on every run, and one built this way passed.
+- **A GameObjectSystem runs in every scene.** Each new scene creates one instance of every
+  non-abstract `GameObjectSystem` type in the project
+  (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.System.cs`, lines 37-56, called from
+  `26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.cs`, lines 167-178). A `NetworkHelper`
+  also clones its player prefab for each connection
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Networking/NetworkHelper.cs`, lines
+  51-62). So a player spawner written as a system also runs in scenes that spawn players
+  through a `NetworkHelper`, and on `26.10.13a` those scenes got a second player. Have the
+  system skip scenes that have their own player route, such as a scene with a
+  `NetworkHelper`.
+- **Test walking without a keyboard.** With `UseInputControls` on, which is the default, a
+  `PlayerController` sets `WishVelocity` from `Input.AnalogMove` on every fixed update
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.DefaultControls.cs`,
+  lines 65-77;
+  `26.10.13:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.Input.cs`,
+  lines 6 and 91-94). With it off, `WishVelocity` keeps what a test sets, and the step
+  before physics applies it through the move mode
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.cs`,
+  lines 204-211;
+  `26.10.13:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/Modes/MoveMode.cs`,
+  lines 57-60). So a test can turn `UseInputControls` off, set `WishVelocity`, let the
+  scene run, and read the position. Set it where the controller isn't a network proxy,
+  because a proxy doesn't apply it (`PlayerController.cs`, line 208). A first real project
+  tested walking this way on `26.10.13a`.
 
 ## Lessons from importing old content
 

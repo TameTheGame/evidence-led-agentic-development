@@ -279,7 +279,7 @@ tests, are in [Evidence Ladder](docs/EVIDENCE_LADDER.md#with-superpowers).
 
 [`examples/sbox/`](examples/sbox/README.md) applies the method to a made-up game map in
 S&box. It includes a sample spec, the ladder for S&box, starter engine tests, a compile
-check, an editor check that runs on its own, a spec checker, an S&box skill, eight
+check, an editor check that runs on its own, a spec checker, an S&box skill, ten
 [lessons from a world build](examples/sbox/README.md#lessons-from-a-world-build), and four
 [from importing old content](examples/sbox/README.md#lessons-from-importing-old-content).
 It is an example, not part of the method's rules.
