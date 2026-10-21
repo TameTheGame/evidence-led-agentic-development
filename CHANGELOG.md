@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **Three more S&box lessons from a world build.** `examples/sbox/README.md` adds them to
+  "Lessons from a world build". In a SceneLoaded hook, `Time.Now` is the caller's clock,
+  not play time. Edits made through `run_csharp` don't mark the scene unsaved, so
+  `save_scene` writes nothing until the script sets `HasUnsavedChanges` or uses an undo
+  scope. `Editor.FileSystem.Content` is read-only. Each cites the `26.10.13` source. A
+  first real project found them on S&box `26.10.13a`. "The editor check" no longer calls
+  the `HasUnsavedChanges` setter untested: that project used it on `26.10.13a`, and the
+  scene saved.
+
 - **Two more S&box lessons from a world build.** `examples/sbox/README.md` adds them to
   "Lessons from a world build". A `GameObjectSystem` runs in every scene, so a player
   spawner written as one also runs in scenes that spawn players through a `NetworkHelper`,

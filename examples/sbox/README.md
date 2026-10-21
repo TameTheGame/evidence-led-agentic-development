@@ -117,8 +117,9 @@ powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
   - Setting the session's `HasUnsavedChanges` to true would force a save too; it has a
     public setter (`26.10.13:engine/Sandbox.Tools/Scene/Session/SceneEditorSession.cs`).
     But only `run_csharp` can set it, and this check uses `sbox-cli`'s own tools. A build
-    script that already runs through `run_csharp` may find the setter simpler. That is
-    from the source and untested.
+    script that already runs through `run_csharp` may find the setter simpler. On
+    `26.10.13a`, a `run_csharp` script that set it at its end, followed by `save_scene`,
+    wrote the scene; the file's new timestamp and contents showed it.
 - **A project without code works too.** A project with code must report a finished,
   successful compile. A content project, such as a map, has no `Code` or `Editor` folder
   and never compiles, so the check doesn't wait for a compile result.
@@ -178,8 +179,8 @@ A first real project kept its map in a content project, with no code of its own.
 
 ## Lessons from a world build
 
-The same project's world work on S&box `26.10.13a` turned up ten more. Each is read from
-the engine source at `26.10.13`, which is approximate for `26.10.13a`.
+The same project's world work on S&box `26.10.13a` turned up thirteen more. Each is read
+from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 - **Read scene-load errors from editor start.** The Editor loads its startup scene before a
   check can mark the log, and opening a scene that is already open logs nothing new. So a
@@ -285,6 +286,45 @@ the engine source at `26.10.13`, which is approximate for `26.10.13a`.
   scene run, and read the position. Set it where the controller isn't a network proxy,
   because a proxy doesn't apply it (`PlayerController.cs`, line 208). A first real project
   tested walking this way on `26.10.13a`.
+- **In a SceneLoaded hook, `Time.Now` is the caller's clock.** `Scene.Load` pushes the
+  scene, which sets `Game.ActiveScene` and the clock from the scene
+  (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.cs`, lines 515-526), only while it
+  reads the file (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.LoadSave.cs`, lines
+  108-151). It signals `Stage.SceneLoaded` after that scope ends (line 164), and stage
+  callbacks run with no scope of their own
+  (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.System.cs`, lines 122-125;
+  `26.10.13:engine/Sandbox.Engine/Scene/GameObjectSystem/TimedCallbackList.cs`, lines
+  41-50). So a SceneLoaded hook sees whatever clock its caller had. On `26.10.13a`, a scene
+  loaded from the Editor gave the Editor's clock, not play time. Read times in the first
+  update instead, or do the hook's work inside `using ( Scene.Push() )`
+  (`Scene.cs`, lines 261-264); that and the same effect on `Game.ActiveScene` are inferred
+  from the source.
+- **`run_csharp` edits don't mark the scene unsaved, so `save_scene` writes nothing.**
+  `run_csharp` creates no undo steps
+  (`26.10.13:engine/Sandbox.Engine/Systems/Mcp/ScriptTools.cs`, line 23), and an editor
+  session marks itself unsaved through undo scopes and undo or redo
+  (`26.10.13:engine/Sandbox.Tools/Scene/Session/SceneEditorSession.Undo.cs`, lines 21-29
+  and 786-789). `save_scene` calls the session's save
+  (`26.10.13:game/addons/tools/Code/Mcp/Scene.cs`, lines 578-588), which returns without
+  writing when the scene has no unsaved changes and its file exists
+  (`26.10.13:engine/Sandbox.Tools/Scene/Session/SceneEditorSession.cs`, lines 356-360). On
+  `26.10.13a`, edits made through `run_csharp` were not saved this way.
+  - End the script by setting `Editor.SceneEditorSession.Active.HasUnsavedChanges = true`,
+    then call `save_scene` (public setter, `SceneEditorSession.cs`, lines 277-290). On
+    `26.10.13a` that wrote the scene. `run_csharp` wants editor types fully qualified
+    (`ScriptTools.cs`, line 23), so use the full name.
+  - Making the edits inside an undo scope, as `create_game_object` does (`Scene.cs` in the
+    tools addon, line 265), should work too. That is from the source and untested.
+- **`Editor.FileSystem.Content` is read-only.** It merges core, citizen, cloud, and addon
+  content into one view (`26.10.13:engine/Sandbox.Tools/FileSystem.cs`, lines 53-55 and
+  75-87), and that merged view is read-only
+  (`26.10.13:engine/Sandbox.Filesystem/AggregateFileSystem.cs`, lines 3-8; `IsReadOnly`,
+  `26.10.13:engine/Sandbox.Filesystem/BaseFileSystem.cs`, line 36). It wraps Zio's
+  `AggregateFileSystem`, a `ReadOnlyFileSystem` whose writes throw an `IOException`, "This
+  filesystem is read-only" (Zio `0.23.0`, `src/Zio/FileSystems/AggregateFileSystem.cs`,
+  line 17; `ReadOnlyFileSystem.cs`, lines 20 and 38). So a write through it fails, as it
+  did on `26.10.13a`. Write project files to a real path instead, such as under the
+  project's `Assets` folder (inferred).
 
 ## Lessons from importing old content
 
