@@ -25,15 +25,22 @@ that use ELAD, their models, or their releases.
 - **Format.** Versions use `MAJOR.MINOR`: `0.5`, `0.6`, `0.7`, and so on. Tags and GitHub
   Releases use a `v` prefix, as in `v0.6`, never `v0.6.0`.
 - **Two-digit minor numbers from 1.0 on.** After `1.0` come `1.01`, `1.02`, and so on, up
-  through `1.09` and on to `1.10`. Never write a one-digit minor number after `1.0`: some
-  version tools read `1.01` as `1.1`, so `1.1` would collide with it. See ADR-0021 in
-  [Decisions](DECISIONS.md).
-- **Minor numbers.** Increment the minor number for each coherent completed update,
-  including a fix or a documentation-only release. Don't release each intermediate commit,
-  but don't leave `main` ahead of the latest tag either: each coherent update that lands on
-  `main` ships as the next release, with its changelog section, notes, and tag.
+  through `1.09` and on to `1.10`; after `2.0` come `2.01`, `2.02`, and so on. Never write
+  a one-digit minor number after a major release: some version tools read `1.01` as `1.1`,
+  so `1.1` would collide with it. See ADR-0021 in [Decisions](DECISIONS.md).
+- **Minor numbers.** Increment the minor number for each coherent completed update that
+  doesn't break existing projects, including a fix or a documentation-only release. Don't
+  release each intermediate commit, but don't leave `main` ahead of the latest tag either:
+  each coherent update that lands on `main` ships as the next release, with its changelog
+  section, notes, and tag.
 - **Breaking changes in 0.x.** A `0.x` minor release may include breaking changes; its
   release notes say what broke and how to stay on the previous version.
+- **Breaking changes from 1.0 on.** A release that breaks existing projects takes the next
+  major number, so the first after `1.xx` is `2.0`. A change breaks existing projects when
+  a project that moves to it has to change its own files, beyond its pin and the copies it
+  takes, for its specs and checks to keep working: for example, a spec field renamed or
+  removed, or an example script whose arguments changed. Its release notes say what broke,
+  what a project must change, and how to stay on the previous release.
 - **When 1.0 comes.** `1.0` is reserved for two conditions:
   - automatic skill triggering has been tested in a real install; and
   - ELAD has been used on one real project.
@@ -49,7 +56,7 @@ that use ELAD, their models, or their releases.
 ## Delivery loop
 
 1. **Pick the version.** Choose the next unused version from `VERSION` and the published
-   releases.
+   releases. A release that breaks existing projects takes the next major number.
 2. **Update the version everywhere.** That means `VERSION`, the README's version line,
    `STATUS.md`, and `SECURITY.md`. Move finished changelog entries from `Unreleased` into a
    dated section.

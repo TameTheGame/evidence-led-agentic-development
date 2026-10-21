@@ -4,6 +4,18 @@
 
 No pending changes.
 
+## 1.03 — 2026-10-21
+
+A rule for breaking changes after `1.0`. No skill changed, and nothing in the core breaks.
+
+- **Breaking changes take a new major number.** `docs/RELEASING.md` now says a release that
+  breaks existing projects goes to the next major number, so the first after `1.xx` is
+  `2.0`, followed by `2.01`, `2.02`, and so on. Every other release takes the next
+  two-digit minor number, as before. A change breaks existing projects when a project
+  that moves to it has to change its own files, beyond its pin and the copies it takes,
+  for its specs and checks to keep working. ADR-0021 records the owner's decision. Until
+  now the policy said what a breaking change does only in `0.x`.
+
 ## 1.02 — 2026-10-21
 
 An import reference for S&box. No skill changed, and nothing in the core breaks.

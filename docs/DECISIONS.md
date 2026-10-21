@@ -3,12 +3,15 @@
 ADR-0001 to ADR-0017 describe the v0.5 protocol design. They are kept as history; the
 artifacts they govern are archived at the `v0.5` tag (see [Archive](../ARCHIVE.md)).
 
-## ADR-0021 — Two-digit minor numbers after 1.0, and a release for each update
+## ADR-0021 — Version numbers and releases after 1.0
 
-**Status:** accepted by Josh, the owner, on 2026-10-21 for v1.01
+**Status:** accepted by Josh, the owner, on 2026-10-21 for v1.01; the rule for breaking
+changes accepted by him on 2026-10-21 for v1.03
 
 After `1.0`, five updates reached `main` without a release, so a project had no version to
 pin them by. The owner asked for versioning to resume, numbered `1.01`, `1.02`, and so on.
+The policy also said what a breaking change does only in `0.x`; the owner chose a new major
+number for one after `1.0`.
 
 **Decision.**
 
@@ -18,6 +21,11 @@ pin them by. The owner asked for versioning to resume, numbered `1.01`, `1.02`, 
   section, release notes, and a tag, so `main` doesn't sit ahead of the latest tag.
 - Each release waits for the owner's typed GREEN before it reaches `main` and is tagged,
   as `v1.0` did. One GREEN covers that release's push and tag.
+- A release that breaks existing projects takes the next major number: the first after
+  `1.xx` is `2.0`, then `2.01`, and so on. Every other release takes the next minor
+  number. A change breaks existing projects when a project that moves to it has to change
+  its own files, beyond its pin and the copies it takes, for its specs and checks to keep
+  working.
 
 **Alternatives.**
 
@@ -25,6 +33,8 @@ pin them by. The owner asked for versioning to resume, numbered `1.01`, `1.02`, 
   trouble, but it isn't the form the owner chose.
 - Releasing in batches. That leaves updates on `main` with no version to pin, which is what
   happened after `1.0`.
+- Breaking changes on the minor number, as in `0.x`. Then the number wouldn't tell a
+  project whether a move needs work beyond its pin.
 
 **Compatibility and rollback.** `1.01` isn't strict Semantic Versioning, which ELAD never
 claimed. Nothing in this repository parses versions: the release job compares the tag with
