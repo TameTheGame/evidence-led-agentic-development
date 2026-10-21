@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+No pending changes.
+
+## 1.01 — 2026-10-21
+
+The first release after `1.0`. It adds steps for moving a project to a new release and nine
+S&box lessons from a first real project, and it brings back a release for each update, now
+with two-digit minor numbers. No skill changed, and nothing in the core breaks.
+
+- **Version numbers after 1.0.** Releases from `1.0` on have a two-digit minor number:
+  `1.01`, `1.02`, and so on. Each coherent update that lands on `main` ships as the next
+  release, with its changelog section, notes, and tag, and each waits for the owner's typed
+  GREEN. `docs/RELEASING.md` and the README say so, and ADR-0021 records the decision.
+  `SECURITY.md` names the current release again; it had said `0.6` since that release. The
+  README's moving steps say to search for the old version as a whole word, since `1.0` is
+  also the start of `1.01`.
 - **Three more S&box lessons from a world build.** `examples/sbox/README.md` adds them to
   "Lessons from a world build". In a SceneLoaded hook, `Time.Now` is the caller's clock,
   not play time. Edits made through `run_csharp` don't mark the scene unsaved, so
@@ -10,7 +25,6 @@
   first real project found them on S&box `26.10.13a`. "The editor check" no longer calls
   the `HasUnsavedChanges` setter untested: that project used it on `26.10.13a`, and the
   scene saved.
-
 - **Two more S&box lessons from a world build.** `examples/sbox/README.md` adds them to
   "Lessons from a world build". A `GameObjectSystem` runs in every scene, so a player
   spawner written as one also runs in scenes that spawn players through a `NetworkHelper`,

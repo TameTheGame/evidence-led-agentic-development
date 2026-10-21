@@ -27,7 +27,7 @@ permission to do anything. Permission comes from you and from your project's own
 `AGENTS.md`, the file that says what your agents may do. See
 [Authority and Safety](docs/AUTHORITY_AND_SAFETY.md).
 
-**Current version: 1.0.** See the [release notes](releases/v1.0.md) and
+**Current version: 1.01.** See the [release notes](releases/v1.01.md) and
 [Versions](#versions).
 
 ## Who it is for
@@ -123,8 +123,8 @@ Move this project to the latest ELAD release
 >    by hand, and say which copies you changed that way.
 > 4. **Update every place the project names its pin,** even when nothing else changed,
 >    such as the version line in `AGENTS.md`, source lines on copied files, and any check
->    that compares the copies with a release. Search the project for the old version and
->    commit to find them all.
+>    that compares the copies with a release. Search the project for the old version, as a
+>    whole word, and its commit to find them all; `1.0` is also the start of `1.01`.
 > 5. **Run the project's checks,** and fix what the move broke.
 > 6. **Record the move** where the project records decisions: the old and new versions and
 >    the new release's commit. If a release suggests a change to what agents may do,
@@ -313,6 +313,8 @@ repository is well formed, nothing more. See [Contributing](CONTRIBUTING.md#chec
 - Versions are `MAJOR.MINOR`, tags are `vMAJOR.MINOR`, and a released tag never moves. See
   [Releasing](docs/RELEASING.md). Each release has notes in [`releases/`](releases/) and a
   dated section in the [changelog](CHANGELOG.md).
+- From `1.0` on, the minor number has two digits: `1.01`, `1.02`, and so on. Each update
+  that lands on `main` is released with the next number.
 - `1.0` marks the first time coding agents built something real under the method. On a
   private S&box project, they built the first slice of a game world, checked it at every
   rung, and its owner approved it. The two formal conditions for `1.0`, skills that trigger

@@ -3,6 +3,36 @@
 ADR-0001 to ADR-0017 describe the v0.5 protocol design. They are kept as history; the
 artifacts they govern are archived at the `v0.5` tag (see [Archive](../ARCHIVE.md)).
 
+## ADR-0021 — Two-digit minor numbers after 1.0, and a release for each update
+
+**Status:** accepted by Josh, the owner, on 2026-10-21 for v1.01
+
+After `1.0`, five updates reached `main` without a release, so a project had no version to
+pin them by. The owner asked for versioning to resume, numbered `1.01`, `1.02`, and so on.
+
+**Decision.**
+
+- From `1.0` on, the minor number has two digits: `1.01`, `1.02`, through `1.09` and on to
+  `1.10`. Tags keep the `v` prefix and two components, as in `v1.01`.
+- Each coherent update that lands on `main` ships as the next release, with a changelog
+  section, release notes, and a tag, so `main` doesn't sit ahead of the latest tag.
+- Each release waits for the owner's typed GREEN before it reaches `main` and is tagged,
+  as `v1.0` did. One GREEN covers that release's push and tag.
+
+**Alternatives.**
+
+- `1.1`, `1.2` under the old rule of no leading zeroes. Version tools parse those without
+  trouble, but it isn't the form the owner chose.
+- Releasing in batches. That leaves updates on `main` with no version to pin, which is what
+  happened after `1.0`.
+
+**Compatibility and rollback.** `1.01` isn't strict Semantic Versioning, which ELAD never
+claimed. Nothing in this repository parses versions: the release job compares the tag with
+`VERSION` as text. Python's `packaging` reads `1.01` as `1.1`, so a one-digit minor number
+must never follow: `1.1` would collide with `1.01` there. Old tags don't change, `v1.0`
+included. Rolling back means a later decision that changes the numbering from its next
+release on.
+
 ## ADR-0020 — Spec, ladder, and skills become the core
 
 **Status:** accepted by Josh, the owner, on 2026-10-09 for v0.6

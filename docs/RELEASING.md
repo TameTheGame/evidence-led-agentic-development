@@ -12,8 +12,10 @@ local-only, or unreleased work, the delivery agent owns these steps:
 - the push and the tag; and
 - verifying that the release was published.
 
-Don't ask for the same release permission again, and don't call a push alone a completed
-delivery. Unaccepted contributor changes don't carry this permission.
+Each release waits for the owner's typed GREEN before it reaches `main` and is tagged. Ask
+for it once per release; it covers that release's push and tag. Don't ask again for each
+step, and don't call a push alone a completed delivery. Unaccepted contributor changes
+don't carry this permission.
 
 This permission covers this public repository only. It grants no authority over projects
 that use ELAD, their models, or their releases.
@@ -22,8 +24,14 @@ that use ELAD, their models, or their releases.
 
 - **Format.** Versions use `MAJOR.MINOR`: `0.5`, `0.6`, `0.7`, and so on. Tags and GitHub
   Releases use a `v` prefix, as in `v0.6`, never `v0.6.0`.
+- **Two-digit minor numbers from 1.0 on.** After `1.0` come `1.01`, `1.02`, and so on, up
+  through `1.09` and on to `1.10`. Never write a one-digit minor number after `1.0`: some
+  version tools read `1.01` as `1.1`, so `1.1` would collide with it. See ADR-0021 in
+  [Decisions](DECISIONS.md).
 - **Minor numbers.** Increment the minor number for each coherent completed update,
-  including a fix or a documentation-only release. Don't release each intermediate commit.
+  including a fix or a documentation-only release. Don't release each intermediate commit,
+  but don't leave `main` ahead of the latest tag either: each coherent update that lands on
+  `main` ships as the next release, with its changelog section, notes, and tag.
 - **Breaking changes in 0.x.** A `0.x` minor release may include breaking changes; its
   release notes say what broke and how to stay on the previous version.
 - **When 1.0 comes.** `1.0` is reserved for two conditions:
@@ -31,8 +39,10 @@ that use ELAD, their models, or their releases.
   - ELAD has been used on one real project.
 
   The number grants no maturity or authority.
-- **Number style.** Use numeric components without leading zeroes, and no patch component.
-  This is not strict Semantic Versioning.
+- **Number style.** Use no patch component. Before `1.0`, numbers have no leading zeroes;
+  from `1.0` on, the minor number's leading zero is part of it. This is not strict
+  Semantic Versioning, which forbids that zero. Nothing in this repository parses
+  versions; the release job compares the tag with `VERSION` as text.
 - **Old tags never change.** Keep `v0.3.0`, `v0.4.0`, and `v0.5` exactly as they are: never
   rename, move, or delete a tag.
 
@@ -40,8 +50,9 @@ that use ELAD, their models, or their releases.
 
 1. **Pick the version.** Choose the next unused version from `VERSION` and the published
    releases.
-2. **Update the version everywhere.** That means `VERSION`, the README's version line, and
-   `STATUS.md`. Move finished changelog entries from `Unreleased` into a dated section.
+2. **Update the version everywhere.** That means `VERSION`, the README's version line,
+   `STATUS.md`, and `SECURITY.md`. Move finished changelog entries from `Unreleased` into a
+   dated section.
    Add `releases/vMAJOR.MINOR.md`, covering:
    - highlights;
    - compatibility and migration, which always tells projects that name their pinned
