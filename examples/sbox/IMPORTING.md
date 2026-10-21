@@ -33,6 +33,7 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
 ## Contents
 
 - [Models](#models)
+- [World geometry](#world-geometry)
 - [Collision](#collision)
 - [Physics and breakables](#physics-and-breakables)
 - [Materials and decals](#materials-and-decals)
@@ -107,6 +108,18 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   or DMX for ModelDoc is the other route; it wasn't tried.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that builds
     every ragdoll and counts its bodies (32 ragdolls, 218 bodies).
+
+## World geometry
+
+- **Cut an imported 3D skybox out of the playable world.** Source draws the 3D skybox first
+  and the world over it, whatever the depth. Rebuilt in S&box, the skybox is ordinary
+  geometry drawn in depth with the world, so its ground, scaled up, covered the map's own
+  ground near the edges and showed as a floor underground. Cut it out of the playable
+  volume, the map's `world_mins` and `world_maxs`, splitting its triangles along those
+  bounds. One skybox displacement scaled up can span the whole map, so leaving out pieces
+  by their middle can't help.
+  - Checked: seen on `26.10.13a`; no source. Proof: captures of the same spots before and
+    after.
 
 ## Collision
 
@@ -204,22 +217,81 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a compiled bottle model
     reports health 5, break speed 79, and 2 break pieces; after a reimport, the props whose
     models have health are breakable.
-- **Turn Source's impact damage into a break speed.** Source works out the energy an impact
-  takes away, in units of the prop's own speed squared, scales it by the prop's
-  `physdamagescale`, 0.1 unless set, and reads the damage from a table: the NPC table
-  unless the prop names another, such as glass
-  (`source-sdk-2013@be57e3d:src/game/server/physics_impact_damage.cpp`, lines 109-188,
-  223-244, and 403-458; `src/game/server/props.cpp`, lines 901-904). S&box deals
+- **Turn Source's impact damage into a break speed.** When a prop hits the world, Source
+  squares the speed the prop lost and multiplies by its mass, then by one over that same
+  mass, so the mass cancels. It scales that by the prop's `physdamagescale`, 0.1 unless
+  set, and reads the damage from a table: the NPC table unless the prop names another, such
+  as glass (`source-sdk-2013@be57e3d:src/game/server/physics_impact_damage.cpp`, lines
+  109-115, 151-158, and 403-458; `src/game/server/props.cpp`, lines 901-904). S&box deals
   `ImpactDamage` times the speed over `MinImpactDamageSpeed`, and only above that speed.
   Its defaults, 500 and a tenth of the mass
   (`26.10.13:engine/Sandbox.Engine/Scene/Components/Collider/Rigidbody.cs`, lines 199-212
   and 454-487), left glass that never broke from drops and throws. So find the slowest
   impact whose damage reaches the prop's health, set `MinImpactDamageSpeed` to it, and set
   `ImpactDamage` to the health.
+  - Props bounce, so they hit faster than the speed they lose: in drops in Garry's Mod,
+    about 1.4 times as fast. S&box compares `MinImpactDamageSpeed` with the speed at
+    impact, so multiply the speed lost that the table needs by about 1.4.
+  - Leave the prop's mass out. A first version that kept it broke tables and chairs dropped
+    from knee height. Mass counts only when the other body moves too: Source adds the
+    energy that body lost, times its own mass, before dividing (lines 413-429).
   - One hit above that speed then breaks the prop. Source can also wear a prop down with
     several smaller hits, and this doesn't (inferred).
+  - Checked: source at `be57e3d` and `26.10.13`; seen on `26.10.13a` and in Garry's Mod.
+    Proof: a play-mode test that drops a bottle 40 units, which breaks, and a crate 6,
+    which doesn't. In Garry's Mod a bottle broke from a 12-unit drop, and no drop up to 384
+    units broke a table or chair.
+- **Don't let anything break a prop the player is carrying.** Carrying pulls a prop through
+  whatever is beside it, and a melon lifted out of a crate broke at once. Turn the prop's
+  own `EnableImpactDamage` off while it's held. That isn't enough: a `Rigidbody` that
+  passes its own break speed also deals 1.2 times its impact damage to what it hits
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Collider/Rigidbody.cs`, lines 467-510),
+  and that is how bottles the carried melon knocked broke it. Also cancel impact damage the
+  prop takes while held, in `Prop.OnPropTakeDamage`, which runs before the health comes off
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/Prop.cs`, lines 383-386).
+  - Source never lets the player damage a held object. Only a body that weighs 2 kg or more
+    and moves faster than the damage table's minimum can hurt it, so the world can't
+    (`source-sdk-2013@be57e3d:src/game/server/physics_impact_damage.cpp`, lines 310-317 and
+    366-376).
   - Checked: source at `be57e3d` and `26.10.13`; seen on `26.10.13a`. Proof: a play-mode
-    test that drops a bottle 40 units, which breaks, and a crate 6, which doesn't.
+    test that carries a melon and four bottles around whole. With impact damage left on
+    while held, two of three broke.
+- **Work out a breakable brush's damage from the scene's collisions.** A component beside a
+  static `MeshComponent` never heard a body hit it through `ICollisionListener`, and
+  S&box's own impact damage reaches it only from a body that passes its own break speed,
+  with S&box's numbers
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Collider/Rigidbody.cs`, lines 467-510).
+  Every contact the physics world reports goes to the scene's `ISceneCollisionEvents`
+  components (`26.10.13:engine/Sandbox.Engine/Systems/Physics/3d/ScenePhysicsSystem.cs`,
+  lines 88 and 129-171;
+  `26.10.13:engine/Sandbox.Engine/Scene/Events/ISceneCollisionEvents.cs`, lines 11-27), so
+  listen there for hits on the brush.
+  - Work the damage out as Source does: the energy the body lost, times its mass, over the
+    breakable's mass (`source-sdk-2013@be57e3d:src/game/server/physics_impact_damage.cpp`,
+    lines 403-458). Take the brush's mass from the BSP's physics lump, as under
+    [Collision](#collision) above. A glass `func_breakable_surf` reads the glass table and
+    breaks above 10 damage (`src/game/server/func_breakablesurf.cpp`, lines 1233-1242). A
+    `func_breakable` reads the table its prop data names, or the NPC table
+    (`src/game/server/func_break.cpp`, lines 798-816).
+  - Checked: source at `be57e3d` and `26.10.13`; seen on `26.10.13a`. Proof: a play-mode
+    test that throws a 20 kg tool at a glass pane at 700 units a second, which shatters it
+    with 75 damage, and at a breakable window at 900, which breaks it with 500.
+- **Write Source's radius damage yourself for an imported map.** S&box's `RadiusDamage`
+  measures each target's distance from the target's own position, and checks the line to
+  its root object against colliders tagged `map`
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/RadiusDamage.cs`, lines 138-152
+  and 185-186). An import that puts every entity under one root object breaks that check.
+  Source traces from the blast to the target's middle, takes off the damage over the radius
+  for each unit to where that trace ends, and lets the world and doors block it
+  (`source-sdk-2013@be57e3d:src/game/shared/gamerules.cpp`, lines 298-317, 334, 381-382,
+  and 477-478).
+  - An `env_explosion`'s radius is 2.5 per point of damage unless it sets one
+    (`src/game/server/explode.cpp`, line 310). A `func_breakable` takes 1.25 times
+    explosion damage (`src/game/server/func_break.cpp`, line 259;
+    `src/game/server/props.cpp`, line 82), and a breakable prop starts at 1 times
+    (`props.cpp`, line 838).
+  - Checked: source at `be57e3d` and `26.10.13`; seen on `26.10.13a`. Proof: a play-mode
+    test that an explosive set on a breakable brush breaks it.
 - **Make hinge friction a motor.** On `26.10.13a`, `HingeJoint.Friction` made no difference
   at any value from 0.5 to 100,000, and hanging signs swung on and on. The component passes
   it to the physics joint only while `Motor` is `Disabled`
@@ -339,6 +411,17 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
   on the model's physics shapes.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a test that lists each
     prop's surface and its break sound.
+- **Give `func_breakable` its `Breakable` sounds, not the surfaces' sounds.** A
+  `func_breakable` that breaks plays a `Breakable` sound named for its material, such as
+  `Breakable.Glass`, `Breakable.Crate` for wood, or `Breakable.Concrete` for rocks and
+  cinder blocks. A hit that doesn't break it plays a `Breakable.Mat` sound, such as
+  `Breakable.MatGlass` (`source-sdk-2013@be57e3d:src/game/server/func_break.cpp`, lines
+  505-573 and 946-988). Breakables given the prop surfaces' sounds, such as `Glass.Break`,
+  asked for two that don't exist, `Concrete.Break` and `Tile.Break`. A
+  `func_breakable_surf` pane plays a physics break sound instead
+  (`src/game/server/func_breakablesurf.cpp`, line 612).
+  - Checked: source at `be57e3d`; seen on `26.10.13a`. Proof: the converted sound list
+    resolves all 11 `Breakable` sounds.
 - **Make water a trigger tagged `water` with a `WaterVolume`, and add its sounds
   yourself.** `MoveModeSwim` swims in triggers tagged `water`
   (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/Modes/Swim.cs`,
@@ -350,8 +433,54 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
     (`source-sdk-2013@be57e3d:src/public/bspflags.h`, lines 30-31). The player plays
     `Player.Wade` going in and out (`src/game/shared/baseplayer_shared.cpp`, lines
     2012-2036) and wading footsteps in the water (lines 586-611).
+  - Under water, play the underwater loop and switch on a `DspVolume` with a water preset
+    yourself. Source plays `Player.AmbientUnderWater` while the eyes are under water
+    (`baseplayer_shared.cpp`, lines 1996-2063) and muffles the sound with its `dsp_water`
+    room type, 14, an engine setting outside the SDK. S&box's first 28 DSP presets,
+    `metallic.small` to `weird.4`, follow Source's room types 2 to 29 in order, which makes
+    14 `water.small` (`26.10.13:engine/Sandbox.Engine/Systems/Audio/Dsp/DspFactory.cs`,
+    lines 20-179; the match is inferred from the names). A `DspVolume` mixes in its preset
+    while the listener is inside it
+    (`26.10.13:engine/Sandbox.Engine/Scene/Components/Audio/Dsp/DspVolumeGameSystem.cs`,
+    lines 46-96). One whose `SceneVolume` type is `Infinite` holds the listener anywhere
+    (`26.10.13:engine/Sandbox.Engine/Scene/Components/Utility/VolumeSystem/VolumeComponent.cs`,
+    lines 9-14), so switch it on and off as the ear goes under and comes out.
   - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`. Proof: a play-mode
-    test that the player swims at the surface and a crate floats.
+    test that the player swims at the surface and a crate floats, and one that hears the
+    underwater loop and `water.small` with the ear under water and neither above it.
+- **Bring Source soundscapes over as `Soundscape` resources played by a `SoundscapeTrigger`
+  at each `env_soundscape`, and add Source's line-of-sight rule yourself.** Nothing in
+  S&box plays an `env_soundscape`, so a map came over with no ambience. Make a `.sndscape`
+  for each soundscape, with a `.sound` for each random sound, and give each
+  `env_soundscape` a sphere `SoundscapeTrigger` of its radius. An S&box soundscape can't
+  include another (`26.10.13:engine/Sandbox.Engine/Resources/Soundscape.cs`, lines 14-24),
+  so fold included soundscapes in at their volume.
+  - S&box plays the nearest sphere or box trigger that holds the listener, and by default
+    keeps the last one playing when none does
+    (`26.10.13:engine/Sandbox.Engine/Scene/GameObjectSystems/SceneSoundscapeSystem.cs`,
+    lines 29-48;
+    `26.10.13:engine/Sandbox.Engine/Scene/Components/Audio/SoundscapeTrigger.cs`, lines
+    62-66 and 200-216), as Source does. Source also needs a line from the `env_soundscape`
+    to the player that no brush or water blocks
+    (`source-sdk-2013@be57e3d:src/game/server/soundscape.cpp`, lines 258-296), and S&box
+    has no such check. Switch off in-range triggers without a clear line.
+  - S&box plays looped sounds at the listener (`SoundscapeTrigger.cs`, line 329) and each
+    random sound in a random direction, 50 to 100 units away unless its `Distance` says
+    otherwise (lines 390-399; `Soundscape.cs`, line 74). Source plays a random sound whose
+    position is "random" 36 units from the ear (`src/game/client/c_soundscape.cpp`, lines
+    26 and 833-849).
+  - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`. Proof: a play-mode
+    test that every `env_soundscape` got a soundscape (52 of 52), that the right one plays
+    at 7 spots, and that it keeps playing after walking out of every radius.
+- **Keep a wave's loop when converting sounds.** Source loops a wave from its first cue
+  point, or over its `smpl` loop. Waves converted with only their format and data played
+  ambient loops once and stopped. For each wave with a `cue ` or `smpl` chunk, set `loop`,
+  `start`, and `end` in its `.wav.meta`, the keys S&box's sound compile settings read
+  (`26.10.13:game/addons/tools/Code/Inspectors/SoundFileCompileSettings.cs`, lines 138-140
+  and 160-162). The public source doesn't give their units; seconds worked.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`; how Source loops a wave isn't in
+    the SDK. Proof: a play-mode test that three loops still play a second after their
+    length.
 
 ## Map logic and entities
 
@@ -408,6 +537,30 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
   (`Pressing.cs`, line 231; `PlayerController.Events.cs`, line 36).
   - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`. Proof: a play-mode
     test that presses every usable thing from where a player would stand.
+- **Rebuild `trigger_hurt` from Source's rules.** Nothing in S&box hurts or clicks for one.
+  A `trigger_hurt` deals its `damage` per second, in half-second steps, and with
+  `damagemodel` 1 it doubles the damage each step up to `damagecap`
+  (`source-sdk-2013@be57e3d:src/game/server/triggers.cpp`, lines 798-809, 839, and
+  860-879).
+  - A radiation one also drives the player's Geiger counter with three times the distance
+    from its box to the player (lines 720-727). The counter clicks only while that is above
+    0 and under 1000 (`src/game/server/player.cpp`, lines 4269-4306 and 5426-5427;
+    `src/game/client/geiger.cpp`, lines 95-104), so it goes quiet inside the box. That is
+    how the code reads; it wasn't heard in Garry's Mod.
+  - Checked: source at `be57e3d`; seen on `26.10.13a`. Proof: a play-mode test of the
+    counter (300 at 100 units outside, 748 at 250, 0 inside). Playing inside Facepunch's
+    Sandbox, standing in a doubling one took 0.5, 1.1, 2.0, 4.2, 8.3, then 10.4 health per
+    half second.
+- **When a breakable entity breaks, remove what's parented to it a tenth of a second
+  later.** `CBreakable::Die` removes the entity 0.1 seconds later, and removing an entity
+  removes whatever is still parented to it
+  (`source-sdk-2013@be57e3d:src/game/server/func_break.cpp`, lines 1109-1116;
+  `src/game/server/baseentity.cpp`, lines 2504-2514). Inputs fired at the same moment, such
+  as an explosion, still run first. When an explosive physbox's `Break` input did nothing,
+  only a button parented to it, which the same output removed, disappeared.
+  - Checked: source at `be57e3d`; seen on `26.10.13a`. Proof: a play-mode test that, 11
+    seconds after a button press, the explosive and the button are gone and the breakable
+    it blew up is cleared.
 
 ## Player movement
 
@@ -499,6 +652,34 @@ the read-only `Editor.FileSystem.Content`.
   worked.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: after registering, all 245
     new surfaces, sounds, and piece models compiled.
+- **To play a map inside Facepunch's Sandbox, make a second project for it.** Give it
+  `Type` `"addon"` and `ParentPackage` `"facepunch.sandbox"` in its `Metadata`, and link
+  its `Assets`, `Code`, and `ProjectSettings` folders to the map's project. The map then
+  gets Sandbox's player, physics gun, weapons, and health. `ParentPackage` is a key a
+  project's metadata can carry
+  (`26.10.13:engine/Launcher/StandaloneTest/Widgets/ProjectTemplate.cs`, line 13), and in
+  play `Game.Ident`, "the current game's ident", was `facepunch.sandbox`
+  (`26.10.13:engine/Sandbox.Engine/Game/Game/Game.cs`, lines 61-63). So switch your own
+  player and camera off when `Game.Ident` isn't your project's.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: in play, `Game.Ident` is
+    `facepunch.sandbox`, the player has Sandbox's inventory and physics gun, and the map's
+    logic runs.
+- **Trace again when a trace starts inside a collider.** On `26.10.13a`, a trace that
+  started inside a collider reported that collider as its hit, with `StartedSolid` set
+  (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.Trace.cs`, lines 770-774; which
+  collider comes back is decided in native code). An explosion sits inside the explosive,
+  so every line from it to the explosives around it stopped at once, and a chain reaction
+  never spread. Source's radius damage leaves the thing that exploded out of its trace
+  (`source-sdk-2013@be57e3d:src/game/shared/gamerules.cpp`, line 382). So trace again,
+  ignoring the collider the trace started in.
+  - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`. Proof: a play-mode
+    test in which one hit sets off a chain of 22 explosives; none spread before the fix.
+- **In a check that throws a prop, set its position and velocity but leave its rotation.**
+  Resetting a long prop's rotation before throwing it stopped it dead three times in a row,
+  most likely because its end started inside a wall. The same throw with the rotation left
+  alone worked at once.
+  - Checked: seen on `26.10.13a`; no source. Proof: the throw lands in the play-mode test
+    that uses it.
 
 ## Faster ways of working
 
