@@ -286,10 +286,10 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   (`source-sdk-2013@be57e3d:src/game/shared/gamerules.cpp`, lines 298-317, 334, 381-382,
   and 477-478).
   - An `env_explosion`'s radius is 2.5 per point of damage unless it sets one
-    (`src/game/server/explode.cpp`, line 310). A `func_breakable` takes 1.25 times
-    explosion damage (`src/game/server/func_break.cpp`, line 259;
-    `src/game/server/props.cpp`, line 82), and a breakable prop starts at 1 times
-    (`props.cpp`, line 838).
+    (`src/game/server/explode.cpp`, line 310). A `func_breakable` or `func_physbox` takes
+    1.25 times explosion damage (`src/game/server/func_break.cpp`, line 259;
+    `src/game/server/physobj.cpp`, line 421; `src/game/server/props.cpp`, lines 82 and
+    147-158), and a breakable prop starts at 1 times (`props.cpp`, line 838).
   - Checked: source at `be57e3d` and `26.10.13`; seen on `26.10.13a`. Proof: a play-mode
     test that an explosive set on a breakable brush breaks it.
 - **Make hinge friction a motor.** On `26.10.13a`, `HingeJoint.Friction` made no difference
@@ -669,11 +669,11 @@ the read-only `Editor.FileSystem.Content`.
   (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.Trace.cs`, lines 770-774; which
   collider comes back is decided in native code). An explosion sits inside the explosive,
   so every line from it to the explosives around it stopped at once, and a chain reaction
-  never spread. Source's radius damage leaves the thing that exploded out of its trace
-  (`source-sdk-2013@be57e3d:src/game/shared/gamerules.cpp`, line 382). So trace again,
-  ignoring the collider the trace started in.
-  - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`. Proof: a play-mode
-    test in which one hit sets off a chain of 22 explosives; none spread before the fix.
+  never spread. So trace again, ignoring the collider the trace started in. How Source's
+  trace treats a solid it starts in is engine code outside the SDK, and the chain wasn't
+  measured in Garry's Mod.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test in which
+    one hit sets off a chain of 22 explosives; none spread before the fix.
 - **In a check that throws a prop, set its position and velocity but leave its rotation.**
   Resetting a long prop's rotation before throwing it stopped it dead three times in a row,
   most likely because its end started inside a wall. The same throw with the rotation left

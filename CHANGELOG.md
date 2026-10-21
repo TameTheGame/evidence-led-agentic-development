@@ -18,7 +18,7 @@
   registering files the Editor didn't make. "Ask the original game what it does" now says
   how to measure physics and record ragdoll poses, and a new entry says to run a case
   with the fix off before writing a fix. Each was checked on S&box `26.10.13a`.
-- **Thirteen more S&box import lessons, and a clearer impact-damage entry.**
+- **Twelve more S&box import lessons, and a clearer impact-damage entry.**
   `examples/sbox/IMPORTING.md` gains entries on props the player carries, breakable
   brushes, radius damage, traces that start inside a collider, soundscapes, sound loops,
   underwater sound, `func_breakable` sounds, `trigger_hurt`, what a breaking entity takes
