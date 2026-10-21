@@ -4,6 +4,33 @@
 
 No pending changes.
 
+## 1.02 — 2026-10-21
+
+An import reference for S&box. No skill changed, and nothing in the core breaks.
+
+- **An S&box import reference.** `examples/sbox/IMPORTING.md` collects what works and what
+  doesn't when bringing old content into S&box, sorted by topic: models, collision,
+  physics and breakables, materials and decals, lighting, sound and water, map logic and
+  entities, player movement, tools and scripting, and faster ways of working. Each entry
+  says what to do, what fails and why, and ends with its evidence (source, seen, or
+  inferred), the S&box version it was checked on, and its proof. The file opens with a
+  note that S&box is still in development, so entries may go stale, and ends with a
+  format for adding entries and steps for rechecking them after an S&box update.
+  - The four lessons in the guide's "Lessons from importing old content" move there, and
+    that section now points to it.
+  - Eighteen entries are new, from a first real project's import of an old Source 1 map
+    on S&box `26.10.13a`. Among them: pose a Source prop as Source draws it, at frame 0 of
+    its current sequence; use a `Multiply` decal for Source's modulate decals; start
+    lights as their "start off" flag says; place track trains on their first path node;
+    read Source's door flags and swing rule; let the player use things inside other
+    solids; write full type names in `run_csharp` scripts; and ask the original game what
+    it does.
+  - Entries about Source cite Valve's Source SDK 2013 at commit `be57e3d`. Garry's Mod
+    runs its own fork, which isn't public, so its match is inferred.
+  - Some entries rest on observation alone, such as OBJ axes in ModelDoc and
+    alpha-tested thin wire, and say so. They had waited in a private candidates list
+    because the guide's lessons each cite source.
+
 ## 1.01 — 2026-10-21
 
 The first release after `1.0`. It adds steps for moving a project to a new release and nine

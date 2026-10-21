@@ -11,6 +11,7 @@
 | [`skills/sbox-engine-reference/`](skills/sbox-engine-reference/SKILL.md) | An example of a project's domain skill: verified S&box behavior and where to look in the engine source. Tested in the [domain-skill test](../../skills/evidence/SBOX_SKILL_TEST.md) |
 | [`tools/compile_check.ps1`](tools/compile_check.ps1) | A rung-0 check that compiles `run_csharp` scripts against the installed engine's assemblies without starting S&box. See [The compile check](#the-compile-check) |
 | [`tools/editor_check.ps1`](tools/editor_check.ps1) | A rung-2 check that runs unattended: it saves a scene in the Editor, closes it, reopens it, and checks that nothing changed, with a screenshot from a fixed camera before and after. Needs S&box `26.10.13` or later. See [The editor check](#the-editor-check) |
+| [`IMPORTING.md`](IMPORTING.md) | The import reference: what works and what doesn't when bringing Source and other old content into S&box, sorted by topic, each entry with the S&box version it was checked on |
 | [`tools/spec_lint.py`](tools/spec_lint.py) | A rung-0 spec lint: format and card checks that fail the run, a lookup that reports checks not found in the test and script folders, and an owner gate that reports any change to an agreed requirement since the last commit. Run `python tools/test_spec_lint.py` to check it against its fixtures. |
 
 ## The ladder for a map
@@ -328,46 +329,6 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 ## Lessons from importing old content
 
-The same project later brought models and materials from an old Source 1 map into S&box
-`26.10.13a`. Four of its lessons are read from the engine source at `26.10.13`, which is
-approximate for `26.10.13a`.
-
-- **Convert SMD models before importing them.** The editor treats only FBX, OBJ, and DMX
-  files as meshes: the asset browser offers Create Model for those three
-  (`26.10.13:game/addons/tools/Code/Editor/AssetList/AssetList.ContextMenu.cs`, lines
-  329-349), and the mesh preview covers the same three
-  (`26.10.13:game/addons/tools/Code/Assets/PreviewMesh.cs`, lines 4-6). No C# in the engine
-  source reads SMD, and on `26.10.13a` ModelDoc wouldn't import one. So convert old Source
-  models to FBX, OBJ, or DMX first. ModelDoc's importer itself is native code that isn't in
-  `sbox-public`; on `26.10.13a` it also listed VOX.
-- **Set some properties in a constructor, not an initializer.** For an auto-property of a
-  simple type, such as an enum, `int`, `bool`, or `float`, the code generator copies the
-  initializer into a `[DefaultValue( ... )]` attribute
-  (`26.10.13:engine/Sandbox.Generator/Units/DefaultValue.cs`, lines 12-26 and 43-84), and it
-  does this for every property in the project
-  (`26.10.13:engine/Sandbox.Generator/Worker.cs`, line 302). An attribute argument must be a
-  constant, so an initializer that reads a primary-constructor parameter, such as
-  `public float Width { get; } = width;`, fails to compile with CS0182, in a struct or a
-  class. On `26.10.13a` the Editor then wouldn't open the project. Assigning the property in
-  an ordinary constructor compiles.
-- **A mesh marked HideInGame still renders in the editor scene.** `MeshComponent` removes
-  its scene object for `HideInGame` only outside the editor
-  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Mesh/MeshComponent.cs`, lines 77-100
-  and 125), so every render of the editor scene draws it. `editor_camera_screenshot`
-  renders the editor viewport's own camera, not a `CameraComponent`
-  (`26.10.13:game/addons/tools/Code/Mcp/Scene.cs`, lines 227-238), and on `26.10.13a` its
-  screenshots showed such meshes even with the camera set to skip their tags. A capture
-  meant to show what players see belongs in play mode (inferred from the source).
-- **`Material.Load` doesn't return null for a missing file.** Its comment says it returns
-  the material or null
-  (`26.10.13:engine/Sandbox.Engine/Resources/Material/Material.Load.cs`, line 17), but it
-  returns null only when the engine gives it no handle (line 70). The engine gives an error
-  material instead, which the load names after the path (lines 30 and 41); on `26.10.13a`
-  a missing file came back that way. `Model` and `Texture` override `IsError`
-  (`26.10.13:engine/Sandbox.Engine/Resources/Model/Model.cs`, line 105;
-  `26.10.13:engine/Sandbox.Engine/Resources/Textures/Texture.cs`, line 33), but `Material`
-  keeps the default, which is always false
-  (`26.10.13:engine/Sandbox.Engine/Resources/Resource.cs`, line 46). So neither a null check
-  nor `IsError` finds a missing material. In editor code, check `AssetSystem.FindByPath`,
-  which returns null when no asset has that path
-  (`26.10.13:engine/Sandbox.Tools/Assets/AssetSystem.cs`, lines 196-218).
+These moved to the [import reference](IMPORTING.md) in v1.02. It sorts what a project
+learned bringing old content into S&box by topic, and each entry names the S&box version
+it was checked on.

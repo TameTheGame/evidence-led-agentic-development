@@ -1,6 +1,6 @@
 # Status
 
-**Current version:** `1.01`
+**Current version:** `1.02`
 
 **What ELAD is:**
 

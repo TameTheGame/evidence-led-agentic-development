@@ -27,7 +27,7 @@ permission to do anything. Permission comes from you and from your project's own
 `AGENTS.md`, the file that says what your agents may do. See
 [Authority and Safety](docs/AUTHORITY_AND_SAFETY.md).
 
-**Current version: 1.01.** See the [release notes](releases/v1.01.md) and
+**Current version: 1.02.** See the [release notes](releases/v1.02.md) and
 [Versions](#versions).
 
 ## Who it is for
@@ -280,8 +280,8 @@ tests, are in [Evidence Ladder](docs/EVIDENCE_LADDER.md#with-superpowers).
 [`examples/sbox/`](examples/sbox/README.md) applies the method to a made-up game map in
 S&box. It includes a sample spec, the ladder for S&box, starter engine tests, a compile
 check, an editor check that runs on its own, a spec checker, an S&box skill, thirteen
-[lessons from a world build](examples/sbox/README.md#lessons-from-a-world-build), and four
-[from importing old content](examples/sbox/README.md#lessons-from-importing-old-content).
+[lessons from a world build](examples/sbox/README.md#lessons-from-a-world-build), and an
+[import reference](examples/sbox/IMPORTING.md) for bringing old content into S&box.
 It is an example, not part of the method's rules.
 
 ## Repository map
