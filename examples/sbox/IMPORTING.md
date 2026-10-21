@@ -86,6 +86,27 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
     about it.
   - Checked: source at `be57e3d`; seen on `26.10.13a`. Proof: a test that every
     converted door model sits closed in its frame.
+- **Give `ModelBuilder` bones in model space, not relative to their parents.** The summary
+  of `ModelBuilder.Bone` says its position and rotation are relative to the parent
+  (`26.10.13:engine/Sandbox.Engine/Resources/Model/Builder/ModelBuilder.Skeleton.cs`, lines
+  24-27). But S&box's own Serious Engine mount multiplies each bone by its parents and
+  passes the model-space result
+  (`26.10.13:engine/Mounting/Sandbox.Mounting.SE3/Model.Skeleton.cs`, lines 43-59). On
+  `26.10.13a`, bones given relative to their parents collapsed a skinned mesh into flat
+  spikes, and bones in model space drew whole bodies.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: the ragdolls built this way
+    render as whole bodies in a capture.
+- **Build a ragdoll from another game at run time with `ModelBuilder`.** Give it bones in
+  model space (above), a skinned mesh whose vertices carry `BlendIndices` and
+  `BlendWeight`, one `AddBody` per physics bone with that bone's hulls, and an
+  `AddBallJoint` with swing and twist limits for each joint. Then simulate it with
+  `ModelPhysics`. S&box's Serious Engine mount builds skinned, jointed models the same way
+  (`26.10.13:engine/Mounting/Sandbox.Mounting.SE3/Model.Mesh.cs`, lines 27-30;
+  `26.10.13:engine/Mounting/Sandbox.Mounting.SE3/Model.Physics.cs`, lines 110-273). A
+  ragdoll converted to OBJ has no bones, so it compiles only as a statue. Converting to FBX
+  or DMX for ModelDoc is the other route; it wasn't tried.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that builds
+    every ragdoll and counts its bodies (32 ragdolls, 218 bodies).
 
 ## Collision
 
@@ -95,6 +116,46 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   separates overlapping bodies.
   - Checked: seen on `26.10.13a`; no source. Proof: a play-mode check that no physics
     object falls out of the world.
+- **Keep each convex piece of a Source collision model.** A `.phy` solid is a set of convex
+  pieces. One hull around the render mesh, ModelDoc's `PhysicsHullFromRender`, fills in
+  hollow props, so things sat on top of crates and buckets instead of inside. Write each
+  piece as its own OBJ object and import the file with ModelDoc's `PhysicsHullFile`,
+  `import_mode` `"HullPerElement"`.
+  - The pieces are stored in the physics engine's metres and axes. To get Source inches,
+    scale them and swap the axes to (x, z, -y), as read from the files. A prop's pieces are
+    in its posed model space; a ragdoll's are in each bone's space.
+  - Checked: seen on `26.10.13a`, with the format read from the files; neither ModelDoc's
+    importer nor Source's physics engine is in the public source. Proof: the compiled
+    models report one hull per Source piece (a bucket 4, a table 6).
+- **Take a brush entity's collision and mass from the BSP's physics lump.** The map
+  compiler stores each brush model's convex pieces and mass in lump 29
+  (`source-sdk-2013@be57e3d:src/public/bspfile.h`, line 310), in the same format as a
+  `.phy`. A `func_physbox` reads its solid from there and scales the mass by its
+  `massScale` (`src/game/server/physobj.cpp`, lines 509-516). One hull around a brush
+  entity made a crate of thin walls solid and hundreds of times too heavy: 5,600 kg instead
+  of 26. In S&box, give each piece a `HullCollider` with `Type` `Points`
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Collider/HullCollider.cs`, lines 15-29
+  and 64), and set the mass as the next section says.
+  - Checked: source at `be57e3d` and `26.10.13`; seen on `26.10.13a`. Proof: two brush
+    signs weigh what Garry's Mod reports for them.
+- **Simplify hulls of more than 64 points before `ModelBuilder` gets them.**
+  `PhysicsBodyBuilder.AddHull` takes an optional `HullSimplify` and by default uses the
+  points as given
+  (`26.10.13:engine/Sandbox.Engine/Resources/Model/Builder/PhysicsBodyBuilder.cs`, lines
+  172-205;
+  `26.10.13:engine/Sandbox.Engine/Resources/Model/Builder/CPhysBodyDescArray.Create.cs`,
+  lines 69-74). On `26.10.13a` a 98-point hull came out with no shape at all, which left
+  its body massless; with `MaxVerts` 64 every body got its collider. The limit is seen, not
+  read: the hull builder is native.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a test that every ragdoll
+    body has its collider.
+- **Split displacement squares in Source's checkerboard.** Source splits each square of a
+  displacement's collision surface by the index of its first vertex: an odd index joins the
+  next vertex to the one below, an even index joins the first vertex to the one diagonally
+  below it (`source-sdk-2013@be57e3d:src/public/builddisp.cpp`, lines 896-962). Splitting
+  every square the same way put steep ground up to 22 units from Source's.
+  - Checked: source at `be57e3d`; seen on `26.10.13a`. Proof: a test that compares ground
+    heights with heights recorded in Garry's Mod (355 of 355 within 1 unit).
 
 ## Physics and breakables
 
@@ -108,6 +169,99 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   placed it.
   - Checked: source at `be57e3d` and `26.10.13`; seen on `26.10.13a`. Proof: a play-mode
     check that the prop rests on the ground.
+- **Give props a few seconds after the map starts before impacts can break them.** Props
+  placed touching are pushed apart when physics starts, and S&box counted that push as an
+  impact: 35 stacked crates broke at once. Turn `EnableImpactDamage` off for the first
+  seconds (`26.10.13:engine/Sandbox.Engine/Scene/Components/Collider/Rigidbody.cs`, line
+  199). Why the push counts is inferred.
+  - Checked: seen on `26.10.13a`. Proof: a test that no prop is broken 15 seconds after
+    start.
+- **Give Source props their own mass and mass centre.** Set `Rigidbody.MassOverride` to the
+  mass the model's `.phy` states, turn on `OverrideMassCenter`, and set
+  `MassCenterOverride` to its collision model's mass centre
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Collider/Rigidbody.cs`, lines 110-158
+  and 832-835). Without them, S&box works the mass out from the collision shapes: a hollow
+  8 kg bucket weighed 99 kg, with its centre off to one side, and rocked on its rope
+  without settling. How S&box works it out is native code, so that part is inferred.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a test that shoves the
+    hanging bucket and checks it comes to rest (it moved 3.6 units and turned 26 degrees
+    before the fix, and not at all after).
+- **Put prop data and break pieces in the model, then reimport placed props.** In ModelDoc,
+  use `GameDataList` with a `GenericGameData` whose `game_class` is `prop_data`, with keys
+  such as `health`, `min_impact_damage_speed`, and `impact_damage`, and list break pieces
+  in a `BreakPieceList` of `BreakPieceExternal`. `GenericDataList` and `GenericData`, the
+  names other Source 2 tools use, stopped the model compiling on `26.10.13a`: "Failed to
+  allocate an instance of class 'GenericDataList'". The keys are `ModelPropData`'s and the
+  pieces `ModelBreakPiece`'s
+  (`26.10.13:engine/Sandbox.Engine/Resources/Model/ModelNodes.cs`, lines 9-27 and 32-86).
+  - A `Prop` takes its health from the model
+    (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/Prop.cs`, lines 196-205), passes
+    the impact keys to its `Rigidbody` (lines 297-309), and spawns the break pieces (line
+    535).
+  - It takes the health only when its model changes, not while the scene loads (line 200).
+    Props placed before the model had health kept 0 and never broke, so reimport the scene
+    after adding prop data.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a compiled bottle model
+    reports health 5, break speed 79, and 2 break pieces; after a reimport, the props whose
+    models have health are breakable.
+- **Turn Source's impact damage into a break speed.** Source works out the energy an impact
+  takes away, in units of the prop's own speed squared, scales it by the prop's
+  `physdamagescale`, 0.1 unless set, and reads the damage from a table: the NPC table
+  unless the prop names another, such as glass
+  (`source-sdk-2013@be57e3d:src/game/server/physics_impact_damage.cpp`, lines 109-188,
+  223-244, and 403-458; `src/game/server/props.cpp`, lines 901-904). S&box deals
+  `ImpactDamage` times the speed over `MinImpactDamageSpeed`, and only above that speed.
+  Its defaults, 500 and a tenth of the mass
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Collider/Rigidbody.cs`, lines 199-212
+  and 454-487), left glass that never broke from drops and throws. So find the slowest
+  impact whose damage reaches the prop's health, set `MinImpactDamageSpeed` to it, and set
+  `ImpactDamage` to the health.
+  - One hit above that speed then breaks the prop. Source can also wear a prop down with
+    several smaller hits, and this doesn't (inferred).
+  - Checked: source at `be57e3d` and `26.10.13`; seen on `26.10.13a`. Proof: a play-mode
+    test that drops a bottle 40 units, which breaks, and a crate 6, which doesn't.
+- **Make hinge friction a motor.** On `26.10.13a`, `HingeJoint.Friction` made no difference
+  at any value from 0.5 to 100,000, and hanging signs swung on and on. The component passes
+  it to the physics joint only while `Motor` is `Disabled`
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Joint/HingeJoint.cs`, lines 100 and
+  290-298), and that joint hands it to native code
+  (`26.10.13:engine/Sandbox.Engine/Systems/Physics/Joints/HingeJoint.cs`, lines 45-48). Set
+  `Motor` to `TargetVelocity`, `TargetVelocity` to 0, and `MaxTorque` to the friction
+  torque, which goes to `SetAngularMotor` (`Joint/HingeJoint.cs`, lines 305-306).
+  - Source's hinge friction torque is `hingefriction` times 1000
+    (`source-sdk-2013@be57e3d:src/game/server/physconstraint.cpp`, line 721). Twenty S&box
+    torque units per unit of Source's torque matched Garry's Mod.
+  - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a` and in Garry's Mod.
+    Proof: a test that shoves a hinged sign and times it to rest: within a second, as in
+    Garry's Mod.
+- **Add a little damping for air drag.** Source slows bodies moving through air; its
+  `air_density` command sets "the density of air for drag computations"
+  (`source-sdk-2013@be57e3d:src/game/server/physics.cpp`, lines 2844-2859), and Garry's Mod
+  reports 2. On `26.10.13a` a swinging object never slowed down. A `Rigidbody` has
+  `LinearDamping` and `AngularDamping`
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Collider/Rigidbody.cs`, lines 54-90),
+  and 0.05 of each matched Garry's Mod: a swing lost 30% in 15 seconds, against 27%.
+  - Checked: source at `be57e3d` and `26.10.13`; seen on `26.10.13a` and in Garry's Mod.
+    Proof: a test that times a swing's decay against Garry's Mod's.
+- **Pose a ragdoll before `ModelPhysics` makes its bodies.** `ModelPhysics` starts each
+  body at the renderer's bone transform, and at the physics bind pose only when the
+  renderer has none
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Collider/ModelPhysics.PhysicsCreate.cs`,
+  lines 233-249). So call `SetBoneTransform` on the renderer first, then enable
+  `ModelPhysics`. Bodies made in the bind pose and then moved into place shoved what they
+  passed through: a table under two ragdolls was knocked over and broke.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that the
+    table under them stays put.
+- **Keep a ragdoll's pieces from colliding with each other when it starts from a pose
+  recorded in another engine.** Recorded poses overlap a little, and S&box kept pushing the
+  pieces apart, so two ragdolls never came to rest. Pieces joined by `AddBallJoint` already
+  skip each other, since its `collision` defaults to false
+  (`26.10.13:engine/Sandbox.Engine/Resources/Model/Builder/ModelBuilder.PhysicsJoints.cs`,
+  lines 40-42), but other pairs don't. Turn off collision between all of a ragdoll's
+  pieces, and between ragdolls. That Source lets small overlaps rest is inferred from
+  Garry's Mod.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a test that every ragdoll
+    comes to rest (32 of 32; with the pieces colliding, two kept moving).
 
 ## Materials and decals
 
@@ -170,8 +324,34 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
 
 ## Sound and water
 
-No entries yet. Sound lost to key spelling is under
-[Map logic and entities](#map-logic-and-entities).
+Sound lost to key spelling is under [Map logic and entities](#map-logic-and-entities).
+
+- **Give each Source surface property its own S&box surface, with sounds.** Collision
+  sounds and a prop's break sound come from the surface of the collider's shape:
+  `Surface.PlayCollisionSound` plays its hard or soft impact sound
+  (`26.10.13:engine/Sandbox.Engine/Resources/Surface.Effects.cs`, lines 34-58), and a
+  `Prop` plays each shape surface's break sound
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/Prop.cs`, lines 490-511). The
+  built-in surfaces have no break sound and impact sounds of their own, so props broke
+  silently or sounded wrong. Make a `.surface` for each Source surface property, with
+  impact, scrape, break, and footstep sounds
+  (`26.10.13:engine/Sandbox.Engine/Resources/Surface.Sounds.cs`, lines 13-58), and name it
+  on the model's physics shapes.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a test that lists each
+    prop's surface and its break sound.
+- **Make water a trigger tagged `water` with a `WaterVolume`, and add its sounds
+  yourself.** `MoveModeSwim` swims in triggers tagged `water`
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/Modes/Swim.cs`,
+  lines 54-81), and a `WaterVolume` floats the bodies touching its collider
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/WaterVolume.cs`, lines 95-104).
+  Neither plays a sound. Water without a trigger let the player sink to the bottom,
+  silently. Give the player a `MoveModeSwim`, and play splash and wading sounds yourself.
+  - Source water is brushes with `CONTENTS_WATER`, 0x20, or `CONTENTS_SLIME`, 0x10
+    (`source-sdk-2013@be57e3d:src/public/bspflags.h`, lines 30-31). The player plays
+    `Player.Wade` going in and out (`src/game/shared/baseplayer_shared.cpp`, lines
+    2012-2036) and wading footsteps in the water (lines 586-611).
+  - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`. Proof: a play-mode
+    test that the player swims at the surface and a crate floats.
 
 ## Map logic and entities
 
@@ -231,8 +411,27 @@ No entries yet. Sound lost to key spelling is under
 
 ## Player movement
 
-No entries yet. To test walking without a keyboard, see
+To test walking without a keyboard, see
 [Lessons from a world build](README.md#lessons-from-a-world-build).
+
+- **Let the player off a ladder at its foot.** `MoveModeLadder` keeps climbing the ladder
+  trigger it's on, starts climbing one that reaches at least halfway up the player, and
+  moves only up and down
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/Modes/Ladder.cs`,
+  lines 118-142 and 176). So a ladder trigger that reaches the floor kept the player
+  climbing at its foot. Make a subclass that lets go when the player moves down onto the
+  ground or jumps, and ignores that ladder until the player moves clear of it or walks back
+  into it.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that climbs
+    down and checks the player is walking and clear of the ladder.
+- **Wake the player's body when the ground under it drops away or moves.**
+  `PlayerController` stops regrounding while its body sleeps
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.Ground.cs`,
+  lines 67-74). A player standing still on a lift going down hung in the air until they
+  moved.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that rides
+    a lift down standing still: the feet stayed 8 units above it, against 8 to 116 without
+    the fix.
 
 ## Tools and scripting
 
@@ -291,6 +490,15 @@ the read-only `Editor.FileSystem.Content`.
   which returns null when no asset has that path
   (`26.10.13:engine/Sandbox.Tools/Assets/AssetSystem.cs`, lines 196-218).
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: nothing yet.
+- **Register files written while the Editor is open.** `AssetSystem.FindByPath` looks only
+  in the Editor's list of known assets, and `RegisterFile`'s summary says to register an
+  asset you just created (`26.10.13:engine/Sandbox.Tools/Assets/AssetSystem.cs`, lines
+  196-219 and 266-283). On `26.10.13a`, new models weren't found until they were
+  registered, so register each new file before compiling it. One model file couldn't be
+  written while the Editor was compiling it ("Permission denied"); running that step again
+  worked.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: after registering, all 245
+    new surfaces, sounds, and piece models compiled.
 
 ## Faster ways of working
 
@@ -310,8 +518,14 @@ the read-only `Editor.FileSystem.Content`.
     ([Workshop for Dedicated Servers](https://wiki.facepunch.com/gmod/Workshop_for_Dedicated_Servers)).
   - Both write into the owner's game folder, so ask the owner first, and delete the
     script and the copy afterwards.
+  - Measure physics instead of tuning it by eye. Have the script shove an object and sample
+    it every 0.1 seconds, give the S&box copy the same shove, and match the curves. The
+    hinge, air drag, and mass entries above were tuned this way.
+  - To record a ragdoll's pose on the server, read each limb from its physics object.
+    There, `GetBoneMatrix` gave a ragdoll's feet at the entity's origin with no rotation.
   - Checked: seen in Garry's Mod during a port to S&box `26.10.13a`; the wiki as read on
-    2026-10-21. Proof: nothing yet.
+    2026-10-21. Proof: the physics entries' tests, which compare with Garry's Mod's
+    records.
 - **Solve a screenshot's camera instead of hunting for it.** To match an old screenshot's
   viewpoint, trace a few pixels of a rough S&box render to get world points, mark the same
   points in the screenshot, and solve the camera from them with the old game's field of
@@ -319,6 +533,12 @@ the read-only `Editor.FileSystem.Content`.
   `26.10.13a`. A screenshot taken under water carries the old game's underwater tint, and no
   camera matches it.
   - Checked: seen on `26.10.13a`. Proof: the solver's reported pixel error.
+- **Run the case with the fix switched off before writing a fix.** When S&box seems to lack
+  something, run the case without your fix first. A system to wake props whose table moves
+  was written, then a run without it showed S&box already wakes them, so it came out. This
+  goes with searching the engine source first, as the multiply decal entry says.
+  - Checked: seen on `26.10.13a`. Proof: the run with the fix off, in which none of 72
+    props was left hanging.
 
 ## Adding an entry
 

@@ -11,6 +11,13 @@
   not every day. An urgent fix lands on the branch too and ships the batch early.
   `AGENTS.md`, `CONTRIBUTING.md`, and the README now say the same. From `v1.01` to
   `v1.03`, each update was its own release.
+- **Twenty more S&box import lessons.** `examples/sbox/IMPORTING.md` gains entries on
+  building ragdolls at run time, keeping a Source collision model's convex pieces, taking
+  brush entities' collision and mass from the BSP, displacement ground, mass, impact
+  breaking, hinge friction, air drag, surfaces with sounds, water, ladders, lifts, and
+  registering files the Editor didn't make. "Ask the original game what it does" now says
+  how to measure physics and record ragdoll poses, and a new entry says to run a case
+  with the fix off before writing a fix. Each was checked on S&box `26.10.13a`.
 
 ## 1.03 — 2026-10-21
 
