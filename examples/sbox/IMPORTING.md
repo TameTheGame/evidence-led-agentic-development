@@ -520,28 +520,43 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
   - Checked: source at `26.10.13`; seen on `26.10.13a`; how Source loops a wave isn't in
     the SDK. Proof: a play-mode test that three loops still play a second after their
     length.
-- **Give imported Source sounds Source's fade with distance.** A `SoundHandle` fades over
-  its `Distance`, 15,000 units unless set, along its `Falloff` curve, which is down to 0.22
-  at 5% of that distance and 0.04 at 20%
+- **Give imported Source sounds Source's fade with distance and its cut-off.** A
+  `SoundHandle` fades over its `Distance`, 15,000 units unless set, along its `Falloff`
+  curve, which is down to 0.22 at 5% of that distance and 0.04 at 20%
   (`26.10.13:engine/Sandbox.Engine/Systems/Audio/SoundHandle.cs`, lines 106-111). Most of a
   Source sound's range was close to silent: of the many sounds a big door makes as it
   opens, only one or two could be heard a few hundred units away. Source's gain is about
-  `36 / (distance * 10^((60 - soundlevel) / 20))`, at most 1, so set `Falloff` to that
-  curve over the distance where it drops to about 1/50.
-  - Source's formula is in its engine, which the SDK doesn't include. The 36 is the SDK's
-    reference distance (`source-sdk-2013@be57e3d:src/game/server/sound.cpp`, line 52); the
-    60 dB reference level is inferred.
+  `36 / (distance * 10^((60 - soundlevel) / 20))`, at most 1.
+  - Source also has a cut-off. A server sends a sound only to players within
+    `2 * 1000 / attenuation` units, where the attenuation is `20 / (soundlevel - 50)`, so
+    the cut-off is `100 * (soundlevel - 50)` units: 2,500 at 75 dB
+    (`source-sdk-2013@be57e3d:src/game/server/recipientfilter.cpp`, lines 367-412;
+    `src/public/soundflags.h`, line 106; `src/public/const.h`, line 428). It applies with
+    more than one player, and to ambient sounds only by assumption, since their filter is
+    in the engine. Once sounds faded as in Source but without the cut-off, faint machinery
+    thousands of units away underground could be heard on the surface, where Source never
+    sends it.
+  - So set each `SoundHandle`'s `Distance` to the cut-off and its `Falloff` to that gain
+    over it.
+  - Source's gain formula is in its engine, which the SDK doesn't include. The 36 is the
+    SDK's reference distance (`source-sdk-2013@be57e3d:src/game/server/sound.cpp`, line
+    52); the 60 dB reference level is inferred.
   - Checked: source at `26.10.13` and `be57e3d`, partly inferred; seen on `26.10.13a`.
     Proof: a play-mode test that every sound Garry's Mod plays near the listener plays and
-    reaches it.
+    reaches it, and one that nothing far away reaches the spawn points.
 - **Set an `ambient_generic`'s sound level the way Source does.** One that names a wave
   file plays at a level set by its radius, `40 + 20 * log10(radius / 36)`
   (`source-sdk-2013@be57e3d:src/game/server/sound.cpp`, lines 55-69 and 956-957). One that
   names a soundscript plays at the script's own level and ignores the radius
   (`src/game/shared/SoundEmitterSystem.cpp`, lines 815 and 931-951). Cutting every ambient
   sound off at its radius silenced alarms whose soundscripts carry much further.
-  - Checked: source at `be57e3d`; seen on `26.10.13a`. Proof: the play-mode sound test in
-    the entry above.
+  - A `func_rotating` plays a plain wave at the level its radius flag gives: small 60 dB,
+    medium 66, and large or none 75 (`src/game/server/bmodels.cpp`, lines 645-660 and
+    861-868; `src/public/soundflags.h`, lines 44-46 and 105). A soundscript brings its own
+    level. Two generators flagged medium played at 75 dB and carried much further than in
+    Source.
+  - Checked: source at `be57e3d`; seen on `26.10.13a`. Proof: the play-mode sound tests in
+    the entry above; the generators reach 1,600 units.
 
 ## Map logic and entities
 
@@ -742,6 +757,16 @@ the read-only `Editor.FileSystem.Content`.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: in play, `Game.Ident` is
     `facepunch.sandbox` and the project settings are Sandbox's, and every play-mode check
     passes with Sandbox's player (it climbs a ladder 49 units in 2 seconds).
+- **Trigger a game's input action from code with `Input.SetAction`.** Call
+  `Input.SetAction( action, true )` for one frame from a `GameObjectSystem` at
+  `Stage.StartUpdate`, and the game's own code sees `Input.Pressed` for it: `Pressed` means
+  down now and not down in the last command, and `SetAction` is public
+  (`26.10.13:engine/Sandbox.Engine/Systems/Input/Input.Actions.cs`, lines 118-123 and 140).
+  Use it for an action the game binds to no key, or in a check. Sandbox's noclip had no key
+  and its toggle is private, so this was the way to give it Garry's Mod's key and console
+  command without copying it.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that
+    toggles noclip this way.
 - **In play, switch off every camera but `Scene.Camera`.** A player controller, Sandbox's
   included, drives the scene's main camera instead of bringing its own. The main camera is
   the first with `IsMainCamera`, then by `Priority`
@@ -812,6 +837,12 @@ the read-only `Editor.FileSystem.Content`.
   goes with searching the engine source first, as the multiply decal entry says.
   - Checked: seen on `26.10.13a`. Proof: the run with the fix off, in which none of 72
     props was left hanging.
+- **When something of the parent game misbehaves in a map running inside it, try a bare
+  addon project first.** Make an `.sbproj` with `ParentPackage` and nothing else, and see
+  whether the fault is there too before tracing your own code. A weapon's swing that didn't
+  animate inside Facepunch's Sandbox was traced through weapon and view-model code for a
+  long time before a bare project showed the same thing: it was Sandbox's own bug.
+  - Checked: seen on `26.10.13a`. Proof: nothing yet.
 - **Check an engine type's members in the running editor before writing code from the
   engine source.** List them by reflection through `run_csharp`. The installed build can
   differ from the nearest `sbox-public` tag: code written from `26.10.13` didn't compile

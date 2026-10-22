@@ -10,6 +10,11 @@
   and the entry covers the game's project settings and its player's input. The water entry
   covers Sandbox's water, and "Ask the original game what it does" adds checking a
   remembered server rule against the map itself. Each was checked on S&box `26.10.13a`.
+- **Two more S&box import lessons, and Source's sound cut-off.**
+  `examples/sbox/IMPORTING.md` gains entries on triggering a game's input action from code
+  and on trying a bare addon project first when the parent game misbehaves. The sound-fade
+  entry adds the distance past which Source never sends a sound, and the sound-level entry
+  covers `func_rotating`. Each was checked on S&box `26.10.13a`.
 
 ## 1.04 — 2026-10-21
 
