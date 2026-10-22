@@ -16,7 +16,7 @@ keeping secrets out of prompts, see [Authority and Safety](docs/AUTHORITY_AND_SA
 
 ## Supported versions
 
-Security corrections are accepted for the current release, `1.03`. Fixes advance the minor
+Security corrections are accepted for the current release, `1.04`. Fixes advance the minor
 number under [Releasing](docs/RELEASING.md); there is no patch line. Earlier versions,
 including the v0.5 protocol, are historical.
 

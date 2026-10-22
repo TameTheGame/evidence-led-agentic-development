@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+No pending changes.
+
+## 1.04 — 2026-10-21
+
+The first batched release. It brings a release cadence and 32 more S&box import lessons. No
+skill changed, and nothing in the core breaks.
+
 - **Releases come in batches.** `docs/RELEASING.md` gains "Release cadence", and ADR-0021
   records it. Finished changes collect on `tamethegame/next-release`, each with a
   changelog line under `Unreleased` and no version bump, and `main` moves only at release
@@ -26,6 +33,10 @@
   geometry" section. The impact-damage entry now says that a prop's mass cancels when it
   hits the world, and that props hit about 1.4 times faster than the speed they lose. Each
   was checked on S&box `26.10.13a`.
+- **Two import entries corrected.** The radius-damage entry now gives the 1.25 explosion
+  scale to `func_physbox` as well as `func_breakable`. The entry on traces that start
+  inside a collider no longer says how Source's trace treats one, since that is engine
+  code outside the SDK.
 
 ## 1.03 — 2026-10-21
 
