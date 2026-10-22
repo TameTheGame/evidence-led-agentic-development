@@ -2,7 +2,14 @@
 
 ## Unreleased
 
-No pending changes.
+- **Seven more S&box import lessons, and Sandbox play in one project.**
+  `examples/sbox/IMPORTING.md` gains entries on colliders that carry things, Source's sound
+  fade and sound levels, cameras in play, rope width, faces S&box can't triangulate, and
+  checking an engine type's members in the running editor before coding from the engine
+  source. Playing a map inside Facepunch's Sandbox now takes one addon project, not two,
+  and the entry covers the game's project settings and its player's input. The water entry
+  covers Sandbox's water, and "Ask the original game what it does" adds checking a
+  remembered server rule against the map itself. Each was checked on S&box `26.10.13a`.
 
 ## 1.04 — 2026-10-21
 

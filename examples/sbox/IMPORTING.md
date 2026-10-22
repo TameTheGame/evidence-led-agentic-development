@@ -108,6 +108,14 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   or DMX for ModelDoc is the other route; it wasn't tried.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that builds
     every ragdoll and counts its bodies (32 ragdolls, 218 bodies).
+- **Draw a Source rope at about a third of its `Width` when it's a solid cylinder.** Source
+  draws a rope as a flat strip `Width` wide
+  (`source-sdk-2013@be57e3d:src/game/client/c_rope.cpp`, line 1812), and the cable
+  material's shading leaves only its middle looking solid. Cylinders as wide as `Width`
+  looked about three times as thick as in Garry's Mod. The factor, 0.35, was matched by
+  eye.
+  - Checked: source at `be57e3d`; seen on `26.10.13a` and in Garry's Mod. Proof: nothing
+    yet; a side-by-side picture only.
 
 ## World geometry
 
@@ -120,6 +128,15 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   by their middle can't help.
   - Checked: seen on `26.10.13a`; no source. Proof: captures of the same spots before and
     after.
+- **Clean each imported face before `PolygonMesh.AddFace`.** Remove repeated corners and
+  spikes, corners the outline runs out to and straight back from. S&box notes a face whose
+  triangulation comes back short as bad, and draws nothing for it when fewer than three
+  indices come back (`26.10.13:engine/Sandbox.Engine/Scene/Components/Mesh/PolygonMesh.cs`,
+  lines 5924-5940). The map compiler writes a few such faces, and clipping brush sides can
+  make more: a big door had a hole where four faces weren't drawn. Keep corners that sit on
+  a straight edge, since they match the neighbouring face's corners.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a test that counts faces
+    drawn with part missing: 59 before, 0 of 46,159 after.
 
 ## Collision
 
@@ -169,6 +186,18 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   every square the same way put steep ground up to 22 units from Source's.
   - Checked: source at `be57e3d`; seen on `26.10.13a`. Proof: a test that compares ground
     heights with heights recorded in Garry's Mod (355 of 355 within 1 unit).
+- **Make what moves and carries things collide as convex pieces.** A `MeshComponent` with
+  `Mesh` collision is concave
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Mesh/MeshComponent.cs`, line 123), and
+  S&box makes every concave collider static, whatever `Static` is set to
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Collider/Collider.cs`, lines 12-15).
+  Moving one doesn't push or carry what's on it: a loose object on a lift's floor stayed
+  put and went through the roof as the lift rose, and a player on the lift rose in small
+  jumps that shook the view. Give lifts, doors, and trains convex pieces with `Static` off,
+  such as a brush entity's pieces from the BSP's physics lump (above).
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that the
+    lift's colliders aren't static, a dropped object rides 3.3 units above its floor, and
+    the player's feet stay on it.
 
 ## Physics and breakables
 
@@ -445,9 +474,19 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
     lines 46-96). One whose `SceneVolume` type is `Infinite` holds the listener anywhere
     (`26.10.13:engine/Sandbox.Engine/Scene/Components/Utility/VolumeSystem/VolumeComponent.cs`,
     lines 9-14), so switch it on and off as the ear goes under and comes out.
+  - Inside Facepunch's Sandbox, don't stop at the `water` tag. When the map loads, Sandbox
+    gives every collider tagged `water` a `WaterVolume` (read from its compiled code), and
+    on `26.10.13a` the installed `WaterVolume`, which isn't the tag's, brings a solid
+    `BoxCollider` and floats every body that enters it, players included. The player stood
+    on an invisible box, then, with the box gone, bobbed waist deep instead of swimming.
+    Remove both, and float loose bodies yourself with `Rigidbody.ApplyBuoyancy`
+    (`26.10.13:engine/Sandbox.Engine/Scene/Components/Collider/Rigidbody.Buoyancy.cs`,
+    lines 8-23).
   - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`. Proof: a play-mode
-    test that the player swims at the surface and a crate floats, and one that hears the
-    underwater loop and `water.small` with the ear under water and neither above it.
+    test that the player swims at the surface and a crate floats, one that hears the
+    underwater loop and `water.small` with the ear under water and neither above it, and,
+    inside Sandbox, one that the player sinks and swims at the water level and a crate
+    floats.
 - **Bring Source soundscapes over as `Soundscape` resources played by a `SoundscapeTrigger`
   at each `env_soundscape`, and add Source's line-of-sight rule yourself.** Nothing in
   S&box plays an `env_soundscape`, so a map came over with no ambience. Make a `.sndscape`
@@ -481,6 +520,28 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
   - Checked: source at `26.10.13`; seen on `26.10.13a`; how Source loops a wave isn't in
     the SDK. Proof: a play-mode test that three loops still play a second after their
     length.
+- **Give imported Source sounds Source's fade with distance.** A `SoundHandle` fades over
+  its `Distance`, 15,000 units unless set, along its `Falloff` curve, which is down to 0.22
+  at 5% of that distance and 0.04 at 20%
+  (`26.10.13:engine/Sandbox.Engine/Systems/Audio/SoundHandle.cs`, lines 106-111). Most of a
+  Source sound's range was close to silent: of the many sounds a big door makes as it
+  opens, only one or two could be heard a few hundred units away. Source's gain is about
+  `36 / (distance * 10^((60 - soundlevel) / 20))`, at most 1, so set `Falloff` to that
+  curve over the distance where it drops to about 1/50.
+  - Source's formula is in its engine, which the SDK doesn't include. The 36 is the SDK's
+    reference distance (`source-sdk-2013@be57e3d:src/game/server/sound.cpp`, line 52); the
+    60 dB reference level is inferred.
+  - Checked: source at `26.10.13` and `be57e3d`, partly inferred; seen on `26.10.13a`.
+    Proof: a play-mode test that every sound Garry's Mod plays near the listener plays and
+    reaches it.
+- **Set an `ambient_generic`'s sound level the way Source does.** One that names a wave
+  file plays at a level set by its radius, `40 + 20 * log10(radius / 36)`
+  (`source-sdk-2013@be57e3d:src/game/server/sound.cpp`, lines 55-69 and 956-957). One that
+  names a soundscript plays at the script's own level and ignores the radius
+  (`src/game/shared/SoundEmitterSystem.cpp`, lines 815 and 931-951). Cutting every ambient
+  sound off at its radius silenced alarms whose soundscripts carry much further.
+  - Checked: source at `be57e3d`; seen on `26.10.13a`. Proof: the play-mode sound test in
+    the entry above.
 
 ## Map logic and entities
 
@@ -652,18 +713,46 @@ the read-only `Editor.FileSystem.Content`.
   worked.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: after registering, all 245
     new surfaces, sounds, and piece models compiled.
-- **To play a map inside Facepunch's Sandbox, make a second project for it.** Give it
-  `Type` `"addon"` and `ParentPackage` `"facepunch.sandbox"` in its `Metadata`, and link
-  its `Assets`, `Code`, and `ProjectSettings` folders to the map's project. The map then
-  gets Sandbox's player, physics gun, weapons, and health. `ParentPackage` is a key a
+- **To play a map inside Facepunch's Sandbox, make the map's own project an addon.** Give
+  its project `Type` `"addon"` and `ParentPackage` `"facepunch.sandbox"` in its `Metadata`,
+  and keep it one project. Sandbox brings the player, camera, physics gun, weapons, and
+  health. Switch your own player and camera off when `Game.Ident` isn't your project's, and
+  give Sandbox's players any extras of yours from a `GameObjectSystem` as they spawn. A
+  second project with its folders linked to the first left two projects to choose between,
+  and the map's own player and camera got in Sandbox's way. `ParentPackage` is a key a
   project's metadata can carry
-  (`26.10.13:engine/Launcher/StandaloneTest/Widgets/ProjectTemplate.cs`, line 13), and in
-  play `Game.Ident`, "the current game's ident", was `facepunch.sandbox`
-  (`26.10.13:engine/Sandbox.Engine/Game/Game/Game.cs`, lines 61-63). So switch your own
-  player and camera off when `Game.Ident` isn't your project's.
+  (`26.10.13:engine/Launcher/StandaloneTest/Widgets/ProjectTemplate.cs`, line 13), an
+  addon's editor session loads that package as the running game
+  (`26.10.13:engine/Sandbox.Tools/StartupLoadProject.cs`, lines 204-212), and in play
+  `Game.Ident`, "the current game's ident", was `facepunch.sandbox`
+  (`26.10.13:engine/Sandbox.Engine/Game/Game/Game.cs`, lines 61-63).
+  - The game's project settings apply, not the addon's. A game mounts its own package's
+    `ProjectSettings` (`26.10.13:engine/Sandbox.GameInstance/GameInstance.cs`, line 326),
+    so in play the addon's `Input.config` and `Collision.config` were ignored, and
+    `ProjectSettings.Input` and `ProjectSettings.Collision` listed Sandbox's actions and
+    tags. Use the game's input actions, and add the collision pairs you need when the scene
+    loads, through `Scene.PhysicsWorld.CollisionRules`
+    (`26.10.13:engine/Sandbox.Engine/Systems/Physics/PhysicsWorld.cs`, lines 73-77).
+    Without that, ragdoll pieces collided with each other again, break pieces blocked the
+    player, and noclip had no key.
+  - Sandbox's `Player` component turns the controller's `UseInputControls` back on every
+    frame (read from its compiled code). A check that steers the player itself with
+    `WishVelocity` has to switch that component off first; until then, ladder, lift, and
+    use checks didn't move the player at all.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: in play, `Game.Ident` is
-    `facepunch.sandbox`, the player has Sandbox's inventory and physics gun, and the map's
-    logic runs.
+    `facepunch.sandbox` and the project settings are Sandbox's, and every play-mode check
+    passes with Sandbox's player (it climbs a ladder 49 units in 2 seconds).
+- **In play, switch off every camera but `Scene.Camera`.** A player controller, Sandbox's
+  included, drives the scene's main camera instead of bringing its own. The main camera is
+  the first with `IsMainCamera`, then by `Priority`
+  (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.Camera.cs`, lines 12-17), and S&box
+  draws every active camera in `Priority` order
+  (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.cs`, lines 331-341). So a still camera
+  of equal priority drew over the player's view, and the view stayed on a fixed spot.
+  Switching off all the scene's cameras made it worse, since one was the camera Sandbox
+  drives.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: nothing yet; in play, the
+    main camera sat at the player's eyes and the other was off.
 - **Trace again when a trace starts inside a collider.** On `26.10.13a`, a trace that
   started inside a collider reported that collider as its hit, with `StartedSolid` set
   (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.Trace.cs`, lines 770-774; which
@@ -704,9 +793,12 @@ the read-only `Editor.FileSystem.Content`.
     hinge, air drag, and mass entries above were tuned this way.
   - To record a ragdoll's pose on the server, read each limb from its physics object.
     There, `GetBoneMatrix` gave a ragdoll's feet at the entity's origin with no rotation.
+  - Check the map in plain Garry's Mod before copying behaviour someone remembers from an
+    old server: a server's gamemode and addons add rules the map doesn't have. Doors and a
+    lift remembered as locked until the power came on opened without it in the map itself.
   - Checked: seen in Garry's Mod during a port to S&box `26.10.13a`; the wiki as read on
     2026-10-21. Proof: the physics entries' tests, which compare with Garry's Mod's
-    records.
+    records, and a test that the same doors and buttons start locked as in Garry's Mod.
 - **Solve a screenshot's camera instead of hunting for it.** To match an old screenshot's
   viewpoint, trace a few pixels of a rough S&box render to get world points, mark the same
   points in the screenshot, and solve the camera from them with the old game's field of
@@ -720,6 +812,18 @@ the read-only `Editor.FileSystem.Content`.
   goes with searching the engine source first, as the multiply decal entry says.
   - Checked: seen on `26.10.13a`. Proof: the run with the fix off, in which none of 72
     props was left hanging.
+- **Check an engine type's members in the running editor before writing code from the
+  engine source.** List them by reflection through `run_csharp`. The installed build can
+  differ from the nearest `sbox-public` tag: code written from `26.10.13` didn't compile
+  against the installed `26.10.13a`. The tag's `WaterVolume` has `FluidDensity` and
+  `IgnoreTags` (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/WaterVolume.cs`,
+  lines 16 and 58); the installed one has neither, and requires a `BoxCollider`. No version
+  of that file in `sbox-public` had the installed members, so its history didn't help
+  either. This adds to the
+  [S&box skill](skills/sbox-engine-reference/SKILL.md#the-engine-source-is-ground-truth)'s
+  advice to compare dates.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`, whose engine is dated four days
+    after the tag. Proof: nothing yet.
 
 ## Adding an entry
 
