@@ -15,6 +15,14 @@
   and on trying a bare addon project first when the parent game misbehaves. The sound-fade
   entry adds the distance past which Source never sends a sound, and the sound-level entry
   covers `func_rotating`. Each was checked on S&box `26.10.13a`.
+- **Six more S&box import lessons, and checking motion on screen.**
+  `examples/sbox/IMPORTING.md` gains entries on making a mesh not solid, Sandbox's physics
+  gun events, break pieces' outward burst, melee push, waiting a frame in `run_csharp`, and
+  drawing moving brushes without judder. The ragdoll entry now builds knees and elbows as
+  hinges, the soundscape entry makes Source's choice, the camera entry keeps the game's own
+  camera, the input entry adds hiding an action, and the translucency entry names its cost.
+  The S&box guide's ladder section adds recording the game window to check motion a player
+  sees. Each was checked on S&box `26.10.13a`.
 
 ## 1.04 — 2026-10-21
 

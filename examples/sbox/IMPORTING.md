@@ -99,15 +99,30 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
     render as whole bodies in a capture.
 - **Build a ragdoll from another game at run time with `ModelBuilder`.** Give it bones in
   model space (above), a skinned mesh whose vertices carry `BlendIndices` and
-  `BlendWeight`, one `AddBody` per physics bone with that bone's hulls, and an
-  `AddBallJoint` with swing and twist limits for each joint. Then simulate it with
-  `ModelPhysics`. S&box's Serious Engine mount builds skinned, jointed models the same way
+  `BlendWeight`, one `AddBody` per physics bone with that bone's hulls, and a joint for
+  each of the ragdoll's joints, as below. Then simulate it with `ModelPhysics`. S&box's
+  Serious Engine mount builds skinned, jointed models the same way
   (`26.10.13:engine/Mounting/Sandbox.Mounting.SE3/Model.Mesh.cs`, lines 27-30;
-  `26.10.13:engine/Mounting/Sandbox.Mounting.SE3/Model.Physics.cs`, lines 110-273). A
+  `26.10.13:engine/Mounting/Sandbox.Mounting.SE3/Model.Physics.cs`, lines 100-280). A
   ragdoll converted to OBJ has no bones, so it compiles only as a statue. Converting to FBX
   or DMX for ModelDoc is the other route; it wasn't tried.
+  - Match Source's joint limits. A Source ragdoll limits each of a joint's three axes
+    separately. Give a joint with a z range and no y range, such as a knee or an elbow, an
+    `AddHingeJoint` with that range (`WithTwistLimit`). A hinge turns about its frames'
+    up axis
+    (`26.10.13:engine/Sandbox.Engine/Scene/Components/Render/SkinnedModelRenderer.PhysicsBones.cs`,
+    lines 283-296), so turn the frames to put that on the joint's z axis. Give every other
+    joint an `AddBallJoint`: turn its frames so the swing cone points at the middle of the
+    y and z ranges, set its swing limit to half the wider of the two ranges
+    (`WithSwingLimit`), and use the x range as its twist (`WithTwistLimit`). With a ball
+    joint everywhere, each cone as wide as the joint's largest limit, a ragdoll carried
+    with the physics gun folded its knees backwards and sideways.
+  - Read Source's limits right-handed, about the child bone's axes in the bind pose.
+    Ragdoll poses recorded in Garry's Mod sat inside the limits read that way (6 ragdolls
+    checked).
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that builds
-    every ragdoll and counts its bodies (32 ragdolls, 218 bodies).
+    every ragdoll and counts its bodies (32 ragdolls, 218 bodies), then hangs each from one
+    piece: no knee or elbow went past Source's limits, against 11 of 13 with cones.
 - **Draw a Source rope at about a third of its `Width` when it's a solid cylinder.** Source
   draws a rope as a flat strip `Width` wide
   (`source-sdk-2013@be57e3d:src/game/client/c_rope.cpp`, line 1812), and the cable
@@ -198,6 +213,14 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that the
     lift's colliders aren't static, a dropped object rides 3.3 units above its floor, and
     the player's feet stay on it.
+- **To make a `MeshComponent` not solid, set its `Collision` to `None`; don't switch it
+  off.** `MeshComponent` is a `Collider` that also draws its mesh
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Mesh/MeshComponent.cs`, line 11), and
+  switched off, it deletes what it draws (lines 159-172). A mounted gun's barrels, which
+  the map marks not solid, were invisible with their `MeshComponent`s switched off. Setting
+  `Collision` rebuilds the model with the new collision (lines 35-47 and 197-200).
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that the
+    gun's two barrels are drawn.
 
 ## Physics and breakables
 
@@ -246,6 +269,18 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a compiled bottle model
     reports health 5, break speed 79, and 2 break pieces; after a reimport, the props whose
     models have health are breakable.
+- **Give break pieces Source's outward burst.** Source sends each break piece away from the
+  prop's origin at 100 units a second, or at the piece's own `burst` from the model's break
+  data, on top of the prop's own velocity
+  (`source-sdk-2013@be57e3d:src/game/server/props.cpp`, line 1728;
+  `src/game/shared/props_shared.cpp`, lines 578-580, 617, and 1104-1118). S&box's `Prop`
+  only passes the prop's velocity on, halved after an impact
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/Prop.cs`, lines 596-621). A table
+  broken with a crowbar seemed to vanish: its pieces lay still where it had stood. Add the
+  burst in `Prop.OnGibsCreated` (line 633).
+  - Checked: source at `be57e3d` and `26.10.13`; seen on `26.10.13a`. Proof: a play-mode
+    test that breaks a table with the crowbar: it falls into 10 pieces, thrown up to 29
+    units.
 - **Turn Source's impact damage into a break speed.** When a prop hits the world, Source
   squares the speed the prop lost and multiplies by its mass, then by one over that same
   mass, so the mass cancels. It scales that by the prop's `physdamagescale`, 0.1 unless
@@ -270,6 +305,16 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
     Proof: a play-mode test that drops a bottle 40 units, which breaks, and a crate 6,
     which doesn't. In Garry's Mod a bottle broke from a 12-unit drop, and no drop up to 384
     units broke a table or chair.
+- **Before retuning props that move too little when hit, compare the weapon's push with
+  Source's.** Source pushes a melee hit with 300 for each point of damage, enough to move a
+  75 kg body 4 inches a second per point, times `phys_pushscale`, which is 1 by default
+  (`source-sdk-2013@be57e3d:src/game/shared/takedamageinfo.cpp`, lines 15, 293-296, and
+  347-359). So a 10-point crowbar hit pushes with 3,000. Sandbox's crowbar pushes with
+  1,000, its `MeleeWeapon.SwingForce`, read from Sandbox's compiled code. Props matched to
+  Garry's Mod for the same shove still moved too little when hit with it. Measure the
+  props' side as "Ask the original game what it does", under
+  [Faster ways of working](#faster-ways-of-working), says.
+  - Checked: source at `be57e3d`; seen on `26.10.13a`. Proof: nothing yet.
 - **Don't let anything break a prop the player is carrying.** Carrying pulls a prop through
   whatever is beside it, and a melon lifted out of a crate broke at once. Turn the prop's
   own `EnableImpactDamage` off while it's held. That isn't enough: a `Rigidbody` that
@@ -355,12 +400,12 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
     table under them stays put.
 - **Keep a ragdoll's pieces from colliding with each other when it starts from a pose
   recorded in another engine.** Recorded poses overlap a little, and S&box kept pushing the
-  pieces apart, so two ragdolls never came to rest. Pieces joined by `AddBallJoint` already
-  skip each other, since its `collision` defaults to false
+  pieces apart, so two ragdolls never came to rest. Pieces joined by `AddHingeJoint` or
+  `AddBallJoint` already skip each other, since `collision` defaults to false for both
   (`26.10.13:engine/Sandbox.Engine/Resources/Model/Builder/ModelBuilder.PhysicsJoints.cs`,
-  lines 40-42), but other pairs don't. Turn off collision between all of a ragdoll's
-  pieces, and between ragdolls. That Source lets small overlaps rest is inferred from
-  Garry's Mod.
+  lines 23-25 and 40-42), but other pairs don't. Turn off collision between all of a
+  ragdoll's pieces, and between ragdolls. That Source lets small overlaps rest is inferred
+  from Garry's Mod.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a test that every ragdoll
     comes to rest (32 of 32; with the pieces colliding, two kept moving).
 
@@ -398,6 +443,8 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
     `26.10.13:game/core/shaders/common/shadingmodel.hlsl`, lines 56-77). A sparse wire
     pattern averages to low alpha in small mips, and that boost can lift it past the
     cutoff, filling the holes. Whether `complex.shader` uses this step can't be read.
+  - The cost: a translucent surface then draws over nearer effects drawn before it. A
+    physics gun's beam seen through a translucent grating was hidden behind the grating.
   - Checked: seen on `26.10.13a`. Proof: nothing yet. An editor capture of a chain-link
     material at several distances, with each feature, would settle it.
 - **Project a decal that has to wrap a corner.** Source's decals wrap round a corner onto
@@ -502,7 +549,10 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
     62-66 and 200-216), as Source does. Source also needs a line from the `env_soundscape`
     to the player that no brush or water blocks
     (`source-sdk-2013@be57e3d:src/game/server/soundscape.cpp`, lines 258-296), and S&box
-    has no such check. Switch off in-range triggers without a clear line.
+    has no such check. So make Source's choice yourself: the nearest `env_soundscape` in
+    range with a clear line, which keeps playing until another one qualifies (lines
+    235-241). Leave only its trigger switched on, so S&box's picker can't choose
+    differently.
   - S&box plays looped sounds at the listener (`SoundscapeTrigger.cs`, line 329) and each
     random sound in a random direction, 50 to 100 units away unless its `Distance` says
     otherwise (lines 390-399; `Soundscape.cs`, line 74). Source plays a random sound whose
@@ -510,7 +560,8 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
     26 and 833-849).
   - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`. Proof: a play-mode
     test that every `env_soundscape` got a soundscape (52 of 52), that the right one plays
-    at 7 spots, and that it keeps playing after walking out of every radius.
+    at 8 spots, including after flying through a wall, and that it keeps playing after
+    leaving every radius.
 - **Keep a wave's loop when converting sounds.** Source loops a wave from its first cue
   point, or over its `smpl` loop. Waves converted with only their format and data played
   ambient loops once and stopped. For each wave with a `cue ` or `smpl` chunk, set `loop`,
@@ -581,6 +632,28 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
   `OnPass` at start, which sets the starting state.
   - Checked: source at `be57e3d`; seen on `26.10.13a`. Proof: a play-mode test of each
     lift's starting position and state.
+- **Draw a brush that moves in `OnFixedUpdate` with a `ModelRenderer`, and hide its
+  `MeshComponent` in game.** Give the `ModelRenderer` the `MeshComponent`'s `Model`, and
+  set the `MeshComponent`'s `HideInGame`. S&box smooths a transform moved in fixed update
+  between physics steps, and `ModelRenderer` draws the smoothed one
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Render/ModelRenderer.cs`, lines
+  318-323). `MeshComponent` takes `WorldTransform` when the transform changes
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Mesh/MeshComponent.cs`, lines 217-221),
+  but the smoothing raises that change inside a callback where `WorldTransform` is the
+  stepped one
+  (`26.10.13:engine/Sandbox.Engine/Scene/GameObject/GameTransform/GameTransform.Interpolation.cs`,
+  line 251;
+  `26.10.13:engine/Sandbox.Engine/Scene/GameObject/GameTransform/GameTransform.TransformChanged.cs`,
+  line 26;
+  `26.10.13:engine/Sandbox.Engine/Scene/GameObject/GameTransform/GameTransform.cs`, line
+  50). So the brush judders on screen: at 50 steps a second on a 60 Hz screen, five frames
+  move and one doesn't. A lift looked jittery to its rider while the rider and a box in the
+  car looked smooth. Positions logged every frame were smooth too, and only a recording of
+  the screen showed it.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a recording of the game
+    window during a ride, measured frame to frame as
+    [the guide](README.md#the-ladder-for-a-map) says: the car's wall held still in the view
+    to 0.1 pixels a frame, against 3 pixels on five frames and none on the sixth before.
 - **Read a sliding door's old "starts open" flag the Source way.** A `func_door` with spawn
   flag 1 spawns at its open position, marked open, so Close brings it back to where it was
   built (`source-sdk-2013@be57e3d:src/game/server/doors.cpp`, lines 273-279; the flag is
@@ -613,6 +686,13 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
   (`Pressing.cs`, line 231; `PlayerController.Events.cs`, line 36).
   - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`. Proof: a play-mode
     test that presses every usable thing from where a player would stand.
+- **Inside Sandbox, implement `IPhysgunEvent` to hear about the physics gun.** Sandbox's
+  physics gun calls `OnPhysgunGrab`, `OnPhysgunPickup`, and `OnPhysgunDrop` on the object
+  it grabs, and Source's `OnPhysGunPickup` and `OnPhysGunDrop` outputs map onto them. A
+  part pulled out of its socket with the physics gun left the socket's pickup output
+  unfired, because only carrying the part by hand fired it. Sandbox's code isn't in
+  `sbox-public`; this was read from its compiled code, where the interface is public.
+  - Checked: seen on `26.10.13a`; no source. Proof: nothing yet.
 - **Rebuild `trigger_hurt` from Source's rules.** Nothing in S&box hurts or clicks for one.
   A `trigger_hurt` deals its `damage` per second, in half-second steps, and with
   `damagemodel` 1 it doubles the damage each step up to `damagecap`
@@ -677,6 +757,16 @@ the read-only `Editor.FileSystem.Content`.
   method of its class. The [compile check](README.md#the-compile-check) wraps scripts the
   same way, so it catches both.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: the compile check.
+- **In a `run_csharp` check, wait for the next frame with a delay, not `GameTask.Yield`.**
+  `GameTask.Yield` awaits `Task.Yield`
+  (`26.10.13:engine/Sandbox.Engine/Systems/Threads/TaskSource.cs`, lines 15 and 575-579),
+  which on `26.10.13a` resumed within the same frame, so whatever the game does each frame
+  hadn't run. A check counted 7,920 yields in a second at about 140 frames a second, and
+  another read a value the game resets every frame four times after yields and saw it
+  unchanged. `TaskSource.Frame` waits for the next frame's update (lines 584-588), but the
+  static `GameTask` has no `Frame`. Wait with `GameTask.DelaySeconds` instead: with
+  0.2-second delays, the value was reset each time.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: nothing yet.
 - **Inside a component, `Transform` is the component's own property.** `Component`
   has a `Transform` property of type `GameTransform`
   (`26.10.13:engine/Sandbox.Engine/Scene/Components/Component.cs`, line 42), so
@@ -762,22 +852,27 @@ the read-only `Editor.FileSystem.Content`.
   `Stage.StartUpdate`, and the game's own code sees `Input.Pressed` for it: `Pressed` means
   down now and not down in the last command, and `SetAction` is public
   (`26.10.13:engine/Sandbox.Engine/Systems/Input/Input.Actions.cs`, lines 118-123 and 140).
-  Use it for an action the game binds to no key, or in a check. Sandbox's noclip had no key
-  and its toggle is private, so this was the way to give it Garry's Mod's key and console
-  command without copying it.
+  `Input.Clear( action )` at the same point hides an action from the game's code (line
+  149). Use them for an action the game binds to no key, or in a check. Sandbox's noclip
+  had no key and its toggle is private, so this was the way to give it Garry's Mod's key
+  and console command without copying it.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that
-    toggles noclip this way.
-- **In play, switch off every camera but `Scene.Camera`.** A player controller, Sandbox's
-  included, drives the scene's main camera instead of bringing its own. The main camera is
-  the first with `IsMainCamera`, then by `Priority`
-  (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.Camera.cs`, lines 12-17), and S&box
+    toggles noclip this way, and one in which a player working a mounted gun stays put
+    while it fires.
+- **In play, keep the game's own camera and switch off the cameras the map brings.** A
+  player controller, Sandbox's included, drives the scene's main camera instead of bringing
+  its own. The main camera is the first with `IsMainCamera`, then by `Priority`
+  (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.Camera.cs`, lines 12-16), and S&box
   draws every active camera in `Priority` order
   (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.cs`, lines 331-341). So a still camera
   of equal priority drew over the player's view, and the view stayed on a fixed spot.
   Switching off all the scene's cameras made it worse, since one was the camera Sandbox
-  drives.
+  drives. Keeping `Scene.Camera` and switching off the rest fixed that, but `Scene.Camera`
+  was the map's plain camera: the player drove it, and Sandbox's own camera, which carries
+  its colour grading, bloom, and physics gun highlight, sat switched off. So keep the
+  game's camera as the main one, and switch off the map's.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: nothing yet; in play, the
-    main camera sat at the player's eyes and the other was off.
+    main camera was Sandbox's, at the player's eyes, and the map's was off.
 - **Trace again when a trace starts inside a collider.** On `26.10.13a`, a trace that
   started inside a collider reported that collider as its hit, with `StartedSolid` set
   (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.Trace.cs`, lines 770-774; which

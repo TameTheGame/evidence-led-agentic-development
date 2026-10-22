@@ -24,6 +24,18 @@
 | **3 · session** | A remote client sees and collides with the same walls. Same-machine host and client is not clean-client proof. Until the game is published, host from the Editor; see [Lessons from a world build](#lessons-from-a-world-build). |
 | **4 · owner** | Walking from spawn to gate to tower feels like a frontier outpost. |
 
+**Check motion on the screen, not only in logs.** Positions a game logs each frame can be
+smooth while the picture isn't. On `26.10.13a`, three in-game measurements said a lift
+moved smoothly while a player riding it saw it judder, and a 60 fps recording of the game
+window showed the judder at once. The cause is in the
+[import reference](IMPORTING.md#map-logic-and-entities). So check motion a player sees by
+recording the game window and measuring how far the picture moves from frame to frame: a
+strip of the picture that shifts by uneven steps shows the beat. On Windows, FFmpeg's
+`gfxcapture` source, in FFmpeg 8.1 and later, records one window, and it kept recording the
+game while other windows covered it. It returns frames as fast as the compositor gives
+them, up to its `max_framerate`
+([FFmpeg filters](https://ffmpeg.org/ffmpeg-filters.html#gfxcapture)).
+
 ## What the spike settled
 
 The spike ran on S&box `26.10.02`. Source references are to `Facepunch/sbox-public` at
