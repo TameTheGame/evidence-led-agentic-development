@@ -817,14 +817,24 @@ To test walking without a keyboard, see
   into it.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that climbs
     down and checks the player is walking and clear of the ladder.
-- **Wake the player's body when the ground under it drops away or moves.**
-  `PlayerController` stops regrounding while its body sleeps
+- **Keep the player's body awake while it stands on anything that moves.**
+  `PlayerController` keeps a walking player on the floor by snapping it down each step, but
+  skips that while its body sleeps
   (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.Ground.cs`,
-  lines 67-74). A player standing still on a lift going down hung in the air until they
-  moved.
+  lines 67-74), and a body standing still falls asleep. Waking it once the floor has moved
+  is too late, because the floor is already out of reach. A player at rest on a lift
+  setting off down hung in the air for a quarter of a second, then dropped about 10 units
+  onto the floor, which looked like the lift juddering. So keep the body awake for as long
+  as the collider under it isn't static: each fixed update, set its physics body's
+  `Sleeping` to false, as the controller does when it changes mode
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.Mode.cs`,
+  lines 18-21), while `GroundComponent` is a `Collider` whose `Static` is false
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Collider/Collider.cs`, lines 12-16). A
+  concave collider always counts as static, but one that moves should collide as convex
+  pieces anyway (see [Collision](#collision)).
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that rides
-    a lift down standing still: the feet stayed 8 units above it, against 8 to 116 without
-    the fix.
+    a lift down from rest: the feet stayed 0.0 units above the floor from the first step,
+    against 9.7 when the body was only woken after the floor moved.
 
 ## Tools and scripting
 
@@ -1014,6 +1024,16 @@ the read-only `Editor.FileSystem.Content`.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof:
     [`tools/scene_refs.py`](tools/scene_refs.py) passes its test on a throwaway project
     laid out the same way, and fails its controls; it hasn't yet run on a real project.
+- **In Python, write files that shell scripts read with `newline='\n'`.** On Windows,
+  Python's text mode turns each `\n` it writes into `\r\n` unless `newline` says otherwise
+  ([Python's `open`](https://docs.python.org/3/library/functions.html#open)). With its
+  default settings, bash's `read` splits a line only on spaces, tabs and newlines, so it
+  keeps the `\r` on the line's last field. A list of points written by Python and read in
+  bash put `104\r` into a generated `run_csharp` script, which then failed to compile at
+  every point, and a run of 108 screenshots all showed the same view. Open such files with
+  `newline='\n'`, or pass it to `Path.write_text` (Python 3.10 and newer), or strip the
+  `\r` in bash with `tr -d '\r'`.
+  - Checked: Python's documentation; seen on Windows. Proof: nothing yet.
 
 ## Faster ways of working
 

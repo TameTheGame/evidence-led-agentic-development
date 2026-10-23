@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **One more import lesson, and a sharper fix for players on lifts.**
+  `examples/sbox/IMPORTING.md` gains an entry on Python writing `\r\n` line endings on
+  Windows that bash's `read` keeps. The entry on waking the player on a moving floor now
+  keeps the body awake for as long as it stands on anything that moves, since waking it
+  after the floor moves is too late. Each was checked on S&box `26.10.13a` or on Windows.
 - **One more S&box import lesson.** `examples/sbox/IMPORTING.md` gains an entry on reading
   a power system's state only from the lamps that start dark. It was checked on S&box
   `26.10.13a`.
