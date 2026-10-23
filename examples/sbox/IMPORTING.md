@@ -794,6 +794,13 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
   - Checked: source at `be57e3d`; seen on `26.10.13a`. Proof: a play-mode test that, 11
     seconds after a button press, the explosive and the button are gone and the breakable
     it blew up is cleared.
+- **Read a power system's state only from its lamps that start dark.** A map can give an
+  always-on lamp the same name as the lamps a power system switches. Read from all of
+  them, the power looked on from the start: the bounce light baked for "power on" showed
+  with the power off, and doors meant to wait for the power opened. The lamps the system
+  switches are the ones with the "start off" flag (see [Lighting](#lighting)).
+  - Checked: seen on `26.10.13a`; no source, as it comes from the map's data. Proof: a
+    play-mode test that the doors stay shut until the system's lamps come on.
 
 ## Player movement
 

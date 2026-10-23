@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- **One more S&box import lesson.** `examples/sbox/IMPORTING.md` gains an entry on reading
+  a power system's state only from the lamps that start dark. It was checked on S&box
+  `26.10.13a`.
 - **Two more S&box import lessons, and more on lighting.** `examples/sbox/IMPORTING.md`
   gains entries on Source's `$selfillum` and on traces that pass through one-sided world
   collision. The lamp entry adds soft fill light, the indoor-light entry adds daylight in a
