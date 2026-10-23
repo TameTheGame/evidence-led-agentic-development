@@ -221,6 +221,14 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   `Collision` rebuilds the model with the new collision (lines 35-47 and 197-200).
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that the
     gun's two barrels are drawn.
+- **Shut the doors before a check that counts traces that hit nothing.** World mesh
+  collision is one-sided: a trace that starts behind a face, or slips past a door into the
+  wall round it, goes straight through solid walls. A check of whether rooms were open to
+  the sky sent rays out through the door beside each light; they went on through the wall
+  below and hit nothing, so every room looked as if it stood outside the map. Don't count a
+  ray that could have started behind a face either.
+  - Checked: seen on `26.10.13a`; no source, as the collision is native code. Proof: a
+    check that counts "nothing hit" only with the doors shut.
 
 ## Physics and breakables
 
@@ -451,6 +459,23 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   the next surface. A decal built as a flat quad trimmed to one surface stops at its edge;
   a projected `Decal` component covers what its box touches, so it wraps.
   - Checked: seen on `26.10.13a`; no source read. Proof: nothing yet.
+- **Bring Source's `$selfillum` over as `complex.shader`'s self-illumination, with the base
+  texture's alpha as its mask.** In Source, `$selfillum` blends a surface from its lit
+  colour to its full, unlit colour times `$selfillumtint`, by the base texture's alpha
+  (`source-sdk-2013@be57e3d:src/materialsystem/stdshaders/lightmappedgeneric_ps2_3_x.h`,
+  lines 515-518). Imported without it, lamps, screens and consoles came over unlit, and
+  their light seemed to come from nowhere. In S&box, switch on `F_SELF_ILLUM` and give
+  `TextureSelfIllumMask` an image of that alpha. The glow is the mask times the tint, times
+  2 to the power of `g_flSelfIllumBrightness`, times `g_flSelfIllumScale` clamped to 1, and
+  by default times the base colour too
+  (`26.10.13:game/core/shaders/vr_shared_standard_ps_code.fxc`, lines 145-159 and 365-370).
+  So the brightness is in stops, and a scale above 1 does nothing, though the editor allows
+  up to 16. Some models share a glowing material but map their part to its dark texels,
+  such as a light fitting's "off" version. So find what glows on a model from the mask
+  under its own texture coordinates, not from the material it uses.
+  - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`, where `F_SELF_ILLUM`
+    is in the private `complex.shader`. Proof: screenshots of the lit fittings, and a
+    script that finds each model's glow from the mask under its texture coordinates.
 
 ## Lighting
 
@@ -473,9 +498,14 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   1252-1257). With `Attenuation` 1, S&box matches that only beyond 100 units and stays flat
   closer in, so walls next to lamps looked dull and rooms evenly dim, without the bright
   patch round each lamp. With `Attenuation` 16 and a colour of 16 × brightness / 255, it
-  matches down to 25 units.
+  matches down to 25 units. `Attenuation` 1 still has a use: flat within 100 units, it
+  leaves no pool or edge, which suits soft fill light. Lights a Source mapper hid for the
+  lightmaps, with no lamp model or glowing texture near them, looked like spotlights from
+  nowhere when lit live; above ground, soft fill in their place worked. With a radius under
+  100 units, though, `Attenuation` 1 stays near full almost to the radius and ends in a
+  hard circle.
   - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`. Proof: screenshots of
-    the lit rooms, with their brightness measured.
+    the lit rooms, with their brightness measured, and of a room lit by soft fill.
 - **For indoor light, switch off the flat ambient light and bake the bounce into
   `IndirectLightVolume`s.** S&box lights a scene live. A `DirectionalLight`'s `SkyColor`
   and any `AmbientLight` component add a flat light to every surface, underground too
@@ -490,15 +520,19 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   lines 64-67). A bake renders each probe's view with a black background and no ambient
   light
   (`26.10.13:engine/Sandbox.Engine/Scene/Components/IndirectLighting/DDGIVolumeUpdater.cs`,
-  lines 47-55). `BakeProbes` is public and can be awaited from `run_csharp`, but it does
-  nothing until the scene has been saved to a file
+  lines 47-55), so it counts the sun's light but not the sky's, and shade outdoors and in
+  doorways stayed black. For daylight there, put a large glowing box round the map while
+  baking, casting no shadow, and remove it afterwards. A probe grid coarser than a passage
+  also leaves the passage black in shade, with its probes inside the walls; give small
+  volumes a probe every 64 to 80 units. `BakeProbes` is public and can be awaited from
+  `run_csharp`, but it does nothing until the scene has been saved to a file
   (`26.10.13:engine/Sandbox.Engine/Scene/Components/IndirectLighting/IndirectLightVolume.cs`,
   lines 332 and 349-352). A bake took about 25 ms a probe. In dark rooms, the camera's
   `Tonemapping.MaximumExposure` limits how far the eye adapts. It is 3 by default
   (`26.10.13:engine/Sandbox.Engine/Scene/Components/PostProcessing/Effects/Tonemapping.cs`,
   line 82), and 5 let it adapt to the rooms.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: screenshots of the same
-    rooms before and after.
+    rooms, and of a shaded entrance, before and after.
 - **Where the map's logic switches lamps, bake a volume for each state and switch it with
   them.** A bake holds the light as it was when baked. Baked with the lamps on, rooms whose
   lamps were off glowed with their bounce; baked with the lamps off, lit rooms got no
@@ -852,15 +886,21 @@ the read-only `Editor.FileSystem.Content`.
   which returns null when no asset has that path
   (`26.10.13:engine/Sandbox.Tools/Assets/AssetSystem.cs`, lines 196-218).
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: nothing yet.
-- **Register files written while the Editor is open.** `AssetSystem.FindByPath` looks only
-  in the Editor's list of known assets, and `RegisterFile`'s summary says to register an
-  asset you just created (`26.10.13:engine/Sandbox.Tools/Assets/AssetSystem.cs`, lines
-  196-219 and 266-283). On `26.10.13a`, new models weren't found until they were
-  registered, so register each new file before compiling it. One model file couldn't be
-  written while the Editor was compiling it ("Permission denied"); running that step again
-  worked.
+- **Register files written while the Editor is open, and compile the ones you rewrite.**
+  `AssetSystem.FindByPath` looks only in the Editor's list of known assets, and
+  `RegisterFile`'s summary says to register an asset you just created
+  (`26.10.13:engine/Sandbox.Tools/Assets/AssetSystem.cs`, lines 196-219 and 266-283). On
+  `26.10.13a`, new models weren't found until they were registered, so register each new
+  file before compiling it. One model file couldn't be written while the Editor was
+  compiling it ("Permission denied"); running that step again worked. Files the Editor
+  already knows aren't always recompiled when rewritten: after a pass that rewrote several
+  materials, one loaded as `materials/error.vmat` while the others had recompiled. So after
+  rewriting files, find each with `AssetSystem.FindByPath`, or register it if it's new, and
+  call its `Compile( true )`, which forces a recompile
+  (`26.10.13:engine/Sandbox.Tools/Assets/Asset.cs`, lines 303-307).
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: after registering, all 245
-    new surfaces, sounds, and piece models compiled.
+    new surfaces, sounds, and piece models compiled; a script that compiles each rewritten
+    material fixed the stale one.
 - **To play a map inside Facepunch's Sandbox, make the map's own project an addon.** Give
   its project `Type` `"addon"` and `ParentPackage` `"facepunch.sandbox"` in its `Metadata`,
   and keep it one project. Sandbox brings the player, camera, physics gun, weapons, and

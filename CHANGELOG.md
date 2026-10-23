@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Two more S&box import lessons, and more on lighting.** `examples/sbox/IMPORTING.md`
+  gains entries on Source's `$selfillum` and on traces that pass through one-sided world
+  collision. The lamp entry adds soft fill light, the indoor-light entry adds daylight in a
+  probe bake and probe spacing for passages, and the entry on files written while the
+  Editor is open adds compiling the ones you rewrite. Each was checked on S&box
+  `26.10.13a`.
 - **A check for clearing out generated files, and four more S&box import lessons.**
   `examples/sbox/tools/scene_refs.py` lists each file in a folder as in use or unused by a
   project's scenes and prefabs, comparing paths the way S&box does, and fails when a scene
