@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **A check for clearing out generated files, and four more S&box import lessons.**
+  `examples/sbox/tools/scene_refs.py` lists each file in a folder as in use or unused by a
+  project's scenes and prefabs, comparing paths the way S&box does, and fails when a scene
+  references a file that isn't there. The S&box guide's new section, Clearing out generated
+  files, uses it to move old bakes aside safely. `examples/sbox/IMPORTING.md` gains entries
+  on Source lamp falloff, a light volume for each lamp state, `sbox-cli` calls that time
+  out, and matching a scene's references without regard to case. The live-lighting entry
+  now says how to light rooms with baked `IndirectLightVolume`s, which it had only guessed
+  at. Each was checked on S&box `26.10.13a`.
 - **Seven more S&box import lessons, and Sandbox play in one project.**
   `examples/sbox/IMPORTING.md` gains entries on colliders that carry things, Source's sound
   fade and sound levels, cameras in play, rope width, faces S&box can't triangulate, and

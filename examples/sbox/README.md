@@ -13,6 +13,7 @@
 | [`tools/editor_check.ps1`](tools/editor_check.ps1) | A rung-2 check that runs unattended: it saves a scene in the Editor, closes it, reopens it, and checks that nothing changed, with a screenshot from a fixed camera before and after. Needs S&box `26.10.13` or later. See [The editor check](#the-editor-check) |
 | [`IMPORTING.md`](IMPORTING.md) | The import reference: what works and what doesn't when bringing Source and other old content into S&box, sorted by topic, each entry with the S&box version it was checked on |
 | [`tools/spec_lint.py`](tools/spec_lint.py) | A rung-0 spec lint: format and card checks that fail the run, a lookup that reports checks not found in the test and script folders, and an owner gate that reports any change to an agreed requirement since the last commit. Run `python tools/test_spec_lint.py` to check it against its fixtures. |
+| [`tools/scene_refs.py`](tools/scene_refs.py) | A rung-0 check for clearing out generated files, such as old light bakes: it lists each file in a folder as in use or unused by the project's scenes and prefabs, and fails when one of them references a file that isn't there. See [Clearing out generated files](#clearing-out-generated-files). Run `python tools/test_scene_refs.py` to check it against its fixtures. |
 
 ## The ladder for a map
 
@@ -189,6 +190,39 @@ A first real project kept its map in a content project, with no code of its own.
   - So a separate game project can't use the map's files through a package reference.
   - Placing the map in the game's `Libraries\` folder wasn't tested.
   - Testing the map inside a game is a later requirement, with its own check.
+
+## Clearing out generated files
+
+S&box writes light, envmap and navmesh bakes into a folder beside the scene,
+`<scene>_scene_data/`
+(`26.10.13:engine/Sandbox.Tools/Scene/Session/SceneEditorSession.cs`, lines 593-625;
+`26.10.13:engine/Sandbox.Engine/Scene/Components/Light/EnvmapProbe.Baking.cs`, line 22;
+`26.10.13:engine/Sandbox.Engine/Game/Navigation/NavMesh.Baking.cs`, lines 50-59). Each
+light bake adds new files and leaves the old ones, so the folder grows. When Git doesn't
+track the folder, a clean-up that takes a file still in use can't be undone, and getting
+it back means baking again. A first real project lost its current light bake this way:
+its clean-up compared the scene's references with the file names exactly, but the scene
+stores them lower-cased and without `_c`
+([the import reference](IMPORTING.md#tools-and-scripting) has the detail). To clear such
+a folder out:
+
+1. Make sure nothing still writes to the folder. After a `sbox-cli` call that timed out,
+   check that it has finished: it keeps running in the editor. If the open scene holds a
+   bake you want to keep, save it first. The check below reads saved files only, so the
+   files of an unsaved bake show as unused.
+2. Run [`tools/scene_refs.py`](tools/scene_refs.py) on the folder, such as
+   `python tools/scene_refs.py Assets/scenes/outpost_scene_data/ddgi`. It reads every scene
+   and prefab and lists each file in the folder as `IN USE` or `UNUSED`, comparing paths
+   the way S&box does. Before you trust the list, check that the newest bake is `IN USE`.
+3. Move only the `UNUSED` files, to a folder outside `Assets/`. Don't delete them yet.
+4. Reopen the scene, read the editor log for files it can't find, and run `scene_refs.py`
+   again. It fails when a scene or prefab references a file that isn't there. If anything
+   fails, move the files back.
+5. Then delete the moved files.
+
+`python tools/test_scene_refs.py` checks the tool on a throwaway project laid out the same
+way. Its controls delete a file the scene uses and a file a prefab uses, and the tool fails
+both times.
 
 ## Lessons from a world build
 

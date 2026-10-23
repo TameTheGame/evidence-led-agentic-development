@@ -463,12 +463,55 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   on, to compare with screenshots taken with the lights on.
   - Checked: source at `be57e3d`; seen on `26.10.13a`. Proof: a play-mode check that
     counts the lights lit at start.
-- **Expect live lighting, not Source's baked lighting.** S&box lights a scene live, so
-  enclosed rooms got sky light they don't get in Source and looked brighter and flatter.
-  An `IndirectLightVolume` (DDGI) per room is the likely fix
+- **Bring a Source lamp over with `Attenuation` 16 and its colour 16 times as bright.**
+  S&box's point and spot lights fall off as
+  `saturate( 10000 / (Attenuation × d²) − the same at the radius )`
+  (`26.10.13:engine/Sandbox.SceneRenderer/Pipeline/Features/LightBinnerFeature.Lights.cs`,
+  lines 100-114; `26.10.13:game/core/shaders/Shadows/Obsolete.hlsl`, lines 4-13). Source
+  scales a lamp so that it has its set brightness at 100 units and falls off with the
+  square of the distance (`source-sdk-2013@be57e3d:src/utils/vrad/lightmap.cpp`, lines
+  1252-1257). With `Attenuation` 1, S&box matches that only beyond 100 units and stays flat
+  closer in, so walls next to lamps looked dull and rooms evenly dim, without the bright
+  patch round each lamp. With `Attenuation` 16 and a colour of 16 × brightness / 255, it
+  matches down to 25 units.
+  - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`. Proof: screenshots of
+    the lit rooms, with their brightness measured.
+- **For indoor light, switch off the flat ambient light and bake the bounce into
+  `IndirectLightVolume`s.** S&box lights a scene live. A `DirectionalLight`'s `SkyColor`
+  and any `AmbientLight` component add a flat light to every surface, underground too
+  (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.cs`, lines 424-446), and a Source
+  map's sun brings its sky colour with it
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Map/MapInstance.cs`, lines 768-769). So
+  enclosed rooms were lit grey and evenly, with no dark corners. With that light off and
+  nothing in its place, they were black between lamps. Bake the bounce instead: a coarse
+  volume over the whole map and a finer one, with a probe every 160 units or so, round each
+  group of lamps. Where volumes overlap, the smallest is used first
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/IndirectLighting/DDGIVolumeSystem.cs`,
+  lines 64-67). A bake renders each probe's view with a black background and no ambient
+  light
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/IndirectLighting/DDGIVolumeUpdater.cs`,
+  lines 47-55). `BakeProbes` is public and can be awaited from `run_csharp`, but it does
+  nothing until the scene has been saved to a file
   (`26.10.13:engine/Sandbox.Engine/Scene/Components/IndirectLighting/IndirectLightVolume.cs`,
-  lines 14-19); that is inferred and untested.
-  - Checked: seen on `26.10.13a`. Proof: nothing yet.
+  lines 332 and 349-352). A bake took about 25 ms a probe. In dark rooms, the camera's
+  `Tonemapping.MaximumExposure` limits how far the eye adapts. It is 3 by default
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/PostProcessing/Effects/Tonemapping.cs`,
+  line 82), and 5 let it adapt to the rooms.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: screenshots of the same
+    rooms before and after.
+- **Where the map's logic switches lamps, bake a volume for each state and switch it with
+  them.** A bake holds the light as it was when baked. Baked with the lamps on, rooms whose
+  lamps were off glowed with their bounce; baked with the lamps off, lit rooms got no
+  bounce. Give each switched group two volumes over the same space, one baked with its
+  lamps off and one with them on. Whenever the logic switches the lamps, enable the volume
+  that matches (`GameObject.Enabled`). Only enabled volumes are used
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/IndirectLighting/DDGIVolumeSystem.cs`,
+  lines 51-56 and 72). Don't switch a volume off while it bakes: that cancels the bake
+  (`26.10.13:engine/Sandbox.Engine/Scene/GameObject/GameObject.cs`, lines 67-70;
+  `26.10.13:engine/Sandbox.Engine/Scene/Components/IndirectLighting/IndirectLightVolume.cs`,
+  line 354).
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: screenshots with the lamps
+    off and on.
 
 ## Sound and water
 
@@ -889,6 +932,41 @@ the read-only `Editor.FileSystem.Content`.
   alone worked at once.
   - Checked: seen on `26.10.13a`; no source. Proof: the throw lands in the play-mode test
     that uses it.
+- **Keep each `sbox-cli` call well inside its timeout, and after a timeout, look before you
+  retry or save.** When a call times out, `sbox-cli` stops waiting and says "The outcome of
+  an already running tool is unknown", but the editor keeps running the call. A bake script
+  that ran past the timeout had switched lamps off for its bake. Its retries did nothing,
+  because `BakeProbes` returns at once while that volume is still baking
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/IndirectLighting/IndirectLightVolume.cs`,
+  line 351). The scene was then saved with the lamps still off: the first call's `finally`
+  block, which switched them back on, ran later. Split long work into calls that each fit,
+  such as one volume per call, sized from a measured rate. After a timeout, check what the
+  editor is doing and what the scene holds before another call or a save.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a bake script that starts a
+    volume only when its estimated time fits.
+- **To find files a scene no longer uses, compare its references without regard to case,
+  and with `_c` removed.** S&box writes baked files into a folder beside the scene, such as
+  `outpost_scene_data/` for `outpost.scene`
+  (`26.10.13:engine/Sandbox.Tools/Scene/Session/SceneEditorSession.cs`, lines 593-625), in
+  the casing it's given. A light bake writes `<object>_Irradiance_<id>_<bake>.vtex_c`
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/IndirectLighting/IndirectLightVolume.cs`,
+  lines 376-378 and 484). The path the folder hands back is lower-cased
+  (`26.10.13:engine/Sandbox.Tools/Scene/Session/SceneEditorSession.cs`, line 638;
+  `26.10.13:engine/Sandbox.System/Extend/StringExtensions.cs`, lines 85 and 120-123), and
+  loading the texture drops the `_c`
+  (`26.10.13:engine/Sandbox.Engine/Resources/Textures/Texture.Load.cs`, lines 62-68), so
+  the scene stores `<object>_irradiance_<id>_<bake>.vtex`. Each bake writes new files and
+  leaves the old ones
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/IndirectLighting/IndirectLightVolume.cs`,
+  line 374), so the folder grows with every bake. A clean-up that matched names exactly
+  found no file in use and deleted the current bake too, which then had to be baked again.
+  Compare paths the way S&box does (`26.10.13:engine/Sandbox.Engine/Resources/Resource.cs`,
+  lines 70-80): lower case, forward slashes, no leading slash and no `_c`.
+  [Clearing out generated files](README.md#clearing-out-generated-files) has the steps and
+  a check.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof:
+    [`tools/scene_refs.py`](tools/scene_refs.py) passes its test on a throwaway project
+    laid out the same way, and fails its controls; it hasn't yet run on a real project.
 
 ## Faster ways of working
 
