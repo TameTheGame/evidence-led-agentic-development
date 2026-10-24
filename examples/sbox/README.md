@@ -149,6 +149,12 @@ powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
   it prints the last lines of both, so a failed start says why.
 - **Steam must be running.** S&box starts through Steam. The check stops with `NOT RUN`
   when Steam isn't running, and doesn't start it, because a Steam start can update S&box.
+- **A failed start stops it in seconds.** When S&box can't start the project, it shows an
+  error box and waits for a click; see [When S&box can't start a project](#when-sbox-cant-start-a-project).
+  While the check waits for an editor, it looks for that box and for the failure in the
+  editor log. On either, it saves the box's text to `error-box.txt`, closes the editor and
+  the box with it, and stops with `NOT RUN` and the error's own words. If a call fails
+  later while the editor shows a box, the check records the box the same way.
 
 Verified on S&box `26.10.13`, in Windows PowerShell 5.1 and PowerShell 7. A scratch scene
 passed in about a minute. A control scene with a component that changes its own saved value
@@ -164,6 +170,61 @@ to `<engine>\logs\sbox-dev.log` and keeps earlier ones under dated names. With
 `-TimeoutSeconds 5`, the check failed with `the editor wasn't ready`, printed the last lines
 of both files, and left no S&box process. Steam stayed open throughout, so the `NOT RUN`
 branch for a closed Steam was read, not run.
+
+## When S&box can't start a project
+
+If the Editor fails while it starts, it logs the exception, shows a native error box such
+as "Bootstrap::Init Error", and waits there until someone clicks OK. Only then does it exit
+(`26.10.13:engine/Sandbox.Engine/Core/Bootstrap.cs`, lines 331-348, and lines 113-127 for a
+failure earlier in the start). It opens the pipe `sbox-cli` talks to only after the project
+has loaded (lines 282-286 and 316-323), so nothing an agent sends reaches it. On
+`26.10.13b`, editors that agents started left this box on the owner's desktop for minutes,
+and one agent's work stopped until the owner clicked OK.
+
+- **What sets it off.** Any exception while the Editor loads the project. On `26.10.13b` it
+  was the parent game. An addon project loads its `ParentPackage` at start
+  (`26.10.13:engine/Sandbox.Tools/StartupLoadProject.cs`, lines 149-156), and a remote game
+  that comes with neither compiled code nor code archives throws "This game has no
+  precompiled assemblies or code archives!"
+  (`26.10.13:engine/Sandbox.Engine/Services/Packages/PackageManager/PackageManager.cs`,
+  lines 114-127). Facepunch's Sandbox package came that way, so no addon of Sandbox could
+  open, and pinning an older revision didn't help. A parent package that doesn't exist
+  throws too (lines 77-80). When the project has compile errors, the box lists them in
+  place of the exception (`Bootstrap.cs`, lines 335-341). A `.sbproj` that S&box can't read
+  shows a "Couldn't open project" box before any of this
+  (`26.10.13:engine/Sandbox.AppSystem/EditorAppSystem.cs`, lines 38-51).
+- **Start every editor so that a failed start can't hang.**
+  1. Start it through `sbox-cli --project`, or a script that does, and keep that `sbox-cli`
+     process. It starts the editor inside a Windows job that closes the editor, box and
+     all, when `sbox-cli` exits or its input closes
+     (`26.10.13:engine/Launcher/SboxCli/OwnedProcess.cs`, line 30;
+     `26.10.13:engine/Launcher/SboxCli/Program.cs`, lines 94-97 and 169-188). It also gives
+     up after `--startup-timeout`, 180 seconds by default (`Program.cs`, lines 193-221;
+     `26.10.13:engine/Launcher/SboxCli/Options.cs`, line 39). An editor started any other
+     way, such as with `Start-Process sbox-dev.exe`, has neither and waits on the box for
+     good.
+  2. While you wait for the editor, watch for the failure, not only the clock. Look for a
+     visible dialog box (window class `#32770`) that belongs to the editor's process, and
+     for an entry in `<engine>\logs\sbox-dev.log` whose stack ends in
+     `Sandbox.Engine.Bootstrap.Init` or `PreInit`, where the exception was caught. Read
+     only entries written after the start: the last run's log stays in place until the new
+     editor starts logging (`26.10.13:engine/Sandbox.System/Logging/Logging.cs`, lines
+     35-60). The box can come without such an entry, as "Couldn't open project" does, so
+     watch for both.
+  3. On either, save the box's text, close the editor, which takes the box with it, and
+     report the error's own words. Retry only once the cause has changed. When it is a
+     package from the cloud, the fix is Facepunch's.
+
+  The [editor check](#the-editor-check) does all three, so a failed start costs it seconds,
+  not its whole timeout. A game or dedicated server started for a check goes through the
+  same `Bootstrap`, and logs to `sbox.log` or `sbox-server.log`, after its process name.
+
+Checked on S&box `26.10.13b`, in Windows PowerShell 5.1 and PowerShell 7, with two scratch
+projects that can't start. An addon whose `ParentPackage` doesn't exist shows "Bootstrap::Init
+Error", and a project whose `.sbproj` isn't valid JSON shows "Couldn't open project". Each
+time, the editor check stopped with `NOT RUN` within a minute, named the box and the error,
+saved `error-box.txt`, and left no S&box process. A project made from S&box's own template
+still passed. The source is read at `26.10.13`, which is approximate for `26.10.13b`.
 
 ## A map with no code
 

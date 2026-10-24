@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **The S&box editor check no longer waits on S&box's start-up error box.** When the
+  Editor can't start a project, it shows an error box and waits for someone to click OK,
+  so an agent waiting for the editor waited too. `examples/sbox/tools/editor_check.ps1` now
+  watches for that box and for the failure in the editor log while the editor starts. On
+  either, it saves the box's text, closes the editor and the box, and stops with `NOT RUN`
+  and the error's own words, in seconds rather than after its timeout. The S&box guide's new
+  section, When S&box can't start a project, says what sets the box off and how any script
+  that starts S&box should guard against it. Checked on S&box `26.10.13b`.
 - **One more import lesson, and a sharper fix for players on lifts.**
   `examples/sbox/IMPORTING.md` gains an entry on Python writing `\r\n` line endings on
   Windows that bash's `read` keeps. The entry on waking the player on a moving floor now
