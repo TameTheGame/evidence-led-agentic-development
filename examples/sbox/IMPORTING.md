@@ -630,13 +630,23 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   and its pictures bear it out. With adaptation on and `MaximumExposure` raised to 5 to see
   into dark rooms, rooms came out about three times as bright as Garry's Mod's, and lamps
   glared. With `AutoExposureEnabled` off and nothing else changed, the rooms checked came
-  within 10% of Garry's Mod's, and outdoors already matched. Turning it off stops only the
-  adaptation
+  within 10% of Garry's Mod's, and outdoors already matched. Turning it off switches the
+  camera's exposure step off altogether, so `ExposureCompensation` no longer applies either
   (`26.10.13:engine/Sandbox.Engine/Scene/Components/Camera/CameraComponent.AutoExposureSetup.cs`,
-  lines 13-19). Light levels tuned while the eye adapted then need tuning again: a dim
+  lines 13-22). Light levels tuned while the eye adapted then need tuning again: a dim
   emergency glow left passages too dark to find the way.
   - A map compiled with HDR lighting does adapt in Source (inferred), so check for lump 53
     first.
+  - A probe bake doesn't go through the camera's exposure, so changing the exposure needs
+    no new bake. An `IndirectLightVolume` and an `EnvmapProbe` each bake through a new
+    scene camera of their own
+    (`26.10.13:engine/Sandbox.Engine/Scene/Components/IndirectLighting/DDGIVolumeUpdater.cs`,
+    lines 47-55; `26.10.13:engine/Sandbox.Engine/Scene/Components/Light/EnvmapProbe.cs`,
+    lines 503-512; `26.10.13:engine/Sandbox.Engine/Systems/Render/CubemapRendering.cs`,
+    lines 48-55), and a new scene camera has its exposure off
+    (`26.10.13:engine/Sandbox.Engine/Systems/SceneSystem/SceneCamera.cs`, lines 221 and
+    800; `26.10.13:engine/Sandbox.Engine/Systems/SceneSystem/SceneCamera.Tonemap.cs`, lines
+    35-38). This is read from the source, not seen.
   - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13b`. Proof: the same views
     pictured in both games from the same eyes, with their mean brightness compared before
     and after.

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Two more S&box facts, and a fix to the exposure entry.** The S&box guide's world-build
+  lessons gain one on a joining client logging small resources as missing even when they
+  load, since files under 64 KB reach it only in memory. The import reference's exposure
+  entry adds that a probe bake doesn't go through the camera's exposure, and now says that
+  turning auto exposure off drops `ExposureCompensation` too, where it said only the
+  adaptation stopped.
 - **Four more S&box import lessons, on lighting.** `examples/sbox/IMPORTING.md` gains
   entries on bringing Source's glowing textures over as lights and on matching an imported
   map's brightness with auto exposure off. The entry on starting lights as their flag says

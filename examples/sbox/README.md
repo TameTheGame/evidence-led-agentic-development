@@ -313,7 +313,7 @@ both times.
 
 ## Lessons from a world build
 
-The same project's world work on S&box `26.10.13a` turned up thirteen more. Each is read
+The same project's world work on S&box `26.10.13a` turned up fourteen more. Each is read
 from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 - **Read scene-load errors from editor start.** The Editor loads its startup scene before a
@@ -459,6 +459,24 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
   line 17; `ReadOnlyFileSystem.cs`, lines 20 and 38). So a write through it fails, as it
   did on `26.10.13a`. Write project files to a real path instead, such as under the
   project's `Assets` folder (inferred).
+- **Expect a client to log a small resource as missing even when it loads.** A host sends a
+  joining client the compiled files it networks. One under 64 KB reaches the client only in
+  memory, unless it's of a type the native engine loads itself, such as `vmat_c`, `vtex_c`,
+  `vsnd_c` or `vmdl_c`, which always goes to disk
+  (`26.10.13:engine/Sandbox.GameInstance/GameInstanceDll.Network.cs`, lines 280-285;
+  `26.10.13:engine/Sandbox.Engine/Systems/Networking/Tables/SmallNetworkFiles.cs`, lines 9
+  and 27). When S&box's C# loads a resource, it also asks the native engine for the same
+  path (`26.10.13:engine/Sandbox.Engine/Resources/GameResource.cs`, lines 181-196;
+  `26.10.13:engine/Sandbox.Engine/Resources/AsyncResourceLoader.cs`, lines 52-59). The
+  native engine can't see a file held in memory, so the client logs
+  `Error loading resource file "<path>" (Error: ERROR_FILEOPEN: File not found)` for each
+  such resource, though it loaded. A project's own terrain materials, sound events, decal
+  definitions, soundscapes and surfaces are usually this small. On `26.10.13a`, a 2 KB
+  terrain material logged the line on a client of an Editor host, and neither the host nor
+  a dedicated server logged it. So a session check that scans the client's log for missing
+  files fails on it, and one that reads only the host's log never sees it. Check on the
+  client that each such resource loaded, from its values and any textures it makes, and
+  excuse that exact line only for a resource whose check passed.
 
 ## Lessons from importing old content
 
