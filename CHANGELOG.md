@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Four more S&box import lessons, on lighting.** `examples/sbox/IMPORTING.md` gains
+  entries on bringing Source's glowing textures over as lights and on matching an imported
+  map's brightness with auto exposure off. The entry on starting lights as their flag says
+  adds that a Source light with no name is lit all game, and the live-screen entry adds
+  keeping lights out of the screen's camera, so their shadow maps aren't made again every
+  frame. Each was checked on S&box `26.10.13b`.
 - **Two more S&box import lessons, and more on timeouts and converters.**
   `examples/sbox/IMPORTING.md` gains entries on turning a Source normal map's green channel
   over and on drawing a live in-world screen from a camera. The `sbox-cli` timeout entry

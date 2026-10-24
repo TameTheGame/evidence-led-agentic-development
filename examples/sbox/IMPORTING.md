@@ -512,20 +512,51 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   137-142;
   `26.10.13:engine/Sandbox.Engine/Resources/Textures/Assets/RenderTextureAsset.cs`, lines
   11-12); that way wasn't tried.
+  - Keep lights out of the screen's camera with `RenderExcludeTags` `light` when the
+    player's camera sees the same shadowed lights. S&box keeps one shadow map per light for
+    every camera, sized for the view that asks
+    (`26.10.13:engine/Sandbox.Engine/Systems/Render/Shadows/ShadowMapper.cs`, lines 216-218
+    and 477-487;
+    `26.10.13:engine/Sandbox.Engine/Systems/Render/Shadows/ShadowMapper.Projected.cs`,
+    lines 56-59). When the size asked for changes, the map is made again and must render
+    again, unless a smaller view asks later in the same frame
+    (`26.10.13:engine/Sandbox.Engine/Systems/Render/Shadows/ShadowMapper.cs`, lines
+    274-287). The screen's camera and the player's asked for different sizes, so the lamps'
+    maps were made again every frame, and near the screens the game ran at 23 to 24 frames
+    a second instead of 90. A `Light` tags its object `light`
+    (`26.10.13:engine/Sandbox.Engine/Scene/Components/Light/Light.cs`, lines 228-233), and
+    a camera leaves out objects with its `RenderExcludeTags`
+    (`26.10.13:engine/Sandbox.Engine/Scene/Components/Camera/CameraComponent.cs`, lines
+    125-129 and 433-434). The screen's picture then has no lamp light, only the baked
+    bounce, and looked the same. A lamp model on the light's own object drops out of that
+    camera too (inferred).
   - Checked: source at `26.10.13`; seen on `26.10.13b`. Proof: in play, the screens showed
-    their camera's live view, drawn only while a player was near one.
+    their camera's live view, drawn only while a player was near one; a frame-rate probe
+    near the screens read 23 to 24 frames a second before the lamps were left out, and 90,
+    the cap, after.
 
 ## Lighting
 
-- **Start each light as its "start off" flag says, and let the map's logic switch it.** A
-  Source light with spawn flag 1 starts dark
+- **Start each light as its "start off" flag says, unless it has no name, and let the map's
+  logic switch it.** A Source light with spawn flag 1 starts dark
   (`source-sdk-2013@be57e3d:src/game/server/util.h`, line 533;
   `src/game/server/lights.cpp`, lines 76-77), and the map's logic turns it on. Lights
   imported all off left lit rooms black; lights imported all on break logic that switches
   them. In play mode, start each light as its flag says. An editor view can show them all
   on, to compare with screenshots taken with the lights on.
-  - Checked: source at `be57e3d`; seen on `26.10.13a`. Proof: a play-mode check that
-    counts the lights lit at start.
+  - A light with no name is lit all game, flag or not. vbsp gives a switchable style, 32 or
+    above, only to a light with a targetname
+    (`source-sdk-2013@be57e3d:src/utils/vbsp/writebsp.cpp`, lines 995-1038). The game
+    removes an unnamed light at spawn and applies the flag only to a switchable style
+    (`src/game/server/lights.cpp`, lines 63-80), and vrad bakes each light into its style
+    without reading the flag (`src/utils/vrad/lightmap.cpp`, line 1130). So it stays in the
+    style it has, 0 and always on unless the mapper chose a flicker pattern, and nothing
+    can switch it. Two such lamps, started dark as their flag said, left a cave dark that
+    Garry's Mod shows lit. The BSP's world lights carry each light's baked style
+    (`src/utils/vrad/lightmap.cpp`, line 1644), so read it there.
+  - Checked: source at `be57e3d`; seen on `26.10.13a` and `26.10.13b`. Proof: a play-mode
+    check that counts the lights lit at start, and pictures of the cave in both games from
+    the same eye.
 - **Bring a Source lamp over with `Attenuation` 16 and its colour 16 times as bright.**
   S&box's point and spot lights fall off as
   `saturate( 10000 / (Attenuation × d²) − the same at the radius )`
@@ -544,6 +575,22 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   hard circle.
   - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`. Proof: screenshots of
     the lit rooms, with their brightness measured, and of a room lit by soft fill.
+- **Bring Source's glowing textures over as lights too.** A texture listed in a
+  `lights.rad` file gives light in Source with no light entity. vrad reads the file
+  (`source-sdk-2013@be57e3d:src/utils/vrad/vrad.cpp`, lines 190-292 and 345-347), and each
+  patch of a face with that texture that gives enough light becomes a surface light
+  (`src/utils/vrad/lightmap.cpp`, lines 1541-1580). vrad writes these to the BSP's world
+  lights with the light entities (lines 1626-1658), as type `emit_surface`
+  (`src/public/bspfile.h`, line 956) in lump 15, or 54 for HDR (lines 296 and 348). So an
+  importer that converts only light entities loses them, and an area lit only by a glowing
+  surface came over nearly black. Read the surface lights from the world lights and bring
+  each group over as lights. A surface light gives no light behind its own plane
+  (`src/utils/vrad/lightmap.cpp`, lines 1897-1912), so it doesn't light the surface it sits
+  on. Lights in front of the surface lit it bright where Garry's Mod's is dark. A grid of
+  lights just behind the surface, casting no shadow, lit the area as in Garry's Mod and
+  left the surface, which faces away from them, unlit.
+  - Checked: source at `be57e3d`; seen on `26.10.13b`. Proof: pictures of the area in both
+    games from the same eye.
 - **For indoor light, switch off the flat ambient light and bake the bounce into
   `IndirectLightVolume`s.** S&box lights a scene live. A `DirectionalLight`'s `SkyColor`
   and any `AmbientLight` component add a flat light to every surface, underground too
@@ -565,12 +612,34 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   volumes a probe every 64 to 80 units. `BakeProbes` is public and can be awaited from
   `run_csharp`, but it does nothing until the scene has been saved to a file
   (`26.10.13:engine/Sandbox.Engine/Scene/Components/IndirectLighting/IndirectLightVolume.cs`,
-  lines 332 and 349-352). A bake took about 25 ms a probe. In dark rooms, the camera's
-  `Tonemapping.MaximumExposure` limits how far the eye adapts. It is 3 by default
-  (`26.10.13:engine/Sandbox.Engine/Scene/Components/PostProcessing/Effects/Tonemapping.cs`,
-  line 82), and 5 let it adapt to the rooms.
+  lines 332 and 349-352). A bake took about 25 ms a probe. How bright the rooms then look
+  depends on the camera's exposure too, as the next entry says.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: screenshots of the same
     rooms, and of a shaded entrance, before and after.
+- **To match an imported map's brightness, switch auto exposure off and compare with the
+  original game's own pictures.** S&box's `Tonemapping` adapts the eye by default:
+  `AutoExposureEnabled` is on, with `MinimumExposure` 1 and `MaximumExposure` 3
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/PostProcessing/Effects/Tonemapping.cs`,
+  lines 75-82 and 90-98). They bound a scale on the picture
+  (`26.10.13:engine/Sandbox.Engine/Systems/SceneSystem/SceneCamera.Tonemap.cs`, lines
+  66-90), so with a minimum of 1 it only ever brightens, and a dim view is brightened up to
+  the maximum. A Source map compiled without HDR lighting has no lump 53
+  (`source-sdk-2013@be57e3d:src/public/bspfile.h`, line 347), and Source tonemaps only in
+  HDR (`src/game/client/viewpostprocess.cpp`, lines 2266-2276), so its dim rooms stay dim.
+  That Garry's Mod runs such a map without HDR is inferred, since its engine isn't public,
+  and its pictures bear it out. With adaptation on and `MaximumExposure` raised to 5 to see
+  into dark rooms, rooms came out about three times as bright as Garry's Mod's, and lamps
+  glared. With `AutoExposureEnabled` off and nothing else changed, the rooms checked came
+  within 10% of Garry's Mod's, and outdoors already matched. Turning it off stops only the
+  adaptation
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Camera/CameraComponent.AutoExposureSetup.cs`,
+  lines 13-19). Light levels tuned while the eye adapted then need tuning again: a dim
+  emergency glow left passages too dark to find the way.
+  - A map compiled with HDR lighting does adapt in Source (inferred), so check for lump 53
+    first.
+  - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13b`. Proof: the same views
+    pictured in both games from the same eyes, with their mean brightness compared before
+    and after.
 - **Where the map's logic switches lamps, bake a volume for each state and switch it with
   them.** A bake holds the light as it was when baked. Baked with the lamps on, rooms whose
   lamps were off glowed with their bounce; baked with the lamps off, lit rooms got no
