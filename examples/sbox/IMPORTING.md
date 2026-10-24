@@ -476,6 +476,44 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`, where `F_SELF_ILLUM`
     is in the private `complex.shader`. Proof: screenshots of the lit fittings, and a
     script that finds each model's glow from the mask under its texture coordinates.
+- **Turn the green channel over when converting a Source `$bumpmap` to an S&box normal
+  map.** Source's normal maps are DirectX-style, with green pointing down the texture, and
+  S&box's are OpenGL-style, with green pointing up. Converted without their bump maps,
+  Source's rock walls came over flat and blurry beside Garry's Mod's craggy ones. S&box
+  decodes a normal map's colour with no channel swap
+  (`26.10.13:game/core/shaders/common/utils/normal.hlsl`, lines 77-80), then turns its y
+  over to make up for tools that still build tangent space Source's way
+  (`26.10.13:game/core/shaders/common/utils/normal.hlsl`, lines 8-18). Which way green
+  should point can't be read from that code alone; the result settled it. The material
+  editor also has a "Legacy Source1 Inverted Normals" switch for Source's maps; use it or
+  turn green over, not both (inferred).
+  - Checked: source at `26.10.13`; seen on `26.10.13b`. The switch was seen, not read: it
+    isn't in the public shaders. Proof: the same rock walls pictured in both games from the
+    same eye, with their cracks shaded the same way.
+- **Draw a live in-world screen with a camera that renders to a texture, shown through a
+  glowing material.** Give a `CameraComponent` a `RenderTarget` made with
+  `Texture.CreateRenderTarget( name, ImageFormat.RGBA8888, size )`. `RenderTarget` throws
+  for a texture that isn't a render target, and a camera with one draws to it instead of
+  the screen (`26.10.13:engine/Sandbox.Engine/Scene/Components/Camera/CameraComponent.cs`,
+  lines 158-182 and 629-636;
+  `26.10.13:engine/Sandbox.Engine/Resources/Textures/Builder/Texture.Create.cs`, lines
+  89-98). Set its `IsMainCamera` false, so a player controller doesn't take it as the main
+  camera, and switch it off while no one can see the screen, since S&box draws every active
+  camera (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.cs`, lines 331-341). Show the
+  texture through a copy of the screen's material made with `Material.CreateCopy`
+  (`26.10.13:engine/Sandbox.Engine/Resources/Material/Material.cs`, lines 65-71), with
+  self-illumination on as the `$selfillum` entry above says, and its `g_tColor` set to the
+  texture with `Material.Set( "g_tColor", texture )`
+  (`26.10.13:engine/Sandbox.Engine/Resources/Material/Material.Parameters.cs`, line 59).
+  The copy kept the texture set at run time. In the editor, a Render Texture asset
+  (`.rtex`) in the camera's `RenderTexture` property should do the same job, since
+  materials can use one
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Camera/CameraComponent.cs`, lines
+  137-142;
+  `26.10.13:engine/Sandbox.Engine/Resources/Textures/Assets/RenderTextureAsset.cs`, lines
+  11-12); that way wasn't tried.
+  - Checked: source at `26.10.13`; seen on `26.10.13b`. Proof: in play, the screens showed
+    their camera's live view, drawn only while a player was near one.
 
 ## Lighting
 
@@ -903,21 +941,28 @@ the read-only `Editor.FileSystem.Content`.
   which returns null when no asset has that path
   (`26.10.13:engine/Sandbox.Tools/Assets/AssetSystem.cs`, lines 196-218).
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: nothing yet.
-- **Register files written while the Editor is open, and compile the ones you rewrite.**
-  `AssetSystem.FindByPath` looks only in the Editor's list of known assets, and
-  `RegisterFile`'s summary says to register an asset you just created
-  (`26.10.13:engine/Sandbox.Tools/Assets/AssetSystem.cs`, lines 196-219 and 266-283). On
-  `26.10.13a`, new models weren't found until they were registered, so register each new
-  file before compiling it. One model file couldn't be written while the Editor was
-  compiling it ("Permission denied"); running that step again worked. Files the Editor
-  already knows aren't always recompiled when rewritten: after a pass that rewrote several
-  materials, one loaded as `materials/error.vmat` while the others had recompiled. So after
-  rewriting files, find each with `AssetSystem.FindByPath`, or register it if it's new, and
-  call its `Compile( true )`, which forces a recompile
-  (`26.10.13:engine/Sandbox.Tools/Assets/Asset.cs`, lines 303-307).
-  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: after registering, all 245
-    new surfaces, sounds, and piece models compiled; a script that compiles each rewritten
-    material fixed the stale one.
+- **Register files written while the Editor is open, compile the ones you rewrite, and
+  leave alone the ones whose bytes haven't changed.** `AssetSystem.FindByPath` looks only
+  in the Editor's list of known assets, and `RegisterFile`'s summary says to register an
+  asset you just created (`26.10.13:engine/Sandbox.Tools/Assets/AssetSystem.cs`, lines
+  196-219 and 266-283). On `26.10.13a`, new models weren't found until they were
+  registered, so register each new file before compiling it. The Editor recompiles most
+  files it already knows when they're rewritten, but not all: after a pass that rewrote
+  several materials, one loaded as `materials/error.vmat` while the others had recompiled.
+  So after rewriting files, find each with `AssetSystem.FindByPath`, or register it if it's
+  new, and call its `Compile( true )`, which forces a recompile
+  (`26.10.13:engine/Sandbox.Tools/Assets/Asset.cs`, lines 303-307). Each rewrite costs a
+  recompile even when nothing in the file changed, and a write can hit a file the Editor
+  has open. A converter that rewrote all of its several hundred materials and textures on
+  every run had the Editor recompile them all, and some of its writes failed with
+  "Permission denied". One model file couldn't be written while the Editor was compiling it
+  either, though running that step again worked. So a converter that may run while the
+  Editor is open should compare each file's new bytes with the old and write only the ones
+  that differ.
+  - Checked: source at `26.10.13`; seen on `26.10.13a` and `26.10.13b`. Proof: after
+    registering, all 245 new surfaces, sounds, and piece models compiled; a script that
+    compiles each rewritten material fixed the stale one; a converter that writes only
+    changed files rewrote one material when only one had changed.
 - **To play a map inside Facepunch's Sandbox, make the map's own project an addon.** Give
   its project `Type` `"addon"` and `ParentPackage` `"facepunch.sandbox"` in its `Metadata`,
   and keep it one project. Sandbox brings the player, camera, physics gun, weapons, and
@@ -989,18 +1034,39 @@ the read-only `Editor.FileSystem.Content`.
   alone worked at once.
   - Checked: seen on `26.10.13a`; no source. Proof: the throw lands in the play-mode test
     that uses it.
-- **Keep each `sbox-cli` call well inside its timeout, and after a timeout, look before you
-  retry or save.** When a call times out, `sbox-cli` stops waiting and says "The outcome of
-  an already running tool is unknown", but the editor keeps running the call. A bake script
-  that ran past the timeout had switched lamps off for its bake. Its retries did nothing,
-  because `BakeProbes` returns at once while that volume is still baking
+- **Give each `sbox-cli` call a timeout longer than its work, and after a timeout, stop and
+  look before you retry or save.** `sbox-cli` waits 300 seconds for a call unless
+  `--request-timeout` gives another number of seconds, from 1 to 86400
+  (`26.10.13:engine/Launcher/SboxCli/Options.cs`, line 40;
+  `26.10.13:engine/Launcher/SboxCli/skills/sbox-cli/references/protocol.md`, lines 43-44).
+  When a call runs past it, `sbox-cli` says it "exceeded --request-timeout. The outcome of
+  an already running tool is unknown" and closes the connection
+  (`26.10.13:engine/Launcher/SboxCli/Program.cs`, lines 379 and 472). Closing it cancels
+  the script's `cancellationToken`, but only cooperatively: a script that doesn't check the
+  token runs on in the editor
+  (`26.10.13:engine/Sandbox.Engine/Systems/Mcp/McpPipeServer.cs`, lines 89 and 146-148;
+  `26.10.13:engine/Sandbox.Engine/Systems/Mcp/ScriptTools.cs`, line 64;
+  `26.10.13:engine/Launcher/SboxCli/skills/sbox-cli/references/protocol.md`, lines
+  132-135). A bake script that ran past the timeout had switched lamps off for its bake.
+  Its retries did nothing, because `BakeProbes` returns at once while that volume is still
+  baking
   (`26.10.13:engine/Sandbox.Engine/Scene/Components/IndirectLighting/IndirectLightVolume.cs`,
   line 351). The scene was then saved with the lamps still off: the first call's `finally`
-  block, which switched them back on, ran later. Split long work into calls that each fit,
-  such as one volume per call, sized from a measured rate. After a timeout, check what the
-  editor is doing and what the scene holds before another call or a save.
-  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a bake script that starts a
-    volume only when its estimated time fits.
+  block, which switched them back on, ran later. Another time, a loop that sent bake calls
+  with the default timeout sent five whose bakes overlapped: one volume was baked twice,
+  each call switched the lamps for its own volume, and the whole bake had to be redone. So
+  pass `--request-timeout` longer than the call's work, and split long work into calls that
+  each fit, such as one volume per call, sized from a measured rate. When a call says it
+  exceeded the timeout, don't send it again: check what the editor is doing and what the
+  scene holds before another call or a save.
+  - Pass the script's `cancellationToken` to long engine calls and check it in loops, so a
+    timeout stops the work instead of leaving it running. `BakeProbes` takes one and, when
+    it's cancelled, keeps the volume's last bake
+    (`26.10.13:engine/Sandbox.Engine/Scene/Components/IndirectLighting/IndirectLightVolume.cs`,
+    lines 349-397). That a timeout then stops a bake cleanly is inferred, not seen.
+  - Checked: source at `26.10.13`; seen on `26.10.13a` and `26.10.13b`. Proof: a bake
+    script, called with a timeout longer than its work, that starts a volume only when its
+    estimated time fits and stops when a call times out.
 - **To find files a scene no longer uses, compare its references without regard to case,
   and with `_c` removed.** S&box writes baked files into a folder beside the scene, such as
   `outpost_scene_data/` for `outpost.scene`

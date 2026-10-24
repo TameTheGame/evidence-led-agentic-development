@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Two more S&box import lessons, and more on timeouts and converters.**
+  `examples/sbox/IMPORTING.md` gains entries on turning a Source normal map's green channel
+  over and on drawing a live in-world screen from a camera. The `sbox-cli` timeout entry
+  now gives the default timeout, says that a timeout cancels a script only if the script
+  checks for it, and says to stop rather than resend a call that timed out. The entry on
+  files written while the Editor is open adds that a converter should leave a file alone
+  when its bytes haven't changed. Each was checked on S&box `26.10.13b`.
 - **Throwaway S&box projects come off S&box's project list.** The S&box guide's new section,
   Throwaway projects, says that opening a project in the Editor lists it in
   `<engine>\config\addons.json`, that it stays there until its folder is deleted, and how to
