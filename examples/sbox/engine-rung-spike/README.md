@@ -312,7 +312,8 @@ back only the summary.
 
 ## Afterwards
 
-The scratch project can be deleted. Whatever the outcome, the result belongs in this
+Delete the scratch project, as [Throwaway projects](../README.md#throwaway-projects) says,
+so it leaves S&box's project list. Whatever the outcome, the result belongs in this
 example's [summary](../README.md#what-the-spike-settled), not in any game repository.
 
 ## S&box lessons found by this kit

@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Throwaway S&box projects come off S&box's project list.** The S&box guide's new section,
+  Throwaway projects, says that opening a project in the Editor lists it in
+  `<engine>\config\addons.json`, that it stays there until its folder is deleted, and how to
+  clear a throwaway project away. The engine-rung spike's clean-up step and the import
+  reference's bare-addon entry now point to it. Seen on S&box `26.10.13b`.
 - **The S&box editor check no longer waits on S&box's start-up error box.** When the
   Editor can't start a project, it shows an error box and waits for someone to click OK,
   so an agent waiting for the editor waited too. `examples/sbox/tools/editor_check.ps1` now

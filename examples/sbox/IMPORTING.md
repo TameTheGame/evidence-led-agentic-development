@@ -1081,7 +1081,8 @@ the read-only `Editor.FileSystem.Content`.
   addon project first.** Make an `.sbproj` with `ParentPackage` and nothing else, and see
   whether the fault is there too before tracing your own code. A weapon's swing that didn't
   animate inside Facepunch's Sandbox was traced through weapon and view-model code for a
-  long time before a bare project showed the same thing: it was Sandbox's own bug.
+  long time before a bare project showed the same thing: it was Sandbox's own bug. Delete
+  the bare project afterwards, as [Throwaway projects](README.md#throwaway-projects) says.
   - Checked: seen on `26.10.13a`. Proof: nothing yet.
 - **Check an engine type's members in the running editor before writing code from the
   engine source.** List them by reflection through `run_csharp`. The installed build can

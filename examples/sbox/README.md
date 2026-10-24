@@ -226,6 +226,32 @@ time, the editor check stopped with `NOT RUN` within a minute, named the box and
 saved `error-box.txt`, and left no S&box process. A project made from S&box's own template
 still passed. The source is read at `26.10.13`, which is approximate for `26.10.13b`.
 
+## Throwaway projects
+
+Opening a project in the Editor adds it to S&box's project list,
+`<engine>\config\addons.json`, where S&box finds its recent projects, such as those on the
+Editor's taskbar jump list (`26.10.13:engine/Sandbox.Tools/StartupLoadProject.cs`, lines
+65-76; `26.10.13:engine/Sandbox.Tools/TaskbarJumpList.cs`, lines 20-36). Each entry names
+the project's `.sbproj` under `Path`
+(`26.10.13:engine/Sandbox.Engine/Systems/Project/Project/Project.cs`, lines 22-23). Nothing
+takes an entry off while its folder is there. Once the folder is gone, S&box skips the entry
+when it reads the list, and drops it from the file the next time it saves the list, which
+it does each time the Editor opens a project (`26.10.13:engine/Sandbox.Tools/ProjectList.cs`,
+lines 14-31). So scratch projects that agents open for checks and experiments pile up in the
+owner's list. On `26.10.13b`, a project made for a check stayed in the list after the check,
+and left it only once its folder was deleted and a later Editor start saved the list.
+
+When a throwaway project is done:
+
+1. Copy out anything worth keeping, such as its `test-results\` folder.
+2. Close it, and make sure no S&box process is running, because S&box writes the list
+   each time it opens a project.
+3. Delete its folder. If the folder has to stay, remove its entry from `addons.json`
+   instead, the one whose `Path` is its `.sbproj`, still with no S&box running.
+
+A script or recipe that makes throwaway projects does this at its end, or says which
+projects it leaves.
+
 ## A map with no code
 
 A first real project kept its map in a content project, with no code of its own. On S&box
