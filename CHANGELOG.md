@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **A build outside S&box can't catch one Editor compile error.** The import reference's
+  entry on setting properties in a constructor adds that only the Editor's compile copies
+  property initializers into `[DefaultValue]`, so `dotnet build` and the compile check pass
+  code the Editor rejects, and a rule in the source is the guard. The S&box guide's compile
+  check section says it doesn't run S&box's code generator. Read from the source at
+  `26.10.13` and `26.10.27`.
 - **Two more S&box facts, and a fix to the exposure entry.** The S&box guide's world-build
   lessons gain one on a joining client logging small resources as missing even when they
   load, since files under 64 KB reach it only in memory. The import reference's exposure

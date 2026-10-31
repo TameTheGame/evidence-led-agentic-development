@@ -93,6 +93,11 @@ powershell -File tools\compile_check.ps1 -Scripts tools\place_player.cs
 - **Errors point at the script.** Each error names the script's own file and line.
 - **The project's own code compiles through its test project.** `dotnet build UnitTests`
   builds the code and the tests S&box generated, without starting the engine.
+- **It doesn't run S&box's code generator.** The Editor's compile rewrites some code before
+  it compiles it, and a build outside S&box doesn't. So code that this check or
+  `dotnet build UnitTests` passes can still fail to compile in the Editor. That is read
+  from the source, not run. The [import reference](IMPORTING.md#tools-and-scripting) has
+  the case found so far: a property initializer the generator copies into an attribute.
 
 Verified on S&box `26.10.13a`, in Windows PowerShell 5.1 and PowerShell 7. A script using
 engine and editor APIs passed in about two seconds. The same script with one misspelled

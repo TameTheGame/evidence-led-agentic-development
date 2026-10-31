@@ -996,6 +996,25 @@ the read-only `Editor.FileSystem.Content`.
   `public float Width { get; } = width;`, fails to compile with CS0182, in a struct or a
   class. On `26.10.13a` the Editor then wouldn't open the project. Assigning the property in
   an ordinary constructor compiles.
+  - No build outside S&box catches it, because only the Editor's compile makes the rewrite.
+    That compile runs the generator with no build context, as in-game
+    (`26.10.13:engine/Sandbox.Compiling/Compiler/Compiler.Generator.cs`, lines 8-24;
+    `26.10.13:engine/Sandbox.Generator/Processor.cs`, line 103), and only then does the
+    rewrite act (`26.10.13:engine/Sandbox.Generator/Worker.cs`, line 81;
+    `26.10.13:engine/Sandbox.Generator/Units/DefaultValue.cs`, lines 28-31). In a
+    `dotnet build` of the project files S&box writes, the generator is listed as an
+    analyzer (`26.10.13:engine/Sandbox.SolutionGenerator/Templates/Project.cs`, line 88)
+    but does nothing unless the build property `SandboxCodegen` is `true`
+    (`26.10.13:engine/Sandbox.Generator/SourceGenerator.cs`, lines 13-18). S&box gives
+    those files only `SandboxHostMigration`
+    (`26.10.13:engine/Sandbox.Engine/Systems/Project/Project/Project.Solution.cs`, line
+    67). With `SandboxCodegen` set, it runs there with a build context, so not as in-game,
+    and still skips the rewrite (`26.10.13:engine/Sandbox.Generator/SourceGenerator.cs`,
+    lines 23-26). The [compile check](README.md#the-compile-check) doesn't load the
+    generator at all. So code that builds cleanly outside S&box can still stop the Editor
+    opening the project. Guard it in the source: a rule that rejects an initializer that
+    isn't a constant, such as a primary-constructor parameter, on an auto-property of those
+    types. This is read from the source at `26.10.13`, the same at `26.10.27`, and not run.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: the project's compile.
 - **A mesh marked HideInGame still renders in the editor scene.** `MeshComponent` removes
   its scene object for `HideInGame` only outside the editor
