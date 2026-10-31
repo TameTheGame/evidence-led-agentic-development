@@ -37,6 +37,16 @@ game while other windows covered it. It returns frames as fast as the compositor
 them, up to its `max_framerate`
 ([FFmpeg filters](https://ffmpeg.org/ffmpeg-filters.html#gfxcapture)).
 
+A check on a recording's size has to read the screen's real size. On Windows, a process
+that isn't DPI aware is told the screen's size in 96 DPI units
+([High DPI Desktop Application Development on Windows](https://learn.microsoft.com/en-us/windows/win32/hidpi/high-dpi-desktop-application-development-on-windows)),
+so a 3840 x 2160 monitor at 150% scaling reads as 2560 x 1440, and a check for a full 4K
+recording compares against the wrong size. Set the thread that reads the screens
+per-monitor DPI aware (version 2), for example with `SetThreadDpiAwarenessContext`, so it
+sees each display's raw pixels, and check what it reads against the video card's real
+resolution. This was seen on Windows while building a check that a recording is 3840 x
+2160.
+
 ## What the spike settled
 
 The spike ran on S&box `26.10.02`. Source references are to `Facepunch/sbox-public` at

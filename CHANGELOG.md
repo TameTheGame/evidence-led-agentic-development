@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Reading the screen's real size on Windows.** The S&box guide's note on checking motion
+  on the screen adds that a process that isn't DPI aware is told a scaled screen size, so a
+  4K monitor at 150% reads as 2560 x 1440. A check on a recording's size reads the screens
+  per-monitor DPI aware and checks them against the video card's real resolution. Seen on
+  Windows.
 - **A build outside S&box can't catch one Editor compile error.** The import reference's
   entry on setting properties in a constructor adds that only the Editor's compile copies
   property initializers into `[DefaultValue]`, so `dotnet build` and the compile check pass
