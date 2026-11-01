@@ -58,6 +58,11 @@
   file written at or after the source, judged by other file times and never by the clock.
   Read from the source at `26.10.13` and `26.10.27`, and seen on `26.10.27c` and in a test
   on Windows.
+- **One more S&box lesson: set a decal's `Rotation` to a constant.** The S&box guide's
+  "More world-build lessons" adds that a `Decal`'s `Rotation` defaults to a range from 0 to
+  360, from which the component takes a new random roll each time it is enabled, so a decal
+  left at it turns between loads, and that a scene check can tell a constant from a range
+  in the saved scene. Read from the source at `26.10.13` and `26.10.27`, not run.
 - **ELAD releases no longer wait for a GREEN each.** On 2026-11-01 the owner gave standing
   approval for releases. The delivery agent releases a batch on its own when it has
   something a user would notice, in the evening and not every day, always with release

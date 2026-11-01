@@ -527,7 +527,7 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 ## More world-build lessons
 
-Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up eighteen more. Each is
+Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up nineteen more. Each is
 read from the engine source at `26.10.13` and again at `26.10.27`, and reads the same at
 both unless it says otherwise. Each says what was seen, and on which build.
 
@@ -770,6 +770,17 @@ both unless it says otherwise. Each says what was seen, and on which build.
   building again, put back from Git each file the failed run touched: the scene, its
   folder, and the `.meta` files beside its sources. For a new source's `.meta`, which Git
   doesn't have yet, take out the keys the run added and keep the `guid` S&box gave it.
+- **Set a decal's `Rotation` to a constant.** A `Decal`'s `Rotation`, its roll about its
+  forward axis, defaults to `new ParticleFloat( 0, 360 )`, a range
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Render/Decal.cs`, line 71). The
+  component draws a new seed with `Random.Shared` each time it is enabled and takes the
+  roll from it (lines 167-178, 300-303 and 366-371). So a decal a script places without
+  setting its roll lands at a new one each time the scene loads or plays, and two captures
+  of one build can differ. S&box saves a constant `ParticleFloat` as a plain number, and a
+  range as an object with its `Type` and `Constants`
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Particles/ParticleFloat.cs`, lines
+  233-268), so a scene check can tell them apart. Set the roll the layout means as a
+  constant, and have the scene check expect that number. Read from the source, not run.
 
 ## Lessons from importing old content
 
