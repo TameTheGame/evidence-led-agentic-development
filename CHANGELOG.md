@@ -2,7 +2,20 @@
 
 ## Unreleased
 
-No pending changes.
+- **Twelve more S&box lessons, from world building.** The S&box guide gains a section,
+  "More world-build lessons": commit the `.meta` files S&box writes; expect a store
+  package's asset ID to change every editor session, and install a new package in a session
+  of its own; change the resource S&box holds for a file rather than a new one; wait with a
+  limit for a resource's compiled file; reload a resource yourself behind a junction, which
+  the Editor's file watch can't see through; give a generated material its world mapping;
+  keep the tags an object's components add; add a code library's assembly to the type
+  library in engine tests; read a store package's licence from `AssetLicense`; commit what
+  the Editor re-saves after an update adds fields; and tell a waiting S&box update by
+  Steam's target build ID. The editor check's section says a scene that uses store packages
+  fails its resave check today, and the start-up error section adds that a library's
+  `.sbproj` that isn't valid JSON stops the Editor too. Read from the source at `26.10.13`
+  and `26.10.27`, and seen on `26.10.13a` to `26.10.27c` except where an entry says
+  otherwise.
 
 ## 1.05 — 2026-11-01
 

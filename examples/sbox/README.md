@@ -149,6 +149,10 @@ powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
     script that already runs through `run_csharp` may find the setter simpler. On
     `26.10.13a`, a `run_csharp` script that set it at its end, followed by `save_scene`,
     wrote the scene; the file's new timestamp and contents showed it.
+- **A scene that uses store packages fails it.** S&box gives a package's files new IDs in
+  each editor session, so the second save writes other `Id`s for them and fails the resave
+  check; see [More world-build lessons](#more-world-build-lessons). This follows from that
+  lesson and hasn't been run with this check.
 - **A project without code works too.** A project with code must report a finished,
   successful compile. A content project, such as a map, has no `Code` or `Editor` folder
   and never compiles, so the check doesn't wait for a compile result.
@@ -207,7 +211,14 @@ and one agent's work stopped until the owner clicked OK.
   throws too (lines 77-80). When the project has compile errors, the box lists them in
   place of the exception (`Bootstrap.cs`, lines 335-341). A `.sbproj` that S&box can't read
   shows a "Couldn't open project" box before any of this
-  (`26.10.13:engine/Sandbox.AppSystem/EditorAppSystem.cs`, lines 38-51).
+  (`26.10.13:engine/Sandbox.AppSystem/EditorAppSystem.cs`, lines 38-51). A library's
+  `.sbproj` that isn't valid JSON marks that project broken
+  (`26.10.13:engine/Sandbox.Engine/Systems/Project/Project/Project.cs`, lines 202-225), and
+  adding it from the project's `Libraries` folder then throws "Couldn't add project."
+  (`26.10.13:engine/Sandbox.Engine/Systems/Project/Project/Project.Static.cs`, lines
+  266-277; `26.10.13:engine/Sandbox.Tools/Editor/LibrarySystem/LibrarySystem.cs`, lines
+  21-40). On `26.10.27c` that showed as a "Bootstrap::Init Error" box. A static check that
+  parses every tracked `.sbproj` as strict JSON catches both before an editor opens.
 - **Start every editor so that a failed start can't hang.**
   1. Start it through `sbox-cli --project`, or a script that does, and keep that `sbox-cli`
      process. It starts the editor inside a Windows job that closes the editor, box and
@@ -379,7 +390,8 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
   (`26.10.13:engine/Sandbox.Tools/Editor/LibrarySystem/LibrarySystem.cs`, lines 287-306).
   So content that lives only in a library loads in the Editor, and the server reports it
   not found. Keep what the server needs in the game's own `Assets`, or link it there; a
-  link fixed it on `26.10.13a`.
+  link fixed it on `26.10.13a`. A file changed behind a junction is hidden from the
+  Editor's file watch, as [More world-build lessons](#more-world-build-lessons) says.
   - The same code runs when local automation starts a game with `-mcp`. That is from the
     source and untested.
 - **Wait for an active scene, not just for loading to end.** While a game or dedicated
@@ -492,6 +504,149 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
   files fails on it, and one that reads only the host's log never sees it. Check on the
   client that each such resource loaded, from its values and any textures it makes, and
   excuse that exact line only for a resource whose check passed.
+
+## More world-build lessons
+
+Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up twelve more. Each is read
+from the engine source at `26.10.13` and again at `26.10.27`, and reads the same at both
+unless it says otherwise. Each says what was seen, and on which build.
+
+- **Commit the `.meta` files S&box writes beside new source files.** The Editor gives each
+  asset it mounts a GUID and writes it under `guid` in a `.meta` file beside the source
+  (`26.10.13:engine/Sandbox.Tools/Assets/NativeAsset/NativeAsset.cs`, lines 24 and 35-41;
+  `26.10.13:engine/Sandbox.Tools/Assets/Asset.cs`, lines 168-189). A scene saves its
+  reference to such a resource as that `Id` and the path
+  (`26.10.13:engine/Sandbox.Engine/Resources/Resource.Json.cs`, lines 188-199). So the
+  first editor to open a project after new images, models or sounds arrive writes a `.meta`
+  for each, and a check that needs a clean working tree fails on them. Commit them with the
+  change that added the sources, so their GUIDs stay put. On `26.10.27c` the first editor
+  to open a project wrote one per new source file, and a `.slnx` solution file at the
+  project's root, which belongs in `.gitignore`.
+- **Expect a store package's asset ID to change every editor session.** S&box writes no
+  `.meta` for a file that a cloud package installed (`Asset.cs`, lines 107 and 173-176), so
+  no file keeps its GUID. On `26.10.13a` a scene's reference to a package's sky saved with
+  one `Id` in the first session and another after reopening, with the same path and nothing
+  else changed. So a check that compares saves from two sessions byte for byte fails on a
+  scene that uses packages, and a run leaves the scene changed in Git. Compare each package
+  reference's `Id` with the GUID that session gives the same path, and every other byte as
+  written. When a run started from the committed scene and only those IDs differ, put Git's
+  copy back. The [editor check](#the-editor-check) compares bytes, so it fails such a scene
+  today.
+- **Install a new package in an editor session of its own.** As the Editor opens a project,
+  it uninstalls every installed package that no file in the project or its libraries lists
+  in its `__references` (`26.10.13:engine/Sandbox.Tools/StartupLoadProject.cs`, lines
+  264-269 and 390-425; `26.10.13:engine/Sandbox.Tools/Utility/CloudAsset.cs`, lines
+  245-313). So a package installed in one editor and not yet in a saved file is gone in the
+  next. On `26.10.13a` a sky from a package installed during a build's own session saved
+  without an `Id`, and the next session gave it one. Build and save once so the scene lists
+  the new package, then run the build that counts in a new editor.
+- **To change a saved resource from a script, change the object S&box holds for its file.**
+  `Asset.SaveToDisk` registers the object it saves under the file's path and gives it no
+  GUID (`Asset.cs`, lines 548-581;
+  `26.10.13:engine/Sandbox.Engine/Resources/GameResource.cs`, lines 210-223), and a scene
+  writes a reference to a resource with no GUID as its path alone (`Resource.Json.cs`,
+  lines 188-193). On `26.10.13a` a build that saved a `new TerrainMaterial()` over a file
+  had its scene save the reference as a bare path, the reopened scene saved it with the
+  file's `Id`, and a save-and-rebuild check failed. Get the held object with
+  `ResourceLibrary.TryGet`, or else `Asset.TryLoadResource`, change it, and save that
+  (`26.10.13:engine/Sandbox.Engine/Resources/ResourceLibrary.cs`, line 751).
+- **After a script writes a resource, wait with a limit for its compiled file.**
+  `AssetSystem.CreateResource` writes `{}` to the file, registers it, and saves a default
+  resource over it (`26.10.13:engine/Sandbox.Tools/Assets/AssetSystem.cs`, lines 343-379).
+  Loading an asset as a resource reads its compiled file, and fails while that file isn't
+  there (`Asset.cs`, lines 429-480). A native asset such as a material compiles in the
+  native asset system, and `HasCompiledFile` asks that system each time it is read
+  (`NativeAsset.cs`, lines 277-291 and 375). On `26.10.13a`, a terrain material made with
+  `CreateResource` failed to load right after the call. On `26.10.27c`, a material compiled
+  with `Compile( true )` already loaded with its shader and textures while
+  `HasCompiledFile` was still false, and its compiled file came a moment later. So read a
+  new resource's values from its source with `Asset.ReadJson` until it has compiled, and
+  before using a compiled file, wait until `HasCompiledFile` is true and the file is on
+  disk. When the limit runs out, report `IsCompileFailed`.
+- **Behind a junction, the Editor doesn't see a file change.** A loaded resource takes a
+  recompiled file only when S&box's file watch reports it: the resource loader watches
+  `*.<extension>_c` on the mounted file system and reloads the resource when one changes
+  (`26.10.13:engine/Sandbox.Engine/Resources/ResourceLoader.cs`, lines 146-160 and
+  163-218). A terrain material loads its generated textures only when it loads or reloads
+  (`26.10.13:engine/Sandbox.Engine/Resources/Terrain/TerrainMaterial.cs`, lines 64-80). On
+  Windows, a folder watch reported nothing written behind a junction: a test outside S&box
+  saw no events through the junction, and two for the same writes in a plain folder. So
+  where a project sees a folder through a junction, as when a game links content into its
+  own `Assets`, a file written there stays as it was in the Editor until something loads it
+  again. On `26.10.27c` a build that waited for a terrain material compiled behind a
+  junction gave up after 60 seconds, though its compiled files were on disk. Once the files
+  are on disk and newer than the compile, reload the resource as the watch would, through
+  `GameResource.PostReloadInternal` (internal, so reached by reflection; `GameResource.cs`,
+  line 127), then wait with a limit for its values. With that, the same build passed.
+- **Give a generated material its world mapping.** S&box's material generator writes a
+  `.vmat` with its shader, features and textures, and no world mapping
+  (`26.10.13:engine/Sandbox.Tools/Utility/MaterialGenerator.cs`, lines 190-234). At the
+  default texture scale, 0.25, a mesh then repeats the material every texture width times
+  0.25 units, unless the material sets `WorldMappingWidth` and `WorldMappingHeight`
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Mesh/PolygonMesh.cs`, lines 3723-3733,
+  3785-3818 and 4606-4623), so a 2048-pixel texture repeats every 512 inches, about 13
+  metres, whatever size its source gives it. Write both in the `.vmat`'s `SystemAttributes`
+  block, as S&box's own materials do
+  (`26.10.13:game/core/materials/dev/simple/simple_tile.vmat`, lines 19-23), from the size
+  the texture's source gives, and check the built file and what S&box reads back against
+  that size. This was read in source before any run.
+- **When a script sets an object's tags, keep the ones its components add.** A
+  `MeshComponent` adds `world` to its object each time it is enabled
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Mesh/MeshComponent.cs`, lines 149-151).
+  Others add a tag when they wake: a light `light`
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Light/Light.cs`, lines 228-233) and
+  `light_point`, `light_spot` or `light_directional` for its kind, a `SkyBox2D` `skybox`
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Render/SkyBox2D.cs`, lines 65-67), and
+  a `ParticleSystem` `particles`
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Effects/ParticleSystem.cs`, lines
+  45-47). A reopen enables and wakes them again. On `26.10.27c` a build that set some
+  objects' tags to exactly what its layout listed, which was none, saved them with none,
+  the reopened scene saved them with `world`, and the save check failed. So a script that
+  sets tags exactly adds back the tags of the object's own components.
+- **In engine tests, add a code library's assembly before loading a scene that uses its
+  components.** The test host's type library holds the engine's assemblies and the game
+  assembly (`26.10.13:engine/Sandbox.Engine/Game/Game/Game.Local.cs`, lines 17-28). A game
+  adds a library's assembly when it loads a package
+  (`26.10.13:engine/Sandbox.GameInstance/GameInstanceDll.cs`, lines 212-219), which a test
+  host never does, and a saved component whose type isn't in the type library loads as a
+  `MissingComponent`
+  (`26.10.13:engine/Sandbox.Engine/Scene/GameObject/GameObject.Serialize.cs`, lines 515 and
+  534-539). On `26.10.27c` a library's component loaded that way in an engine test, though
+  the library's DLL was built beside the test assembly. Add each library's assembly to
+  `Game.TypeLibrary` first with `TypeLibrary.AddAssembly( assembly, true )`, as the game
+  does. It is internal (`26.10.13:engine/Sandbox.Reflection/TypeLibrary/TypeLibrary.cs`,
+  line 85), so reach it by reflection. Find the library's DLL from the test build's
+  `.deps.json`, not from what the build's output folder holds, since a library that was
+  dropped can leave its old DLL there. That the component then loads as itself is from the
+  source, not yet run.
+- **Read a store package's licence from its `AssetLicense`, and take a missing one as no
+  licence.** `Package.AssetLicense` names the licence covering a package's assets, such as
+  `CC0` or `CC_BY`, and is null when the package declares none
+  (`26.10.13:engine/Sandbox.Engine/Services/Packages/Package.License.cs`, lines 5-24;
+  `26.10.13:engine/Sandbox.Engine/Services/Packages/RemotePackage.cs`, line 118). The
+  package service gives it as a `LicenseType` number: 1 for CC0, 2 for CC BY-NC-ND, 3 for
+  CC BY and 4 for CC BY-SA (`26.10.13:engine/Sandbox.Services/Api/Models/Licensing.cs`,
+  lines 6-21), and on 2026-11-01 it left the field out for a package that declares none.
+  Who published a package says where it came from, not what it allows: that day, some of
+  Facepunch's own packages declared no licence while others were CC0. Read each package's
+  version and size again on the day you pin it too, since a publisher can replace a package
+  at any time: that day, several packages read far smaller than they had a few days before.
+- **After an S&box update, commit what the Editor re-saves with the new fields.**
+  `26.10.27` added fields such as a light's `Intensity` and `Temperature`
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Light/Light.cs`, lines 160-172 and
+  179-194) and a project's `PublishUsedAssetsOnly`
+  (`26.10.27:engine/Sandbox.Engine/Systems/Project/ProjectConfig.cs`, line 95), and the
+  Editor writes each at its default the first time it saves a scene or project file. On
+  `26.10.27c`, checks that compare a run's own saves passed and left every scene and
+  `.sbproj` changed, and the next check refused to run on an unclean tree. In the update
+  review, put Git's bytes back before each check, and commit the Editor's saves with the
+  review once every check has passed.
+- **Tell a waiting S&box update by Steam's target build ID, not its update flag.** On
+  `26.10.13a` a check that read the "update required" flag, 2, in the `StateFlags` of
+  Steam's `appmanifest_590830.acf` reported a waiting update, and launching S&box cleared
+  the flag with nothing new installed: `buildid` and `TargetBuildID` were the same. Report
+  a waiting update only when `TargetBuildID` is set and differs from `buildid`. Steam's
+  manifest format isn't documented; this was seen.
 
 ## Lessons from importing old content
 

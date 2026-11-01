@@ -957,7 +957,9 @@ To test walking without a keyboard, see
 
 The guide's [Lessons from a world build](README.md#lessons-from-a-world-build) has more
 on scripting the Editor: the clock in a SceneLoaded hook, saving after `run_csharp`, and
-the read-only `Editor.FileSystem.Content`.
+the read-only `Editor.FileSystem.Content`. Its
+[More world-build lessons](README.md#more-world-build-lessons) cover resources a script
+writes, store packages, and tags.
 
 - **Write full type names in `run_csharp` scripts.** `run_csharp` puts the script inside a
   method, after a fixed set of `using` lines: `System`, `System.Linq`, `System.Threading`,
