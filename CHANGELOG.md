@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+No pending changes.
+
+## 1.05 — 2026-11-01
+
+A batch of S&box example updates: 27 more import lessons, a guard that stops the editor
+check hanging on S&box's start-up error box, a check for clearing out generated files, and
+three new sections in the S&box guide. No skill changed, and nothing in the core breaks.
+
 - **Reading the screen's real size on Windows.** The S&box guide's note on checking motion
   on the screen adds that a process that isn't DPI aware is told a scaled screen size, so a
   4K monitor at 150% reads as 2560 x 1440. A check on a recording's size reads the screens
