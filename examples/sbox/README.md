@@ -527,7 +527,7 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 ## More world-build lessons
 
-Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up seventeen more. Each is
+Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up eighteen more. Each is
 read from the engine source at `26.10.13` and again at `26.10.27`, and reads the same at
 both unless it says otherwise. Each says what was seen, and on which build.
 
@@ -593,7 +593,28 @@ both unless it says otherwise. Each says what was seen, and on which build.
   `HasCompiledFile` was still false, and its compiled file came a moment later. So read a
   new resource's values from its source with `Asset.ReadJson` until it has compiled, and
   before using a compiled file, wait until `HasCompiledFile` is true and the file is on
-  disk. When the limit runs out, report `IsCompileFailed`.
+  disk. When the limit runs out, report `IsCompileFailed`. The next lesson adds that the
+  file must be this run's.
+- **Ask for a compile with `Compile`, but don't take its result as the verdict.**
+  `NativeAsset.Compile` returns false when the asset can't be recompiled, and otherwise
+  whatever the native asset system's `RecompileAsset` returns
+  (`26.10.27:engine/Sandbox.Tools/Assets/NativeAsset/NativeAsset.cs`, lines 275-289).
+  S&box's own `CompileIfNeededAsync` drops that result and waits for `IsCompiled`, failing
+  only on `IsCompileFailed` or its time limit (lines 326-363). On `26.10.27c` a build
+  stopped on a material whose `Compile( true )` returned false while `IsCompileFailed` was
+  false. A compiled file an earlier build left says nothing about this one, and a project
+  that keeps compiled files out of Git keeps them on disk between runs, so a wait for
+  `HasCompiledFile` alone can pass on an old file. After a script changes a source, call
+  `Compile( true )` to ask for the compile. Then wait, with a limit, for `HasCompiledFile`
+  and a compiled file on disk written at or after the source the run wrote, or one that
+  wasn't there before the request or has changed since. Fail on `IsCompileFailed` or on the
+  limit, and say which, with what `Compile` returned and the compiled file's time. Judge
+  the file by other file times, never by the clock: Windows stamps a file write with the
+  time of the system clock's last tick, so a file written just after a `DateTime.UtcNow`
+  reading can read as older than it, and `Compile` runs synchronously (line 337 says so),
+  so a compile can finish in the request's own tick. A test of such a wait on Windows
+  failed 4 runs in 7 that way; the file times are not read in source. Time the wait itself
+  with `RealTimeSince` or a count of its waits.
 - **Behind a junction, the Editor doesn't see a file change.** A loaded resource takes a
   recompiled file only when S&box's file watch reports it: the resource loader watches
   `*.<extension>_c` on the mounted file system and reloads the resource when one changes

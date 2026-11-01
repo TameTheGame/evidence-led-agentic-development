@@ -51,6 +51,13 @@
   on every call, so a build that fails part way can leave some `.meta` files set, and that
   the run that counts starts from Git's copies. Read from the source at `26.10.13` and
   `26.10.27`, and seen on `26.10.27c`.
+- **One more S&box lesson: ask for a compile with `Compile`, but don't take its result as
+  the verdict.** The S&box guide's "More world-build lessons" adds that
+  `NativeAsset.Compile` can return false for a compile that works, and that a compiled file
+  an earlier build left counts for nothing, so a script waits with a limit for a compiled
+  file written at or after the source, judged by other file times and never by the clock.
+  Read from the source at `26.10.13` and `26.10.27`, and seen on `26.10.27c` and in a test
+  on Windows.
 - **ELAD releases no longer wait for a GREEN each.** On 2026-11-01 the owner gave standing
   approval for releases. The delivery agent releases a batch on its own when it has
   something a user would notice, in the evening and not every day, always with release
