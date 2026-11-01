@@ -15,11 +15,13 @@ these release steps:
 - the push and the tag; and
 - verifying that the release was published.
 
-Each release waits for the owner's typed GREEN before it reaches `main` and is tagged. Ask
-for it once per release; it covers that release's push and tag. Don't ask again for each
-step, and don't call a push alone a completed delivery. Pushing a finished update to
-`tamethegame/next-release` needs no GREEN. Unaccepted contributor changes don't carry this
-permission.
+The owner gave standing approval for releases on 2026-11-01. The delivery agent releases a
+batch on its own when it is due (see [Release cadence](#release-cadence)), with no GREEN
+for each release, and every release carries its notes. Pushing a finished update to
+`tamethegame/next-release` needs no GREEN either. The owner can withdraw the standing
+approval at any time; each release then waits for the owner's typed GREEN again, asked for
+once per release and covering its push and tag. Don't call a push alone a completed
+delivery. Unaccepted contributor changes don't carry this permission.
 
 This permission covers this public repository only. It grants no authority over projects
 that use ELAD, their models, or their releases.
@@ -33,11 +35,11 @@ that use ELAD, their models, or their releases.
 - **A release is due when the batch has something a user would notice:** a new or changed
   skill, a new guide or example, a fix a project needs, or a breaking change. Typos and
   small tidies wait for a release that has one of those.
-- **When it goes out.** The delivery agent proposes the release, and the owner gives one
-  GREEN. A release goes out after the owner's working hours, such as in the evening, and
-  not every day. The [delivery loop](#delivery-loop) then makes the release commit on the
-  branch, fast-forwards `main` to it, and tags it, so the branch equals `main` and starts
-  collecting the next batch.
+- **When it goes out.** The delivery agent decides when a batch is due and releases it
+  under the owner's standing approval. A release goes out after the owner's working hours,
+  such as in the evening, and not every day. The [delivery loop](#delivery-loop) makes the
+  release commit on the branch, fast-forwards `main` to it, and tags it, so the branch
+  equals `main` and starts collecting the next batch.
 - **Urgent fixes.** A fix for something broken lands on `tamethegame/next-release` like
   any other change, and its release ships the whole batch early. Everything on the branch
   is finished and checked, so the batch can always be released. There are no side
@@ -82,7 +84,7 @@ See ADR-0021 in [Decisions](DECISIONS.md).
 2. **Update the version everywhere.** That means `VERSION`, the README's version line,
    `STATUS.md`, and `SECURITY.md`. Move finished changelog entries from `Unreleased` into a
    dated section.
-   Add `releases/vMAJOR.MINOR.md`, covering:
+   Add `releases/vMAJOR.MINOR.md`, in plain words for the people who use ELAD, covering:
    - highlights;
    - compatibility and migration, which always tells projects that name their pinned
      version to update it, even when nothing else needs to change (see
@@ -105,7 +107,8 @@ See ADR-0021 in [Decisions](DECISIONS.md).
    - is marked latest; and
    - has the intended notes.
 
-   Report the release URL and the final Git state. Delivery isn't complete without this.
+   Report the release URL and the final Git state to the owner. Delivery isn't complete
+   without this.
 7. **Carry on.** `tamethegame/next-release` now equals `main`, with `No pending changes.`
    under `Unreleased`, and collects the next batch.
 

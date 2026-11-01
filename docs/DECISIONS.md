@@ -7,14 +7,17 @@ artifacts they govern are archived at the `v0.5` tag (see [Archive](../ARCHIVE.m
 
 **Status:** accepted by Josh, the owner, on 2026-10-21 for v1.01; the rule for breaking
 changes accepted by him on 2026-10-21 for v1.03; batched releases asked for by him on
-2026-10-21, after v1.03
+2026-10-21, after v1.03; standing approval for releases given by Josh on 2026-11-01, after
+v1.05
 
 After `1.0`, five updates reached `main` without a release, so a project had no version to
 pin them by. The owner asked for versioning to resume, numbered `1.01`, `1.02`, and so on.
 The policy also said what a breaking change does only in `0.x`; the owner chose a new major
 number for one after `1.0`. After `v1.03`, the owner found a release for each update too
 frequent, and asked to hold changes until there is enough for a new version, then release
-them together in the evening, not every day.
+them together in the evening, not every day. After `v1.05`, the owner gave standing
+approval for releases: the agent may release on its own once a batch is a meaningful
+update, always with release notes.
 
 **Decision.**
 
@@ -25,11 +28,14 @@ them together in the evening, not every day.
   time, so it never sits ahead of the latest tag.
 - A release is due when the batch has something a user would notice: a new or changed
   skill, a new guide or example, a fix a project needs, or a breaking change. Typos and
-  small tidies wait. It goes out on one GREEN, in the evening and not every day. An urgent
-  fix for something broken lands on the branch like any change, and its release ships the
-  whole batch early.
-- Each release waits for the owner's typed GREEN before it reaches `main` and is tagged,
-  as `v1.0` did. One GREEN covers that release's push and tag.
+  small tidies wait. It goes out in the evening and not every day. An urgent fix for
+  something broken lands on the branch like any change, and its release ships the whole
+  batch early.
+- From 2026-11-01 the owner's standing approval covers each release: the delivery agent
+  releases a due batch on its own, with its release notes, and needs no GREEN for it. From
+  `v1.0` to `v1.05`, each release waited for the owner's typed GREEN. If the owner
+  withdraws the approval, each release waits for a typed GREEN again, and one GREEN covers
+  that release's push and tag.
 - A release that breaks existing projects takes the next major number: the first after
   `1.xx` is `2.0`, then `2.01`, and so on. Every other release takes the next minor
   number. A change breaks existing projects when a project that moves to it has to change
@@ -45,6 +51,8 @@ them together in the evening, not every day.
 - A release for each update, as `v1.01` to `v1.03` did. It released more often than the
   owner wanted.
 - A fixed schedule, such as weekly. A quiet week would make a release with little in it.
+- A typed GREEN for each release, as from `v1.0` to `v1.05`. A finished batch waited until
+  the owner could answer, and the owner chose to approve releases once instead.
 - Releasing an urgent fix on its own from a branch off `main`. Bringing it back into
   `tamethegame/next-release` would take a merge, which would reach `main` at the next
   release, and the owner keeps history linear.
@@ -55,8 +63,11 @@ them together in the evening, not every day.
 claimed. Nothing in this repository parses versions: the release job compares the tag with
 `VERSION` as text. Python's `packaging` reads `1.01` as `1.1`, so a one-digit minor number
 must never follow: `1.1` would collide with `1.01` there. Old tags don't change, `v1.0`
-included. Projects pin released tags, so batching changes nothing for them. Rolling back
-means a later decision that changes the numbering or the cadence from its next release on.
+included. Projects pin released tags, so batching changes nothing for them, and neither
+does the standing approval: a project still moves only when its own owner decides. Rolling
+back means a later decision that changes the numbering or the cadence from its next release
+on. The owner withdraws the standing approval by saying so, and from then on each release
+waits for a GREEN again.
 
 ## ADR-0020 — Spec, ladder, and skills become the core
 

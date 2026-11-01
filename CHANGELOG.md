@@ -30,6 +30,11 @@
   `Rotation.Distance` can't see turns under about 0.03 degrees. Scale to unit length and
   take `4 atan2(|a - b|, |a + b|)`. Read from the source at `26.10.13` and `26.10.27`, and
   seen on `26.10.27c`; the `Rotation.Distance` part is worked from the source, not run.
+- **ELAD releases no longer wait for a GREEN each.** On 2026-11-01 the owner gave standing
+  approval for releases. The delivery agent releases a batch on its own when it has
+  something a user would notice, in the evening and not every day, always with release
+  notes in plain words. The owner can withdraw the approval, and then each release waits
+  for a typed GREEN again. `docs/RELEASING.md` says so, and ADR-0021 records it.
 - **Twelve more S&box lessons, from world building.** The S&box guide gains a section,
   "More world-build lessons": commit the `.meta` files S&box writes; allow for a store
   package's asset ID changing between sessions, and install a new package in a session
