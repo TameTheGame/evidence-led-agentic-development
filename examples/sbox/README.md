@@ -527,7 +527,7 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 ## More world-build lessons
 
-Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up fourteen more. Each is
+Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up fifteen more. Each is
 read from the engine source at `26.10.13` and again at `26.10.27`, and reads the same at
 both unless it says otherwise. Each says what was seen, and on which build.
 
@@ -548,18 +548,21 @@ both unless it says otherwise. Each says what was seen, and on which build.
   resource database gives it one. On `26.10.13a` a scene's reference to a package's sky
   saved with one `Id` in the first session and another after reopening, with the same path
   and nothing else changed. On `26.10.27c` a scene's reference to a package's model kept
-  one `Id` across five sessions. Between those releases the managed side of that database
+  one `Id` across five sessions, while in another project on the same build a package's
+  material got a new `Id` between sessions. A project's own `.sound` kept its reference to
+  the compiled `.vsnd` at one `Id` across three sessions there, an `Id` that isn't the GUID
+  in the `.wav.meta`. Between `26.10.13` and `26.10.27` the managed side of that database
   changed: it now tells the database when a `.meta` is written or deleted, asks it whether
   it gave a file a new GUID, and takes GUID changes from a start-up scan
   (`26.10.27:engine/Definitions/engine/resourcesystem.def`, lines 18-20 and 43;
   `26.10.27:engine/Sandbox.Engine/Resources/Resource.cs`, lines 180-197). The database
-  itself is native code outside the public source, so which package files keep their ID,
-  and why, is not known. So a check that compares saves from two sessions byte for byte can
-  fail on a scene that uses packages, and a run can leave the scene changed in Git. Compare
-  each package reference's `Id` with the GUID that session gives the same path, and every
-  other byte as written. When a run started from the committed scene and only those IDs
-  differ, put Git's copy back. The [editor check](#the-editor-check) compares saves this
-  way.
+  itself is native code outside the public source, so why some package files keep their ID
+  and others don't is not known. So a check that compares saves from two sessions byte for
+  byte can fail on a scene that uses packages, and a run can leave the scene changed in
+  Git. Compare each package reference's `Id` with the GUID that session gives the same
+  path, and every other byte as written. When a run started from the committed scene and
+  only those IDs differ, put Git's copy back. The [editor check](#the-editor-check)
+  compares saves this way.
 - **Install a new package in an editor session of its own.** As the Editor opens a project,
   it uninstalls every installed package that no file in the project or its libraries lists
   in its `__references` (`26.10.13:engine/Sandbox.Tools/StartupLoadProject.cs`, lines
@@ -704,6 +707,19 @@ both unless it says otherwise. Each says what was seen, and on which build.
   each handle was valid. Before a script reads anything a sound file holds, call
   `LoadAsync` again until `IsLoaded`, with a limit, and stop with the file's name when the
   handle goes away or the limit runs out.
+- **A sound component's `Force2d` works with Sound Override off.** The Inspector shows
+  `Force2d` inside the Sound Override group, but `BaseSoundComponent` applies it whether
+  that override is on or not, and after the distance override, so it wins: it moves the
+  sound to `Vector3.Forward * 10` and turns off its distance attenuation, occlusion and air
+  absorption
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Audio/BaseSoundComponent.cs`, lines
+  20-32 and 75-112). Only with Sound Override on does it also set `ListenLocal`, which puts
+  the listener at the origin facing forward, so the sound plays just in front of it
+  (`26.10.27:engine/Sandbox.Engine/Systems/Audio/SoundHandle.cs`, lines 305-308); with the
+  override off, the sound sits at that point in the world, still with no fade over
+  distance. A script that builds sound emitters, and means them to fade with distance, sets
+  `Force2d` to false and reads it back with the other overrides. Read from the source, not
+  run.
 
 ## Lessons from importing old content
 

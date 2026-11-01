@@ -22,8 +22,9 @@
   the path; every other byte still has to match. `-SelfTest` checks the comparison on
   planted saves, including a planted break. Run on S&box `26.10.27c`: a scene with a store
   package's model re-saved byte for byte, since the model kept its ID in every session, so
-  only the planted saves exercise the ID compare. A component that changes its own saved
-  value still failed it.
+  only the planted saves exercise the ID compare. In another project on the same build, a
+  store package's material did get a new ID between sessions. A component that changes its
+  own saved value still failed it.
 - **One more S&box lesson: compare read-back rotations with atan2.** The S&box guide's
   "More world-build lessons" adds that S&box's float32 quaternions are only nearly unit, so
   `2 acos(|a · b|)` reads two identical rotations as 0.03 degrees apart, and that
@@ -35,6 +36,12 @@
   loads nothing, so a script that reads `Duration` straight after it fails, and that a
   script should call `LoadAsync` again until `IsLoaded`, with a limit. Read from the source
   at `26.10.13` and `26.10.27`, and seen on `26.10.27c`.
+- **One more S&box lesson: a sound component's `Force2d` works with Sound Override off.**
+  The S&box guide's "More world-build lessons" adds that `BaseSoundComponent` applies
+  `Force2d` whether Sound Override is on or not, and that it turns distance attenuation
+  off, so a script that builds sound emitters sets it to false and reads it back. Read from
+  the source at `26.10.13` and `26.10.27`, not run. The store package ID lesson adds that a
+  store material's ID did change between sessions on `26.10.27c`.
 - **ELAD releases no longer wait for a GREEN each.** On 2026-11-01 the owner gave standing
   approval for releases. The delivery agent releases a batch on its own when it has
   something a user would notice, in the evening and not every day, always with release
