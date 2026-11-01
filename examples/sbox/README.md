@@ -527,7 +527,7 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 ## More world-build lessons
 
-Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up thirteen more. Each is
+Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up fourteen more. Each is
 read from the engine source at `26.10.13` and again at `26.10.27`, and reads the same at
 both unless it says otherwise. Each says what was seen, and on which build.
 
@@ -691,6 +691,19 @@ both unless it says otherwise. Each says what was seen, and on which build.
   difference's `w` (lines 295-318), which by the same arithmetic reads any turn up to about
   0.03 degrees as 0, and the smallest turn it can see as 0.04. That is worked from the
   source, not run.
+- **Load a sound with `LoadAsync` before a script reads its length.** `SoundFile.Load`
+  returns a handle and loads nothing
+  (`26.10.27:engine/Sandbox.Engine/Resources/Sound/SoundFile.cs`, lines 196-222). `IsValid`
+  reads the handle, but `Duration`, `Rate`, `Channels` and the other format members read
+  the loaded sound (lines 89-129). Only `LoadAsync`, `Preload` or a reload of the file sets
+  it, and `IsLoaded` says whether it is there, so a script that only waits for `IsLoaded`
+  can wait for ever. `LoadAsync` starts the load and waits until the sound can play, but
+  returns false after 3 seconds (lines 432-457). On `26.10.27c` a `run_csharp` script that
+  loaded two freshly compiled `.wav` files with `SoundFile.Load` and read `Duration`
+  stopped with `NullReferenceException: VSound_t was null when calling Duration`, though
+  each handle was valid. Before a script reads anything a sound file holds, call
+  `LoadAsync` again until `IsLoaded`, with a limit, and stop with the file's name when the
+  handle goes away or the limit runs out.
 
 ## Lessons from importing old content
 

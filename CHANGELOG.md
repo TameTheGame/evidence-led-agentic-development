@@ -30,6 +30,11 @@
   `Rotation.Distance` can't see turns under about 0.03 degrees. Scale to unit length and
   take `4 atan2(|a - b|, |a + b|)`. Read from the source at `26.10.13` and `26.10.27`, and
   seen on `26.10.27c`; the `Rotation.Distance` part is worked from the source, not run.
+- **One more S&box lesson: load a sound with `LoadAsync` before reading its length.** The
+  S&box guide's "More world-build lessons" adds that `SoundFile.Load` returns a handle and
+  loads nothing, so a script that reads `Duration` straight after it fails, and that a
+  script should call `LoadAsync` again until `IsLoaded`, with a limit. Read from the source
+  at `26.10.13` and `26.10.27`, and seen on `26.10.27c`.
 - **ELAD releases no longer wait for a GREEN each.** On 2026-11-01 the owner gave standing
   approval for releases. The delivery agent releases a batch on its own when it has
   something a user would notice, in the evening and not every day, always with release
