@@ -241,7 +241,21 @@ it for the user, and a hotfix tag appearing on GitHub.
 
 ### Results from the TRX file, and the time limit
 
-Not yet run against S&box. The verdict rules and the time limit come from a second real
-project, where a run whose tests all stopped inconclusive would otherwise have read as a
-pass. `-SelfTest` checks the verdicts on planted TRX files, the tree walk on planted
-process lists, and, on Windows, the time limit on a planted hung tree.
+Verified on 2026-11-01 with S&box `26.10.27c`, in a scratch copy of this starter. Each run
+used Windows PowerShell 5.1, and the first also ran in PowerShell 7.
+
+| Run | Result |
+|---|---|
+| All seven tests, with `Assets/scenes/minimal.scene` in place | `PASS`, exit 0, in both shells. |
+| `minimal.scene` moved aside | `INCONCLUSIVE`, exit 2: the two saved-scene tests didn't run. |
+| `-Filter "Name~NoSuchTest"` | `INCONCLUSIVE`, exit 2: no test ran. |
+| `-TimeoutSeconds 5` | `FAIL - the run hit its time limit`, exit 1, after a `TIME LIMIT` line saying it killed 13 processes. None of the run's processes was left, and `results.txt` kept the 17 lines written before the kill. A compiler server (`VBCSCompiler`) that was running before the run started isn't part of its tree, and stayed. |
+| `-Out` with a space in the folder name | `PASS`, with `results.trx` in that folder. |
+
+At `-TimeoutSeconds 15` the run finished first: an incremental build and the seven tests
+took about 11 seconds. To watch the time limit work, use 5 seconds, or a clean build.
+
+The verdict rules and the time limit come from a second real project, where a run whose
+tests all stopped inconclusive would otherwise have read as a pass. `-SelfTest` checks the
+verdicts on planted TRX files, the tree walk on planted process lists, and, on Windows, the
+time limit on a planted hung tree.

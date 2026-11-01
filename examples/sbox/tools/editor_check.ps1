@@ -32,9 +32,9 @@ The editor skips a save when nothing changed, which would make step 4's comparis
 each save first adds a marker object and undoes it: the content is unchanged, but the editor
 writes the scene out again from what it loaded.
 
-S&box gives each file a store package installed a new ID in every editor session, and a scene
-saves that ID with the file's path, so a scene that uses packages never saves the same bytes
-twice across sessions. After each save the check runs package_ids.cs, from this script's
+S&box can give each file a store package installed a new ID in each editor session, and a
+scene saves that ID with the file's path, so a scene that uses packages may not save the same
+bytes twice across sessions. After each save the check runs package_ids.cs, from this script's
 folder, through run_csharp; it returns the ID that session gives each package file the scene
 references. The second save passes if it is byte-identical to the first, or if the two differ
 only in such references' IDs, each exactly the ID its own session gave that path. A stale ID, a

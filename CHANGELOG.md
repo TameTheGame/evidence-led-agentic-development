@@ -11,17 +11,22 @@
   `INCONCLUSIVE` (exit 2) when a test didn't run or none ran. It also stops a run at
   `-TimeoutSeconds`, 30 minutes by default, by killing `dotnet test` and every process
   under it, and keeps the output and the engine log. `-SelfTest` checks both without S&box.
-  Not yet run against S&box.
-- **The S&box editor check sets store package IDs aside.** S&box gives a store package's
-  files new IDs in each editor session, so the resave check would fail every scene that
-  used one. `examples/sbox/tools/editor_check.ps1` now runs the new
-  `examples/sbox/tools/package_ids.cs` through `run_csharp` after each save, and sets a
-  reference's ID aside only when it is exactly the ID its own session gave the path; every
-  other byte still has to match. `-SelfTest` checks the comparison on planted saves,
-  including a planted break. Not yet run against S&box.
+  Run on S&box `26.10.27c`: seven passing tests gave `PASS`, a missing scene and a filter
+  that matched nothing gave `INCONCLUSIVE`, and a 5-second limit killed the run's whole
+  tree.
+- **The S&box editor check sets store package IDs aside.** S&box can give a store
+  package's files new IDs in each editor session, as it did on `26.10.13a`, and then the
+  resave check would fail a scene that used one. `examples/sbox/tools/editor_check.ps1`
+  now runs the new `examples/sbox/tools/package_ids.cs` through `run_csharp` after each
+  save, and sets a reference's ID aside only when it is exactly the ID its own session gave
+  the path; every other byte still has to match. `-SelfTest` checks the comparison on
+  planted saves, including a planted break. Run on S&box `26.10.27c`: a scene with a store
+  package's model re-saved byte for byte, since the model kept its ID in every session, so
+  only the planted saves exercise the ID compare. A component that changes its own saved
+  value still failed it.
 - **Twelve more S&box lessons, from world building.** The S&box guide gains a section,
-  "More world-build lessons": commit the `.meta` files S&box writes; expect a store
-  package's asset ID to change every editor session, and install a new package in a session
+  "More world-build lessons": commit the `.meta` files S&box writes; allow for a store
+  package's asset ID changing between sessions, and install a new package in a session
   of its own; change the resource S&box holds for a file rather than a new one; wait with a
   limit for a resource's compiled file; reload a resource yourself behind a junction, which
   the Editor's file watch can't see through; give a generated material its world mapping;

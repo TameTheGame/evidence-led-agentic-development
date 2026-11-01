@@ -151,8 +151,8 @@ powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
     tools. A build script that already runs through `run_csharp` may find the setter
     simpler. On `26.10.13a`, a `run_csharp` script that set it at its end, followed by
     `save_scene`, wrote the scene; the file's new timestamp and contents showed it.
-- **It sets store package IDs aside, one at a time.** S&box gives a package's files new
-  IDs in each editor session, so the second save writes other `Id`s for them; see
+- **It sets store package IDs aside, one at a time.** S&box can give a package's files new
+  IDs in each editor session, and then the second save writes other `Id`s for them; see
   [More world-build lessons](#more-world-build-lessons). After each save the check runs
   `tools/package_ids.cs` through `run_csharp`. For each `{"Id", "Path"}` reference in the
   saved scene whose path is a store package's file, it returns the ID that session gives
@@ -200,9 +200,15 @@ to `<engine>\logs\sbox-dev.log` and keeps earlier ones under dated names. With
 of both files, and left no S&box process. Steam stayed open throughout, so the `NOT RUN`
 branch for a closed Steam was read, not run.
 
-The store package compare is not yet run against S&box. `package_ids.cs` loads package
-materials and models the way another real project's world check does; there, that check
-passed on a scene whose package IDs changed between sessions.
+On `26.10.27c`, in both shells, in a scratch project: a scene with no store package
+passed byte-identical. So did a scene with a model from a store package, installed with
+`install_package` and placed with `spawn_model` in an earlier session: the model kept the
+same `Id` in all five sessions run, so the compare never had a package ID to set aside, and
+only the planted saves in `-SelfTest` exercise that part. `package_ids.cs` ran after each
+save and read the scene's ten references without an error. The same scene plus a component
+that changes its own saved value each time it loads failed with `the second save differs
+from the first in more than store package IDs`. Each run left the scene and the `.sbproj`
+as they were.
 
 ## When S&box can't start a project
 
@@ -536,15 +542,24 @@ unless it says otherwise. Each says what was seen, and on which build.
   change that added the sources, so their GUIDs stay put. On `26.10.27c` the first editor
   to open a project wrote one per new source file, and a `.slnx` solution file at the
   project's root, which belongs in `.gitignore`.
-- **Expect a store package's asset ID to change every editor session.** S&box writes no
-  `.meta` for a file that a cloud package installed (`Asset.cs`, lines 107 and 173-176), so
-  no file keeps its GUID. On `26.10.13a` a scene's reference to a package's sky saved with
-  one `Id` in the first session and another after reopening, with the same path and nothing
-  else changed. So a check that compares saves from two sessions byte for byte fails on a
-  scene that uses packages, and a run leaves the scene changed in Git. Compare each package
-  reference's `Id` with the GUID that session gives the same path, and every other byte as
-  written. When a run started from the committed scene and only those IDs differ, put Git's
-  copy back. The [editor check](#the-editor-check) compares saves this way.
+- **Allow for a store package's asset ID changing between editor sessions.** S&box writes
+  no `.meta` for a file that a cloud package installed (`Asset.cs`, lines 107 and 173-176;
+  still so at `26.10.27`), so no file in the project keeps its GUID, and the native
+  resource database gives it one. On `26.10.13a` a scene's reference to a package's sky
+  saved with one `Id` in the first session and another after reopening, with the same path
+  and nothing else changed. On `26.10.27c` a scene's reference to a package's model kept
+  one `Id` across five sessions. Between those releases the managed side of that database
+  changed: it now tells the database when a `.meta` is written or deleted, asks it whether
+  it gave a file a new GUID, and takes GUID changes from a start-up scan
+  (`26.10.27:engine/Definitions/engine/resourcesystem.def`, lines 18-20 and 43;
+  `26.10.27:engine/Sandbox.Engine/Resources/Resource.cs`, lines 180-197). The database
+  itself is native code outside the public source, so which package files keep their ID,
+  and why, is not known. So a check that compares saves from two sessions byte for byte can
+  fail on a scene that uses packages, and a run can leave the scene changed in Git. Compare
+  each package reference's `Id` with the GUID that session gives the same path, and every
+  other byte as written. When a run started from the committed scene and only those IDs
+  differ, put Git's copy back. The [editor check](#the-editor-check) compares saves this
+  way.
 - **Install a new package in an editor session of its own.** As the Editor opens a project,
   it uninstalls every installed package that no file in the project or its libraries lists
   in its `__references` (`26.10.13:engine/Sandbox.Tools/StartupLoadProject.cs`, lines
