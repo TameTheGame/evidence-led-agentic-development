@@ -527,9 +527,9 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 ## More world-build lessons
 
-Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up twelve more. Each is read
-from the engine source at `26.10.13` and again at `26.10.27`, and reads the same at both
-unless it says otherwise. Each says what was seen, and on which build.
+Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up thirteen more. Each is
+read from the engine source at `26.10.13` and again at `26.10.27`, and reads the same at
+both unless it says otherwise. Each says what was seen, and on which build.
 
 - **Commit the `.meta` files S&box writes beside new source files.** The Editor gives each
   asset it mounts a GUID and writes it under `guid` in a `.meta` file beside the source
@@ -675,6 +675,22 @@ unless it says otherwise. Each says what was seen, and on which build.
   the flag with nothing new installed: `buildid` and `TargetBuildID` were the same. Report
   a waiting update only when `TargetBuildID` is set and differs from `buildid`. Steam's
   manifest format isn't documented; this was seen.
+- **Compare rotations read back from S&box as unit quaternions, with atan2, not acos.** A
+  `Rotation` is a float32 quaternion (`26.10.27:engine/Sandbox.System/Math/Rotation.cs`,
+  lines 16-53), and the ones S&box builds can be only nearly unit:
+  `Rotation.From( 0, 90, 0 )` gives `0, 0, 0.70710677, 0.70710677`, whose length squared is
+  0.99999997 (lines 162-188). The usual turn between two rotations, `2 acos(|a · b|)`, is
+  steep near 1, so it reads two identical such rotations as 0.03 degrees apart. On
+  `26.10.27c` a check with a 0.01 degree limit failed that way on a target rotation and the
+  same rotation read back from S&box. A 1 degree limit elsewhere had hidden it, and the
+  check's self-test, fed exactly unit doubles, never showed it. Scale each quaternion to
+  unit length, flip one when their dot product is negative so q and -q count as one
+  rotation, and take the turn as `4 atan2(|a - b|, |a + b|)`, which stays exact near 0.
+  Feed the self-test float32 values the way S&box hands them over. S&box's own
+  `Rotation.Distance` doesn't help at such limits: it takes a float32 acos of the
+  difference's `w` (lines 295-318), which by the same arithmetic reads any turn up to about
+  0.03 degrees as 0, and the smallest turn it can see as 0.04. That is worked from the
+  source, not run.
 
 ## Lessons from importing old content
 

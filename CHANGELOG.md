@@ -24,6 +24,12 @@
   package's model re-saved byte for byte, since the model kept its ID in every session, so
   only the planted saves exercise the ID compare. A component that changes its own saved
   value still failed it.
+- **One more S&box lesson: compare read-back rotations with atan2.** The S&box guide's
+  "More world-build lessons" adds that S&box's float32 quaternions are only nearly unit, so
+  `2 acos(|a · b|)` reads two identical rotations as 0.03 degrees apart, and that
+  `Rotation.Distance` can't see turns under about 0.03 degrees. Scale to unit length and
+  take `4 atan2(|a - b|, |a + b|)`. Read from the source at `26.10.13` and `26.10.27`, and
+  seen on `26.10.27c`; the `Rotation.Distance` part is worked from the source, not run.
 - **Twelve more S&box lessons, from world building.** The S&box guide gains a section,
   "More world-build lessons": commit the `.meta` files S&box writes; allow for a store
   package's asset ID changing between sessions, and install a new package in a session
