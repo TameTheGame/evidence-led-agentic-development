@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+- **The S&box engine test runner no longer reads a run that proved nothing as a pass.**
+  `dotnet test` exits 0 when tests stop with `Assert.Inconclusive`, because MSTest records
+  them as not executed, so a run whose tests all stopped inconclusive read as a pass.
+  `examples/sbox/rung1-starter/tools/run_engine_tests.ps1` now reads each test's outcome
+  from the run's TRX file and ends with a `Result:` line: `PASS` (exit 0) only when at
+  least one test ran and every test passed, `FAIL` (exit 1) on a failure, and
+  `INCONCLUSIVE` (exit 2) when a test didn't run or none ran. It also stops a run at
+  `-TimeoutSeconds`, 30 minutes by default, by killing `dotnet test` and every process
+  under it, and keeps the output and the engine log. `-SelfTest` checks both without S&box.
+  Not yet run against S&box.
+- **The S&box editor check sets store package IDs aside.** S&box gives a store package's
+  files new IDs in each editor session, so the resave check would fail every scene that
+  used one. `examples/sbox/tools/editor_check.ps1` now runs the new
+  `examples/sbox/tools/package_ids.cs` through `run_csharp` after each save, and sets a
+  reference's ID aside only when it is exactly the ID its own session gave the path; every
+  other byte still has to match. `-SelfTest` checks the comparison on planted saves,
+  including a planted break. Not yet run against S&box.
 - **Twelve more S&box lessons, from world building.** The S&box guide gains a section,
   "More world-build lessons": commit the `.meta` files S&box writes; expect a store
   package's asset ID to change every editor session, and install a new package in a session
@@ -11,11 +28,9 @@
   keep the tags an object's components add; add a code library's assembly to the type
   library in engine tests; read a store package's licence from `AssetLicense`; commit what
   the Editor re-saves after an update adds fields; and tell a waiting S&box update by
-  Steam's target build ID. The editor check's section says a scene that uses store packages
-  fails its resave check today, and the start-up error section adds that a library's
-  `.sbproj` that isn't valid JSON stops the Editor too. Read from the source at `26.10.13`
-  and `26.10.27`, and seen on `26.10.13a` to `26.10.27c` except where an entry says
-  otherwise.
+  Steam's target build ID. The start-up error section adds that a library's `.sbproj` that
+  isn't valid JSON stops the Editor too. Read from the source at `26.10.13` and `26.10.27`,
+  and seen on `26.10.13a` to `26.10.27c` except where an entry says otherwise.
 
 ## 1.05 — 2026-11-01
 

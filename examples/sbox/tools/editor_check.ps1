@@ -12,7 +12,8 @@ Runs unattended through sbox-cli, which ships with S&box 26.10.13 and later
   3. quits the editor, opens the project in a new one, and opens the scene again;
   4. checks that the scene reopens with no unsaved changes and no error-level console lines,
      that every saved object comes back with the same name, parent, enabled state, and
-     components, and that saving again writes a byte-identical file;
+     components, and that saving again writes the same file, byte for byte but for store
+     package IDs (below);
   5. takes the same screenshot, and reports how much it differs as a record, not a score;
   6. puts the scene file and the project's .sbproj back as they were, so the check leaves the
      working tree unchanged. The editor writes the .sbproj again when it starts if the file's
@@ -31,6 +32,16 @@ The editor skips a save when nothing changed, which would make step 4's comparis
 each save first adds a marker object and undoes it: the content is unchanged, but the editor
 writes the scene out again from what it loaded.
 
+S&box gives each file a store package installed a new ID in every editor session, and a scene
+saves that ID with the file's path, so a scene that uses packages never saves the same bytes
+twice across sessions. After each save the check runs package_ids.cs, from this script's
+folder, through run_csharp; it returns the ID that session gives each package file the scene
+references. The second save passes if it is byte-identical to the first, or if the two differ
+only in such references' IDs, each exactly the ID its own session gave that path. A stale ID, a
+project asset's changed ID, or any other changed byte, line endings included, still fails it.
+If the script can't run, the IDs are compared as written. -SelfTest checks this comparison on
+planted saves, without S&box.
+
 A project with code must report a finished, successful compile. A project with no Code or
 Editor folder, in it or in its libraries, such as a content map, never compiles: editor_status
 then reports no compile result, and the check doesn't wait for one.
@@ -43,9 +54,11 @@ Communication is off.
 .EXAMPLE
 powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
 powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene -Camera "0,-900,400" -Angles "20,90,0"
+powershell -File tools\editor_check.ps1 -SelfTest
 #>
+[CmdletBinding(DefaultParameterSetName = 'Check')]
 param(
-    [Parameter(Mandatory)][string]$Scene,
+    [Parameter(Mandatory, ParameterSetName = 'Check')][string]$Scene,
     [string]$Project = '.',
     [string]$Camera = '-600,-600,400',
     [string]$Angles = '25,45,0',
@@ -53,10 +66,115 @@ param(
     [int]$Height = 720,
     [string]$Engine = $env:FACEPUNCH_ENGINE,
     [string]$Out,
-    [int]$TimeoutSeconds = 300
+    [int]$TimeoutSeconds = 300,
+    [Parameter(ParameterSetName = 'SelfTest')][switch]$SelfTest
 )
 $ErrorActionPreference = 'Stop'
 function Stop-Setup($message) { Write-Host "NOT RUN: $message"; exit 2 }
+
+# A scene saves a resource as {"Id": <GUID>, "Path": <path>}
+# (26.10.27:engine/Sandbox.Engine/Resources/Resource.Json.cs, WriteJsonReference). The groups:
+# the text before the ID, the ID, the text between, the path, and the closing quote.
+$referencePattern = '("Id":\s*")([0-9A-Fa-f-]{36})(",\s*"Path":\s*")([^"\\]*)(")'
+# Saves are read as Latin-1, so each byte is one character and comparisons are byte for byte.
+$latin1 = [Text.Encoding]::GetEncoding(28591)
+
+# A saved scene's text with the ID of each reference to a store package file set aside, when
+# that ID is the one its session gave the path. $Ids maps each package path to that session's
+# ID. Returns Text, Set (the IDs set aside, in order) and Stale (each package path whose saved
+# ID isn't the session's).
+function Hide-PackageIds([byte[]]$Bytes, [hashtable]$Ids) {
+    $set = [System.Collections.Generic.List[string]]::new()
+    $stale = [System.Collections.Generic.List[string]]::new()
+    $hide = [Text.RegularExpressions.MatchEvaluator]{
+        param($m)
+        # The path as package_ids.cs read it, in UTF-8.
+        $path = [Text.Encoding]::UTF8.GetString($latin1.GetBytes($m.Groups[4].Value))
+        if (-not $Ids.ContainsKey($path)) { return $m.Value }
+        if ($m.Groups[2].Value -cne $Ids[$path]) { $stale.Add($path); return $m.Value }
+        $set.Add($m.Groups[2].Value)
+        return $m.Groups[1].Value + 'package ID' + $m.Groups[3].Value + $m.Groups[4].Value + $m.Groups[5].Value
+    }
+    $text = [regex]::Replace($latin1.GetString($Bytes), $referencePattern, $hide)
+    return [pscustomobject]@{ Text = $text; Set = $set.ToArray(); Stale = $stale.ToArray() }
+}
+
+# Whether the second save matches the first: byte for byte, or byte for byte once each store
+# package reference's ID is set aside, where each such ID is exactly the one its own session
+# gave the path. $FirstIds and $SecondIds are each session's package IDs by path, or $null when
+# they couldn't be read. Returns Same and Why.
+function Compare-Saves([byte[]]$First, [byte[]]$Second, $FirstIds, $SecondIds) {
+    function Result([bool]$Same, [string]$Why) { [pscustomobject]@{ Same = $Same; Why = $Why } }
+    if ([Convert]::ToBase64String($First) -ceq [Convert]::ToBase64String($Second)) { return Result $true 'byte-identical' }
+    if ($null -eq $FirstIds -or $null -eq $SecondIds) { return Result $false 'the second save wrote a different file, and the package IDs to set aside were not read' }
+    $a = Hide-PackageIds $First $FirstIds
+    $b = Hide-PackageIds $Second $SecondIds
+    if ($a.Stale.Count) { return Result $false "the first save's reference to $($a.Stale[0]) doesn't carry the ID its session gave that path" }
+    if ($b.Stale.Count) { return Result $false "the second save's reference to $($b.Stale[0]) doesn't carry the ID its session gave that path" }
+    if ($a.Text -cne $b.Text) {
+        if (-not $a.Set.Count -and -not $b.Set.Count) { return Result $false 'the second save wrote a different file' }
+        return Result $false 'the second save differs from the first in more than store package IDs'
+    }
+    $changed = @(for ($i = 0; $i -lt $a.Set.Count; $i++) { if ($a.Set[$i] -cne $b.Set[$i]) { $i } }).Count
+    return Result $true "identical but for $changed store package ID(s), each the one its own session gave the path"
+}
+
+if ($SelfTest) {
+    $script:cases = 0; $script:wrong = 0
+    function Expect([string]$Name, $Result, [bool]$Same) {
+        $script:cases++
+        if ($Result.Same -eq $Same) { Write-Host "ok     $Name - $($Result.Why)" }
+        else { $script:wrong++; Write-Host "WRONG  $Name - expected $(if ($Same) { 'a pass' } else { 'a failure' }), got: $($Result.Why)" }
+    }
+    # A saved scene as S&box lays one out, with a reference to a store package's model and one
+    # to a project material. An empty $ModelId saves the model as its path alone.
+    $template = @'
+{
+  "__guid": "55555555-5555-5555-5555-555555555555",
+  "GameObjects": [
+    {
+      "Name": "NAME",
+      "Components": [
+        {
+          "__type": "Sandbox.ModelRenderer",
+          "Model": {
+            "Id": "MODELID",
+            "Path": "MODELPATH"
+          },
+          "MaterialOverride": {
+            "Id": "MATERIALID",
+            "Path": "materials/floor.vmat"
+          }
+        }
+      ]
+    }
+  ]
+}
+'@
+    $p1 = '11111111-1111-1111-1111-111111111111'; $p2 = '22222222-2222-2222-2222-222222222222'
+    $local = '33333333-3333-3333-3333-333333333333'; $other = '44444444-4444-4444-4444-444444444444'
+    function Save([string]$ModelId, [string]$MaterialId = $local, [string]$Name = 'crate', [string]$NewLine = "`r`n", [string]$ModelPath = 'models/crate.vmdl') {
+        $text = $template -replace "`r`n", "`n"
+        if (-not $ModelId) { $text = $text -creplace '\{\s*"Id": "MODELID",\s*"Path": "MODELPATH"\s*\}', '"MODELPATH"' }
+        $text = $text -creplace 'NAME', $Name -creplace 'MODELID', $ModelId -creplace 'MODELPATH', $ModelPath -creplace 'MATERIALID', $MaterialId
+        return , [Text.Encoding]::UTF8.GetBytes(($text -replace "`n", $NewLine))
+    }
+    $ids1 = @{ 'models/crate.vmdl' = $p1 }; $ids2 = @{ 'models/crate.vmdl' = $p2 }
+    Expect 'the same save twice' (Compare-Saves (Save $p1) (Save $p1) $ids1 $ids1) $true
+    Expect 'only the package ID changed, each the ID its own session gave' (Compare-Saves (Save $p1) (Save $p2) $ids1 $ids2) $true
+    Expect "a package ID that isn't the one its session gave" (Compare-Saves (Save $p1) (Save $other) $ids1 $ids2) $false
+    Expect 'a stale package ID in the first save' (Compare-Saves (Save $other) (Save $p2) $ids1 $ids2) $false
+    Expect "a project material's ID changed beside the package's" (Compare-Saves (Save $p1) (Save $p2 $other) $ids1 $ids2) $false
+    Expect "planted break: an object's name changed beside the package's ID" (Compare-Saves (Save $p1) (Save $p2 -Name 'crate 2') $ids1 $ids2) $false
+    Expect "line endings changed beside the package's ID" (Compare-Saves (Save $p1) (Save $p2 -NewLine "`n") $ids1 $ids2) $false
+    Expect "the package reference's path changed" (Compare-Saves (Save $p1) (Save $p2 -ModelPath 'models/crate2.vmdl') $ids1 @{ 'models/crate2.vmdl' = $p2 }) $false
+    Expect 'the package saved as its path alone in one session' (Compare-Saves (Save $p1) (Save '') $ids1 @{ 'models/crate.vmdl' = $null }) $false
+    Expect 'saves that differ, with no package IDs read' (Compare-Saves (Save $p1) (Save $p2) $null $null) $false
+    Expect 'the same save twice, with no package IDs read' (Compare-Saves (Save $p1) (Save $p1) $null $null) $true
+    Expect "a project material's ID changed, in a scene with no package" (Compare-Saves (Save $p1) (Save $p1 $other) @{} @{}) $false
+    Write-Host "Self-test: $($script:cases - $script:wrong) of $($script:cases) cases gave the expected result."
+    exit $(if ($script:wrong) { 1 } else { 0 })
+}
 
 if ([Environment]::OSVersion.Platform -ne 'Win32NT') { Stop-Setup 'S&box editor checks run on Windows only.' }
 # The S&box launcher sets FACEPUNCH_ENGINE as a user variable, which older shells lack.
@@ -195,6 +313,7 @@ public static class EditorCheckDialogs {
 }
 $editorLog = Join-Path $Engine 'logs\sbox-dev.log'
 $sessions = New-Object System.Collections.Generic.List[object]
+$idsScript = Join-Path $PSScriptRoot 'package_ids.cs'
 
 function Test-Open {
     $r = Invoke-SboxCli @('--list')
@@ -414,6 +533,29 @@ function Get-Difference($a, $b) {
 
 function Get-Hash { (Get-FileHash $sceneFile -Algorithm SHA256).Hash.ToLower() }
 
+# The ID this editor session gives each store package file the saved scene references, by path,
+# from package_ids.cs. $null, with a note, when it can't be read, so the IDs are compared as
+# written.
+function Get-PackageIds([string]$Name) {
+    if (-not (Test-Path -LiteralPath $idsScript)) {
+        $note = 'there is no package_ids.cs next to this script, so store package IDs were compared as written'
+        if (-not $notes.Contains($note)) { $notes.Add($note) }
+        return $null
+    }
+    try {
+        $text = Call 'run_csharp' @{ path = $idsScript }
+        [IO.File]::WriteAllText((Join-Path $Out $Name), $text)
+        $read = $text | ConvertFrom-Json
+        if ("$($read.Scene)" -ne $Scene) { throw "it read $($read.Scene), not $Scene" }
+        $ids = [hashtable]::new([StringComparer]::Ordinal)
+        if ($null -ne $read.Ids) { foreach ($p in $read.Ids.PSObject.Properties) { $ids[$p.Name] = $p.Value } }
+        return $ids
+    } catch {
+        $notes.Add("package_ids.cs failed for $Name ($($_.Exception.Message)), so store package IDs were compared as written")
+        return $null
+    }
+}
+
 # Saves the scene for real and returns the file's hash. An undone edit counts as a change, so
 # the editor writes the whole scene out instead of skipping the save.
 function Save-Scene([string]$Name) {
@@ -441,6 +583,7 @@ try {
     if ($editor.Status.LastCompileSucceeded -eq $false) { Stop-Setup "the project has $($editor.Status.LastCompileErrors) compile error(s); fix them first." }
     Call 'open_scene' @{ path = $Scene } | Out-Null
     $saved = Save-Scene 'saved-first.scene'
+    $firstIds = Get-PackageIds 'package-ids-first.json'
     if ($saved -ne (Get-FileHash -InputStream ([IO.MemoryStream]::new($original)) -Algorithm SHA256).Hash.ToLower()) {
         $notes.Add('the first save rewrote the scene file; the original is restored at the end')
     }
@@ -466,8 +609,11 @@ try {
         else { "pass - $($before.Count) saved objects back unchanged" }
     $shotAfter = Save-Screenshot 'after.png'
     $resaved = Save-Scene 'saved-second.scene'
-    $checks['Resave'] = if ($resaved -eq $saved) { "pass - byte-identical ($($saved.Substring(0, 12)))" }
-        else { 'FAIL - the second save wrote a different file; compare saved-first.scene and saved-second.scene' }
+    $secondIds = Get-PackageIds 'package-ids-second.json'
+    $resave = Compare-Saves ([IO.File]::ReadAllBytes((Join-Path $Out 'saved-first.scene'))) ([IO.File]::ReadAllBytes((Join-Path $Out 'saved-second.scene'))) $firstIds $secondIds
+    $checks['Resave'] = if (-not $resave.Same) { "FAIL - $($resave.Why); compare saved-first.scene and saved-second.scene" }
+        elseif ($resaved -eq $saved) { "pass - $($resave.Why) ($($saved.Substring(0, 12)))" }
+        else { "pass - $($resave.Why)" }
     Stop-Editor $editor.Owner
     $editor = $null
 } catch {

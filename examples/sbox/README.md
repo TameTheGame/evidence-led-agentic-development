@@ -7,10 +7,11 @@
 |---|---|
 | [`outpost.spec.md`](outpost.spec.md) | A worked spec, with a layout data file, requirements at each rung, owner cards, and a rung-1 test sketch |
 | [`engine-rung-spike/`](engine-rung-spike/README.md) | A runnable kit that proved rung 1 works for a project's own tests, with results from seven runs |
-| [`rung1-starter/`](rung1-starter/README.md) | A copyable starting point for a project's engine tests: the default-surface scaffolding, helpers, a requirement test with its control, a runner that keeps the engine log, and a script that keeps a local `sbox-public` clone on the installed release |
+| [`rung1-starter/`](rung1-starter/README.md) | A copyable starting point for a project's engine tests: the default-surface scaffolding, helpers, a requirement test with its control, a runner with a time limit that reads each test's outcome and keeps the engine log, and a script that keeps a local `sbox-public` clone on the installed release |
 | [`skills/sbox-engine-reference/`](skills/sbox-engine-reference/SKILL.md) | An example of a project's domain skill: verified S&box behavior and where to look in the engine source. Tested in the [domain-skill test](../../skills/evidence/SBOX_SKILL_TEST.md) |
 | [`tools/compile_check.ps1`](tools/compile_check.ps1) | A rung-0 check that compiles `run_csharp` scripts against the installed engine's assemblies without starting S&box. See [The compile check](#the-compile-check) |
 | [`tools/editor_check.ps1`](tools/editor_check.ps1) | A rung-2 check that runs unattended: it saves a scene in the Editor, closes it, reopens it, and checks that nothing changed, with a screenshot from a fixed camera before and after. Needs S&box `26.10.13` or later. See [The editor check](#the-editor-check) |
+| [`tools/package_ids.cs`](tools/package_ids.cs) | The `run_csharp` script the editor check runs after each save, to read the IDs that editor session gives the store package files a scene uses. Copy it with the check. |
 | [`IMPORTING.md`](IMPORTING.md) | The import reference: what works and what doesn't when bringing Source and other old content into S&box, sorted by topic, each entry with the S&box version it was checked on |
 | [`tools/spec_lint.py`](tools/spec_lint.py) | A rung-0 spec lint: format and card checks that fail the run, a lookup that reports checks not found in the test and script folders, and an owner gate that reports any change to an agreed requirement since the last commit. Run `python tools/test_spec_lint.py` to check it against its fixtures. |
 | [`tools/scene_refs.py`](tools/scene_refs.py) | A rung-0 check for clearing out generated files, such as old light bakes: it lists each file in a folder as in use or unused by the project's scenes and prefabs, and fails when one of them references a file that isn't there. See [Clearing out generated files](#clearing-out-generated-files). Run `python tools/test_scene_refs.py` to check it against its fixtures. |
@@ -139,30 +140,39 @@ powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
   - unsaved changes as soon as the scene opens;
   - error-level console lines on reopen;
   - any saved object whose name, parent, enabled state, or components changed; or
-  - a second save that doesn't write a byte-identical file.
+  - a second save that differs from the first in any byte but a store package's ID, and
+    then only an ID that its own session gave that path.
 - **Saves are forced.** The Editor skips a save when nothing changed, so the script adds a
   marker object and undoes it first. The content stays the same, and the Editor writes the
   scene out from what it loaded.
   - Setting the session's `HasUnsavedChanges` to true would force a save too; it has a
     public setter (`26.10.13:engine/Sandbox.Tools/Scene/Session/SceneEditorSession.cs`).
-    But only `run_csharp` can set it, and this check uses `sbox-cli`'s own tools. A build
-    script that already runs through `run_csharp` may find the setter simpler. On
-    `26.10.13a`, a `run_csharp` script that set it at its end, followed by `save_scene`,
-    wrote the scene; the file's new timestamp and contents showed it.
-- **A scene that uses store packages fails it.** S&box gives a package's files new IDs in
-  each editor session, so the second save writes other `Id`s for them and fails the resave
-  check; see [More world-build lessons](#more-world-build-lessons). This follows from that
-  lesson and hasn't been run with this check.
+    But only `run_csharp` can set it, and this check makes its edits with `sbox-cli`'s own
+    tools. A build script that already runs through `run_csharp` may find the setter
+    simpler. On `26.10.13a`, a `run_csharp` script that set it at its end, followed by
+    `save_scene`, wrote the scene; the file's new timestamp and contents showed it.
+- **It sets store package IDs aside, one at a time.** S&box gives a package's files new
+  IDs in each editor session, so the second save writes other `Id`s for them; see
+  [More world-build lessons](#more-world-build-lessons). After each save the check runs
+  `tools/package_ids.cs` through `run_csharp`. For each `{"Id", "Path"}` reference in the
+  saved scene whose path is a store package's file, it returns the ID that session gives
+  the path. A save passes if it is byte-identical, or if it differs only in such
+  references' IDs, each exactly the ID its own session gave. A stale ID, a project asset's
+  changed ID, a changed path, or any other changed byte, line endings included, still
+  fails it. If the script can't run, the check notes why and compares the IDs as written.
+  `-SelfTest` checks this comparison on planted saves, without S&box, including a planted
+  break: a changed object name beside new package IDs.
 - **A project without code works too.** A project with code must report a finished,
   successful compile. A content project, such as a map, has no `Code` or `Editor` folder
   and never compiles, so the check doesn't wait for a compile result.
 - **The screenshot is a record.** `-Camera` and `-Angles` fix the view. The script reports
-  how much the two captures differ but doesn't score it, because the byte-identical save
-  already proves the scene came back unchanged.
+  how much the two captures differ but doesn't score it, because the resave check already
+  proves the scene came back unchanged.
 - **It leaves no trace.** It puts the scene file and the project's `.sbproj` back as they
-  were, and saves results in `test-results\editor-<time>\`: both captures, both saved files,
-  the object lists, and the console errors. The Editor can rewrite the `.sbproj` when it
-  starts; see [Lessons from a world build](#lessons-from-a-world-build).
+  were, and saves results in `test-results\editor-<time>\`: both captures, both saved
+  files, both sessions' package IDs, the object lists, and the console errors. The Editor
+  can rewrite the `.sbproj` when it starts; see
+  [Lessons from a world build](#lessons-from-a-world-build).
 - **It keeps each editor's own account.** It saves the output of the `sbox-cli` process that
   owns each editor, and the editor log from `<engine>\logs\`, with the results. On a failure
   it prints the last lines of both, so a failed start says why.
@@ -189,6 +199,10 @@ to `<engine>\logs\sbox-dev.log` and keeps earlier ones under dated names. With
 `-TimeoutSeconds 5`, the check failed with `the editor wasn't ready`, printed the last lines
 of both files, and left no S&box process. Steam stayed open throughout, so the `NOT RUN`
 branch for a closed Steam was read, not run.
+
+The store package compare is not yet run against S&box. `package_ids.cs` loads package
+materials and models the way another real project's world check does; there, that check
+passed on a scene whose package IDs changed between sessions.
 
 ## When S&box can't start a project
 
@@ -530,8 +544,7 @@ unless it says otherwise. Each says what was seen, and on which build.
   scene that uses packages, and a run leaves the scene changed in Git. Compare each package
   reference's `Id` with the GUID that session gives the same path, and every other byte as
   written. When a run started from the committed scene and only those IDs differ, put Git's
-  copy back. The [editor check](#the-editor-check) compares bytes, so it fails such a scene
-  today.
+  copy back. The [editor check](#the-editor-check) compares saves this way.
 - **Install a new package in an editor session of its own.** As the Editor opens a project,
   it uninstalls every installed package that no file in the project or its libraries lists
   in its `__references` (`26.10.13:engine/Sandbox.Tools/StartupLoadProject.cs`, lines

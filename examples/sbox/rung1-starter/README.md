@@ -19,7 +19,7 @@ is that code, ready to copy.
 | `UnitTests/EngineTestHelpers.cs` | A headless player, a bounded tick-until-grounded loop, the stuck check with its enclosure probe, and the saved-scene loader |
 | `UnitTests/StarterGeometry.cs` | Stand-in box geometry, built in the order a game scene needs: create the `MeshComponent` disabled, assign the mesh, then enable it. Replace it with your own generator. |
 | `UnitTests/StarterTests.cs` | Five setup checks, and one requirement written as project tests should be: named after its check, with a control case that must fail |
-| `tools/run_engine_tests.ps1` | Runs the tests and saves the engine's own log with the results, because engine errors appear only there |
+| `tools/run_engine_tests.ps1` | Runs the tests under a time limit, reads each test's outcome, and saves the engine's own log with the results, because engine errors appear only there |
 | `tools/sync_engine_source.ps1` | Moves a local clone of `Facepunch/sbox-public` to the release that is installed, so agents read the source of the engine they run. The runner calls it first. |
 
 ## Using it
@@ -42,12 +42,27 @@ is that code, ready to copy.
    powershell -File tools\run_engine_tests.ps1
    ```
 
-   - The script saves results in `test-results\<time>\`, including `testhost.log`. Add
-     `test-results/` to the project's `.gitignore`.
+   - The script saves results in `test-results\<time>\`, including `testhost.log` and the
+     run's TRX file. Add `test-results/` to the project's `.gitignore`.
    - Runs on one machine wait for each other, because they share the engine log.
+   - It ends with a `Result:` line, and only `PASS` is a pass:
+
+     | Result | Exit | When |
+     |---|---|---|
+     | `PASS` | 0 | At least one test ran, and every test passed. |
+     | `FAIL` | 1 | A test failed, timed out or was aborted; the run hit its time limit; it wrote no TRX file, as after a build error; or `dotnet test` exited non-zero with no failed test. |
+     | `INCONCLUSIVE` | 2 | Nothing failed, but a test didn't run, such as one that stopped with `Assert.Inconclusive`, or no test ran at all. |
+     | `NOT RUN` | 2 | The machine or project isn't set up. |
+
+     `dotnet test` itself exits 0 when tests stop inconclusive, because MSTest records them
+     as not executed, so the script reads each test's outcome from the run's TRX file.
+   - `-TimeoutSeconds` limits the run, 1800 by default. Past it, the script kills
+     `dotnet test` and every process under it, and keeps the output and the engine log.
+   - `powershell -File tools\run_engine_tests.ps1 -SelfTest` checks the results on planted
+     TRX files and, on Windows, kills a planted hung process tree. It needs no S&box.
 6. **Tell agents.** Add a line to the project's `AGENTS.md`, such as: "Run engine tests with
-   `powershell -File tools\run_engine_tests.ps1`. Read its engine-log lines when a test fails
-   without an exception."
+   `powershell -File tools\run_engine_tests.ps1`. Only `Result: PASS` is a pass. Read its
+   engine-log lines when a test fails without an exception."
 
 ## Matching the engine source
 
@@ -136,9 +151,9 @@ When the line says `SYNCED`, the engine changed under the project:
 All seven tests should pass, and `Setup_DefaultSurfaceIsAvailable` should print the route
 `internal fallback: registered a stand-in default surface`. `Setup_SavedSceneLoads` and
 `Setup_SavedSceneSimulates` are inconclusive if the project has no
-`Assets/scenes/minimal.scene`. `Setup_SavedSceneKeepsMeshData` saves its own scene to a
-temporary folder, so it runs in any project. It is inconclusive only if the engine's save
-internals moved.
+`Assets/scenes/minimal.scene`, and the run's result is then `INCONCLUSIVE`, not `PASS`.
+`Setup_SavedSceneKeepsMeshData` saves its own scene to a temporary folder, so it runs in
+any project. It is inconclusive only if the engine's save internals moved.
 
 ## Results
 
@@ -223,3 +238,10 @@ Verified on 2026-10-18, with S&box `26.10.13a` installed and no `26.10.13a` tag 
 
 **Not covered:** the user-level `SBOX_PUBLIC` fallback, because the test machine doesn't set
 it for the user, and a hotfix tag appearing on GitHub.
+
+### Results from the TRX file, and the time limit
+
+Not yet run against S&box. The verdict rules and the time limit come from a second real
+project, where a run whose tests all stopped inconclusive would otherwise have read as a
+pass. `-SelfTest` checks the verdicts on planted TRX files, the tree walk on planted
+process lists, and, on Windows, the time limit on a planted hung tree.
