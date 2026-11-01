@@ -42,6 +42,15 @@
   off, so a script that builds sound emitters sets it to false and reads it back. Read from
   the source at `26.10.13` and `26.10.27`, not run. The store package ID lesson adds that a
   store material's ID did change between sessions on `26.10.27c`.
+- **Two more S&box lessons: set a picture compare's threshold from runs, and put back a
+  failed build's writes.** The S&box guide's "More world-build lessons" adds a way to set
+  the share of changed pixels a screenshot compare allows: half the share a planted change
+  moves, set only when two captures of one build stay under it, recorded with its runs and
+  held to them by the self-test. Two play-mode captures of one build came out byte for byte
+  the same on `26.10.27c`. It also adds that `Asset.MetaData.Set` writes the `.meta` file
+  on every call, so a build that fails part way can leave some `.meta` files set, and that
+  the run that counts starts from Git's copies. Read from the source at `26.10.13` and
+  `26.10.27`, and seen on `26.10.27c`.
 - **ELAD releases no longer wait for a GREEN each.** On 2026-11-01 the owner gave standing
   approval for releases. The delivery agent releases a batch on its own when it has
   something a user would notice, in the evening and not every day, always with release

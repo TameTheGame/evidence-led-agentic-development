@@ -527,7 +527,7 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 ## More world-build lessons
 
-Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up fifteen more. Each is
+Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up seventeen more. Each is
 read from the engine source at `26.10.13` and again at `26.10.27`, and reads the same at
 both unless it says otherwise. Each says what was seen, and on which build.
 
@@ -720,6 +720,35 @@ both unless it says otherwise. Each says what was seen, and on which build.
   distance. A script that builds sound emitters, and means them to fade with distance, sets
   `Force2d` to false and reads it back with the other overrides. Read from the source, not
   run.
+- **Set a picture compare's threshold from a planted change and two captures of one
+  build.** A check that compares an S&box update's screenshots with approved ones needs a
+  share of changed pixels above which a picture trips, and a share picked by hand can be
+  loose enough to pass anything. One way that worked on `26.10.27c`: take every shot in
+  play mode, since an editor capture can show what the game hides (see [the import
+  reference](IMPORTING.md#tools-and-scripting)), at one fixed size, and refuse any other
+  size rather than scale it. Convert each pixel from sRGB to CIELAB under D65 and count it
+  as moved when it moved by a just-noticeable difference, a CIE76 ΔE of 2.3. Capture the
+  scene twice from one build and commit, for the noise, and once with a planted change the
+  check must catch, such as one lamp's colour. Set the share at half the share the planted
+  change moved, and only when both plain captures stay under it. On `26.10.27c` the two
+  plain captures came out byte for byte the same, so the noise between runs of one build
+  was 0; the noise between builds first shows in the first real update compare. Record the
+  three runs, the commit and the build beside the share, and have the compare's self-test
+  check that the share follows from them by the rule, so a share typed by hand fails. Give
+  that self-test a thresholds file of its own: one that reads the real file breaks as soon
+  as the share is set. No engine source is involved; this was seen.
+- **After a build fails part way, put back what it wrote before the run that counts.**
+  `Asset.MetaData.Set` writes the `.meta` file each time it is called, not when the build
+  ends or the scene saves (`26.10.27:engine/Sandbox.Tools/Assets/MetaData.cs`, lines 88-119
+  and 186-200). So a build that sets keys in several `.meta` files and stops between them
+  leaves some set and the rest as they were, and nothing in the scene shows it. On
+  `26.10.27c` a failed build left one sound's `.wav.meta` with its loop keys and another
+  with only its GUID, and a review caught it before the commit. If the build writes only
+  what differs, its next run skips the file the failed run set, so the run that passes
+  neither writes it nor records it, and the commit can't show which run did. Before
+  building again, put back from Git each file the failed run touched: the scene, its
+  folder, and the `.meta` files beside its sources. For a new source's `.meta`, which Git
+  doesn't have yet, take out the keys the run added and keep the `guid` S&box gave it.
 
 ## Lessons from importing old content
 
