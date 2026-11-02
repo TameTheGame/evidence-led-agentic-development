@@ -39,6 +39,12 @@
   message, turns that text's line breaks into spaces, since a runner that judges a result
   by its own line otherwise misses it. A first real project's suite runner failed a passing
   check this way.
+- **The starter says to keep the AI block in the `.sbproj`.** An S&box editor opens the
+  pipe that `sbox-cli` drives only when the project's `AI.EnableMcpCommunication` isn't
+  `false`, even when started with `-mcp`. The rung-1 starter's set-up now has a step that
+  says so, shows the block and where S&box writes it, and says the Editor adds it the first
+  time it opens a project without one, which leaves the `.sbproj` changed until it is
+  committed. The editor check's notes point to it.
 
 ## 1.06 — 2026-11-02
 

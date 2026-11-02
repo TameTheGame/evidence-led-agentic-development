@@ -30,13 +30,34 @@ is that code, ready to copy.
    and copy both scripts in `tools\` into the project's `tools\`.
 3. **Generate the test project.** Open the project in the S&box Editor, check the console
    for compile errors, and close it. S&box generates `UnitTests\<project>.unittest.csproj`.
-4. **Set up the machine.** Rung 1 needs Windows, the .NET 10 SDK (`dotnet --list-sdks` must
+4. **Keep the AI block in the `.sbproj`.** Agents drive the Editor through `sbox-cli`, over
+   a pipe that an editor opens only when the project's `AI.EnableMcpCommunication` isn't
+   `false`, even though `sbox-cli` starts it with `-mcp`
+   (`26.10.27:engine/Sandbox.Engine/Core/Bootstrap.cs`, lines 436-443). With it `false`,
+   `sbox-cli` waits out its start-up timeout and stops with "Timed out waiting for the MCP
+   endpoint" (`26.10.27:engine/Launcher/SboxCli/Program.cs`, lines 196-220). The setting is
+   on by default (`26.10.27:engine/Sandbox.Engine/Systems/Project/ProjectAISettings.cs`,
+   line 15). If the `.sbproj` has no `AI` block, the Editor adds one the first time it
+   opens the project, so step 3 leaves the file changed, as it did in a first real project
+   on `26.10.13a`. Commit that change. Or add the block before step 3, after
+   `IsStandaloneOnly` and before `Metadata`, where S&box writes it:
+
+   ```json
+     "AI": {
+       "EnableMcpCommunication": true
+     },
+   ```
+
+   Saving the project with it off closes the pipe at once
+   (`26.10.27:engine/Sandbox.Tools/Utility/Utility.Projects.cs`, lines 14-24), so leave it
+   on in any project agents work in. The source reads the same at `26.10.13`.
+5. **Set up the machine.** Rung 1 needs Windows, the .NET 10 SDK (`dotnet --list-sdks` must
    show `10.x`), and `FACEPUNCH_ENGINE` set to the S&box install folder, the one containing
    `sbox-dev.exe`. If agents read engine source from a local clone of
    `Facepunch/sbox-public`, also set `SBOX_PUBLIC` to that clone; see
    [Matching the engine source](#matching-the-engine-source). Set both for the user. The
    scripts read the user's values when a shell started before they were set.
-5. **Run the tests.** From the project root:
+6. **Run the tests.** From the project root:
 
    ```powershell
    powershell -File tools\run_engine_tests.ps1
@@ -60,7 +81,7 @@ is that code, ready to copy.
      `dotnet test` and every process under it, and keeps the output and the engine log.
    - `powershell -File tools\run_engine_tests.ps1 -SelfTest` checks the results on planted
      TRX files and, on Windows, kills a planted hung process tree. It needs no S&box.
-6. **Tell agents.** Add a line to the project's `AGENTS.md`, such as: "Run engine tests with
+7. **Tell agents.** Add a line to the project's `AGENTS.md`, such as: "Run engine tests with
    `powershell -File tools\run_engine_tests.ps1`. Only `Result: PASS` is a pass. Read its
    engine-log lines when a test fails without an exception."
 
