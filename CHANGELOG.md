@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+No pending changes.
+
+## 1.06 — 2026-11-02
+
+A batch of S&box example updates: an engine test runner that no longer reads a run that
+proved nothing as a pass, an editor check that sets store package IDs aside, a static check
+for `.meta` files, and twenty world-build lessons. ELAD's Python tools write UTF-8 on any
+pipe, and the spec format guide suggests a hold on files built from an input the owner
+adopted. No skill changed, and nothing in the core breaks.
+
 - **The S&box engine test runner no longer reads a run that proved nothing as a pass.**
   `dotnet test` exits 0 when tests stop with `Assert.Inconclusive`, because MSTest records
   them as not executed, so a run whose tests all stopped inconclusive read as a pass.
