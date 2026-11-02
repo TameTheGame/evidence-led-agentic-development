@@ -59,6 +59,10 @@
   test](examples/sbox/rung1-starter/README.md#writing-a-requirements-test) says that a
   planted case a step must refuse gets its own entry, which expects the refusal by its
   words, and that later steps don't read output a refused run never makes.
+- **A missing-file excuse allows S&box's new line ending.** The guide's lesson on clients
+  that log a small resource as missing now says that on `26.10.27c` the line can end in
+  ` - from <path>`, and that an excuse should allow that one ending while still matching
+  the whole line.
 
 ## 1.06 — 2026-11-02
 
