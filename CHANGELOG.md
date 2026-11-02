@@ -63,6 +63,13 @@
   that log a small resource as missing now says that on `26.10.27c` the line can end in
   ` - from <path>`, and that an excuse should allow that one ending while still matching
   the whole line.
+- **The editor check checks its captures' size.** `editor_check.ps1` now refuses a `-Width`
+  or `-Height` outside 16-4096 px before it starts, since the screenshot tool clamps them
+  without saying so, and fails a capture whose own PNG header gives another size than the
+  one asked for. `-SelfTest` gains five cases, one a planted capture at the tool's 1280 by
+  720 default. A new world-build lesson says a capture's size comes from the picture, not
+  the monitor or the Editor's game view, and that a GPU frame time read in the Editor is
+  the Editor's, never the map's frame rate.
 
 ## 1.06 — 2026-11-02
 

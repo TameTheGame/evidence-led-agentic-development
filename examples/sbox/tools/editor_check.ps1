@@ -14,7 +14,8 @@ Runs unattended through sbox-cli, which ships with S&box 26.10.13 and later
      that every saved object comes back with the same name, parent, enabled state, and
      components, and that saving again writes the same file, byte for byte but for store
      package IDs (below);
-  5. takes the same screenshot, and reports how much it differs as a record, not a score;
+  5. takes the same screenshot, checks that both are the size asked for, and reports how much
+     they differ as a record, not a score;
   6. puts the scene file and the project's .sbproj back as they were, so the check leaves the
      working tree unchanged. The editor writes the .sbproj again when it starts if the file's
      text differs from what S&box writes, such as LF line endings on Windows.
@@ -41,6 +42,11 @@ only in such references' IDs, each exactly the ID its own session gave that path
 project asset's changed ID, or any other changed byte, line endings included, still fails it.
 If the script can't run, the IDs are compared as written. -SelfTest checks this comparison on
 planted saves, and the AI setting's reading below on planted .sbproj text, without S&box.
+
+Each screenshot renders the fixed camera straight into a picture of -Width by -Height, so the
+editor's layout and the monitor don't set its size. The screenshot tool clamps each side to
+16-4096 px without saying so, so the check refuses other sizes before it starts, and fails a
+capture whose own PNG header gives any other size.
 
 A project with code must report a finished, successful compile. A project with no Code or
 Editor folder, in it or in its libraries, such as a content map, never compiles: editor_status
@@ -135,6 +141,19 @@ function Test-McpOff([string]$Text) {
     return ($null -ne $flag -and $flag.Value -is [bool] -and -not $flag.Value)
 }
 
+# Whether a capture is the size asked for, read from the PNG's own header (its IHDR chunk), not
+# from what was asked. Returns Same and Why.
+function Test-ShotSize([byte[]]$Bytes, [int]$Width, [int]$Height) {
+    function Result([bool]$Same, [string]$Why) { [pscustomobject]@{ Same = $Same; Why = $Why } }
+    if ($Bytes.Length -lt 24 -or ($Bytes[0..7] -join ',') -ne '137,80,78,71,13,10,26,10' -or ($Bytes[12..15] -join ',') -ne '73,72,68,82') {
+        return Result $false 'the capture is not a PNG with a header to read its size from'
+    }
+    $w = [long]$Bytes[16] * 16777216 + [long]$Bytes[17] * 65536 + [long]$Bytes[18] * 256 + [long]$Bytes[19]
+    $h = [long]$Bytes[20] * 16777216 + [long]$Bytes[21] * 65536 + [long]$Bytes[22] * 256 + [long]$Bytes[23]
+    if ($w -ne $Width -or $h -ne $Height) { return Result $false "the capture is $($w)x$h px, not the $($Width)x$Height asked for" }
+    return Result $true "$($w)x$h px, as asked"
+}
+
 if ($SelfTest) {
     $script:cases = 0; $script:wrong = 0
     function Expect([string]$Name, $Result, [bool]$Same) {
@@ -206,10 +225,29 @@ if ($SelfTest) {
     Expect-Off 'an AI block of null' (Sbproj "`"AI`": null,`n  ") $false
     # Cut short, so S&box can't read it and shows its own error box.
     Expect-Off "the setting off in a .sbproj that isn't JSON" (Sbproj $off).TrimEnd('}') $false
+    # The first bytes of a PNG: its signature, then the IHDR chunk with the width and height.
+    function Png([long]$W, [long]$H) {
+        $b = [Collections.Generic.List[byte]]::new()
+        $b.AddRange([byte[]](137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82))
+        foreach ($n in @($W, $H)) { foreach ($shift in 24, 16, 8, 0) { $b.Add([byte](($n -shr $shift) -band 255)) } }
+        $b.AddRange([byte[]](8, 6, 0, 0, 0))
+        return , $b.ToArray()
+    }
+    Expect 'a capture of the size asked for' (Test-ShotSize (Png 3840 2160) 3840 2160) $true
+    Expect 'planted fault: a capture at the tool default of 1280x720' (Test-ShotSize (Png 1280 720) 3840 2160) $false
+    Expect "a capture the size of the editor's game view" (Test-ShotSize (Png 2282 1382) 3840 2160) $false
+    Expect 'a capture with its width and height swapped' (Test-ShotSize (Png 720 1280) 1280 720) $false
+    Expect 'a JPEG, which has no PNG header' (Test-ShotSize ([byte[]](255, 216, 255, 224, 0, 16, 74, 70, 73, 70, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 255, 219, 0, 67)) 1280 720) $false
     Write-Host "Self-test: $($script:cases - $script:wrong) of $($script:cases) cases gave the expected result."
     exit $(if ($script:wrong) { 1 } else { 0 })
 }
 
+# editor_camera_screenshot clamps each side to 16-4096 px without saying so
+# (26.10.27:game/addons/tools/Code/Mcp/Scene.cs, lines 227-236;
+# 26.10.27:engine/Sandbox.Engine/Systems/Mcp/ToolRegistry.cs, lines 299-316).
+if ($Width -lt 16 -or $Width -gt 4096 -or $Height -lt 16 -or $Height -gt 4096) {
+    Stop-Setup "-Width and -Height must each be 16 to 4096 px, since the editor's screenshot tool clamps any other size without saying so; asked for $($Width)x$Height."
+}
 if ([Environment]::OSVersion.Platform -ne 'Win32NT') { Stop-Setup 'S&box editor checks run on Windows only.' }
 # The S&box launcher sets FACEPUNCH_ENGINE as a user variable, which older shells lack.
 if (-not $Engine) { $Engine = [Environment]::GetEnvironmentVariable('FACEPUNCH_ENGINE', 'User') }
@@ -649,6 +687,11 @@ try {
     $checks['Objects'] = if ($diff.Count) { "FAIL - $($diff.Count) line(s) differ; compare objects-before.txt and objects-after.txt" }
         else { "pass - $($before.Count) saved objects back unchanged" }
     $shotAfter = Save-Screenshot 'after.png'
+    $checks['Shot size'] = "pass - both captures are $($Width)x$Height px, read from their own PNG headers"
+    foreach ($shot in @($shotBefore, $shotAfter)) {
+        $size = Test-ShotSize ([IO.File]::ReadAllBytes($shot)) $Width $Height
+        if (-not $size.Same) { $checks['Shot size'] = "FAIL - $(Split-Path $shot -Leaf): $($size.Why)"; break }
+    }
     $resaved = Save-Scene 'saved-second.scene'
     $secondIds = Get-PackageIds 'package-ids-second.json'
     $resave = Compare-Saves ([IO.File]::ReadAllBytes((Join-Path $Out 'saved-first.scene'))) ([IO.File]::ReadAllBytes((Join-Path $Out 'saved-second.scene'))) $firstIds $secondIds

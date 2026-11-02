@@ -146,9 +146,10 @@ powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
 - **What fails it.** It saves the scene, quits, reopens it, and fails on:
   - unsaved changes as soon as the scene opens;
   - error-level console lines on reopen;
-  - any saved object whose name, parent, enabled state, or components changed; or
+  - any saved object whose name, parent, enabled state, or components changed;
   - a second save that differs from the first in any byte but a store package's ID, and
-    then only an ID that its own session gave that path.
+    then only an ID that its own session gave that path; or
+  - a screenshot whose PNG isn't the size asked for.
 - **Saves are forced.** The Editor skips a save when nothing changed, so the script adds a
   marker object and undoes it first. The content stays the same, and the Editor writes the
   scene out from what it loaded.
@@ -175,6 +176,15 @@ powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
 - **The screenshot is a record.** `-Camera` and `-Angles` fix the view. The script reports
   how much the two captures differ but doesn't score it, because the resave check already
   proves the scene came back unchanged.
+- **Each capture is the size asked for.** `editor_camera_screenshot` renders the camera
+  straight into a picture of `-Width` by `-Height`, 1280 by 720 by default, so neither the
+  Editor's layout nor the monitor sets its size
+  (`26.10.27:game/addons/tools/Code/Mcp/Scene.cs`, lines 227-236). The tool clamps each
+  side to 16-4096 px without saying so
+  (`26.10.27:engine/Sandbox.Engine/Systems/Mcp/ToolRegistry.cs`, lines 299-316), so the
+  check refuses other sizes before it starts, and fails a capture whose own PNG header
+  gives another size. `-SelfTest` checks the header reading on planted ones, including a
+  planted fault: a capture at the 1280 by 720 default when 3840 by 2160 was asked for.
 - **It leaves no trace.** It puts the scene file and the project's `.sbproj` back as they
   were, and saves results in `test-results\editor-<time>\`: both captures, both saved
   files, both sessions' package IDs, the object lists, and the console errors. The Editor
@@ -549,7 +559,7 @@ on its build scripts, harness and map code.
 
 ## More world-build lessons
 
-Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up twenty-three more. Each is
+Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up twenty-four more. Each is
 read from the engine source at `26.10.13` and again at `26.10.27`, and reads the same at
 both unless it says otherwise. Each says what was seen, and on which build.
 
@@ -900,6 +910,24 @@ both unless it says otherwise. Each says what was seen, and on which build.
   read fails as one, not as a wrong angle. Don't widen the reading's bounds to fit an early
   read. At `26.10.13` the code reads the same, at lines 71-88 of
   `PlayerController.Input.cs` and 310-323 of `CameraComponent.cs`.
+- **Read a capture's size from the picture, and never report an editor frame time as the
+  map's.** `camera_screenshot` and `editor_camera_screenshot` render a camera into a
+  picture of the width and height asked for, 1280 by 720 unless told
+  (`26.10.27:game/addons/tools/Code/Mcp/Scene.cs`, lines 227-236 and 627-640). That is
+  separate from the Editor's game view, which draws at whatever size its panel leaves: on a
+  3840 by 2160 screen with the side and bottom panels open, `26.10.27c`'s game view read
+  "Free Size 2282x1382". So neither the monitor's size nor the game view's says how big a
+  capture is, and the tool clamps each side to 16-4096 px instead of failing
+  (`26.10.27:engine/Sandbox.Engine/Systems/Mcp/ToolRegistry.cs`, lines 299-316). Check each
+  capture's size from the saved picture itself, such as the width and height in a PNG's
+  header, and refuse one that isn't the size its reading needs.
+  `PerformanceStats.GpuFrametime` is the render device's time for the whole last frame
+  (`26.10.27:engine/Sandbox.Engine/Core/Diagnostics/PerformanceStats.cs`, lines 26-29 and
+  99-103). In the Editor that frame holds what the Editor draws, its game view at its panel
+  size among it, and any capture, so a frame time read beside an editor capture is the
+  Editor's. Label it so, and never report it as the map's frame rate; measure that in a
+  game run at the screen's full size. At `26.10.13` the code reads the same, with
+  `camera_screenshot` at lines 619-632 of `Scene.cs`.
 
 ## Lessons from importing old content
 
