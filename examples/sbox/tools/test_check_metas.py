@@ -8,6 +8,7 @@ Each case builds a project in a temporary folder, stages its files with git add 
 reads Git's index, so nothing is committed), changes it, runs the check from the project's
 root, and checks the exit code and output. The project holds a scene, an image whose .meta
 S&box wrote with a lower-cased name, a material, and files S&box writes no .meta for.
+It writes its own output as UTF-8, since a failing case prints the check's.
 """
 
 from __future__ import annotations
@@ -132,6 +133,8 @@ def run_case(change, args: list[str]) -> tuple[int, str]:
 
 
 def main() -> int:
+    for stream in (sys.stdout, sys.stderr):  # a failing case prints the check's output
+        stream.reconfigure(encoding="utf-8", errors="replace")
     failures = 0
     for name, change, args, want_code, must, must_not in CASES:
         code, out = run_case(change, args)

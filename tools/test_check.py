@@ -6,7 +6,9 @@ Dependency-free; needs git on PATH.
 
 Each case copies check.py and the hooks into a throwaway git repository, lists made-up
 private words, plants them or an AI tool's credit in a commit (or not), and checks the exit
-code and output.
+code and output. Two cases run check.py with a cp1252 stdout, as Windows pipes it, and read
+its output as UTF-8. This script writes UTF-8 too, since a failing case prints check.py's
+output.
 """
 
 from __future__ import annotations
@@ -47,9 +49,10 @@ def commit(repo: Path, message: str, author: str | None = None,
     git(repo, *args, env=env)
 
 
-def run(args: list[str], cwd: Path, stdin: str = "") -> tuple[int, str]:
+def run(args: list[str], cwd: Path, stdin: str = "", env: dict[str, str] | None = None) -> tuple[int, str]:
     result = subprocess.run([sys.executable, *args], cwd=cwd, input=stdin, capture_output=True,
-                            text=True, encoding="utf-8", errors="replace")
+                            text=True, encoding="utf-8", errors="replace",
+                            env={**os.environ, **env} if env else None)
     return result.returncode, result.stdout + result.stderr
 
 
@@ -80,12 +83,13 @@ def make_repo(tmp: Path, files: dict[str, str], message: str = "Add notes",
 
 
 def check_case(files: dict[str, str], message: str = "Add notes", fingerprints: bool = True,
-               untracked: dict[str, str] | None = None, **commit_options) -> tuple[int, str]:
+               untracked: dict[str, str] | None = None, env: dict[str, str] | None = None,
+               **commit_options) -> tuple[int, str]:
     with tempfile.TemporaryDirectory() as tmp:
         repo = make_repo(Path(tmp), files, message, fingerprints, **commit_options)
         for name, text in (untracked or {}).items():
             (repo / name).write_text(text, encoding="utf-8")
-        return run([str(repo / "tools" / "check.py")], repo)
+        return run([str(repo / "tools" / "check.py")], repo, env=env)
 
 
 def hook_case(files: dict[str, str], command: str) -> tuple[int, str]:
@@ -123,6 +127,11 @@ MENTIONS = ("Run the Claude Code hook before Cursor and Copilot pushes\n\n"
             "Co-authored-by: Test Friend <friend@example.invalid>\n"
             "Signed-off-by: Test Owner <owner@example.invalid>\n")
 
+# Windows gives a pipe the ANSI code page; these characters are outside cp1252.
+PIPE = {"PYTHONIOENCODING": "cp1252"}
+ODD_LINK = {"notes.md": CLEAN + "\nSee [the plan](plan→next.md).\n"}
+ODD_AUTHOR = "Claude Ω <noreply@anthropic.com>"
+
 CASES = [
     # (name, run, expected exit, text that must appear, text that must not appear)
     ("clean repository passes", lambda: check_case({"notes.md": CLEAN}),
@@ -158,6 +167,11 @@ CASES = [
      1, ["message line 3 credits an AI tool"], ["PASS"]),
     ("generated-with line fails", lambda: check_case({"notes.md": CLEAN}, FOOTER),
      1, ["message line 3 credits an AI tool"], ["PASS"]),
+    ("a broken link outside the code page is reported on a cp1252 pipe", lambda: check_case(ODD_LINK, env=PIPE),
+     1, ["FAIL  notes.md:5: broken link: plan→next.md"], ["PASS", "Traceback", "\ufffd"]),
+    ("an AI author outside the code page is reported on a cp1252 pipe",
+     lambda: check_case({"notes.md": CLEAN}, author=ODD_AUTHOR, env=PIPE),
+     1, [f"author {ODD_AUTHOR} names an AI tool"], ["PASS", "Traceback", "\ufffd"]),
     ("hook denies a push from a failing repository", lambda: hook_case(PLANTED, "git push -u origin main"),
      0, ['"permissionDecision": "deny"', "notes.md:3"], []),
     ("hook sees a push after global options", lambda: hook_case(PLANTED, "cd x && git -C . push origin HEAD"),
@@ -176,6 +190,8 @@ CASES = [
 
 
 def main() -> int:
+    for stream in (sys.stdout, sys.stderr):  # a failing case prints check.py's output
+        stream.reconfigure(encoding="utf-8", errors="replace")
     failures = 0
     for name, case, code, present, absent in CASES:
         got_code, output = case()

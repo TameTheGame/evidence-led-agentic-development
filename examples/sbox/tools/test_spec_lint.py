@@ -5,7 +5,8 @@
 
 Each case commits fixtures/base.spec.md and the stand-in sources in fixtures/sources/ in a
 throwaway git repository, replaces the spec with a variant, runs the lint, and checks the
-exit code and output.
+exit code and output. It writes its own output as UTF-8, since a failing case prints the
+lint's.
 """
 
 from __future__ import annotations
@@ -73,6 +74,8 @@ def run_case(variant: str, extra: list[str]) -> tuple[int, str]:
 
 
 def main() -> int:
+    for stream in (sys.stdout, sys.stderr):  # a failing case prints the lint's output
+        stream.reconfigure(encoding="utf-8", errors="replace")
     failures = 0
     for variant, extra, code, present, absent in CASES:
         got_code, output = run_case(variant, extra)

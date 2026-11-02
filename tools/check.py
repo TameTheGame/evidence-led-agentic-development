@@ -9,6 +9,11 @@ Dependency-free; Python 3.10 or newer, and git for the last two checks. Run from
 Exit code 0 means every check passed. It proves the repository's skills and links are
 well formed and that no listed private word appears in it, nothing more.
 
+It writes its output as UTF-8 on any console or pipe, so read it as UTF-8. Its problems
+quote text it didn't write: file names, link targets, a commit's author. On Windows, Python
+would otherwise give a pipe the ANSI code page, such as cp1252, and stop with a traceback
+in place of the report at the first character outside it.
+
 The private-word check fails when a tracked text file, a tracked file name, or a commit
 message contains a word or phrase whose fingerprint is in tools/private-words.sha256. The
 readable list is kept outside the repository; to regenerate the fingerprints from it:
@@ -400,6 +405,8 @@ def check_ai_attribution() -> tuple[list[str], str]:
 
 
 def main() -> int:
+    for stream in (sys.stdout, sys.stderr):  # UTF-8 on any pipe; see the docstring
+        stream.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="ELAD repository checks.")
     parser.add_argument("--hash-words", type=Path, metavar="LIST",
                         help="print the fingerprint file for a readable word list, then exit")

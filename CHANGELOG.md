@@ -83,6 +83,15 @@
   `scene_refs.py` and `check_metas.py` now set their output to UTF-8. Each test runs its
   tool with a cp1252 stdout, as Windows pipes it, reads the output as UTF-8, and has a case
   with characters outside cp1252, which fails with the old tool.
+- **ELAD's other Python tools and the tests write UTF-8 on any pipe too.** Each prints text
+  it didn't write: `tools/check.py` a file name, a link target or a commit's author,
+  `analyze_transcripts.py` a lint's last line and its own "exit≠0" mark, and each test a
+  failing case's output. On a Windows pipe in the ANSI code page, the first character
+  outside it stopped the script with a traceback in place of its report, as on CI's Windows
+  leg or in an agent's shell. `check.py`, `analyze_transcripts.py` and the five tests now
+  set their output to UTF-8. `test_check.py` gains two cases that run the check with a
+  cp1252 stdout, and the new `skills/evidence/tools/test_analyze_transcripts.py` runs the
+  tool the same way; each case with characters outside cp1252 fails with the old tool.
 - **ELAD releases no longer wait for a GREEN each.** On 2026-11-01 the owner gave standing
   approval for releases. The delivery agent releases a batch on its own when it has
   something a user would notice, in the evening and not every day, always with release

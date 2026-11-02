@@ -18,6 +18,11 @@ SKILL.md files, spec_lint and run_engine_tests runs with their output, file edit
 refused by permissions (a non-zero exit is marked exit≠0, not denied), and the
 final reply. An engine run started in the background takes its output from the agent's
 later read of it. Dependency-free; Python 3.10 or newer; git is needed only for diffs.
+
+It writes its output as UTF-8 on any console or pipe, so read it as UTF-8. Its summary
+quotes text other programs wrote, such as a lint's last line, and marks a failed run
+exit≠0. On Windows, Python would otherwise give a pipe the ANSI code page, such as cp1252,
+and stop with a traceback at the first character outside it.
 """
 
 from __future__ import annotations
@@ -26,6 +31,7 @@ import argparse
 import json
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 SKILLS = ("choosing-rigor", "matching-evidence-to-claims", "asking-the-owner", "sbox-engine-reference")
@@ -166,6 +172,8 @@ def extract(info: dict) -> str:
 
 
 def main() -> None:
+    for stream in (sys.stdout, sys.stderr):  # UTF-8 on any pipe; see the docstring
+        stream.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--transcripts", type=Path, required=True)
     parser.add_argument("--runs", type=Path)
