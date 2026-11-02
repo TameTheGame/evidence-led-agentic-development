@@ -69,6 +69,12 @@
   camera effect: it belongs to the nearest camera or volume on its object or above it, and
   with none it fogs every camera. Set its mode, colour and `SkyAffect`, since by default it
   takes its colour from the sky and covers the sky too. Read from the source at `26.10.27`.
+- **The spec format guide suggests a hold on files built from an input the owner adopted.**
+  `docs/SPEC_FORMAT.md` now says a project's lint can hold the parts it builds from such an
+  input, such as a plan, to their copy at the commit that last pinned the input's SHA-256,
+  and let them change only in a commit that pins the new input and records the owner's
+  answer. Without that route, the owner's first answer can only land by loosening the
+  check.
 - **The S&box lesson on `.meta` files adds when to commit them.** The Editor writes a
   `.meta` for every new source it mounts, in every folder at once, so a build of one scene
   fails its clean-tree check on another change's sources. Commit new sources with their

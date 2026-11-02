@@ -113,10 +113,21 @@ fail the lint.
 commit and reports any change to its sentence, state, rung, or check as needing the owner.
 It reports and never blocks, because the owner may already have agreed the change.
 
+**So is a hold on files built from an input the owner adopted.** A project may build part
+of its spec, or of its rules, from an input the owner adopted, such as a plan. Pin the
+input by its SHA-256 in the decision record, and have the lint hold the built parts to
+their copy at the commit that last pinned it. Give the owner's later answers a route: a
+commit that changes the built parts passes only when, in that same commit, it pins the new
+input's SHA-256 and records the owner's answer that changed it. Every other change fails.
+Without that route, the owner's first answer can only land by loosening the check. Unlike
+the owner gate, this blocks, since a commit either carries the pin and the answer or it
+doesn't. Have the build rewrite only the parts that answer names, so the rest can't change
+with it.
+
 The core doesn't ship a lint; each project owns its own. A worked example is
 [`examples/sbox/tools/spec_lint.py`](../examples/sbox/tools/spec_lint.py). It covers every
-item above and the owner gate, with fixtures. It looks for check names in the folders
-passed with `--sources`.
+item in the list above and the owner gate, with fixtures, but not the hold. It looks for
+check names in the folders passed with `--sources`.
 
 With a lint like this, spec-driven work needs no per-task records. Git commits supply
 identity, and test output and `ACCEPTANCE.md` supply results.
