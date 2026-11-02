@@ -11,6 +11,7 @@ S&box writes it, lower-cased and without "_c"; the files keep their capitals and
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -23,6 +24,10 @@ DATA = "Assets/scenes/yard_scene_data/ddgi"
 OLD = f"{DATA}/Yard_Irradiance_1f2e_0a0a.vtex_c"
 NEW = f"{DATA}/Yard_Irradiance_1f2e_0b0b.vtex_c"
 NAV = f"{DATA}/Yard_Distance_1f2e_0b0b.vtex_c"
+ODD = f"{DATA}/Yard_Irradiance_Ω·_0a0a.vtex_c"
+# Each check runs with a cp1252 stdout, as Windows gives a pipe, and its output is read as
+# UTF-8, so a case with characters outside cp1252 fails unless the check writes UTF-8.
+PIPE = {"PYTHONIOENCODING": "cp1252"}
 
 
 def build(root: Path) -> None:
@@ -38,6 +43,10 @@ def build(root: Path) -> None:
         "DistanceTexture": "/Scenes/Yard_Scene_Data/DDGI/Yard_Distance_1f2e_0b0b.vtex_c"}]}}
     (root / "Assets/prefabs").mkdir(parents=True)
     (root / "Assets/prefabs/lamp.prefab").write_text(json.dumps(prefab), encoding="utf-8")
+
+
+def add(*names: str):
+    return lambda root: [(root / n).write_bytes(b"") for n in names]
 
 
 def delete(*names: str):
@@ -58,6 +67,8 @@ CASES = [
      ["MISSING  scenes/yard_scene_data/ddgi/yard_distance_1f2e_0b0b.vtex (in prefabs/lamp.prefab)"],
      ["PASS"]),
     ("a folder outside the assets root", None, "elsewhere", 1, ["is not a folder under"], ["PASS"]),
+    ("a file name outside cp1252 comes back as itself", add(ODD), DATA, 0,
+     [f"UNUSED   {ODD}", "PASS - 2 in use, 2 unused, 0 missing"], ["\ufffd", "Irradiance_?"]),
 ]
 
 
@@ -68,7 +79,8 @@ def run_case(change, folder: str) -> tuple[int, str]:
         if change:
             change(root)
         done = subprocess.run([sys.executable, str(CHECK), folder], cwd=root,
-                              capture_output=True, text=True)
+                              capture_output=True, text=True, encoding="utf-8",
+                              errors="replace", env={**os.environ, **PIPE})
         return done.returncode, done.stdout + done.stderr
 
 

@@ -25,6 +25,9 @@ It leaves out the files S&box writes no .meta for:
 It prints MISSING for each file with no .meta, then one PASS, FAIL or NOT RUN line.
 Exit code 0 pass, 1 fail, 2 not run: Git failed, or it tracks no file under the assets
 folder, so a run from the wrong folder can't pass.
+It writes its output as UTF-8 on any console or pipe, so read it as UTF-8. On Windows,
+Python would otherwise give a pipe the ANSI code page, such as cp1252, and a character
+outside it would come out as "?" or as a byte a UTF-8 reader can't read.
 Dependency-free; Python 3.10 or newer.
 """
 
@@ -50,6 +53,8 @@ def missing_metas(tracked: list[str]) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
+    for stream in (sys.stdout, sys.stderr):  # UTF-8 on any pipe; see the docstring
+        stream.reconfigure(encoding="utf-8", errors="replace")
     args = list(argv)
     assets = "Assets"
     if "--assets" in args:

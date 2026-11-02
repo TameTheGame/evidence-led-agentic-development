@@ -31,6 +31,10 @@ git base (default HEAD). It prints "NEEDS OWNER: <ID>" when:
   - a requirement is agreed now but was not agreed at the base.
 Only the owner agrees, changes, or retires a requirement.
 
+It writes its output as UTF-8 on any console or pipe, so read it as UTF-8. On Windows,
+Python would otherwise give a pipe the ANSI code page, such as cp1252, and a character
+outside it would come out as "?" or as a byte a UTF-8 reader can't read.
+
 Dependency-free; Python 3.10 or newer. The owner gate and the retired-ID check need git on
 PATH.
 """
@@ -215,7 +219,8 @@ def owner_gate(now: list[dict], before: list[dict]) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
-    sys.stdout.reconfigure(errors="replace")  # never crash on a console that can't show a character
+    for stream in (sys.stdout, sys.stderr):  # UTF-8 on any pipe; see the docstring
+        stream.reconfigure(encoding="utf-8", errors="replace")
     base = "HEAD"
     paths: list[str] = []
     roots: list[Path] = []

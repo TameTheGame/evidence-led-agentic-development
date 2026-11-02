@@ -39,6 +39,9 @@ NO_META = [
     "Assets/empty/.gitkeep",
     "tools/build.ps1",
 ]
+# Each check runs with a cp1252 stdout, as Windows gives a pipe, and its output is read as
+# UTF-8, so a case with characters outside cp1252 fails unless the check writes UTF-8.
+PIPE = {"PYTHONIOENCODING": "cp1252"}
 
 
 def git(root: Path, *args: str) -> None:
@@ -98,6 +101,8 @@ CASES = [
      lambda root: (unstage("Assets/materials/sand_color.png.meta")(root),
                    add("Assets/materials/sand_colour.png.meta")(root)), [], 1,
      ["MISSING  Assets/materials/Sand_Color.png.meta"], ["PASS"]),
+    ("control: a file name outside cp1252 comes back as itself", add("Assets/sounds/vent_Ω·.wav"), [], 1,
+     ["MISSING  Assets/sounds/vent_Ω·.wav.meta"], ["PASS", "\ufffd", "vent_?"]),
     ("control: a scene with no .meta", unstage("Assets/scenes/yard.scene.meta"), [], 1,
      ["MISSING  Assets/scenes/yard.scene.meta"], ["PASS"]),
     ("another assets folder with --assets", assets_named("Content"), ["--assets", "Content"], 0,
@@ -113,7 +118,7 @@ def run_case(change, args: list[str]) -> tuple[int, str]:
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp) / "project"
         root.mkdir()
-        env = dict(os.environ, GIT_CEILING_DIRECTORIES=str(Path(tmp)))
+        env = dict(os.environ, GIT_CEILING_DIRECTORIES=str(Path(tmp)), **PIPE)
         if change == "no-git":
             write(root, *SOURCES)
         else:
@@ -121,7 +126,8 @@ def run_case(change, args: list[str]) -> tuple[int, str]:
             if change:
                 change(root)
         done = subprocess.run([sys.executable, str(CHECK), *args], cwd=root, env=env,
-                              capture_output=True, text=True)
+                              capture_output=True, text=True, encoding="utf-8",
+                              errors="replace")
         return done.returncode, done.stdout + done.stderr
 
 

@@ -76,6 +76,13 @@
   a run from the wrong folder can't pass. `test_check_metas.py` checks it on throwaway Git
   repositories, with four controls, and each of eight planted faults in the check fails it.
   On a real project's tracked assets it agreed with that project's own check.
+- **The S&box example's Python tools write UTF-8 on any pipe.** On Windows, Python gives a
+  pipe the ANSI code page, such as cp1252. So `spec_lint.py`'s owner gate showed a changed
+  sentence's "·" as a byte a UTF-8 reader can't read and its "≥" or "→" as "?", and
+  `scene_refs.py` stopped on a file name outside that code page. `spec_lint.py`,
+  `scene_refs.py` and `check_metas.py` now set their output to UTF-8. Each test runs its
+  tool with a cp1252 stdout, as Windows pipes it, reads the output as UTF-8, and has a case
+  with characters outside cp1252, which fails with the old tool.
 - **ELAD releases no longer wait for a GREEN each.** On 2026-11-01 the owner gave standing
   approval for releases. The delivery agent releases a batch on its own when it has
   something a user would notice, in the evening and not every day, always with release

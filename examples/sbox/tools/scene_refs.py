@@ -23,6 +23,9 @@ again afterwards: it must pass, with the same IN USE files.
 
 Exit code 1 when a reference into FOLDER is MISSING, or when FOLDER isn't a folder under
 the assets root. So it fails after a clean-up that took a file still in use.
+It writes its output as UTF-8 on any console or pipe, so read it as UTF-8. On Windows,
+Python would otherwise give a pipe the ANSI code page, such as cp1252, and a character
+outside it would come out as "?" or as a byte a UTF-8 reader can't read.
 Dependency-free; Python 3.10 or newer.
 """
 
@@ -70,6 +73,8 @@ def references(assets: Path) -> dict[str, list[str]]:
 
 
 def main(argv: list[str]) -> int:
+    for stream in (sys.stdout, sys.stderr):  # UTF-8 on any pipe; see the docstring
+        stream.reconfigure(encoding="utf-8", errors="replace")
     args = list(argv)
     assets = Path("Assets")
     if "--assets" in args:

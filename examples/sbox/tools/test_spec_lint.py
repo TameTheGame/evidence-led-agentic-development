@@ -10,6 +10,7 @@ exit code and output.
 
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 import sys
@@ -21,6 +22,9 @@ LINT = HERE / "spec_lint.py"
 FIXTURES = HERE / "fixtures"
 
 SOURCES = ["--sources", "UnitTests", "--sources", "tools"]
+# Each check runs with a cp1252 stdout, as Windows gives a pipe, and its output is read as
+# UTF-8, so a case with characters outside cp1252 fails unless the check writes UTF-8.
+PIPE = {"PYTHONIOENCODING": "cp1252"}
 
 CASES = [
     # (variant, extra arguments, expected exit, text that must appear, text that must not appear)
@@ -29,6 +33,8 @@ CASES = [
     ("base.spec.md", [], 0, ["PASS", "note  check names not looked up"], ["NOT FOUND", "FAIL"]),
     ("agreed-sentence-changed.spec.md", SOURCES, 0,
      ["NEEDS OWNER: YARD-SIGHT-01", "sentence changed", "PASS"], ["FAIL"]),
+    ("agreed-sentence-unicode.spec.md", SOURCES, 0,
+     ["NEEDS OWNER: YARD-SIGHT-01", "at every spawn · ≥ 2 m →\"", "PASS"], ["FAIL", "\ufffd", "spawn · ?"]),
     ("draft-changed.spec.md", SOURCES, 0, ["PASS", "no agreed requirement changed"],
      ["NEEDS OWNER", "FAIL"]),
     ("check-not-written.spec.md", SOURCES, 0,
@@ -61,7 +67,8 @@ def run_case(variant: str, extra: list[str]) -> tuple[int, str]:
         git(repo, "commit", "-q", "-m", "Base spec")
         shutil.copyfile(FIXTURES / variant, target)
         result = subprocess.run([sys.executable, str(LINT), *extra], cwd=repo, capture_output=True,
-                                text=True, encoding="utf-8", errors="replace")
+                                text=True, encoding="utf-8", errors="replace",
+                                env={**os.environ, **PIPE})
         return result.returncode, result.stdout + result.stderr
 
 
