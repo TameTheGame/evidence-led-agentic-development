@@ -18,6 +18,15 @@
   this repository that names another tag, names a file or heading the repository doesn't
   have, or leaves the repository. `test_check.py` gains a case, and each of eight planted
   faults in the check fails one.
+- **Two more world-build lessons.** The S&box guide's [More world-build
+  lessons](examples/sbox/README.md#more-world-build-lessons) now says to bake envmap probes
+  in the editor, keep the compiled bake in Git since it has no source, read a scene's
+  `bake_<Id>.vtex` as its `.vtex_c`, and check that each probe holds a bake before a
+  capture, since one with no bake reads black. It also says to check from the layout that a
+  picture check's camera sees each thing it reads, since one hidden behind another changes
+  almost no pixels when it's hidden. The `.meta` lesson and `check_metas.py`'s notes add
+  that a file a project's own script writes under the assets folder, such as a bake's
+  record, gets no `.meta`, and to leave it out by its folder and name.
 
 ## 1.06 — 2026-11-02
 

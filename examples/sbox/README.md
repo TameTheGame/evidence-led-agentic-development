@@ -528,7 +528,7 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 ## More world-build lessons
 
-Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up twenty more. Each is
+Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up twenty-two more. Each is
 read from the engine source at `26.10.13` and again at `26.10.27`, and reads the same at
 both unless it says otherwise. Each says what was seen, and on which build.
 
@@ -553,7 +553,10 @@ both unless it says otherwise. Each says what was seen, and on which build.
   `.meta` files themselves, and compiled `*_c` files and a scene's `.scene_d`, which S&box
   treats as files that go with their source (`Asset.cs`, lines 10-16 and 168-189). On
   `26.10.27c` notes and scripts kept beside sources, such as `.md` and `.py` files, got no
-  `.meta` either.
+  `.meta` either. Nor did a `.json` record that a project's own script wrote beside a probe
+  bake: S&box keeps a `.meta` only for a file it takes as an asset (`Asset.cs`, lines
+  168-189). Leave such a file out by its folder and name, not by its extension, so a real
+  asset of that type still needs its `.meta`.
 - **Allow for a store package's asset ID changing between editor sessions.** S&box writes
   no `.meta` for a file that a cloud package installed (`Asset.cs`, lines 107 and 173-176;
   still so at `26.10.27`), so no file in the project keeps its GUID, and the native
@@ -817,6 +820,38 @@ both unless it says otherwise. Each says what was seen, and on which build.
   is 1, so the fog covers the sky too (`Fog.cs`, lines 77, 175 and 249-253). New at
   `26.10.27`: at `26.10.13` there is no `Fog` and `GradientFog` isn't obsolete. Read from
   the source, not run.
+- **Bake envmap probes in the editor, track the compiled bake, and don't capture a probe
+  with no bake.** `EnvmapProbe.Bake` runs only in the editor
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Light/EnvmapProbe.Baking.cs`, lines
+  15-20). It writes the bake straight to a compiled texture,
+  `<scene>_scene_data/envmap/bake_<Id>.vtex_c`, with no source file, then loads it as the
+  probe's `BakedTexture` (lines 41-53), and loading a texture drops the `_c`
+  (`26.10.27:engine/Sandbox.Engine/Resources/Textures/Texture.Load.cs`, line 62), so the
+  scene names `bake_<Id>.vtex`. A project that keeps compiled `*_c` files out of Git has to
+  let these in, since only another bake makes them again. A check that each file a scene
+  names is tracked has to read `bake_<Id>.vtex` as `bake_<Id>.vtex_c`, as
+  [`tools/scene_refs.py`](tools/scene_refs.py) does. A probe in `Baked` mode with no bake
+  hands its scene object a null texture
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Light/EnvmapProbe.cs`, lines 376-379),
+  and on `26.10.27c` a picture check of a scene whose probes had no bake read their boxes
+  as black, so it measured the missing bake, not the light. Before capturing a scene, check
+  that each probe in `Baked` mode holds its `BakedTexture`, and bake first when one
+  doesn't. Seen on `26.10.27c`: the first bake wrote only the `.vtex_c` files, and a scene
+  check failed the `.vtex` paths as missing until it read them this way.
+- **Check that a picture check's camera sees each thing it reads, before the capture.** A
+  reading that counts the pixels that change when a thing is hidden says almost nothing
+  about a thing behind another, and a reading of a box's outline in the shot reads whatever
+  stands in front of it. On `26.10.27c` a check set three stand-ins on its camera's line,
+  500, 5,300 and 8,000 units out. Hiding the far one changed 2 pixels of the shot and
+  hiding the near one 23,089, so the far one read as unseen whatever the scene did, and the
+  check was blind to the change it was for. Set apart, the middle one still had a slab's
+  corner over its foot. A check on the layout catches this without S&box: trace a grid of
+  lines, such as 6 by 6, from the camera to each face of the thing that faces it, against
+  every solid in the layout, and refuse the reading when a line is blocked or the camera
+  sees no face of it. A line that ends on a solid's face, as one to a patch on a wall does,
+  isn't blocked. Run it on each planted copy of the scene the check reads too, and place a
+  reading past terrain by hand unless the check traces the terrain as well. No engine
+  source is involved; this was seen.
 
 ## Lessons from importing old content
 

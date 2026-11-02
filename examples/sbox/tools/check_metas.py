@@ -21,6 +21,10 @@ It leaves out the files S&box writes no .meta for:
     which S&box keeps with their source (Asset.cs, RelatedFileExts and GetMetadataFile);
   - notes and scripts kept beside the sources: .md, .py and .gitkeep, which got no .meta
     on 26.10.27c. Change NO_META if your build or project differs.
+A file your own scripts write under the assets folder gets no .meta either, such as a
+.json record a bake script keeps beside a probe bake. NO_META matches the end of a path,
+so add such a file by its folder and name, such as "_scene_data/envmap/record.json", not
+by its extension, so a real asset of that type still needs its .meta.
 
 It prints MISSING for each file with no .meta, then one PASS, FAIL or NOT RUN line.
 Exit code 0 pass, 1 fail, 2 not run: Git failed, or it tracks no file under the assets
