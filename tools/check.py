@@ -3,7 +3,8 @@
 AI-attribution check, and a check that the current release's notes keep each paragraph on
 one line.
 
-Dependency-free; Python 3.10 or newer, and git for the last two checks. Run from anywhere:
+Dependency-free; Python 3.10 or newer, and git for the private-word and AI-attribution
+checks. Run from anywhere:
 
     python tools/check.py
 
@@ -30,6 +31,10 @@ The release-notes check reads VERSION and fails when releases/v<VERSION>.md is m
 has a line that carries on the paragraph or list item above it. GitHub keeps each line
 break in a release's notes, so a wrapped line shows as a break in mid-sentence on the
 release page and in its email. Code blocks, tables, headings and list items are left alone.
+It also fails a relative link in those notes, since the release job publishes them as they
+are and on the release page a relative link leads to a missing page. A link into this
+repository by full URL must name the release's tag, v<VERSION>, and a file, and for a
+Markdown file a heading, that the repository has.
 """
 
 from __future__ import annotations
@@ -435,6 +440,46 @@ def wrapped_lines(text: str) -> list[int]:
     return found
 
 
+REPO_URL = re.compile(r"https://github\.com/TameTheGame/evidence-led-agentic-development"
+                      r"/(?:blob|tree)/([^/#?]+)/?([^#?]*)(?:#(.*))?$", re.IGNORECASE)
+
+
+def note_links(notes: Path, tag: str) -> tuple[list[str], int]:
+    """Problems with the links in release notes, and how many point into this repository."""
+    problems: list[str] = []
+    cache: dict[Path, set[str]] = {}
+    pinned = 0
+    for number, raw in links_in(notes):
+        target = raw[1:-1] if raw.startswith("<") and raw.endswith(">") else raw
+        where = f"{rel(notes)}:{number}"
+        if not target or target.startswith(("#", "//")):
+            continue
+        if not SCHEME.match(target):
+            problems.append(f"{where}: relative link {target} leads to a missing page on the release "
+                            f"page, which shows the notes as they are; link by full URL pinned to {tag}")
+            continue
+        match = REPO_URL.match(target)
+        if not match:
+            continue
+        pinned += 1
+        ref, path, anchor = match.groups()
+        if ref != tag:
+            problems.append(f"{where}: link pinned to {ref}, not {tag}: {target}")
+            continue
+        resolved = (ROOT / unquote(path)).resolve()
+        try:
+            resolved.relative_to(ROOT)
+        except ValueError:
+            problems.append(f"{where}: link leaves the repository: {target}")
+            continue
+        if not resolved.exists():
+            problems.append(f"{where}: link to a file the repository doesn't have: {target}")
+        elif anchor and resolved.is_file() and resolved.suffix.lower() == ".md":
+            if unquote(anchor).lower() not in anchors(resolved, cache):
+                problems.append(f"{where}: no heading for anchor #{anchor} in {rel(resolved)}")
+    return problems, pinned
+
+
 def check_release_notes() -> tuple[list[str], str]:
     version_file = ROOT / "VERSION"
     if not version_file.is_file():
@@ -444,12 +489,18 @@ def check_release_notes() -> tuple[list[str], str]:
     where = rel(notes)
     if not notes.is_file():
         return [f"{where}: missing; VERSION is {version}"], ""
+    problems: list[str] = []
     lines = wrapped_lines(notes.read_text(encoding="utf-8"))
     if lines:
-        return [f"{where}: {len(lines)} line(s) carry on the paragraph or list item above them "
-                f"(first: line {lines[0]}). GitHub shows each line break in a release's notes, so "
-                "write each paragraph and list item on one line"], ""
-    return [], f"v{version}'s release notes keep each paragraph on one line"
+        problems.append(f"{where}: {len(lines)} line(s) carry on the paragraph or list item above them "
+                        f"(first: line {lines[0]}). GitHub shows each line break in a release's notes, so "
+                        "write each paragraph and list item on one line")
+    link_problems, pinned = note_links(notes, f"v{version}")
+    problems += link_problems
+    if problems:
+        return problems, ""
+    return [], (f"v{version}'s release notes keep each paragraph on one line, and their {pinned} "
+                f"link(s) to this repository's files are pinned to v{version} and resolve")
 
 
 def main() -> int:

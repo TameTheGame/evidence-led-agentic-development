@@ -10,6 +10,14 @@
   the one above it, leaving code blocks, tables, headings and list items alone.
   `test_check.py` gains three cases, and each of five planted faults in the check fails
   one.
+- **Release notes link by full URLs pinned to the release's tag.** The release job
+  publishes the notes as they are, and on the release page a relative link leads to a
+  missing page, as each of the seven in the v1.06 notes did. `releases/v1.06.md` now links
+  by full URLs pinned to `v1.06`, and `docs/RELEASING.md` says to link that way.
+  `tools/check.py` fails a relative link in the current version's notes, and a link into
+  this repository that names another tag, names a file or heading the repository doesn't
+  have, or leaves the repository. `test_check.py` gains a case, and each of eight planted
+  faults in the check fails one.
 
 ## 1.06 — 2026-11-02
 

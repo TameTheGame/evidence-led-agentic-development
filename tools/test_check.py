@@ -135,9 +135,17 @@ ODD_AUTHOR = "Claude Ω <noreply@anthropic.com>"
 
 # Release notes: GitHub keeps each line break in a release's notes, so each paragraph and
 # list item is one line. Code blocks, tables, headings and nested items stay as they are.
+REPO = "https://github.com/TameTheGame/evidence-led-agentic-development"
 NOTES_ONE_LINE = ("# ELAD v9.99 — Test\n\nOne paragraph on one line.\n\n## Highlights\n\n"
                   "- **One item.** On one line.\n  - A nested item.\n1. A numbered item.\n\n"
-                  "```text\nwrapped code\nstays\n```\n\n| a | b |\n|---|---|\n| 1 | 2 |\n\n> A quote.\n")
+                  "```text\nwrapped code\nstays\n```\n\n| a | b |\n|---|---|\n| 1 | 2 |\n\n> A quote.\n\n"
+                  f"See [the notes]({REPO}/blob/v9.99/notes.md#notes), [the releases]({REPO}/tree/v9.99/releases), "
+                  f"[a run]({REPO}/actions/runs/1), [an example](https://example.com/a.md) and "
+                  "[the highlights](#highlights).\n")
+NOTES_BAD_LINKS = ("# ELAD v9.99 — Test\n\n- [Relative](../notes.md).\n"
+                   f"- [Main]({REPO}/blob/main/notes.md).\n- [Gone]({REPO}/blob/v9.99/gone.md).\n"
+                   "- [No heading](https://github.com/tamethegame/Evidence-Led-Agentic-Development/blob/v9.99/"
+                   f"notes.md#gone).\n- [Out]({REPO}/blob/v9.99/../../outside.md).\n")
 NOTES_WRAPPED = "# ELAD v9.99 — Test\n\nOne paragraph\nwrapped.\n\n- **One item.** Wrapped\n  onto two lines.\n"
 VERSIONED = {"notes.md": CLEAN, "VERSION": "9.99\n"}
 
@@ -183,12 +191,20 @@ CASES = [
      1, [f"author {ODD_AUTHOR} names an AI tool"], ["PASS", "Traceback", "\ufffd"]),
     ("release notes with each paragraph on one line pass",
      lambda: check_case({**VERSIONED, "releases/v9.99.md": NOTES_ONE_LINE}),
-     0, ["PASS", "v9.99's release notes keep each paragraph on one line"], ["FAIL"]),
+     0, ["PASS", "v9.99's release notes keep each paragraph on one line, and their 2 link(s) to this "
+         "repository's files are pinned to v9.99 and resolve"], ["FAIL"]),
     ("wrapped release notes fail", lambda: check_case({**VERSIONED, "releases/v9.99.md": NOTES_WRAPPED}),
      1, ["FAIL  releases/v9.99.md: 2 line(s) carry on the paragraph or list item above them (first: line 4)"],
      ["PASS"]),
     ("missing release notes fail", lambda: check_case(VERSIONED),
      1, ["FAIL  releases/v9.99.md: missing; VERSION is 9.99"], ["PASS"]),
+    ("relative or unresolved links in release notes fail",
+     lambda: check_case({**VERSIONED, "releases/v9.99.md": NOTES_BAD_LINKS}),
+     1, ["FAIL  releases/v9.99.md:3: relative link ../notes.md leads to a missing page on the release page",
+         f"FAIL  releases/v9.99.md:4: link pinned to main, not v9.99: {REPO}/blob/main/notes.md",
+         f"FAIL  releases/v9.99.md:5: link to a file the repository doesn't have: {REPO}/blob/v9.99/gone.md",
+         "FAIL  releases/v9.99.md:6: no heading for anchor #gone in notes.md",
+         "FAIL  releases/v9.99.md:7: link leaves the repository", "FAIL - 5 problem(s)."], ["PASS"]),
     ("hook denies a push from a failing repository", lambda: hook_case(PLANTED, "git push -u origin main"),
      0, ['"permissionDecision": "deny"', "notes.md:3"], []),
     ("hook sees a push after global options", lambda: hook_case(PLANTED, "cd x && git -C . push origin HEAD"),
