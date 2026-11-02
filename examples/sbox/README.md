@@ -138,8 +138,10 @@ powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
   editor closes if the script stops. It refuses to run while another editor has the project
   open.
 - **The project must leave its AI setting on.** An editor opens the pipe `sbox-cli` uses
-  only when the project's `.sbproj` doesn't set `AI.EnableMcpCommunication` to `false`, and
-  with it off, `sbox-cli` gives up when its start-up timeout runs out. The block, and where
+  only when the project's `.sbproj` doesn't set `AI.EnableMcpCommunication` to `false`.
+  With it off, the check stops with `NOT RUN` before it starts an editor, since `sbox-cli`
+  would only wait out its start-up timeout. `-SelfTest` checks this reading on planted
+  `.sbproj` text, including a planted fault: the setting turned off. The block, and where
   S&box writes it, are in the [starter's set-up](rung1-starter/README.md#using-it).
 - **What fails it.** It saves the scene, quits, reopens it, and fails on:
   - unsaved changes as soon as the scene opens;

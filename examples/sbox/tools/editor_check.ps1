@@ -40,7 +40,7 @@ references. The second save passes if it is byte-identical to the first, or if t
 only in such references' IDs, each exactly the ID its own session gave that path. A stale ID, a
 project asset's changed ID, or any other changed byte, line endings included, still fails it.
 If the script can't run, the IDs are compared as written. -SelfTest checks this comparison on
-planted saves, without S&box.
+planted saves, and the AI setting's reading below on planted .sbproj text, without S&box.
 
 A project with code must report a finished, successful compile. A project with no Code or
 Editor folder, in it or in its libraries, such as a content map, never compiles: editor_status
@@ -49,7 +49,8 @@ then reports no compile result, and the check doesn't wait for one.
 The project must be closed in every editor first, because the check closes and reopens it.
 Steam must be running, because S&box starts through it; the check doesn't start Steam, which
 can update S&box. Editors accept sbox-cli unless Project Settings > AI > Enable MCP
-Communication is off.
+Communication is off. When the project's .sbproj turns it off, the check stops with NOT RUN
+before it starts an editor, since sbox-cli would only wait out its start-up timeout.
 
 .EXAMPLE
 powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
@@ -119,6 +120,21 @@ function Compare-Saves([byte[]]$First, [byte[]]$Second, $FirstIds, $SecondIds) {
     return Result $true "identical but for $changed store package ID(s), each the one its own session gave the path"
 }
 
+# Whether a .sbproj's text turns off the pipe sbox-cli talks to. An editor opens it unless the
+# project's AI.EnableMcpCommunication is false, even when sbox-cli starts it with -mcp
+# (26.10.27:engine/Sandbox.Engine/Core/Bootstrap.cs, lines 436-443). S&box reads the file with
+# System.Text.Json's default options, so a name counts only in its exact case
+# (26.10.27:engine/Sandbox.Engine/Systems/Project/Project/Project.cs, lines 211-212). Text that
+# isn't JSON returns $false: S&box can't open that project, and the check reports its error box.
+function Test-McpOff([string]$Text) {
+    try { $config = $Text | ConvertFrom-Json } catch { return $false }
+    if ($null -eq $config) { return $false }
+    $ai = $config.PSObject.Properties | Where-Object { $_.Name -ceq 'AI' }
+    if ($null -eq $ai -or $null -eq $ai.Value) { return $false }
+    $flag = $ai.Value.PSObject.Properties | Where-Object { $_.Name -ceq 'EnableMcpCommunication' }
+    return ($null -ne $flag -and $flag.Value -is [bool] -and -not $flag.Value)
+}
+
 if ($SelfTest) {
     $script:cases = 0; $script:wrong = 0
     function Expect([string]$Name, $Result, [bool]$Same) {
@@ -172,6 +188,24 @@ if ($SelfTest) {
     Expect 'saves that differ, with no package IDs read' (Compare-Saves (Save $p1) (Save $p2) $null $null) $false
     Expect 'the same save twice, with no package IDs read' (Compare-Saves (Save $p1) (Save $p1) $null $null) $true
     Expect "a project material's ID changed, in a scene with no package" (Compare-Saves (Save $p1) (Save $p1 $other) @{} @{}) $false
+    function Expect-Off([string]$Name, [string]$Text, [bool]$Off) {
+        $script:cases++
+        $got = Test-McpOff $Text
+        $said = if ($got) { 'stops: the AI setting is off' } else { 'goes on' }
+        if ($got -eq $Off) { Write-Host "ok     $Name - $said" }
+        else { $script:wrong++; Write-Host "WRONG  $Name - expected it to $(if ($Off) { 'stop' } else { 'go on' }), but it $said" }
+    }
+    # A .sbproj as S&box lays one out, with AIBLOCK where it writes the AI block.
+    $planted = "{`n  `"Title`": `"Outpost`",`n  `"Type`": `"game`",`n  `"IsStandaloneOnly`": false,`n  AIBLOCK`"Metadata`": {}`n}"
+    function Sbproj([string]$Block) { return $planted -creplace 'AIBLOCK', $Block }
+    $off = "`"AI`": {`n    `"EnableMcpCommunication`": false`n  },`n  "
+    Expect-Off 'a .sbproj with the AI setting on' (Sbproj "`"AI`": {`n    `"EnableMcpCommunication`": true`n  },`n  ") $false
+    Expect-Off 'a .sbproj with no AI block' (Sbproj '') $false
+    Expect-Off 'planted fault: a .sbproj with the AI setting off' (Sbproj $off) $true
+    Expect-Off "the setting off under a lower-case name, which S&box doesn't read" (Sbproj "`"ai`": {`n    `"EnableMcpCommunication`": false`n  },`n  ") $false
+    Expect-Off 'an AI block of null' (Sbproj "`"AI`": null,`n  ") $false
+    # Cut short, so S&box can't read it and shows its own error box.
+    Expect-Off "the setting off in a .sbproj that isn't JSON" (Sbproj $off).TrimEnd('}') $false
     Write-Host "Self-test: $($script:cases - $script:wrong) of $($script:cases) cases gave the expected result."
     exit $(if ($script:wrong) { 1 } else { 0 })
 }
@@ -193,6 +227,13 @@ if (-not (Get-Process steam -ErrorAction SilentlyContinue)) {
 $dir = (Resolve-Path $Project).Path
 if ($dir -like '*.sbproj') { $dir = Split-Path $dir }
 if (-not (Get-ChildItem $dir -Filter *.sbproj)) { Stop-Setup "no .sbproj in $dir." }
+# With the AI setting off the editor opens no pipe, and sbox-cli would wait out its start-up
+# timeout (26.10.27:engine/Launcher/SboxCli/Program.cs, lines 196-220).
+foreach ($f in Get-ChildItem $dir -Filter *.sbproj) {
+    if (Test-McpOff ([IO.File]::ReadAllText($f.FullName))) {
+        Stop-Setup "$($f.Name) sets AI.EnableMcpCommunication to false, so the editor would open no pipe for sbox-cli. Turn on Project Settings > AI > Enable MCP Communication, or set it to true in the file, and rerun."
+    }
+}
 # S&box compiles the Code and Editor folders of the project and of each library in Libraries\.
 $codeRoots = @($dir) + @(Get-ChildItem (Join-Path $dir 'Libraries') -Directory -ErrorAction SilentlyContinue | ForEach-Object FullName)
 $hasCode = [bool]($codeRoots | Where-Object { (Test-Path (Join-Path $_ 'Code')) -or (Test-Path (Join-Path $_ 'Editor')) })

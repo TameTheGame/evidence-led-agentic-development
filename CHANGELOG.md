@@ -45,6 +45,12 @@
   says so, shows the block and where S&box writes it, and says the Editor adds it the first
   time it opens a project without one, which leaves the `.sbproj` changed until it is
   committed. The editor check's notes point to it.
+- **The editor check stops at once when the AI setting is off.** When the project's
+  `.sbproj` sets `AI.EnableMcpCommunication` to `false`, `editor_check.ps1` now stops with
+  `NOT RUN` and says so before it starts an editor, where before `sbox-cli` waited out its
+  start-up timeout. It reads the setting as S&box does, by its exact name, and leaves a
+  `.sbproj` that isn't JSON to S&box's own error box. `-SelfTest` gains six cases, one of
+  them a planted `.sbproj` with the setting off.
 
 ## 1.06 — 2026-11-02
 
