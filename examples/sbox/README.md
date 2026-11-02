@@ -15,6 +15,7 @@
 | [`IMPORTING.md`](IMPORTING.md) | The import reference: what works and what doesn't when bringing Source and other old content into S&box, sorted by topic, each entry with the S&box version it was checked on |
 | [`tools/spec_lint.py`](tools/spec_lint.py) | A rung-0 spec lint: format and card checks that fail the run, a lookup that reports checks not found in the test and script folders, and an owner gate that reports any change to an agreed requirement since the last commit. Run `python tools/test_spec_lint.py` to check it against its fixtures. |
 | [`tools/scene_refs.py`](tools/scene_refs.py) | A rung-0 check for clearing out generated files, such as old light bakes: it lists each file in a folder as in use or unused by the project's scenes and prefabs, and fails when one of them references a file that isn't there. See [Clearing out generated files](#clearing-out-generated-files). Run `python tools/test_scene_refs.py` to check it against its fixtures. |
+| [`tools/check_metas.py`](tools/check_metas.py) | A rung-0 check that every file Git tracks under the assets folder has the `.meta` S&box writes for it, tracked beside it, with names compared in any letter case. Run it from the project's root before an editor run, so a missing `.meta` fails here and not in the run. See [More world-build lessons](#more-world-build-lessons). Run `python tools/test_check_metas.py` to check it on throwaway Git repositories. |
 
 ## The ladder for a map
 
@@ -548,10 +549,11 @@ both unless it says otherwise. Each says what was seen, and on which build.
   caught it. When you add sources for something still to be built, open an editor to write
   their `.meta` files and commit both before the build. A static check that every tracked
   file under the assets folder has a tracked `.meta` beside it catches a missing one
-  without S&box. Leave out the `.meta` files themselves, and compiled `*_c` files and a
-  scene's `.scene_d`, which S&box treats as files that go with their source (`Asset.cs`,
-  lines 10-16 and 168-189). On `26.10.27c` notes and scripts kept beside sources, such as
-  `.md` and `.py` files, got no `.meta` either.
+  without S&box; [`tools/check_metas.py`](tools/check_metas.py) is one. Leave out the
+  `.meta` files themselves, and compiled `*_c` files and a scene's `.scene_d`, which S&box
+  treats as files that go with their source (`Asset.cs`, lines 10-16 and 168-189). On
+  `26.10.27c` notes and scripts kept beside sources, such as `.md` and `.py` files, got no
+  `.meta` either.
 - **Allow for a store package's asset ID changing between editor sessions.** S&box writes
   no `.meta` for a file that a cloud package installed (`Asset.cs`, lines 107 and 173-176;
   still so at `26.10.27`), so no file in the project keeps its GUID, and the native

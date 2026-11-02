@@ -69,6 +69,13 @@
   `.meta` files before the build, and a static check that every tracked asset has its
   `.meta` catches a missing one without S&box. Read from the source at `26.10.13` and
   `26.10.27`, and seen on `26.10.27c`.
+- **A static check for the `.meta` files S&box writes.**
+  `examples/sbox/tools/check_metas.py` fails each file Git tracks under a project's assets
+  folder with no tracked `.meta` beside it, comparing names in any letter case and leaving
+  out the files S&box writes none for. It ends `NOT RUN` when Git tracks no file there, so
+  a run from the wrong folder can't pass. `test_check_metas.py` checks it on throwaway Git
+  repositories, with four controls, and each of eight planted faults in the check fails it.
+  On a real project's tracked assets it agreed with that project's own check.
 - **ELAD releases no longer wait for a GREEN each.** On 2026-11-01 the owner gave standing
   approval for releases. The delivery agent releases a batch on its own when it has
   something a user would notice, in the evening and not every day, always with release
