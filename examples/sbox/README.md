@@ -542,11 +542,13 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
   a dedicated server logged it. So a session check that scans the client's log for missing
   files fails on it, and one that reads only the host's log never sees it. Check on the
   client that each such resource loaded, from its values and any textures it makes, and
-  excuse that exact line only for a resource whose check passed. On `26.10.27c` the same
-  line can end in ` - from <path>`, naming the file that asked for the resource, such as a
-  model or a sound event. The native engine writes the line, so the source doesn't say when
-  it adds the ending. Let the excuse allow that one ending, and still match the whole line
-  from start to end, so it excuses nothing else.
+  excuse that exact line only for a resource whose check passed. On `26.10.27c` a client
+  logs the line as a warning, and it can end in ` - from <path>`, naming the file that
+  asked for the resource: a model or a sound event in the Editor, and on a client in a real
+  project's run, the scene the run loaded. The native engine writes the line, so the source
+  doesn't say when it adds the ending. Let the excuse allow that ending only with the path
+  you expect, such as the run's own scene, and still match the whole line from start to
+  end, so a line naming another file, or with more after it, still counts.
 
 A static check over every C# file the project tracks can hold four of these before any
 S&box run, since none is a compile error. It fails a `GameObjectSystem` that spawns a

@@ -60,9 +60,10 @@
   planted case a step must refuse gets its own entry, which expects the refusal by its
   words, and that later steps don't read output a refused run never makes.
 - **A missing-file excuse allows S&box's new line ending.** The guide's lesson on clients
-  that log a small resource as missing now says that on `26.10.27c` the line can end in
-  ` - from <path>`, and that an excuse should allow that one ending while still matching
-  the whole line.
+  that log a small resource as missing now says that on `26.10.27c` a client logs the line
+  as a warning that can end in ` - from <path>`, such as the run's own scene, and that an
+  excuse should allow that ending only with the path it expects, while still matching the
+  whole line.
 - **The editor check checks its captures' size.** `editor_check.ps1` now refuses a `-Width`
   or `-Height` outside 16-4096 px before it starts, since the screenshot tool clamps them
   without saying so, and fails a capture whose own PNG header gives another size than the
