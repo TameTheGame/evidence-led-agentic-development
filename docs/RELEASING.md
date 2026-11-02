@@ -92,7 +92,10 @@ See ADR-0021 in [Decisions](DECISIONS.md).
    - evidence limits; and
    - rollback.
 
-   Its first heading names the exact release.
+   Its first heading names the exact release. Write each paragraph and list item on one
+   line, not wrapped: GitHub keeps every line break in a release's notes, so a wrapped line
+   shows as a break in mid-sentence on the release page and in its email. `tools/check.py`
+   fails the current version's notes if a line carries on the one above it.
 3. **Check.** Run `python tools/check.py` and `git diff --check`, review proportionally,
    and run the check on a fresh clone.
 4. **Push.** Commit the release on `tamethegame/next-release` and push it. Wait for the

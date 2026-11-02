@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""ELAD repository checks: a skill lint, a relative-link check, a private-word check, and an
-AI-attribution check.
+"""ELAD repository checks: a skill lint, a relative-link check, a private-word check, an
+AI-attribution check, and a check that the current release's notes keep each paragraph on
+one line.
 
 Dependency-free; Python 3.10 or newer, and git for the last two checks. Run from anywhere:
 
@@ -24,6 +25,11 @@ The AI-attribution check fails when a commit reachable from HEAD credits an AI c
 an author or committer whose name or email names one, a trailer such as Co-authored-by
 naming one, a trailer named for one such as Claude-Session, or a line such as "Generated
 with Claude Code". Ordinary mentions in a message, such as "Add a Claude Code hook", pass.
+
+The release-notes check reads VERSION and fails when releases/v<VERSION>.md is missing or
+has a line that carries on the paragraph or list item above it. GitHub keeps each line
+break in a release's notes, so a wrapped line shows as a break in mid-sentence on the
+release page and in its email. Code blocks, tables, headings and list items are left alone.
 """
 
 from __future__ import annotations
@@ -404,6 +410,48 @@ def check_ai_attribution() -> tuple[list[str], str]:
     return problems, f"none of {len(commits)} commits credits an AI tool"
 
 
+# --- Release notes ----------------------------------------------------------------------
+
+LIST_ITEM = re.compile(r"\s*(?:[-*+]|\d+\.)\s")
+BLOCK_START = ("#", "|", ">")
+
+
+def wrapped_lines(text: str) -> list[int]:
+    """Line numbers, outside code blocks, that carry on the paragraph or list item above."""
+    found, fence, in_text = [], False, False
+    for number, line in enumerate(text.splitlines(), start=1):
+        stripped = line.strip()
+        if stripped.startswith("```"):
+            fence, in_text = not fence, False
+            continue
+        if fence:
+            continue
+        if not stripped or stripped.startswith(BLOCK_START):
+            in_text = False
+            continue
+        if in_text and not LIST_ITEM.match(line):
+            found.append(number)
+        in_text = True
+    return found
+
+
+def check_release_notes() -> tuple[list[str], str]:
+    version_file = ROOT / "VERSION"
+    if not version_file.is_file():
+        return [], ""
+    version = version_file.read_text(encoding="utf-8").strip()
+    notes = ROOT / "releases" / f"v{version}.md"
+    where = rel(notes)
+    if not notes.is_file():
+        return [f"{where}: missing; VERSION is {version}"], ""
+    lines = wrapped_lines(notes.read_text(encoding="utf-8"))
+    if lines:
+        return [f"{where}: {len(lines)} line(s) carry on the paragraph or list item above them "
+                f"(first: line {lines[0]}). GitHub shows each line break in a release's notes, so "
+                "write each paragraph and list item on one line"], ""
+    return [], f"v{version}'s release notes keep each paragraph on one line"
+
+
 def main() -> int:
     for stream in (sys.stdout, sys.stderr):  # UTF-8 on any pipe; see the docstring
         stream.reconfigure(encoding="utf-8", errors="replace")
@@ -419,14 +467,15 @@ def main() -> int:
     link_problems, link_count = check_links(files)
     word_problems, word_summary = check_private_words()
     ai_problems, ai_summary = check_ai_attribution()
-    problems = skill_problems + link_problems + word_problems + ai_problems
+    notes_problems, notes_summary = check_release_notes()
+    problems = skill_problems + link_problems + word_problems + ai_problems + notes_problems
     for problem in problems:
         print(f"FAIL  {problem}")
     if problems:
         print(f"FAIL - {len(problems)} problem(s).")
         return 1
     print(f"PASS - {skill_count} skills linted; {link_count} relative links in {len(files)} Markdown files resolve; "
-          f"{word_summary}; {ai_summary}.")
+          f"{word_summary}; {ai_summary}" + (f"; {notes_summary}." if notes_summary else "."))
     return 0
 
 

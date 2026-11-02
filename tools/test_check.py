@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Checks check.py's private-word and AI-attribution checks and both push hooks.
-Dependency-free; needs git on PATH.
+"""Checks check.py's private-word, AI-attribution and release-notes checks and both push
+hooks. Dependency-free; needs git on PATH.
 
     python tools/test_check.py
 
@@ -73,6 +73,7 @@ def make_repo(tmp: Path, files: dict[str, str], message: str = "Add notes",
         assert code == 0, output
         (repo / "tools" / "private-words.sha256").write_text(output, encoding="utf-8")
     for name, text in files.items():
+        (repo / name).parent.mkdir(parents=True, exist_ok=True)
         (repo / name).write_text(text, encoding="utf-8")
     git(repo, "init", "-q")
     git(repo, "add", ".")
@@ -132,6 +133,14 @@ PIPE = {"PYTHONIOENCODING": "cp1252"}
 ODD_LINK = {"notes.md": CLEAN + "\nSee [the plan](plan→next.md).\n"}
 ODD_AUTHOR = "Claude Ω <noreply@anthropic.com>"
 
+# Release notes: GitHub keeps each line break in a release's notes, so each paragraph and
+# list item is one line. Code blocks, tables, headings and nested items stay as they are.
+NOTES_ONE_LINE = ("# ELAD v9.99 — Test\n\nOne paragraph on one line.\n\n## Highlights\n\n"
+                  "- **One item.** On one line.\n  - A nested item.\n1. A numbered item.\n\n"
+                  "```text\nwrapped code\nstays\n```\n\n| a | b |\n|---|---|\n| 1 | 2 |\n\n> A quote.\n")
+NOTES_WRAPPED = "# ELAD v9.99 — Test\n\nOne paragraph\nwrapped.\n\n- **One item.** Wrapped\n  onto two lines.\n"
+VERSIONED = {"notes.md": CLEAN, "VERSION": "9.99\n"}
+
 CASES = [
     # (name, run, expected exit, text that must appear, text that must not appear)
     ("clean repository passes", lambda: check_case({"notes.md": CLEAN}),
@@ -172,6 +181,14 @@ CASES = [
     ("an AI author outside the code page is reported on a cp1252 pipe",
      lambda: check_case({"notes.md": CLEAN}, author=ODD_AUTHOR, env=PIPE),
      1, [f"author {ODD_AUTHOR} names an AI tool"], ["PASS", "Traceback", "\ufffd"]),
+    ("release notes with each paragraph on one line pass",
+     lambda: check_case({**VERSIONED, "releases/v9.99.md": NOTES_ONE_LINE}),
+     0, ["PASS", "v9.99's release notes keep each paragraph on one line"], ["FAIL"]),
+    ("wrapped release notes fail", lambda: check_case({**VERSIONED, "releases/v9.99.md": NOTES_WRAPPED}),
+     1, ["FAIL  releases/v9.99.md: 2 line(s) carry on the paragraph or list item above them (first: line 4)"],
+     ["PASS"]),
+    ("missing release notes fail", lambda: check_case(VERSIONED),
+     1, ["FAIL  releases/v9.99.md: missing; VERSION is 9.99"], ["PASS"]),
     ("hook denies a push from a failing repository", lambda: hook_case(PLANTED, "git push -u origin main"),
      0, ['"permissionDecision": "deny"', "notes.md:3"], []),
     ("hook sees a push after global options", lambda: hook_case(PLANTED, "cd x && git -C . push origin HEAD"),

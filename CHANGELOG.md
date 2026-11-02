@@ -2,7 +2,14 @@
 
 ## Unreleased
 
-No pending changes.
+- **Release notes keep each paragraph on one line.** GitHub keeps every line break in a
+  release's notes, so the hard-wrapped v1.06 notes showed a break in mid-sentence on the
+  release page and in its email. `releases/v1.06.md` now has one line per paragraph and
+  list item, and `docs/RELEASING.md` says to write them that way. `tools/check.py` fails
+  when the notes for the version in `VERSION` are missing or have a line that carries on
+  the one above it, leaving code blocks, tables, headings and list items alone.
+  `test_check.py` gains three cases, and each of five planted faults in the check fails
+  one.
 
 ## 1.06 — 2026-11-02
 
