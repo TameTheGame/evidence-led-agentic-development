@@ -477,10 +477,12 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
   (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.System.cs`, lines 122-125;
   `26.10.13:engine/Sandbox.Engine/Scene/GameObjectSystem/TimedCallbackList.cs`, lines
   41-50). So a SceneLoaded hook sees whatever clock its caller had. On `26.10.13a`, a scene
-  loaded from the Editor gave the Editor's clock, not play time. Read times in the first
-  update instead, or do the hook's work inside `using ( Scene.Push() )`
-  (`Scene.cs`, lines 261-264); that and the same effect on `Game.ActiveScene` are inferred
-  from the source.
+  loaded from the Editor gave the Editor's clock, not play time. `TimeSince` and
+  `TimeUntil` count from `Time.NowDouble`
+  (`26.10.13:engine/Sandbox.Engine/Utility/TimeSince.cs`, lines 22-25 and 73-75), so they
+  read that clock too. Read times in the first update instead, or do the hook's work inside
+  `using ( Scene.Push() )` (`Scene.cs`, lines 261-264); that and the same effect on
+  `Game.ActiveScene` are inferred from the source.
 - **`run_csharp` edits don't mark the scene unsaved, so `save_scene` writes nothing.**
   `run_csharp` creates no undo steps
   (`26.10.13:engine/Sandbox.Engine/Systems/Mcp/ScriptTools.cs`, line 23), and an editor
@@ -525,6 +527,15 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
   files fails on it, and one that reads only the host's log never sees it. Check on the
   client that each such resource loaded, from its values and any textures it makes, and
   excuse that exact line only for a resource whose check passed.
+
+A static check over every C# file the project tracks can hold four of these before any
+S&box run, since none is a compile error. It fails a `GameObjectSystem` that spawns a
+player and never names `NetworkHelper`; a `Stage.SceneLoaded` handler that reads
+`Time.Now`, `Time.NowDouble` or `Time.Delta`, or uses `TimeSince` or `TimeUntil`; a write
+to `WishVelocity` before `UseInputControls` is turned off; and a write through
+`Editor.FileSystem.Content`. Read the code with comments and the text of strings taken out,
+and plant each fault in the check's self-test. One project's check holds all four this way
+on its build scripts, harness and map code.
 
 ## More world-build lessons
 
@@ -813,13 +824,21 @@ both unless it says otherwise. Each says what was seen, and on which build.
   is no longer added for every camera. A camera with `EnablePostProcessing` off gets no fog
   either way; it is on by default
   (`26.10.27:engine/Sandbox.Engine/Scene/Components/Camera/CameraComponent.PostProcess.cs`,
-  line 35). Have the scene check hold the map's fog alone on its object, with no camera or
-  volume on it or above it, and plant a camera there to see the check fail. Set the fog's
-  other values to the look you want rather than leaving its defaults: `Mode` is
-  Exponential, the colour comes from the sky (`ColorSource` is `SceneSky`), and `SkyAffect`
-  is 1, so the fog covers the sky too (`Fog.cs`, lines 77, 175 and 249-253). New at
-  `26.10.27`: at `26.10.13` there is no `Fog` and `GradientFog` isn't obsolete. Read from
-  the source, not run.
+  line 35). A camera with a `PostProcessAnchor` picks its volumes from that object's
+  position, not its own (line 41; `CameraComponent.cs` beside it, line 444). Both are a new
+  camera's defaults, but a camera a scene already saved keeps what it was saved with, so
+  have the build set `EnablePostProcessing` on and the anchor empty on each camera it
+  makes, and the scene check expect both. Have the scene check hold the map's fog alone on
+  its object, with no camera or volume on it or above it, and plant a camera there to see
+  the check fail. Set the fog's other values to the look you want rather than leaving its
+  defaults: `Mode` is Exponential, the colour comes from the sky (`ColorSource` is
+  `SceneSky`), and `SkyAffect` is 1, so the fog covers the sky too (`Fog.cs`, lines 77, 175
+  and 249-253). Leave its height layer off unless the map wants one: `HeightEnabled`, off
+  by default, draws fog by height alone, apart from distance, full at `HeightOffset` above
+  the fog's object and fading over `HeightGradientLength` (`Fog.cs`, lines 111-127), so
+  with it on a room below that height is fogged however near the camera stands, and a scene
+  check can fail it. New at `26.10.27`: at `26.10.13` there is no `Fog` and `GradientFog`
+  isn't obsolete. Read from the source, not run.
 - **Bake envmap probes in the editor, track the compiled bake, and don't capture a probe
   with no bake.** `EnvmapProbe.Bake` runs only in the editor
   (`26.10.27:engine/Sandbox.Engine/Scene/Components/Light/EnvmapProbe.Baking.cs`, lines

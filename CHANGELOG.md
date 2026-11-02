@@ -27,6 +27,13 @@
   almost no pixels when it's hidden. The `.meta` lesson and `check_metas.py`'s notes add
   that a file a project's own script writes under the assets folder, such as a bake's
   record, gets no `.meta`, and to leave it out by its folder and name.
+- **More on cameras, fog and the clock.** The guide's `Fog` lesson adds that a camera with
+  a `PostProcessAnchor` picks its volumes from that object's position, that a camera a
+  scene already saved keeps its post-processing settings, so a build sets them on each
+  camera it makes, and that the fog's height layer fogs a room below its height however
+  near the camera stands. The SceneLoaded lesson adds that `TimeSince` and `TimeUntil` read
+  the same clock, and a note after the first lessons list says a static check over the
+  project's C# can hold four of them before any S&box run.
 
 ## 1.06 — 2026-11-02
 
