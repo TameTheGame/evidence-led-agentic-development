@@ -63,6 +63,12 @@
   360, from which the component takes a new random roll each time it is enabled, so a decal
   left at it turns between loads, and that a scene check can tell a constant from a range
   in the saved scene. Read from the source at `26.10.13` and `26.10.27`, not run.
+- **The S&box lesson on `.meta` files adds when to commit them.** The Editor writes a
+  `.meta` for every new source it mounts, in every folder at once, so a build of one scene
+  fails its clean-tree check on another change's sources. Commit new sources with their
+  `.meta` files before the build, and a static check that every tracked asset has its
+  `.meta` catches a missing one without S&box. Read from the source at `26.10.13` and
+  `26.10.27`, and seen on `26.10.27c`.
 - **ELAD releases no longer wait for a GREEN each.** On 2026-11-01 the owner gave standing
   approval for releases. The delivery agent releases a batch on its own when it has
   something a user would notice, in the evening and not every day, always with release

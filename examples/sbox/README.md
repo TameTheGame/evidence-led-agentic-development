@@ -541,7 +541,17 @@ both unless it says otherwise. Each says what was seen, and on which build.
   for each, and a check that needs a clean working tree fails on them. Commit them with the
   change that added the sources, so their GUIDs stay put. On `26.10.27c` the first editor
   to open a project wrote one per new source file, and a `.slnx` solution file at the
-  project's root, which belongs in `.gitignore`.
+  project's root, which belongs in `.gitignore`. The Editor writes them for every new
+  source it mounts, in every folder at once, so a run that builds one scene also writes
+  `.meta` files for sources another change added, and that run's clean-tree check fails on
+  them. On `26.10.27c` that happened three times in one project before a static check
+  caught it. When you add sources for something still to be built, open an editor to write
+  their `.meta` files and commit both before the build. A static check that every tracked
+  file under the assets folder has a tracked `.meta` beside it catches a missing one
+  without S&box. Leave out the `.meta` files themselves, and compiled `*_c` files and a
+  scene's `.scene_d`, which S&box treats as files that go with their source (`Asset.cs`,
+  lines 10-16 and 168-189). On `26.10.27c` notes and scripts kept beside sources, such as
+  `.md` and `.py` files, got no `.meta` either.
 - **Allow for a store package's asset ID changing between editor sessions.** S&box writes
   no `.meta` for a file that a cloud package installed (`Asset.cs`, lines 107 and 173-176;
   still so at `26.10.27`), so no file in the project keeps its GUID, and the native
