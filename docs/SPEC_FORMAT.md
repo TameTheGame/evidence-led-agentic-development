@@ -84,7 +84,10 @@ The spec says what must be true. It doesn't hold pass or fail state, which would
   the script's name in the `check` field, such as `editor-check OUT-SAVE-01`. When one
   script run settles several requirements, it prints one result line per ID, such as
   `OUT-SAVE-01 PASS` or `OUT-SAVE-01 FAIL - the second save changed the file`, and exits
-  non-zero if any line fails.
+  non-zero if any line fails. Keep each result on its one line: when it quotes text another
+  program wrote, such as an engine test's assertion message, turn that text's line breaks
+  into spaces first. A runner or a reader that judges a result by its own line otherwise
+  finds its reason, or the word it looks for, on a later line.
 - **Human rungs** add one line to `spec/ACCEPTANCE.md`:
 
   ```text

@@ -34,6 +34,11 @@
   near the camera stands. The SceneLoaded lesson adds that `TimeSince` and `TimeUntil` read
   the same clock, and a note after the first lessons list says a static check over the
   project's C# can hold four of them before any S&box run.
+- **A check's result line stays on one line.** `docs/SPEC_FORMAT.md` now says a script's
+  result line that quotes text another program wrote, such as an engine test's assertion
+  message, turns that text's line breaks into spaces, since a runner that judges a result
+  by its own line otherwise misses it. A first real project's suite runner failed a passing
+  check this way.
 
 ## 1.06 — 2026-11-02
 
