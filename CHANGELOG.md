@@ -63,6 +63,12 @@
   360, from which the component takes a new random roll each time it is enabled, so a decal
   left at it turns between loads, and that a scene check can tell a constant from a range
   in the saved scene. Read from the source at `26.10.13` and `26.10.27`, not run.
+- **One more S&box lesson: put a map's `Fog` where no camera or post-process volume owns
+  it.** The S&box guide's "More world-build lessons" gains it. On `26.10.27`, `Fog`
+  replaces the obsolete `GradientFog`, and it is the one post-process effect that is a
+  camera effect: it belongs to the nearest camera or volume on its object or above it, and
+  with none it fogs every camera. Set its mode, colour and `SkyAffect`, since by default it
+  takes its colour from the sky and covers the sky too. Read from the source at `26.10.27`.
 - **The S&box lesson on `.meta` files adds when to commit them.** The Editor writes a
   `.meta` for every new source it mounts, in every folder at once, so a build of one scene
   fails its clean-tree check on another change's sources. Commit new sources with their

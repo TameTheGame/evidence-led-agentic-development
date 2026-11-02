@@ -528,7 +528,7 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
 
 ## More world-build lessons
 
-Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up nineteen more. Each is
+Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up twenty more. Each is
 read from the engine source at `26.10.13` and again at `26.10.27`, and reads the same at
 both unless it says otherwise. Each says what was seen, and on which build.
 
@@ -793,6 +793,30 @@ both unless it says otherwise. Each says what was seen, and on which build.
   (`26.10.27:engine/Sandbox.Engine/Scene/Components/Particles/ParticleFloat.cs`, lines
   233-268), so a scene check can tell them apart. Set the roll the layout means as a
   constant, and have the scene check expect that number. Read from the source, not run.
+- **Put a map's `Fog` where no camera or post-process volume owns it.** On `26.10.27`,
+  `GradientFog` is marked obsolete in favour of `Fog`, a post-process effect
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Render/GradientFog.cs`, line 6). `Fog`
+  is the one post-process effect there that is a camera effect
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/PostProcessing/Fog.Blending.cs`, line
+  10), and it reaches cameras by its own rule. Any other effect works only on a camera's
+  object or under it, or under a post-process volume the camera stands in
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/PostProcessing/PostProcessSystem.cs`,
+  lines 96-120; `PostProcessSystem.BuildScratch.cs` beside it, lines 26-35). A `Fog`
+  belongs to the nearest `PostProcessVolume` or `CameraComponent` on its object or above
+  it, disabled ones included, and a `Fog` with no owner is added for every camera at full
+  weight (`PostProcessSystem.cs`, lines 143-217; `PostProcessSystem.BuildScratch.cs`, lines
+  50-77). So a fog on a plain object under the scene's root fogs every camera, the same fog
+  under a camera's object fogs only that camera, and under a disabled camera or volume it
+  is no longer added for every camera. A camera with `EnablePostProcessing` off gets no fog
+  either way; it is on by default
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Camera/CameraComponent.PostProcess.cs`,
+  line 35). Have the scene check hold the map's fog alone on its object, with no camera or
+  volume on it or above it, and plant a camera there to see the check fail. Set the fog's
+  other values to the look you want rather than leaving its defaults: `Mode` is
+  Exponential, the colour comes from the sky (`ColorSource` is `SceneSky`), and `SkyAffect`
+  is 1, so the fog covers the sky too (`Fog.cs`, lines 77, 175 and 249-253). New at
+  `26.10.27`: at `26.10.13` there is no `Fog` and `GradientFog` isn't obsolete. Read from
+  the source, not run.
 
 ## Lessons from importing old content
 
