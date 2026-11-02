@@ -51,6 +51,14 @@
   start-up timeout. It reads the setting as S&box does, by its exact name, and leaves a
   `.sbproj` that isn't JSON to S&box's own error box. `-SelfTest` gains six cases, one of
   them a planted `.sbproj` with the setting off.
+- **A camera lesson and a planted-refusal lesson.** The S&box guide's [More world-build
+  lessons](examples/sbox/README.md#more-world-build-lessons) now says to read a player's
+  camera once it has stopped turning, with a real-time limit, and fail one still moving,
+  since in 2 of 45 runs a fixed wait after a turn read it part of the way round, though the
+  source shows no smoothing of the turn. The starter's [Writing a requirement's
+  test](examples/sbox/rung1-starter/README.md#writing-a-requirements-test) says that a
+  planted case a step must refuse gets its own entry, which expects the refusal by its
+  words, and that later steps don't read output a refused run never makes.
 
 ## 1.06 — 2026-11-02
 

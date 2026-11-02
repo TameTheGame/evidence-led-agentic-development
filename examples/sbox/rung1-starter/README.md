@@ -164,6 +164,13 @@ When the line says `SYNCED`, the engine changed under the project:
   scenes build meshes only on enable, as the game does.
 - **Give every stuck check a control case** that places a body inside a block and expects
   it to be caught. A check that has never failed may be blind.
+- **Expect a planted refusal by its own words.** When a suite runs a planted case that a
+  step must refuse, such as a copy of the scene the build must stop on, give that case its
+  own entry that expects the refusal: the exit code and the refusal's words, since any
+  other failure exits the same way. Keep later steps from reading output a refused run
+  never makes, such as its capture. A first real project's suite expected two such copies
+  to pass like the rest, so its run failed on them though the build had refused each as
+  designed.
 - **Keep `Setup_DefaultSurfaceIsAvailable`.** If it ever fails, generated meshes can't
   build in tests on that engine build. Stop and report the route it prints.
 

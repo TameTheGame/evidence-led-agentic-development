@@ -545,7 +545,7 @@ on its build scripts, harness and map code.
 
 ## More world-build lessons
 
-Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up twenty-two more. Each is
+Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up twenty-three more. Each is
 read from the engine source at `26.10.13` and again at `26.10.27`, and reads the same at
 both unless it says otherwise. Each says what was seen, and on which build.
 
@@ -877,6 +877,25 @@ both unless it says otherwise. Each says what was seen, and on which build.
   isn't blocked. Run it on each planted copy of the scene the check reads too, and place a
   reading past terrain by hand unless the check traces the terrain as well. No engine
   source is involved; this was seen.
+- **Read a player's camera once it has stopped turning, and fail it if it never does.** A
+  `PlayerController` writes its eye rotation, made from `EyeAngles`, straight into the
+  camera's view each time the scene composes the view, once per tick
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.Camera.cs`,
+  lines 41-49 and 90;
+  `26.10.27:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/Modes/MoveMode.Camera.cs`,
+  lines 9-15; `26.10.27:engine/Sandbox.Engine/Scene/Components/Camera/CameraComponent.cs`,
+  lines 270 and 298-311). It smooths only the eye's height and the third-person camera's
+  distance (`PlayerController.Camera.cs`, lines 51-54 and 72-84). With `UseLookControls`
+  on, each update also adds the look input to `EyeAngles`
+  (`PlayerController.DefaultControls.cs`, lines 46-49; `PlayerController.Input.cs`, lines
+  82-99). Yet on `26.10.27c`, a check that turned a first-person player a quarter turn in
+  play mode and read the camera after five waits of 1/60 s got 63 and 0 degrees in 2 of 45
+  runs, and about 90 in the rest. The source doesn't say why. So read the camera once it
+  has settled: wait frame by frame, past a least wait, until its view has held still for a
+  span, for at most a real-time limit, and fail a camera still moving then, so a part-way
+  read fails as one, not as a wrong angle. Don't widen the reading's bounds to fit an early
+  read. At `26.10.13` the code reads the same, at lines 71-88 of
+  `PlayerController.Input.cs` and 310-323 of `CameraComponent.cs`.
 
 ## Lessons from importing old content
 
