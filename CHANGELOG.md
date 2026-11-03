@@ -90,7 +90,8 @@
 - **A settle wait counts the game's frames.** The camera lesson adds that a wait that saw
   too few frames means the game stalled, which a check fails as a stall, not as a camera
   still turning, and that a static check can fail a fixed wait before a reading in a
-  `run_csharp` script.
+  `run_csharp` script. It also says to take the turn and its reading several times in one
+  launch, since a part-way read seen in 2 of 45 runs passes most single runs.
 
 ## 1.06 — 2026-11-02
 

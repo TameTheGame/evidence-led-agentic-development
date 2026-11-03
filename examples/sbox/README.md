@@ -917,11 +917,15 @@ both unless it says otherwise. Each says what was seen, and on which build.
   read. Count the game's frames during the wait too: on `26.10.27c` one such wait saw 11
   frames in 18 s, so the game had stalled, and a check that didn't count read that as a
   camera still turning. Fail a wait that saw too few frames, such as fewer than 30 in its
-  limit, as a stalled game, and don't widen a limit to fit a stall. Wait the same way for
-  any engine state a `run_csharp` script reads after a change. A static check can fail a
-  fixed wait, such as a `GameTask` delay, before a reading unless a loop with a limit and
-  another way out holds it or follows it. At `26.10.13` the code reads the same, at lines
-  71-88 of `PlayerController.Input.cs` and 310-323 of `CameraComponent.cs`.
+  limit, as a stalled game, and don't widen a limit to fit a stall. A part-way read in 2 of
+  45 runs passes most single runs, so take the turn several times in one launch, such as
+  10: each time turn again, settle and read, and write each result to the output. Reading
+  the camera again without turning answers the same way each time, so it isn't a repeat.
+  Wait the same way for any engine state a `run_csharp` script reads after a change. A
+  static check can fail a fixed wait, such as a `GameTask` delay, before a reading unless a
+  loop with a limit and another way out holds it or follows it. At `26.10.13` the code
+  reads the same, at lines 71-88 of `PlayerController.Input.cs` and 310-323 of
+  `CameraComponent.cs`.
 - **Read a capture's size from the picture, and never report an editor frame time as the
   map's.** `camera_screenshot` and `editor_camera_screenshot` render a camera into a
   picture of the width and height asked for, 1280 by 720 unless told
