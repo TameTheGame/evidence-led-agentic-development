@@ -104,6 +104,11 @@
   the entry says to set `Input.AnalogMove` on every fixed step from a
   `Stage.StartFixedUpdate` hook, and a jump on one step only. Read from the source at
   `26.10.13` and `26.10.27`; not yet seen in a run.
+- **A check a spec cites must run in the suite.** `docs/SPEC_FORMAT.md` now says that
+  finding a check's name in the test sources doesn't show anything runs it. A check the
+  suite and CI leave out holds nothing, so the commit that brings a citation or its check
+  adds the check to the suite, with a planted fault it fails. A first real project found a
+  generator's check that two records cited and nothing ran.
 
 ## 1.06 — 2026-11-02
 

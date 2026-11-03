@@ -112,6 +112,12 @@ files:
 agrees its requirement, so a newly agreed requirement has no check yet. The other items
 fail the lint.
 
+**A name in the test sources doesn't mean the check runs.** The lint finds the check, not
+whatever runs it. A check that the project's suite and CI leave out passes nothing and
+fails nothing, so a requirement or a record that cites it claims what nothing holds. In the
+commit that brings a citation or its check, add the check to the suite the project runs on
+each change, with a planted fault it fails.
+
 **An owner gate is worth adding.** It compares each `agreed` requirement with the last
 commit and reports any change to its sentence, state, rung, or check as needing the owner.
 It reports and never blocks, because the owner may already have agreed the change.
