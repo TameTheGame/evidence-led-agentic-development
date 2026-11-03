@@ -80,6 +80,17 @@
   owner's answer from a new input, it builds that input afresh into a scratch copy and
   compares, since a hand-made list of changed parts can miss one, and the hold compares
   with the last pinned copy, so it never sees the miss.
+- **A wall doesn't stop a player's use.** A new world-build lesson in the S&box guide says
+  a `PlayerController`'s use trace runs a ray and then two sphere passes, that each pass
+  stops at a solid only for itself, and that on `26.10.27c` a player hovered a button
+  behind a thin wall within reach. It says to keep a usable thing out of reach of every eye
+  behind a wall, and to press in an engine test what the player hovers. The import
+  reference's entry on usable things inside other solids now says the trace ends each pass,
+  not the whole search, at a solid.
+- **A settle wait counts the game's frames.** The camera lesson adds that a wait that saw
+  too few frames means the game stalled, which a check fails as a stall, not as a camera
+  still turning, and that a static check can fail a fixed wait before a reading in a
+  `run_csharp` script.
 
 ## 1.06 — 2026-11-02
 

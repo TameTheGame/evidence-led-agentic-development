@@ -867,8 +867,8 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
   - Checked: source at `be57e3d`; seen on `26.10.13a`, and in Garry's Mod, which swung
     that hatch the same way. Proof: a test that every rotating door opens without going
     into a wall.
-- **Let the player use things that sit inside other solids.** S&box's use trace stops at
-  the first solid collider that has nothing to press
+- **Let the player use things that sit inside other solids.** S&box's use trace ends each
+  of its passes at the first solid collider that has nothing to press
   (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.Pressing.cs`,
   lines 205-261). Source's use also searches a sphere for usable things roughly in front
   (`source-sdk-2013@be57e3d:src/game/shared/baseplayer_shared.cpp`, lines 1067-1269; the
@@ -877,7 +877,9 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
   line 696; `src/game/server/doors.h`, line 71). So a button built overlapping a door
   works in Source but not in S&box. Give the player a component that answers the
   controller's `GetUsableComponent` event, which it asks before anything else
-  (`Pressing.cs`, line 231; `PlayerController.Events.cs`, line 36).
+  (`Pressing.cs`, line 231; `PlayerController.Events.cs`, line 36). Its sphere passes can
+  still reach a button behind a thin wall, as
+  [More world-build lessons](README.md#more-world-build-lessons) says.
   - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`. Proof: a play-mode
     test that presses every usable thing from where a player would stand.
 - **Inside Sandbox, implement `IPhysgunEvent` to hear about the physics gun.** Sandbox's

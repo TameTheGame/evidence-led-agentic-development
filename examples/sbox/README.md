@@ -561,7 +561,7 @@ on its build scripts, harness and map code.
 
 ## More world-build lessons
 
-Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up twenty-four more. Each is
+Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up twenty-five more. Each is
 read from the engine source at `26.10.13` and again at `26.10.27`, and reads the same at
 both unless it says otherwise. Each says what was seen, and on which build.
 
@@ -914,8 +914,14 @@ both unless it says otherwise. Each says what was seen, and on which build.
   has settled: wait frame by frame, past a least wait, until its view has held still for a
   span, for at most a real-time limit, and fail a camera still moving then, so a part-way
   read fails as one, not as a wrong angle. Don't widen the reading's bounds to fit an early
-  read. At `26.10.13` the code reads the same, at lines 71-88 of
-  `PlayerController.Input.cs` and 310-323 of `CameraComponent.cs`.
+  read. Count the game's frames during the wait too: on `26.10.27c` one such wait saw 11
+  frames in 18 s, so the game had stalled, and a check that didn't count read that as a
+  camera still turning. Fail a wait that saw too few frames, such as fewer than 30 in its
+  limit, as a stalled game, and don't widen a limit to fit a stall. Wait the same way for
+  any engine state a `run_csharp` script reads after a change. A static check can fail a
+  fixed wait, such as a `GameTask` delay, before a reading unless a loop with a limit and
+  another way out holds it or follows it. At `26.10.13` the code reads the same, at lines
+  71-88 of `PlayerController.Input.cs` and 310-323 of `CameraComponent.cs`.
 - **Read a capture's size from the picture, and never report an editor frame time as the
   map's.** `camera_screenshot` and `editor_camera_screenshot` render a camera into a
   picture of the width and height asked for, 1280 by 720 unless told
@@ -934,6 +940,29 @@ both unless it says otherwise. Each says what was seen, and on which build.
   Editor's. Label it so, and never report it as the map's frame rate; measure that in a
   game run at the screen's full size. At `26.10.13` the code reads the same, with
   `camera_screenshot` at lines 619-632 of `Scene.cs`.
+- **Don't count on a wall to keep a player from pressing what is behind it.** A
+  `PlayerController` finds what to press with three traces from its eyes
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.Pressing.cs`,
+  lines 205-219): a ray and then spheres of radius 2 and 4, each `RunAll` with triggers and
+  `ReachLength` less its radius long. Each pass takes the first hit that a
+  `GetUsableComponent` hook on the player answers for or that holds an `IPressable` (lines
+  221-255). Its `break` at the first hit that isn't a trigger (lines 257-261) leaves only
+  that pass's loop, so the sphere passes still run after the ray has stopped at a wall. On
+  `26.10.27c`, in five engine-test runs, a player looking at a button 24 in behind a 4 in
+  wall, within reach, hovered the button, whether the wall or the button was built first:
+  the ray stopped at the wall, and a sphere pass reached the button. `SceneTrace.RunAll`
+  sorts its hits by distance (`26.10.27:engine/Sandbox.Engine/Scene/Scene/Scene.Trace.cs`,
+  line 69), and the physics query under it is native, so the source doesn't say why a
+  sphere pass reached the button first. Keep a usable thing more than `ReachLength`, 130 by
+  default (`PlayerController.Input.cs`, line 65), from every eye on a wall's other side. In
+  an engine test, press what a player would: turn the player's eyes to the thing, tick the
+  scene once, and press what `Hovered` holds (`Pressing.cs`, lines 8 and 23-37), which the
+  controller sets only while `UseLookControls` is on
+  (`PlayerController.DefaultControls.cs`, lines 46-50). So that this can't pass by hovering
+  anything, plant a button past reach and one the player looks away from, which the player
+  must not hover. A static check can fail an engine test that presses a usable thing before
+  it looks at it this way. At `26.10.13` the code reads the same, with `ReachLength` at
+  line 54 of `PlayerController.Input.cs`.
 
 ## Lessons from importing old content
 
