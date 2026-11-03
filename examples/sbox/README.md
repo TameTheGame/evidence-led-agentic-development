@@ -938,12 +938,14 @@ both unless it says otherwise. Each says what was seen, and on which build.
   limit, as a stalled game, and don't widen a limit to fit a stall. A part-way read in 2 of
   45 runs passes most single runs, so take the turn several times in one launch, such as
   10: each time turn again, settle and read, and write each result to the output. Reading
-  the camera again without turning answers the same way each time, so it isn't a repeat.
-  Wait the same way for any engine state a `run_csharp` script reads after a change. A
-  static check can fail a fixed wait, such as a `GameTask` delay, before a reading unless a
-  loop with a limit and another way out holds it or follows it. At `26.10.13` the code
-  reads the same, at lines 71-88 of `PlayerController.Input.cs` and 310-323 of
-  `CameraComponent.cs`.
+  the camera again without turning answers the same way each time, so it isn't a repeat. A
+  loop that catches each failed repeat so the next one still runs must let
+  `Assert.Inconclusive` through while no repeat has failed, or a test that couldn't run,
+  such as one with no saved scene, ends as ten failures, not `INCONCLUSIVE`. Wait the same
+  way for any engine state a `run_csharp` script reads after a change. A static check can
+  fail a fixed wait, such as a `GameTask` delay, before a reading unless a loop with a
+  limit and another way out holds it or follows it. At `26.10.13` the code reads the same,
+  at lines 71-88 of `PlayerController.Input.cs` and 310-323 of `CameraComponent.cs`.
 - **Read a capture's size from the picture, and never report an editor frame time as the
   map's.** `camera_screenshot` and `editor_camera_screenshot` render a camera into a
   picture of the width and height asked for, 1280 by 720 unless told

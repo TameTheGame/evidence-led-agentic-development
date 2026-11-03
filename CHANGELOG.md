@@ -115,6 +115,11 @@
   which `sbox-cli --game` adds but a script's own start must, and that each such client
   takes a made-up Steam ID from its `+instanceid`. Read from the source at `26.10.13` and
   `26.10.27`.
+- **A repeat loop lets a test that didn't run end inconclusive.** The camera lesson adds
+  that a loop that catches each failed repeat so the next one still runs must let
+  `Assert.Inconclusive` through while no repeat has failed. Otherwise the engine test
+  runner reads a test that couldn't run, such as one with no saved scene, as ten failures,
+  not `INCONCLUSIVE`.
 
 ## 1.06 — 2026-11-02
 
