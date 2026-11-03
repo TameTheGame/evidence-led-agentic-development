@@ -120,6 +120,14 @@
   `Assert.Inconclusive` through while no repeat has failed. Otherwise the engine test
   runner reads a test that couldn't run, such as one with no saved scene, as ten failures,
   not `INCONCLUSIVE`.
+- **The spec lint finds its repository under a non-ASCII folder on Windows.**
+  `spec_lint.py` read Git's path for the repository as text, which Python decodes in the
+  ANSI code page on Windows, such as cp1252. Under a folder whose name is outside ASCII,
+  the path didn't match the spec's, so the lint skipped the owner gate and the retired-ID
+  check with only a note and passed a changed agreed sentence. It now decodes the path as
+  Python decodes file names. `test_spec_lint.py` gains a case under such a folder, which
+  fails with the old lint when its text runs decode in cp1252, and runs the lint with UTF-8
+  mode off, since a PC that sets `PYTHONUTF8=1` decodes text runs as UTF-8 and hid the bug.
 
 ## 1.06 — 2026-11-02
 

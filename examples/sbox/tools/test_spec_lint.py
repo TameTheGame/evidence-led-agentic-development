@@ -24,11 +24,14 @@ FIXTURES = HERE / "fixtures"
 
 SOURCES = ["--sources", "UnitTests", "--sources", "tools"]
 # Each check runs with a cp1252 stdout, as Windows gives a pipe, and its output is read as
-# UTF-8, so a case with characters outside cp1252 fails unless the check writes UTF-8.
-PIPE = {"PYTHONIOENCODING": "cp1252"}
+# UTF-8, so a case with characters outside cp1252 fails unless the check writes UTF-8. UTF-8
+# mode is off, as Python starts on Windows by default, so a text run decodes in the ANSI code
+# page even where the runner sets PYTHONUTF8=1, which would hide the non-ASCII folder case.
+PIPE = {"PYTHONIOENCODING": "cp1252", "PYTHONUTF8": "0"}
 
 CASES = [
-    # (variant, extra arguments, expected exit, text that must appear, text that must not appear)
+    # (variant, extra arguments, expected exit, text that must appear, text that must not appear,
+    # and the folder the repository sits in, if any)
     ("base.spec.md", SOURCES, 0, ["PASS", "no agreed requirement changed"],
      ["NEEDS OWNER", "NOT FOUND", "FAIL", "note"]),
     ("base.spec.md", [], 0, ["PASS", "note  check names not looked up"], ["NOT FOUND", "FAIL"]),
@@ -41,6 +44,10 @@ CASES = [
     ("check-not-written.spec.md", SOURCES, 0,
      ["NOT FOUND: YARD-ROUTE-01", "YARD_ROUTE_01_RouteIsClear", "1 check(s) not found", "PASS"],
      ["FAIL", "NOT FOUND: YARD-SIGHT-01", "NOT FOUND: YARD-DATA-01"]),
+    # The repository under a folder with a non-ASCII name. A lint that reads Git's path in the
+    # ANSI code page, as a text run does on Windows, skips the owner gate here.
+    ("agreed-sentence-changed.spec.md", SOURCES, 0, ["NEEDS OWNER: YARD-SIGHT-01", "PASS"],
+     ["owner gate and retired-ID check skipped", "FAIL"], "Übung ü"),
     ("bad-format.spec.md", SOURCES, 1,
      ["duplicate ID", "state \"approved\"", "rung \"vibes\"", "agreed requirement has no check"], []),
     ("bad-checks.spec.md", SOURCES, 1,
@@ -56,9 +63,9 @@ def git(repo: Path, *args: str) -> None:
                     *args], cwd=repo, check=True, capture_output=True)
 
 
-def run_case(variant: str, extra: list[str]) -> tuple[int, str]:
+def run_case(variant: str, extra: list[str], folder: str = "") -> tuple[int, str]:
     with tempfile.TemporaryDirectory() as tmp:
-        repo = Path(tmp)
+        repo = Path(tmp) / folder
         shutil.copytree(FIXTURES / "sources", repo, dirs_exist_ok=True)
         (repo / "spec").mkdir()
         target = repo / "spec" / "yard.spec.md"
@@ -77,13 +84,14 @@ def main() -> int:
     for stream in (sys.stdout, sys.stderr):  # a failing case prints the lint's output
         stream.reconfigure(encoding="utf-8", errors="replace")
     failures = 0
-    for variant, extra, code, present, absent in CASES:
-        got_code, output = run_case(variant, extra)
+    for variant, extra, code, present, absent, *where in CASES:
+        folder = where[0] if where else ""
+        got_code, output = run_case(variant, extra, folder)
         missing = [t for t in present if t not in output]
         unwanted = [t for t in absent if t in output]
         ok = got_code == code and not missing and not unwanted
         failures += not ok
-        shown = f"{variant} {' '.join(extra)}".strip()
+        shown = f"{variant} {' '.join(extra)}".strip() + (f" in {folder}" if folder else "")
         print(f"{'PASS' if ok else 'FAIL'}  {shown}: exit {got_code}")
         if not ok:
             print(f"      expected exit {code}; missing {missing}; unexpected {unwanted}")

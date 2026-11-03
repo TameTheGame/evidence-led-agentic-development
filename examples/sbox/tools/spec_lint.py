@@ -41,6 +41,7 @@ PATH.
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import sys
@@ -179,8 +180,10 @@ def read_text(path: Path, texts: dict[Path, str]) -> str:
 def base_text(path: Path, base: str) -> tuple[str | None, str | None]:
     """The file's content at the git base, or (None, reason) when unavailable."""
     try:
-        top = subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=path.parent,
-                             capture_output=True, text=True, check=True).stdout.strip()
+        # Decoded as Python decodes file names, since a text run would read Git's UTF-8 in
+        # the ANSI code page on Windows and miss the repository under a non-ASCII folder.
+        top = os.fsdecode(subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=path.parent,
+                                         capture_output=True, check=True).stdout).strip()
         rel = path.resolve().relative_to(Path(top).resolve()).as_posix()
         shown = subprocess.run(["git", "show", f"{base}:{rel}"], cwd=top,
                                capture_output=True, text=True, encoding="utf-8")
