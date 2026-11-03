@@ -129,7 +129,12 @@ with it. Don't trust that list of parts when it is made by hand: after the rebui
 the new input afresh into a scratch copy and compare it with the rebuilt files. Any
 difference outside the values the project keeps on its own is a part the input changed that
 the list missed. The hold can't see it, since it compares the built parts with their copy
-at the last pin, not with the input.
+at the last pin, not with the input. An answer that changes only a few parts can land
+without a new input: commit it as an amendment file that names each part it changes and the
+new value, pin the file's SHA-256 in the decision record, and hold the built parts to the
+input with each amendment applied. A later new input must then carry each amended value, or
+its decision must say it supersedes that amendment, since a rebuild from it would otherwise
+undo the owner's answer while every check passes.
 
 The core doesn't ship a lint; each project owns its own. A worked example is
 [`examples/sbox/tools/spec_lint.py`](../examples/sbox/tools/spec_lint.py). It covers every

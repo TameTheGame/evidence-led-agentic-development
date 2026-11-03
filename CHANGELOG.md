@@ -80,6 +80,11 @@
   owner's answer from a new input, it builds that input afresh into a scratch copy and
   compares, since a hand-made list of changed parts can miss one, and the hold compares
   with the last pinned copy, so it never sees the miss.
+- **A small owner answer can amend the built parts.** `docs/SPEC_FORMAT.md` now says an
+  answer that changes only a few parts built from an owner's input can land as an amendment
+  file, pinned by its SHA-256, that names each part. A later new input must carry each
+  amended value or say it supersedes it, since a rebuild from it would otherwise undo the
+  answer while every check passes.
 - **A wall doesn't stop a player's use.** A new world-build lesson in the S&box guide says
   a `PlayerController`'s use trace runs a ray and then two sphere passes, that each pass
   stops at a solid only for itself, and that on `26.10.27c` a player hovered a button
