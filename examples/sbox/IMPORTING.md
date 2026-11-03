@@ -1096,16 +1096,32 @@ writes, store packages, and tags.
     passes with Sandbox's player (it climbs a ladder 49 units in 2 seconds).
 - **Trigger a game's input action from code with `Input.SetAction`.** Call
   `Input.SetAction( action, true )` for one frame from a `GameObjectSystem` at
-  `Stage.StartUpdate`, and the game's own code sees `Input.Pressed` for it: `Pressed` means
-  down now and not down in the last command, and `SetAction` is public
-  (`26.10.13:engine/Sandbox.Engine/Systems/Input/Input.Actions.cs`, lines 118-123 and 140).
-  `Input.Clear( action )` at the same point hides an action from the game's code (line
-  149). Use them for an action the game binds to no key, or in a check. Sandbox's noclip
-  had no key and its toggle is private, so this was the way to give it Garry's Mod's key
-  and console command without copying it.
-  - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that
-    toggles noclip this way, and one in which a player working a mounted gun stays put
-    while it fires.
+  `Stage.StartUpdate`, and the game's own code that runs in its update sees `Input.Pressed`
+  for it: `Pressed` means down now and not down in the last command, and `SetAction` is
+  public (`26.10.13:engine/Sandbox.Engine/Systems/Input/Input.Actions.cs`, lines 118-123
+  and 140). `Input.Clear( action )` at the same point hides an action from the game's code
+  (line 149). Use them for an action the game binds to no key, or in a check. Sandbox's
+  noclip had no key and its toggle is private, so this was the way to give it Garry's Mod's
+  key and console command without copying it. That stage comes too late for input read in a
+  fixed update, as the stock `PlayerController` reads move, duck and jump
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.DefaultControls.cs`,
+  lines 65-79), and its move mode reads the run key
+  (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/Modes/MoveMode.cs`,
+  line 152). A scene's tick runs its fixed steps before `StartUpdate`
+  (`26.10.13:engine/Sandbox.Engine/Scene/Scene/Scene.Tick.cs`, lines 221 and 229), each
+  fixed step flips and pushes its own input context before `StartFixedUpdate` (lines
+  350-357), and `SetAction` writes to whichever context is pushed (`Input.Actions.cs`,
+  lines 194-198). Each frame also works `Input.AnalogMove` out again from the move keys
+  before the tick (`26.10.13:engine/Sandbox.Engine/Systems/Input/Input.cs`, lines 123-138).
+  So from a hook at `Stage.StartFixedUpdate`, set `Input.AnalogMove`, whose setter is
+  public (lines 60-64), on every fixed step of a walk, and call `SetAction` for a jump on
+  one fixed step only, since a press set on two steps in a row reads as two. At `26.10.27`
+  the code reads the same, with the fixed step at lines 358-365 of `Scene.Tick.cs` and the
+  run key at line 159 of `MoveMode.cs`.
+  - Checked: source at `26.10.13`; seen on `26.10.13a`. The fixed-step case is from source
+    at `26.10.13` and `26.10.27` and not yet seen. Proof: a play-mode test that toggles
+    noclip this way, and one in which a player working a mounted gun stays put while it
+    fires.
 - **In play, keep the game's own camera and switch off the cameras the map brings.** A
   player controller, Sandbox's included, drives the scene's main camera instead of bringing
   its own. The main camera is the first with `IsMainCamera`, then by `Priority`

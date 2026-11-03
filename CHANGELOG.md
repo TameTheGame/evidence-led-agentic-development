@@ -97,6 +97,13 @@
   still turning, and that a static check can fail a fixed wait before a reading in a
   `run_csharp` script. It also says to take the turn and its reading several times in one
   launch, since a part-way read seen in 2 of 45 runs passes most single runs.
+- **Scripted input reaches a fixed update only from a fixed-step hook.** The import
+  reference's `Input.SetAction` entry now says that a press set at `Stage.StartUpdate`
+  reaches only code that runs in the update. The stock player reads move, run, duck and
+  jump in its fixed update, which runs before `StartUpdate` with its own input context, so
+  the entry says to set `Input.AnalogMove` on every fixed step from a
+  `Stage.StartFixedUpdate` hook, and a jump on one step only. Read from the source at
+  `26.10.13` and `26.10.27`; not yet seen in a run.
 
 ## 1.06 — 2026-11-02
 
