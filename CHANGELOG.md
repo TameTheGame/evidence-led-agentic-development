@@ -71,6 +71,10 @@
   720 default. A new world-build lesson says a capture's size comes from the picture, not
   the monitor or the Editor's game view, and that a GPU frame time read in the Editor is
   the Editor's, never the map's frame rate.
+- **Two more `Fog` facts.** The guide's `Fog` lesson adds that a `GradientFog` a scene
+  already saved still turns the world's own gradient fog on, apart from any `Fog`, so a
+  scene that moves to `Fog` drops it and its scene check fails one, and that `Fog`'s sun
+  glow is on by default.
 
 ## 1.06 — 2026-11-02
 

@@ -831,8 +831,11 @@ both unless it says otherwise. Each says what was seen, and on which build.
   constant, and have the scene check expect that number. Read from the source, not run.
 - **Put a map's `Fog` where no camera or post-process volume owns it.** On `26.10.27`,
   `GradientFog` is marked obsolete in favour of `Fog`, a post-process effect
-  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Render/GradientFog.cs`, line 6). `Fog`
-  is the one post-process effect there that is a camera effect
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Render/GradientFog.cs`, line 6). A
+  `GradientFog` a scene already saved still turns the scene world's own gradient fog on
+  before each render (lines 31-36), apart from any `Fog`, so remove it when a scene moves
+  to `Fog`, and have the scene check fail one. `Fog` is the one post-process effect there
+  that is a camera effect
   (`26.10.27:engine/Sandbox.Engine/Scene/Components/PostProcessing/Fog.Blending.cs`, line
   10), and it reaches cameras by its own rule. Any other effect works only on a camera's
   object or under it, or under a post-process volume the camera stands in
@@ -854,13 +857,14 @@ both unless it says otherwise. Each says what was seen, and on which build.
   its object, with no camera or volume on it or above it, and plant a camera there to see
   the check fail. Set the fog's other values to the look you want rather than leaving its
   defaults: `Mode` is Exponential, the colour comes from the sky (`ColorSource` is
-  `SceneSky`), and `SkyAffect` is 1, so the fog covers the sky too (`Fog.cs`, lines 77, 175
-  and 249-253). Leave its height layer off unless the map wants one: `HeightEnabled`, off
-  by default, draws fog by height alone, apart from distance, full at `HeightOffset` above
-  the fog's object and fading over `HeightGradientLength` (`Fog.cs`, lines 111-127), so
-  with it on a room below that height is fogged however near the camera stands, and a scene
-  check can fail it. New at `26.10.27`: at `26.10.13` there is no `Fog` and `GradientFog`
-  isn't obsolete. Read from the source, not run.
+  `SceneSky`), `SkyAffect` is 1, so the fog covers the sky too, and `SunLightingEnabled` is
+  on, which adds an unshadowed glow facing the sun to the distance fog (`Fog.cs`, lines 77,
+  175, 213-229 and 249-253). Leave its height layer off unless the map wants one:
+  `HeightEnabled`, off by default, draws fog by height alone, apart from distance, full at
+  `HeightOffset` above the fog's object and fading over `HeightGradientLength` (`Fog.cs`,
+  lines 111-127), so with it on a room below that height is fogged however near the camera
+  stands, and a scene check can fail it. New at `26.10.27`: at `26.10.13` there is no `Fog`
+  and `GradientFog` isn't obsolete. Read from the source, not run.
 - **Bake envmap probes in the editor, track the compiled bake, and don't capture a probe
   with no bake.** `EnvmapProbe.Bake` runs only in the editor
   (`26.10.27:engine/Sandbox.Engine/Scene/Components/Light/EnvmapProbe.Baking.cs`, lines
