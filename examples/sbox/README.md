@@ -431,6 +431,24 @@ from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
   Editor's file watch, as [More world-build lessons](#more-world-build-lessons) says.
   - The same code runs when local automation starts a game with `-mcp`. That is from the
     source and untested.
+- **A `-joinlocal` client joins on its own, and `sbox-cli` reaches it only with `-mcp`.** A
+  game started with `-joinlocal` runs its whole start-up in one call. It waits for the
+  account's sign-in, which sets its avatar
+  (`26.10.27:engine/Sandbox.Engine/Core/Bootstrap.cs`, line 374;
+  `26.10.27:engine/Sandbox.Menu/MenuDll.cs`, lines 52 and 165-172). It then opens the pipe
+  `sbox-cli` attaches to, only when started with `-mcp` (`Bootstrap.cs`, lines 436-443),
+  and runs `connect local` itself (lines 445-449). `sbox-cli --game` adds `-mcp`
+  (`26.10.27:engine/Launcher/SboxCli/Program.cs`, lines 158-160), but a script that starts
+  a client with its own switches must add it, or `sbox-cli` can't reach that client at all.
+  Since the pipe opens just before the join, plan anything a check changes on the client
+  for after its first join. A `-joinlocal` client also takes a made-up Steam ID, a base
+  plus its `+instanceid`, which is 1 unless given
+  (`26.10.27:engine/Sandbox.Engine/Utility/Steam.cs`, lines 62-66;
+  `26.10.27:engine/Sandbox.Engine/Application.cs`, lines 118-120), so its saves stay apart
+  from the host's; give each client its own `+instanceid`. A client started without
+  `-joinlocal` uses the signed-in account's Steam ID. At `26.10.13` the code reads the
+  same, at lines 255 and 318-328 of `Bootstrap.cs`, 158-165 of `MenuDll.cs` and 157-159 of
+  `Program.cs`.
 - **Wait for an active scene, not just for loading to end.** While a game or dedicated
   server loads, `instance_status` can report `Game` set and `IsLoading` false before any
   scene is open. The game's ident is set during the load

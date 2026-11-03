@@ -109,6 +109,12 @@
   suite and CI leave out holds nothing, so the commit that brings a citation or its check
   adds the check to the suite, with a planted fault it fails. A first real project found a
   generator's check that two records cited and nothing ran.
+- **A `-joinlocal` client and `sbox-cli`.** A new session lesson in the S&box guide says a
+  game started with `-joinlocal` waits for sign-in and then joins the local host on its own
+  as start-up ends, that `sbox-cli` can reach a game only if it was started with `-mcp`,
+  which `sbox-cli --game` adds but a script's own start must, and that each such client
+  takes a made-up Steam ID from its `+instanceid`. Read from the source at `26.10.13` and
+  `26.10.27`.
 
 ## 1.06 — 2026-11-02
 
