@@ -75,6 +75,11 @@
   already saved still turns the world's own gradient fog on, apart from any `Fog`, so a
   scene that moves to `Fog` drops it and its scene check fails one, and that `Fog`'s sun
   glow is on by default.
+- **A rebuild from a new owner input is compared with a fresh build.**
+  `docs/SPEC_FORMAT.md` now says that after a project rebuilds the parts named in an
+  owner's answer from a new input, it builds that input afresh into a scratch copy and
+  compares, since a hand-made list of changed parts can miss one, and the hold compares
+  with the last pinned copy, so it never sees the miss.
 
 ## 1.06 — 2026-11-02
 

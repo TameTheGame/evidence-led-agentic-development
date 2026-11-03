@@ -125,7 +125,11 @@ input's SHA-256 and records the owner's answer that changed it. Every other chan
 Without that route, the owner's first answer can only land by loosening the check. Unlike
 the owner gate, this blocks, since a commit either carries the pin and the answer or it
 doesn't. Have the build rewrite only the parts that answer names, so the rest can't change
-with it.
+with it. Don't trust that list of parts when it is made by hand: after the rebuild, build
+the new input afresh into a scratch copy and compare it with the rebuilt files. Any
+difference outside the values the project keeps on its own is a part the input changed that
+the list missed. The hold can't see it, since it compares the built parts with their copy
+at the last pin, not with the input.
 
 The core doesn't ship a lint; each project owns its own. A worked example is
 [`examples/sbox/tools/spec_lint.py`](../examples/sbox/tools/spec_lint.py). It covers every
