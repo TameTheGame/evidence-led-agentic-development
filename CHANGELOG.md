@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+No pending changes.
+
+## 1.07 — 2026-11-03
+
+A batch of S&box example and spec format updates: an editor check that stops before it
+starts an editor that can't work and checks its captures' size, four spec format rules on
+checks and owner input, a spec lint fix for non-ASCII folders on Windows, and new and
+extended lessons in the S&box guide and import reference. `tools/check.py` holds release
+notes to the form GitHub shows. No skill changed, and nothing in the core breaks.
+
 - **Release notes keep each paragraph on one line.** GitHub keeps every line break in a
   release's notes, so the hard-wrapped v1.06 notes showed a break in mid-sentence on the
   release page and in its email. `releases/v1.06.md` now has one line per paragraph and
@@ -138,8 +148,8 @@
 - **Test a Python tool with UTF-8 mode off.** The import reference's Tools and scripting
   section gains an entry: a machine that sets `PYTHONUTF8=1`, or runs Python 3.15, where
   that is the default, decodes text runs and pipes as UTF-8, so a code-page bug that Python
-  3.14 and earlier hit on Windows doesn't show there. A tool's tests run it with `PYTHONIOENCODING=cp1252` and
-  `PYTHONUTF8=0`, as `test_spec_lint.py` now does.
+  3.14 and earlier hit on Windows doesn't show there. A tool's tests run it with
+  `PYTHONIOENCODING=cp1252` and `PYTHONUTF8=0`, as `test_spec_lint.py` now does.
 
 ## 1.06 — 2026-11-02
 

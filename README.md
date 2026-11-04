@@ -27,7 +27,7 @@ permission to do anything. Permission comes from you and from your project's own
 `AGENTS.md`, the file that says what your agents may do. See
 [Authority and Safety](docs/AUTHORITY_AND_SAFETY.md).
 
-**Current version: 1.06.** See the [release notes](releases/v1.06.md) and
+**Current version: 1.07.** See the [release notes](releases/v1.07.md) and
 [Versions](#versions).
 
 ## Who it is for
