@@ -7,7 +7,8 @@ fixed camera captures it before and after.
 Runs unattended through sbox-cli, which ships with S&box 26.10.13 and later
 (<engine>\bin\managed\sbox-cli.exe) and talks to an editor over a local named pipe. The script:
   1. opens the project in an editor that sbox-cli owns, so the editor closes if the script dies;
-  2. opens the scene, saves it, records the saved file's hash and its objects, and takes a
+  2. opens the scene, saves it, checks that the save wrote the scene file as it was, byte for
+     byte but for store package IDs (below), records the saved file's objects, and takes a
      screenshot from the fixed camera;
   3. quits the editor, opens the project in a new one, and opens the scene again;
   4. checks that the scene reopens with no unsaved changes and no error-level console lines,
@@ -16,9 +17,12 @@ Runs unattended through sbox-cli, which ships with S&box 26.10.13 and later
      package IDs (below);
   5. takes the same screenshot, checks that both are the size asked for, and reports how much
      they differ as a record, not a score;
-  6. puts the scene file and the project's .sbproj back as they were, so the check leaves the
-     working tree unchanged. The editor writes the .sbproj again when it starts if the file's
-     text differs from what S&box writes, such as LF line endings on Windows.
+  6. puts the scene file, its companion files and the project's .sbproj back as they were, and
+     asks Git which files in the project the run left changed. A save writes the scene's binary
+     data to <scene>_d beside it, so a companion that changed is put back with the editor's copy
+     kept in the results, and one that wasn't there before is moved into the results. The editor
+     writes the .sbproj again when it starts if the file's text differs from what S&box writes,
+     such as LF line endings on Windows.
 Results go to test-results\editor-<time>\, with each editor's sbox-cli output and editor log.
 On a failure it also prints the last lines of both. Exit code: 0 pass, 1 fail, 2 not run.
 
@@ -40,8 +44,10 @@ folder, through run_csharp; it returns the ID that session gives each package fi
 references. The second save passes if it is byte-identical to the first, or if the two differ
 only in such references' IDs, each exactly the ID its own session gave that path. A stale ID, a
 project asset's changed ID, or any other changed byte, line endings included, still fails it.
-If the script can't run, the IDs are compared as written. -SelfTest checks this comparison on
-planted saves, and the AI setting's reading below on planted .sbproj text, without S&box.
+The first save is held to the scene file as it was in the same way, but the file's own IDs can
+be any, since an earlier session wrote them. If the script can't run, the IDs are compared as
+written. -SelfTest checks both comparisons on planted saves, and the AI setting's reading below
+on planted .sbproj text, without S&box.
 
 Each screenshot renders the fixed camera straight into a picture of -Width by -Height, so the
 editor's layout and the monitor don't set its size. The screenshot tool clamps each side to
@@ -56,10 +62,11 @@ The project must be closed in every editor first, because the check closes and r
 Steam must be running, because S&box needs it; the check doesn't start Steam, which can update
 S&box. Steam also installs a waiting update once its download has finished and no S&box process
 is running, so one can land between the check's two sessions; its own start, through
-sbox-cli --project, runs sbox-dev.exe directly and installs none. The Engine line names the
-release read at the start. Editors accept sbox-cli unless Project Settings > AI > Enable MCP
-Communication is off. When the project's .sbproj turns it off, the check stops with NOT RUN
-before it starts an editor, since sbox-cli would only wait out its start-up timeout.
+sbox-cli --project, runs sbox-dev.exe directly and installs none. So the check reads S&box's
+build again after its last session, and reports NOT RUN when the build changed. Editors accept
+sbox-cli unless Project Settings > AI > Enable MCP Communication is off. When the project's
+.sbproj turns it off, the check stops with NOT RUN before it starts an editor, since sbox-cli
+would only wait out its start-up timeout.
 
 .EXAMPLE
 powershell -File tools/editor_check.ps1 -Scene scenes/outpost.scene
@@ -93,7 +100,7 @@ $latin1 = [Text.Encoding]::GetEncoding(28591)
 # that ID is the one its session gave the path. $Ids maps each package path to that session's
 # ID. Returns Text, Set (the IDs set aside, in order) and Stale (each package path whose saved
 # ID isn't the session's).
-function Hide-PackageIds([byte[]]$Bytes, [hashtable]$Ids) {
+function Hide-PackageIds([byte[]]$Bytes, [hashtable]$Ids, [switch]$AnyId) {
     $set = [System.Collections.Generic.List[string]]::new()
     $stale = [System.Collections.Generic.List[string]]::new()
     $hide = [Text.RegularExpressions.MatchEvaluator]{
@@ -101,7 +108,7 @@ function Hide-PackageIds([byte[]]$Bytes, [hashtable]$Ids) {
         # The path as package_ids.cs read it, in UTF-8.
         $path = [Text.Encoding]::UTF8.GetString($latin1.GetBytes($m.Groups[4].Value))
         if (-not $Ids.ContainsKey($path)) { return $m.Value }
-        if ($m.Groups[2].Value -cne $Ids[$path]) { $stale.Add($path); return $m.Value }
+        if (-not $AnyId -and $m.Groups[2].Value -cne $Ids[$path]) { $stale.Add($path); return $m.Value }
         $set.Add($m.Groups[2].Value)
         return $m.Groups[1].Value + 'package ID' + $m.Groups[3].Value + $m.Groups[4].Value + $m.Groups[5].Value
     }
@@ -127,6 +134,23 @@ function Compare-Saves([byte[]]$First, [byte[]]$Second, $FirstIds, $SecondIds) {
     }
     $changed = @(for ($i = 0; $i -lt $a.Set.Count; $i++) { if ($a.Set[$i] -cne $b.Set[$i]) { $i } }).Count
     return Result $true "identical but for $changed store package ID(s), each the one its own session gave the path"
+}
+
+# Whether the first save wrote the scene file as it was, such as the committed scene: byte for
+# byte, or byte for byte once each store package reference's ID is set aside. The file can
+# carry the ID an earlier session gave a package's file, so any ID is set aside there; each of
+# the save's own must be the one its session gave the path. $SavedIds is the first session's
+# package IDs by path, or $null when they couldn't be read. Returns Same and Why.
+function Compare-Committed([byte[]]$Committed, [byte[]]$Saved, $SavedIds) {
+    function Result([bool]$Same, [string]$Why) { [pscustomobject]@{ Same = $Same; Why = $Why } }
+    if ([Convert]::ToBase64String($Committed) -ceq [Convert]::ToBase64String($Saved)) { return Result $true 'the first save wrote the scene file back byte for byte' }
+    if ($null -eq $SavedIds) { return Result $false "the first save rewrote the scene file, and the package IDs to set aside were not read" }
+    $a = Hide-PackageIds $Committed $SavedIds -AnyId
+    $b = Hide-PackageIds $Saved $SavedIds
+    if ($b.Stale.Count) { return Result $false "the first save's reference to $($b.Stale[0]) doesn't carry the ID its session gave that path" }
+    if ($a.Text -cne $b.Text) { return Result $false "the first save rewrote the scene file, so S&box doesn't write it as it is" }
+    $changed = @(for ($i = 0; $i -lt $a.Set.Count; $i++) { if ($a.Set[$i] -cne $b.Set[$i]) { $i } }).Count
+    return Result $true "the first save wrote the scene file back but for $changed store package ID(s), each the one its session gave the path"
 }
 
 # Whether a .sbproj's text turns off the pipe sbox-cli talks to. An editor opens it unless the
@@ -155,6 +179,121 @@ function Test-ShotSize([byte[]]$Bytes, [int]$Width, [int]$Height) {
     $h = [long]$Bytes[20] * 16777216 + [long]$Bytes[21] * 65536 + [long]$Bytes[22] * 256 + [long]$Bytes[23]
     if ($w -ne $Width -or $h -ne $Height) { return Result $false "the capture is $($w)x$h px, not the $($Width)x$Height asked for" }
     return Result $true "$($w)x$h px, as asked"
+}
+
+# The files S&box keeps with a source file, by the ending each adds to its path: the compiled
+# file, the binary data a save writes beside a resource, and the .meta
+# (26.10.27:engine/Sandbox.Tools/Assets/Asset.cs, lines 10-16). A scene save writes its binary
+# data to <scene>_d whenever it has any (26.10.27:engine/Sandbox.Engine/Resources/GameResource.cs,
+# lines 446-469), so putting only the scene back can leave its _d out of step with it.
+$companionEndings = @('_c', '_d', '.meta')
+
+# Each companion file of $Path, by path, with its bytes, or $null when it isn't there.
+function Save-Companions([string]$Path) {
+    $saved = [ordered]@{}
+    foreach ($ending in $companionEndings) {
+        $file = $Path + $ending
+        $bytes = $null
+        if (Test-Path -LiteralPath $file -PathType Leaf) { $bytes = [IO.File]::ReadAllBytes($file) }
+        $saved[$file] = $bytes
+    }
+    return $saved
+}
+
+# Each companion file that differs from what $Saved holds: changed, removed or new.
+function Get-ChangedCompanions($Saved) {
+    foreach ($file in @($Saved.Keys)) {
+        $was = $Saved[$file]
+        $there = Test-Path -LiteralPath $file -PathType Leaf
+        if ($null -eq $was) { if ($there) { $file } }
+        elseif (-not $there) { $file }
+        elseif ([Convert]::ToBase64String([IO.File]::ReadAllBytes($file)) -cne [Convert]::ToBase64String($was)) { $file }
+    }
+}
+
+# Puts each companion file back as $Saved holds it, and returns a note for each one it put back.
+# One the run changed is written back, with the editor's copy kept in $Keep; one it removed is
+# written again; one that wasn't there before is moved into $Keep.
+function Restore-Companions($Saved, [string]$Keep) {
+    foreach ($file in @(Get-ChangedCompanions $Saved)) {
+        $name = Split-Path $file -Leaf
+        $was = $Saved[$file]
+        if ($null -eq $was) {
+            Move-Item -LiteralPath $file -Destination (Join-Path $Keep $name) -Force
+            "the editor wrote $name, which wasn't there before; it is moved to the results"
+        } elseif (Test-Path -LiteralPath $file -PathType Leaf) {
+            Copy-Item -LiteralPath $file -Destination (Join-Path $Keep $name) -Force
+            [IO.File]::WriteAllBytes($file, $was)
+            "the editor rewrote $name; the original is restored, and the editor's copy is in the results"
+        } else {
+            [IO.File]::WriteAllBytes($file, $was)
+            "the run removed $name; the original is restored"
+        }
+    }
+}
+
+# Why a run can't count when S&box's build changed under it, or $null when it didn't. Steam
+# installs a waiting update once its download has finished and no S&box process is running,
+# so one can land between the check's two sessions, and then the second runs another build
+# than the first. $Before and $After are the first line of the engine's .version before the
+# first session and after the last, or $null when it couldn't be read.
+function Get-BuildChange($Before, $After) {
+    if ("$Before" -ceq "$After") { return $null }
+    if (-not "$After") { return "S&box's build couldn't be read after the run, and was $Before before it" }
+    return "S&box went from $Before to $After during the run, so its two sessions may have run different builds"
+}
+
+# Each file Git lists as changed or untracked under $Dir, by full path, with its status and its
+# SHA-256, so a run can tell which files it left changed. $null when Git can't read the work
+# tree, such as when the project isn't in one.
+function Get-TreeState([string]$Dir) {
+    $encoding = $null
+    try { $encoding = [Console]::OutputEncoding; [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch { }
+    $ErrorActionPreference = 'Continue'
+    try {
+        if (-not (Get-Command git -ErrorAction SilentlyContinue)) { return $null }
+        # Porcelain paths are relative to the work tree's top, and -z leaves them unquoted. Each
+        # starts with $Dir's own path in the tree, which is cut, so that each full path starts
+        # with $Dir as given, as the results folder's does.
+        $prefix = "$(& git -C $Dir rev-parse --show-prefix 2>$null)".Trim()
+        if ($LASTEXITCODE -ne 0) { return $null }
+        $raw = (& git -C $Dir status --porcelain=v1 -z --untracked-files=all -- . 2>$null) -join "`n"
+        if ($LASTEXITCODE -ne 0) { return $null }
+    } catch {
+        return $null
+    } finally {
+        $ErrorActionPreference = 'Stop'
+        if ($null -ne $encoding) { try { [Console]::OutputEncoding = $encoding } catch { } }
+    }
+    $state = @{}
+    $entries = @($raw -split "`0" | Where-Object { $_ })
+    for ($i = 0; $i -lt $entries.Count; $i++) {
+        $entry = $entries[$i]
+        if ($entry.Length -lt 4) { continue }
+        $status = $entry.Substring(0, 2)
+        # A rename or copy is followed by its old path, which isn't in the tree now.
+        if ($status -cmatch '[RC]') { $i++ }
+        $path = $entry.Substring(3)
+        if ($path.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)) { $path = $path.Substring($prefix.Length) }
+        $file = [IO.Path]::GetFullPath((Join-Path $Dir $path))
+        $hash = 'absent'
+        if (Test-Path -LiteralPath $file -PathType Leaf) {
+            try { $hash = (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash } catch { $hash = 'unreadable' }
+        }
+        $state[$file] = "$status $hash"
+    }
+    return $state
+}
+
+# Each file whose Git status or content differs between two tree states, sorted, leaving out
+# those under $Skip, such as the results folder.
+function Compare-TreeStates($Before, $After, [string]$Skip) {
+    $under = $null
+    if ($Skip) { $under = [IO.Path]::GetFullPath($Skip).TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar }
+    foreach ($file in @(@($Before.Keys) + @($After.Keys) | Sort-Object -Unique)) {
+        if ($under -and $file.StartsWith($under, [StringComparison]::OrdinalIgnoreCase)) { continue }
+        if ($Before[$file] -cne $After[$file]) { $file }
+    }
 }
 
 if ($SelfTest) {
@@ -210,6 +349,14 @@ if ($SelfTest) {
     Expect 'saves that differ, with no package IDs read' (Compare-Saves (Save $p1) (Save $p2) $null $null) $false
     Expect 'the same save twice, with no package IDs read' (Compare-Saves (Save $p1) (Save $p1) $null $null) $true
     Expect "a project material's ID changed, in a scene with no package" (Compare-Saves (Save $p1) (Save $p1 $other) @{} @{}) $false
+    # The scene file as it was, against the first save.
+    Expect 'a scene file S&box writes back byte for byte' (Compare-Committed (Save $p1) (Save $p1) $ids1) $true
+    Expect 'a scene file with the ID an earlier session gave a package' (Compare-Committed (Save $other) (Save $p2) $ids2) $true
+    Expect "planted fault: a first save that renames an object in the scene file" (Compare-Committed (Save $p1) (Save $p1 -Name 'crate 2') $ids1) $false
+    Expect 'a first save that changes the line endings' (Compare-Committed (Save $p1 -NewLine "`n") (Save $p1) $ids1) $false
+    Expect "a first save whose package ID isn't the one its session gave" (Compare-Committed (Save $p1) (Save $other) $ids2) $false
+    Expect "a project material's ID changed by the first save" (Compare-Committed (Save $p1 $other) (Save $p1) $ids1) $false
+    Expect 'a first save that differs, with no package IDs read' (Compare-Committed (Save $p1) (Save $p2) $null) $false
     function Expect-Off([string]$Name, [string]$Text, [bool]$Off) {
         $script:cases++
         $got = Test-McpOff $Text
@@ -241,6 +388,93 @@ if ($SelfTest) {
     Expect "a capture the size of the editor's game view" (Test-ShotSize (Png 2282 1382) 3840 2160) $false
     Expect 'a capture with its width and height swapped' (Test-ShotSize (Png 720 1280) 1280 720) $false
     Expect 'a JPEG, which has no PNG header' (Test-ShotSize ([byte[]](255, 216, 255, 224, 0, 16, 74, 70, 73, 70, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 255, 219, 0, 67)) 1280 720) $false
+    function Expect-That([string]$Name, [bool]$Held, [string]$Why) {
+        $script:cases++
+        if ($Held) { Write-Host "ok     $Name - $Why" } else { $script:wrong++; Write-Host "WRONG  $Name - $Why" }
+    }
+    # A scene with a _d and a .meta in a scratch folder, which the editor then changes.
+    $root = Join-Path ([IO.Path]::GetTempPath()) ('editor-check-self-test-' + [Guid]::NewGuid().ToString('N'))
+    $keep = Join-Path $root 'results'
+    New-Item -ItemType Directory -Force $keep | Out-Null
+    try {
+        $planted = Join-Path $root 'yard.scene'
+        [IO.File]::WriteAllText($planted, '{}')
+        [IO.File]::WriteAllBytes($planted + '_d', [byte[]](1, 2, 3))
+        [IO.File]::WriteAllText($planted + '.meta', 'meta')
+        $kept = Save-Companions $planted
+        Expect-That 'an unchanged scene leaves no companion changed' (@(Get-ChangedCompanions $kept).Count -eq 0) "found $(@(Get-ChangedCompanions $kept).Count)"
+        # The editor rewrites the _d, writes a _c that wasn't there, and removes the .meta.
+        [IO.File]::WriteAllBytes($planted + '_d', [byte[]](9, 9))
+        [IO.File]::WriteAllBytes($planted + '_c', [byte[]](7))
+        Remove-Item -LiteralPath ($planted + '.meta')
+        $found = @(Get-ChangedCompanions $kept)
+        Expect-That 'planted fault: a rewritten _d, a new _c and a removed .meta are each found' ($found.Count -eq 3) "found $($found.Count) of 3"
+        $said = @(Restore-Companions $kept $keep)
+        Expect-That 'a note for each companion put back' ($said.Count -eq 3) "$($said.Count) note(s)"
+        Expect-That 'the rewritten _d is put back' (([IO.File]::ReadAllBytes($planted + '_d') -join ',') -eq '1,2,3') "the _d reads $([IO.File]::ReadAllBytes($planted + '_d') -join ',')"
+        Expect-That "the editor's _d is kept in the results" ((Test-Path -LiteralPath (Join-Path $keep 'yard.scene_d')) -and ([IO.File]::ReadAllBytes((Join-Path $keep 'yard.scene_d')) -join ',') -eq '9,9') 'read from the results'
+        Expect-That 'the new _c is moved into the results' ((-not (Test-Path -LiteralPath ($planted + '_c'))) -and (Test-Path -LiteralPath (Join-Path $keep 'yard.scene_c'))) 'read from both folders'
+        Expect-That 'the removed .meta is written again' ((Test-Path -LiteralPath ($planted + '.meta')) -and ([IO.File]::ReadAllText($planted + '.meta') -ceq 'meta')) 'read back'
+        Expect-That 'nothing is left changed after the restore' (@(Get-ChangedCompanions $kept).Count -eq 0) "found $(@(Get-ChangedCompanions $kept).Count)"
+        Expect-That 'a second restore has nothing to do' (@(Restore-Companions $kept $keep).Count -eq 0) 'no notes'
+    } finally {
+        Remove-Item -LiteralPath $root -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    # Tree states as Get-TreeState reads them, by full path.
+    $d = Join-Path $root 'yard.scene_d'; $new = Join-Path $root 'notes.txt'; $shot = Join-Path $keep 'before.png'
+    $before = @{ $d = 'M  AAAA' }
+    $left = @(Compare-TreeStates $before @{ $d = 'M  AAAA' } $keep)
+    Expect-That 'the same tree before and after' ($left.Count -eq 0) "$($left.Count) file(s) listed"
+    $left = @(Compare-TreeStates $before @{ $d = 'M  BBBB' } $keep)
+    Expect-That 'planted fault: a changed file that kept its status' ($left.Count -eq 1 -and $left[0] -eq $d) "$($left.Count) file(s) listed"
+    $left = @(Compare-TreeStates $before @{ $d = 'M  AAAA'; $new = '?? CCCC' } $keep)
+    Expect-That 'a new untracked file' ($left.Count -eq 1 -and $left[0] -eq $new) "$($left.Count) file(s) listed"
+    $left = @(Compare-TreeStates $before @{} $keep)
+    Expect-That 'a changed file the run put back as Git has it' ($left.Count -eq 1 -and $left[0] -eq $d) "$($left.Count) file(s) listed"
+    $left = @(Compare-TreeStates $before @{ $d = 'M  AAAA'; $shot = '?? DDDD' } $keep)
+    Expect-That 'a new file in the results folder, which is left out' ($left.Count -eq 0) "$($left.Count) file(s) listed"
+    Expect-That 'the same build before and after' ($null -eq (Get-BuildChange '26.10.27c' '26.10.27c')) 'no change'
+    $why = Get-BuildChange '26.10.27c' '26.11.03a'
+    Expect-That 'planted fault: an update between the sessions' ($null -ne $why) "$why"
+    $why = Get-BuildChange '26.10.27c' $null
+    Expect-That "a build that can't be read after the run" ($null -ne $why) "$why"
+    # Get-TreeState on a scratch Git repository, with the project in a folder of its own whose
+    # name has a space, and a file name that isn't ASCII.
+    if (Get-Command git -ErrorAction SilentlyContinue) {
+        $repo = Join-Path ([IO.Path]::GetTempPath()) ('editor-check-self-test-' + [Guid]::NewGuid().ToString('N'))
+        $work = Join-Path $repo 'my project'
+        New-Item -ItemType Directory -Force (Join-Path $work 'Assets') | Out-Null
+        try {
+            $yard = [IO.Path]::GetFullPath((Join-Path $work 'Assets\yard.scene'))
+            $outside = Join-Path $repo 'outside.txt'
+            [IO.File]::WriteAllText($yard, '{}')
+            [IO.File]::WriteAllText($outside, 'a')
+            $ErrorActionPreference = 'Continue'
+            & git -C $repo init -q 2>$null | Out-Null
+            & git -C $repo add -A 2>$null | Out-Null
+            & git -C $repo -c user.name=check -c user.email=check@example.invalid -c commit.gpgsign=false commit -q --no-verify -m planted 2>$null | Out-Null
+            $ErrorActionPreference = 'Stop'
+            $clean = Get-TreeState $work
+            Expect-That 'a clean tree lists no file' ($null -ne $clean -and $clean.Count -eq 0) "$(if ($null -eq $clean) { 'Git gave no state' } else { "$($clean.Count) file(s) listed" })"
+            [IO.File]::WriteAllText($yard, '{ }')
+            [IO.File]::WriteAllBytes($yard + '_d', [byte[]](1))
+            $named = [IO.Path]::GetFullPath((Join-Path $work "Assets\notes $([char]0x00FC).txt"))
+            [IO.File]::WriteAllText($named, 'n')
+            [IO.File]::WriteAllText($outside, 'b')
+            $dirty = Get-TreeState $work
+            $listed = 'Git gave no state'
+            if ($null -ne $dirty) { $listed = "listed: $(@($dirty.Keys | ForEach-Object { Split-Path $_ -Leaf }) -join ', ')" }
+            Expect-That "a changed scene, its new _d and a new file whose name isn't ASCII, and nothing outside the project" ($null -ne $dirty -and $dirty.Count -eq 3 -and $dirty.ContainsKey($yard) -and $dirty.ContainsKey($yard + '_d') -and $dirty.ContainsKey($named)) $listed
+            $left = @()
+            if ($null -ne $clean -and $null -ne $dirty) { $left = @(Compare-TreeStates $clean $dirty (Join-Path $work 'test-results')) }
+            Expect-That 'each of them found as left changed' ($left.Count -eq 3) "$($left.Count) file(s) listed"
+        } finally {
+            $ErrorActionPreference = 'Stop'
+            Remove-Item -LiteralPath $repo -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    } else {
+        Write-Host 'skip   Get-TreeState on a scratch Git repository - Git is not installed'
+    }
     Write-Host "Self-test: $($script:cases - $script:wrong) of $($script:cases) cases gave the expected result."
     exit $(if ($script:wrong) { 1 } else { 0 })
 }
@@ -650,6 +884,8 @@ function Save-Scene([string]$Name) {
     if ($result.HasUnsavedChanges) { throw 'save_scene left unsaved changes' }
     if ([IO.File]::ReadAllText($sceneFile).Contains('editor_check_marker')) { throw 'the marker object was saved; undo did not remove it' }
     Copy-Item $sceneFile (Join-Path $Out $Name)
+    $blob = $sceneFile + '_d'
+    if (Test-Path -LiteralPath $blob -PathType Leaf) { Copy-Item -LiteralPath $blob (Join-Path $Out ($Name + '_d')) }
     return Get-Hash
 }
 
@@ -659,6 +895,8 @@ $original = [IO.File]::ReadAllBytes($sceneFile)
 # The editor may rewrite the .sbproj when it starts (26.10.13:engine/Sandbox.Tools/Utility/Utility.Projects.cs).
 $projectFiles = @{}
 foreach ($f in Get-ChildItem $dir -Filter *.sbproj) { $projectFiles[$f.FullName] = [IO.File]::ReadAllBytes($f.FullName) }
+$companions = Save-Companions $sceneFile
+$treeBefore = Get-TreeState $dir
 $checks = [ordered]@{}
 $notes = New-Object System.Collections.Generic.List[string]
 $editor = $null
@@ -669,9 +907,10 @@ try {
     Call 'open_scene' @{ path = $Scene } | Out-Null
     $saved = Save-Scene 'saved-first.scene'
     $firstIds = Get-PackageIds 'package-ids-first.json'
-    if ($saved -ne (Get-FileHash -InputStream ([IO.MemoryStream]::new($original)) -Algorithm SHA256).Hash.ToLower()) {
-        $notes.Add('the first save rewrote the scene file; the original is restored at the end')
-    }
+    # A scene S&box doesn't write as it is leaves the tree changed after any editor's save.
+    $first = Compare-Committed $original ([IO.File]::ReadAllBytes((Join-Path $Out 'saved-first.scene'))) $firstIds
+    $checks['First save'] = if ($first.Same) { "pass - $($first.Why)" }
+        else { "FAIL - $($first.Why); compare it with saved-first.scene, and commit the scene S&box writes" }
     $before = Get-Objects
     [IO.File]::WriteAllLines((Join-Path $Out 'objects-before.txt'), [string[]]$before)
     $beforeErrors = Get-Errors 'console-before.txt'
@@ -728,6 +967,21 @@ try {
                 $notes.Add("the editor rewrote $(Split-Path $f -Leaf); the original is restored")
             }
         }
+        foreach ($n in @(Restore-Companions $companions $Out)) { $notes.Add($n) }
+        $treeAfter = $null
+        if ($null -ne $treeBefore) { $treeAfter = Get-TreeState $dir }
+        if ($null -eq $treeAfter) {
+            $notes.Add("Git couldn't read the project's work tree, so the check didn't confirm it left the files as it found them")
+        } else {
+            $left = @(Compare-TreeStates $treeBefore $treeAfter $Out)
+            if ($left.Count) {
+                $shown = @($left | Select-Object -First 10 | ForEach-Object {
+                    if ($_.StartsWith($dir, [StringComparison]::OrdinalIgnoreCase)) { $_.Substring($dir.Length).TrimStart('\', '/') } else { $_ } })
+                $more = ''
+                if ($left.Count -gt 10) { $more = " and $($left.Count - 10) more" }
+                $notes.Add("the run left $($left.Count) file(s) in the project changed that it didn't put back: $($shown -join ', ')$more")
+            }
+        }
     } else {
         # An editor that still has the project open would write over a restore, so leave the
         # files, and say which ones the run changed.
@@ -737,6 +991,7 @@ try {
         foreach ($f in $projectFiles.Keys) {
             if ([Convert]::ToBase64String([IO.File]::ReadAllBytes($f)) -ne [Convert]::ToBase64String($projectFiles[$f])) { $changed += $f }
         }
+        $changed += @(Get-ChangedCompanions $companions)
         if ($changed) {
             $notes.Add("an editor still had the project open, so these weren't restored: $(($changed | ForEach-Object { Split-Path $_ -Leaf }) -join ', '); close it and restore them from Git")
         }
@@ -744,6 +999,7 @@ try {
 }
 
 $failed = @($checks.Values | Where-Object { $_ -like 'FAIL*' }).Count
+$build = Get-BuildChange $version (Get-Content (Join-Path $Engine '.version') -TotalCount 1 -ErrorAction SilentlyContinue)
 Write-Host "Engine:     S&box $version ($Engine)"
 Write-Host "Scene:      $Scene in $dir"
 foreach ($k in $checks.Keys) { Write-Host ('{0,-11} {1}' -f "${k}:", $checks[$k]) }
@@ -761,6 +1017,11 @@ if (($failed -or -not $checks.Count) -and $sessions.Count) {
         # Both files are UTF-8 without a byte order mark, which Windows PowerShell reads as ANSI.
         Get-Content $file -Tail 15 -Encoding UTF8 | ForEach-Object { Write-Host "  $_" }
     }
+}
+if ($build) {
+    Write-Host "Result:     NOT RUN - $build; run the check again"
+    Write-Host "Saved:      $Out"
+    exit 2
 }
 Write-Host "Result:     $(if ($failed -or -not $checks.Count) { 'FAIL' } else { 'PASS' })"
 Write-Host "Saved:      $Out"

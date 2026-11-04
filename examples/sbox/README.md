@@ -166,6 +166,8 @@ powershell -File tools/editor_check.ps1 -Scene scenes/outpost.scene
   `.sbproj` text, including a planted fault: the setting turned off. The block, and where
   S&box writes it, are in the [starter's set-up](rung1-starter/README.md#using-it).
 - **What fails it.** It saves the scene, quits, reopens it, and fails on:
+  - a first save that rewrites the scene file in any byte but a store package's ID, so a
+    committed scene must be one S&box writes as it is;
   - unsaved changes as soon as the scene opens;
   - error-level console lines on reopen;
   - any saved object whose name, parent, enabled state, or components changed;
@@ -189,9 +191,11 @@ powershell -File tools/editor_check.ps1 -Scene scenes/outpost.scene
   the path. A save passes if it is byte-identical, or if it differs only in such
   references' IDs, each exactly the ID its own session gave. A stale ID, a project asset's
   changed ID, a changed path, or any other changed byte, line endings included, still
-  fails it. If the script can't run, the check notes why and compares the IDs as written.
-  `-SelfTest` checks this comparison on planted saves, without S&box, including a planted
-  break: a changed object name beside new package IDs.
+  fails it. The first save is held to the scene file as it was in the same way, except
+  that the file's own IDs can be any, since an earlier session wrote them. If the script
+  can't run, the check notes why and compares the IDs as written. `-SelfTest` checks both
+  comparisons on planted saves, without S&box, including a planted break: a changed object
+  name beside new package IDs.
 - **A project without code works too.** A project with code must report a finished,
   successful compile. A content project, such as a map, has no `Code` or `Editor` folder
   and never compiles, so the check doesn't wait for a compile result.
@@ -207,10 +211,20 @@ powershell -File tools/editor_check.ps1 -Scene scenes/outpost.scene
   check refuses other sizes before it starts, and fails a capture whose own PNG header
   gives another size. `-SelfTest` checks the header reading on planted ones, including a
   planted fault: a capture at the 1280 by 720 default when 3840 by 2160 was asked for.
-- **It leaves no trace.** It puts the scene file and the project's `.sbproj` back as they
-  were, and saves results in `test-results\editor-<time>\`: both captures, both saved
-  files, both sessions' package IDs, the object lists, and the console errors. The Editor
-  can rewrite the `.sbproj` when it starts; see
+- **It puts back what it changes, and says what it couldn't.** It puts the scene file, the
+  files S&box keeps beside it and the project's `.sbproj` back as they were. A save writes
+  the scene's binary data, such as its clutter
+  (`26.10.27:engine/Sandbox.Engine/Scene/GameObjectSystems/ClutterGridSystem.Storage.cs`,
+  line 12), to `<scene>_d` whenever it has any
+  (`26.10.27:engine/Sandbox.Engine/Resources/GameResource.cs`, lines 446-469), and on
+  `26.10.27c` a resave changed it. So the check puts back the scene's `_c`, `_d` and
+  `.meta` too, with the editor's copy of each in the results, and moves one that wasn't
+  there before into the results. Then it asks Git which files in the project the run left
+  changed, and names them in a note. `-SelfTest` checks both on planted files and a scratch
+  Git repository, including a planted fault: a rewritten `_d`, a new `_c` and a removed
+  `.meta`. Results go in `test-results\editor-<time>\`: both captures, both saved files
+  with their `_d`, both sessions' package IDs, the object lists, and the console errors.
+  The Editor can rewrite the `.sbproj` when it starts; see
   [Lessons from a world build](#lessons-from-a-world-build).
 - **It keeps each editor's own account.** It saves the output of the `sbox-cli` process that
   owns each editor, and the editor log from `<engine>\logs\`, with the results. On a failure
@@ -222,8 +236,10 @@ powershell -File tools/editor_check.ps1 -Scene scenes/outpost.scene
   `sbox-cli --project` runs `sbox-dev.exe` directly
   (`26.10.27:engine/Launcher/SboxCli/Program.cs`, lines 153-161). On `26.10.27c` Steam
   installed `26.11.03a` between two `sbox-cli` sessions. The check quits its first editor
-  before it starts the second, so an update can land between them; the `Engine:` line names
-  the release read at the start.
+  before it starts the second, so an update can land between them. It reads S&box's build
+  from `.version` again after its last session, and reports `NOT RUN` when the build
+  changed. `-SelfTest` checks this on planted builds, including a planted fault:
+  `26.10.27c` before and `26.11.03a` after.
 - **A failed start stops it in seconds.** When S&box can't start the project, it shows an
   error box and waits for a click; see [When S&box can't start a project](#when-sbox-cant-start-a-project).
   While the check waits for an editor, it looks for that box and for the failure in the

@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- **The editor check puts back the scene's `_d`, fails a scene S&box rewrites, and catches
+  an update mid-run.** A save writes a scene's binary data, such as its clutter, to
+  `<scene>_d` beside it, and on `26.10.27c` a resave changed it. `editor_check.ps1` put
+  back only the scene file and the `.sbproj`, so it could leave the scene and its `_d` out
+  of step while it said it left the tree unchanged. It now puts back the scene's `_c`, `_d`
+  and `.meta` too, keeping the editor's copy in the results, and asks Git which files the
+  run left changed and names them. A first save that rewrites the scene file, in any byte
+  but a store package's ID, is now a failed `First save` check, where it was a note, so the
+  check can't pass on a committed scene that S&box doesn't write as it is. It also reads
+  S&box's build again after its last session and reports `NOT RUN` when the build changed,
+  since Steam can install a waiting update between its two sessions; it read the build only
+  before the first. `-SelfTest` checks each on planted faults. Read from the source at
+  `26.10.27`.
 - **Start-up facts: the test folder, Steam's update and `.json` files.** S&box makes no
   `UnitTests` folder: it generates the test project only when the folder is already there.
   The guide's spike notes and the rung-1 starter now say so, and `run_engine_tests.ps1` now
