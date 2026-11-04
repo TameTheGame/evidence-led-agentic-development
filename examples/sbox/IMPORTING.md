@@ -1218,6 +1218,21 @@ writes, store packages, and tags.
   `newline='\n'`, or pass it to `Path.write_text` (Python 3.10 and newer), or strip the
   `\r` in bash with `tr -d '\r'`.
   - Checked: Python's documentation; seen on Windows. Proof: nothing yet.
+- **In Git Bash, turn path conversion off for a command whose arguments start with `/`.**
+  An agent's Bash tool on Windows is often Git Bash, which rewrites an argument that looks
+  like a POSIX path into a Windows path before a Windows program such as `rg`, `git` or
+  `python` sees it
+  ([Git for Windows' known issues](https://github.com/git-for-windows/build-extra/blob/main/ReleaseNotes.md#known-issues)).
+  With Git for Windows 2.56.0, `/old/path` arrived as `C:/Program Files/Git/old/path`, the
+  pattern `^/old/` as `^C:/Program Files/Git/old/`, and `--root=/c/work` as
+  `--root=C:/work`, while `old/path` and `s/a/b/` came through unchanged. So
+  `rg '/old/path'` found nothing in a file that held it, and exited 1 as if there were no
+  hits: searches for a moved folder's old path missed real hits that way. Put
+  `MSYS_NO_PATHCONV=1` before such a command, or run it from PowerShell, which passes such
+  arguments unchanged. That variable also stops the command's real paths being converted,
+  so give them in Windows form, such as `C:/work`, not `/c/work` or `/tmp`.
+  - Checked: Git for Windows' release notes; seen with Git for Windows 2.56.0. Proof:
+    nothing yet.
 
 ## Faster ways of working
 

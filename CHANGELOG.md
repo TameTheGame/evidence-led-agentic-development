@@ -128,6 +128,13 @@
   Python decodes file names. `test_spec_lint.py` gains a case under such a folder, which
   fails with the old lint when its text runs decode in cp1252, and runs the lint with UTF-8
   mode off, since a PC that sets `PYTHONUTF8=1` decodes text runs as UTF-8 and hid the bug.
+- **Git Bash rewrites arguments that start with a slash.** The import reference's Tools and
+  scripting section gains an entry: Git Bash, often an agent's Bash tool on Windows, turns
+  an argument such as `/old/path` or `^/old/` into a path under Git's install folder before
+  a Windows program sees it, so a search for it finds nothing and exits as if there were no
+  hits. Put `MSYS_NO_PATHCONV=1` before such a command, with its real paths in Windows
+  form, or run it from PowerShell. Seen with Git for Windows 2.56.0, where searches for a
+  moved folder's old path missed real hits.
 
 ## 1.06 — 2026-11-02
 
