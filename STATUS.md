@@ -51,6 +51,10 @@ non-normative.
   named change, all 6 runs refactored and reran every shared check afterwards, and
   reference probes confirmed the build in 6 of 6. The rule failed because no run ran those
   checks before the change. See [the rerun](skills/evidence/REFACTOR_TEST.md).
+- **The S&box skill update test** (v1.08). A change to the domain skill passed its
+  pre-registered, blind-scored rule against the v1.07 text in 12 runs: with it, 3 of 3 runs
+  asked the owner where a lesson should live, where 2 of 3 with the old text made a lessons
+  file unasked. See [the test](skills/evidence/SKILL_UPDATE_TEST.md).
 - **Four reference-project experiments** against v0.3.0. They are historical; see
   [Empirical Status](docs/EMPIRICAL_STATUS.md).
 

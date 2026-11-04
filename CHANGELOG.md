@@ -92,6 +92,22 @@
   `SBOX_PUBLIC` is set for the user, since the engine test runner falls back to it, and
   checks the engine paths each project file names after its rewrite, instead of the path it
   meant to write.
+- **The S&box skill points at the starter, and keeps lessons where the project says.**
+  `sbox-engine-reference` now loads a saved scene with the starter's
+  `EngineTestHelpers.LoadSavedScene`, since `SceneFile.LoadFromJson` drops a scene's `_d`
+  mesh data; finds the default surface in the starter's `TestSurfaces.cs`, not the spike
+  kit; and looks to `SBOX_PUBLIC` or `AGENTS.md` for the engine source clone. It records a
+  lesson only in the lessons file `AGENTS.md` names, or, with none named, gives it in the
+  report and asks the owner where lessons live, as rule, what happened, why and proof. The
+  starter's suggested `AGENTS.md` lines name the clone and `docs/LESSONS.md`, and the import
+  reference's entry shape builds on the skill's.
+- **New evidence: `skills/evidence/SKILL_UPDATE_TEST.md`.** The change passed its
+  pre-registered, blind-scored rule against the v1.07 text in 12 acting sessions. With it,
+  3 of 3 runs asked the owner where a lesson should live, where 2 of 3 with the old text
+  wrote a lessons file unasked. Saved-scene loading showed no difference, since every run
+  used the starter's helper, and no run in either condition fixed a decal's random roll.
+  `run_sbox_skill_test.ps1` now takes a plan's own fixture, prompts, starter files and skill
+  version, a model, and `-BuildOnly`.
 
 ## 1.07 — 2026-11-03
 

@@ -92,6 +92,12 @@ never against private project data.
     confirmed the build in 6 of 6.
   - It failed its rule because no run ran the shared checks before the change. Agents
     rated the move light, and the skill doesn't ask for a baseline at light.
+- **[S&box skill update test](evidence/SKILL_UPDATE_TEST.md):** a change to
+  `sbox-engine-reference` against its v1.07 text, in 12 acting sessions.
+  - It passed its pre-registered rule. With the update, 3 of 3 runs asked the owner where
+    a lesson should live, where 2 of 3 with the old text made a lessons file unasked.
+  - Saved-scene loading showed no difference: every run used the starter's helper.
+  - No run in either condition fixed a decal's random roll, which the skill doesn't cover.
 
 | # | Scenario given to the agent | Expected behavior |
 |---|---|---|

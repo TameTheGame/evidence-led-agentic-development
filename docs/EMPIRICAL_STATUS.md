@@ -179,6 +179,22 @@ change.
 **Limits:** three runs per condition, one model, Windows only, a model scorer, and no run
 met a failing check, which is when a baseline would matter.
 
+## The S&box skill update test (v1.08)
+
+The [skill update test](../skills/evidence/SKILL_UPDATE_TEST.md) compared a change to the
+domain skill with its v1.07 text, in 12 sessions on a synthetic project that had the rung-1
+starter's helpers. Both conditions had the skill.
+
+- It passed its pre-registered rule, 13 to 12 on the scored total.
+- With the update, 3 of 3 runs gave a lesson in the reply and asked the owner where lessons
+  live. With the old text, 2 of 3 wrote a new lessons file unasked, and 1 recorded none.
+- Every run in both conditions loaded the saved scene with the starter's helper, so the
+  loader change showed no difference in a project that has it.
+- No run fixed the planted decal roll, which neither text covers.
+
+**Limits:** three runs per cell, one model, Windows only, a model scorer, partial blinding,
+and a synthetic scene that nothing compiled or ran.
+
 ## Pressure tests of the skills (v0.6)
 
 Fresh agents received owner requests about a synthetic map project. They worked with the
