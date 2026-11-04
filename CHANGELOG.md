@@ -14,6 +14,14 @@
   backslash in an unquoted path is an escape, so PowerShell got `tools<script>.ps1`. They
   now use forward slashes, which PowerShell reads the same, quote the `tools/*.cs` pattern
   so Git Bash doesn't expand it, and the starter says why.
+- **The S&box example says what a project copies.** A new [Using this example in a
+  project](examples/sbox/README.md#using-this-example-in-a-project) section lists each file
+  a project copies and where it goes: the domain skill, the starter's `UnitTests/` and
+  scripts, the compile check, the editor check with `package_ids.cs` beside it, and the
+  Python tools. Setup step 1 links to it, and names the three skill folders to copy, since
+  `skills/` also holds `evidence/`. The README and the guide drop lesson counts that had
+  gone stale, and the guide and the roadmap no longer list a generated mesh saved into a
+  scene as open, since the starter's saved mesh data run loaded one with its collision.
 
 ## 1.07 — 2026-11-03
 

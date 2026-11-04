@@ -53,9 +53,9 @@ decision rule committed before any run, and blind scoring.
 
 - **A second, non-game target example,** to check that the rung names and the skills
   carry over.
-- **S&box:** saved scenes that reference prefabs or collision models, and generated
-  geometry saved into a scene. These are still open after the
-  [spike](examples/sbox/README.md#what-the-spike-settled).
+- **S&box:** saved scenes that reference prefabs or collision models. These are still open
+  after the [spike](examples/sbox/README.md#what-the-spike-settled) and the starter's
+  [saved mesh data](examples/sbox/rung1-starter/README.md#saved-mesh-data) run.
 
 ## Not planned
 

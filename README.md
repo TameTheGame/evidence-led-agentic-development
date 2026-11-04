@@ -80,10 +80,14 @@ the decisions that are yours.
 
 > **For agents: setup steps**
 >
-> 1. **Install the skills.** From the latest release, copy the three folders in
->    [`skills/`](skills/README.md) into the project's skills folder: `.claude/skills/`
->    for Claude Code, or `.agents/skills/` for Codex. Any tool that supports the Agent
->    Skills format loads a skill when its description matches the work.
+> 1. **Install the skills.** From the latest release, copy the three skill folders in
+>    [`skills/`](skills/README.md), `choosing-rigor`, `matching-evidence-to-claims` and
+>    `asking-the-owner`, into the project's skills folder: `.claude/skills/` for Claude
+>    Code, or `.agents/skills/` for Codex. Leave `skills/evidence/`, which holds the test
+>    records. Any tool that supports the Agent Skills format loads a skill when its
+>    description matches the work. An S&box project also copies what
+>    [Using this example in a project](examples/sbox/README.md#using-this-example-in-a-project)
+>    lists.
 > 2. **Draft a first spec.** Ask the owner what the project is for. Then write a spec for
 >    one small area at `spec/<area>.spec.md`, in the [spec format](docs/SPEC_FORMAT.md),
 >    with every requirement as `draft`. If the project already has gates or sign-off
@@ -279,7 +283,7 @@ tests, are in [Evidence Ladder](docs/EVIDENCE_LADDER.md#with-superpowers).
 
 [`examples/sbox/`](examples/sbox/README.md) applies the method to a made-up game map in
 S&box. It includes a sample spec, the ladder for S&box, starter engine tests, a compile
-check, an editor check that runs on its own, a spec checker, an S&box skill, thirteen
+check, an editor check that runs on its own, a spec checker, an S&box skill,
 [lessons from a world build](examples/sbox/README.md#lessons-from-a-world-build), and an
 [import reference](examples/sbox/IMPORTING.md) for bringing old content into S&box.
 It is an example, not part of the method's rules.

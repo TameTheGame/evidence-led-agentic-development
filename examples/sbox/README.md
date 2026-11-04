@@ -17,6 +17,22 @@
 | [`tools/scene_refs.py`](tools/scene_refs.py) | A rung-0 check for clearing out generated files, such as old light bakes: it lists each file in a folder as in use or unused by the project's scenes and prefabs, and fails when one of them references a file that isn't there. See [Clearing out generated files](#clearing-out-generated-files). Run `python tools/test_scene_refs.py` to check it against its fixtures. |
 | [`tools/check_metas.py`](tools/check_metas.py) | A rung-0 check that every file Git tracks under the assets folder has the `.meta` S&box writes for it, tracked beside it, with names compared in any letter case. Run it from the project's root before an editor run, so a missing `.meta` fails here and not in the run. See [More world-build lessons](#more-world-build-lessons). Run `python tools/test_check_metas.py` to check it on throwaway Git repositories. |
 
+## Using this example in a project
+
+An S&box project copies these, from the same ELAD release, and adapts them:
+
+| Copy | To | Notes |
+|---|---|---|
+| [`skills/sbox-engine-reference/`](skills/sbox-engine-reference/SKILL.md) | `.claude/skills/sbox-engine-reference/`, or the tool's own skills folder | A starting domain skill. It belongs to the project, which keeps it current. |
+| [`rung1-starter/UnitTests/`](rung1-starter/README.md#contents) | `UnitTests/` at the project root, next to the `.sbproj` | Then follow the starter's [Using it](rung1-starter/README.md#using-it) steps. |
+| [`rung1-starter/tools/`](rung1-starter/README.md#contents): `run_engine_tests.ps1` and `sync_engine_source.ps1` | `tools/` | The runner calls the sync script, so take both. |
+| [`tools/compile_check.ps1`](tools/compile_check.ps1) | `tools/` | |
+| [`tools/editor_check.ps1`](tools/editor_check.ps1) and [`tools/package_ids.cs`](tools/package_ids.cs) | `tools/`, side by side | The check looks for `package_ids.cs` beside itself. |
+| [`tools/spec_lint.py`](tools/spec_lint.py), [`tools/scene_refs.py`](tools/scene_refs.py), [`tools/check_metas.py`](tools/check_metas.py) | `tools/` | Each needs only Python 3 and Git. To keep its test, copy `test_<name>.py` with it, and for the spec lint, `fixtures/` too. |
+
+[`outpost.spec.md`](outpost.spec.md) is a worked example to read, not a file to copy, and the
+[engine-rung spike](engine-rung-spike/README.md) is a record of what was proved.
+
 ## The ladder for a map
 
 | Rung | Example check |
@@ -84,8 +100,10 @@ collision, traces, spawn landing, and stuck detection against generated geometry
 5. **Rung 1 is Windows-only.** It needs the installed engine (`FACEPUNCH_ENGINE`) and the
    .NET 10 SDK. Cloud or Linux agents can run rung 0 only.
 
-Still open: saved scenes that reference prefabs or collision models, and generated geometry
-saved into a scene. See the [roadmap](../../ROADMAP.md).
+Still open: saved scenes that reference prefabs or collision models. A mesh that a script
+built and the Editor saved into a scene loads with its collision, as the starter's
+[saved mesh data](rung1-starter/README.md#saved-mesh-data) run shows. See the
+[roadmap](../../ROADMAP.md).
 
 ## The compile check
 
@@ -376,8 +394,9 @@ both times.
 
 ## Lessons from a world build
 
-The same project's world work on S&box `26.10.13a` turned up fourteen more. Each is read
-from the engine source at `26.10.13`, which is approximate for `26.10.13a`.
+The same project's world work, first on S&box `26.10.13a`, turned up these. Each is read
+from the engine source at `26.10.13`, which is approximate for `26.10.13a`, and an entry
+that was also read at `26.10.27` or seen on a later build says so.
 
 - **Read scene-load errors from editor start.** The Editor loads its startup scene before a
   check can mark the log, and opening a scene that is already open logs nothing new. So a
@@ -579,7 +598,7 @@ on its build scripts, harness and map code.
 
 ## More world-build lessons
 
-Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up twenty-five more. Each is
+Later world work, on S&box `26.10.13a` to `26.10.27c`, turned up these. Each is
 read from the engine source at `26.10.13` and again at `26.10.27`, and reads the same at
 both unless it says otherwise. Each says what was seen, and on which build.
 
