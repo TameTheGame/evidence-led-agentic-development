@@ -39,6 +39,19 @@ jobs:
       - name: Test the private-word and AI-attribution checks and push hooks
         run: python tools/test_check.py
 
+      # One script per step: on Windows the step's shell judges only its last command's exit.
+      - name: Test the S&box example's spec lint
+        run: python examples/sbox/tools/test_spec_lint.py
+
+      - name: Test the S&box example's scene reference check
+        run: python examples/sbox/tools/test_scene_refs.py
+
+      - name: Test the S&box example's .meta check
+        run: python examples/sbox/tools/test_check_metas.py
+
+      - name: Test the transcript analyzer
+        run: python skills/evidence/tools/test_analyze_transcripts.py
+
   release:
     name: Publish validated version tag
     if: startsWith(github.ref, 'refs/tags/v') && github.event_name == 'push'

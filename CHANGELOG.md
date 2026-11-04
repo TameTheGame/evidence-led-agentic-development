@@ -50,6 +50,10 @@
   walks every folder through junctions and symbolic links, since `Path.rglob` stops
   following symbolic links from Python 3.13. `test_scene_refs.py` gains a linked bake
   folder, which the old tool fails, and a scene in a linked folder.
+- **The hosted checks run the example tools' tests.** The workflow ran only `check.py` and
+  its test, so a change that broke `spec_lint.py`, `scene_refs.py`, `check_metas.py` or
+  the transcript analyzer still passed. It now runs each of their tests on Ubuntu and
+  Windows, one per step, since on Windows a step's shell judges only its last command.
 
 ## 1.07 — 2026-11-03
 
