@@ -44,6 +44,12 @@
   requirement dropped out of the format checks, the check lookup and the owner gate with no
   word. `spec_lint.py` now fails each such heading by its line. `test_spec_lint.py`'s
   bad-format case gains one, which the old lint passes over.
+- **`scene_refs.py` works through linked folders.** It worked out each file's path by
+  resolving it, so a folder linked in from outside the assets root, such as a junction,
+  stopped it with a traceback. It now names each file by the path a scene would use, and
+  walks every folder through junctions and symbolic links, since `Path.rglob` stops
+  following symbolic links from Python 3.13. `test_scene_refs.py` gains a linked bake
+  folder, which the old tool fails, and a scene in a linked folder.
 
 ## 1.07 — 2026-11-03
 

@@ -32,6 +32,7 @@ Dependency-free; Python 3.10 or newer.
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -57,11 +58,27 @@ def strings(value) -> list[str]:
     return []
 
 
+def files_under(root: Path) -> list[Path]:
+    """Every file under root, through junctions and symbolic links too, since a project can
+    link a folder in and Path.rglob stopped following symbolic links in Python 3.13. Each
+    folder is walked once, so a link loop ends."""
+    found: list[Path] = []
+    walked: set[str] = set()
+    for top, dirs, names in os.walk(root, followlinks=True):
+        real = os.path.normcase(os.path.realpath(top))
+        if real in walked:
+            dirs[:] = []
+            continue
+        walked.add(real)
+        found += [Path(top) / name for name in names if (Path(top) / name).is_file()]
+    return sorted(found)
+
+
 def references(assets: Path) -> dict[str, list[str]]:
     """Each normalized string in the scenes and prefabs, with the files it appears in."""
     found: dict[str, list[str]] = {}
     for pattern in REFERRERS:
-        for path in sorted(assets.rglob(pattern)):
+        for path in (p for p in files_under(assets) if p.match(pattern)):
             text = path.read_text(encoding="utf-8", errors="replace")
             try:
                 values = strings(json.loads(text))
@@ -89,7 +106,9 @@ def main(argv: list[str]) -> int:
         return 1
     folder = Path(args[0])
     try:
-        inside = folder.resolve().relative_to(assets.resolve())
+        # Without following links, so a folder linked in from outside the assets root still
+        # counts as the path a scene names it by.
+        inside = Path(os.path.abspath(folder)).relative_to(os.path.abspath(assets))
     except ValueError:
         inside = None
     if inside is None or not folder.is_dir():
@@ -101,8 +120,8 @@ def main(argv: list[str]) -> int:
     keys: set[str] = set()
     in_use: list[str] = []
     unused: list[str] = []
-    for path in sorted(p for p in folder.rglob("*") if p.is_file()):
-        key = normalize(path.resolve().relative_to(assets.resolve()).as_posix())
+    for path in files_under(folder):
+        key = normalize((inside / path.relative_to(folder)).as_posix())
         keys.add(key)
         (in_use if key in refs else unused).append(path.as_posix())
     missing = sorted((ref, where) for ref, where in refs.items()

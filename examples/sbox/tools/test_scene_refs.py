@@ -54,6 +54,36 @@ def delete(*names: str):
     return lambda root: [(root / n).unlink() for n in names]
 
 
+def link(root: Path, at: str, target: str) -> None:
+    """Links folder at to target, both under root: a junction on Windows, which needs no
+    extra rights, and a symbolic link elsewhere."""
+    (root / target).mkdir(parents=True, exist_ok=True)
+    (root / at).parent.mkdir(parents=True, exist_ok=True)
+    if os.name == "nt":
+        subprocess.run(["cmd", "/c", "mklink", "/J", str(root / at), str(root / target)],
+                       check=True, capture_output=True)
+    else:
+        (root / at).symlink_to(root / target, target_is_directory=True)
+
+
+def linked_bake(root: Path) -> None:
+    """A bake folder linked in from outside the assets root, holding a file the scene uses."""
+    link(root, f"{DATA}/linked", "elsewhere/bake")
+    (root / "elsewhere/bake/Yard_Probe_0c0c.vtex_c").write_bytes(b"")
+    scene = json.loads((root / "Assets/scenes/yard.scene").read_text(encoding="utf-8"))
+    scene["GameObjects"][0]["Components"][0]["ProbeTexture"] = \
+        "scenes/yard_scene_data/ddgi/linked/yard_probe_0c0c.vtex"
+    (root / "Assets/scenes/yard.scene").write_text(json.dumps(scene), encoding="utf-8")
+
+
+def linked_scene(root: Path) -> None:
+    """A scene in a folder linked in from outside the assets root, using the old bake."""
+    link(root, "Assets/maps", "elsewhere/maps")
+    scene = {"GameObjects": [{"Components": [{
+        "IrradianceTexture": "scenes/yard_scene_data/ddgi/yard_irradiance_1f2e_0a0a.vtex"}]}]}
+    (root / "elsewhere/maps/far.scene").write_text(json.dumps(scene), encoding="utf-8")
+
+
 CASES = [
     # (name, change, folder argument, expected exit, text that must appear, text that must not)
     ("before a clean-up", None, DATA, 0,
@@ -70,6 +100,14 @@ CASES = [
     ("a folder outside the assets root", None, "elsewhere", 1, ["is not a folder under"], ["PASS"]),
     ("a file name outside cp1252 comes back as itself", add(ODD), DATA, 0,
      [f"UNUSED   {ODD}", "PASS - 2 in use, 2 unused, 0 missing"], ["\ufffd", "Irradiance_?"]),
+    # A check that resolves a file's path through the link leaves the assets root and stops.
+    ("a bake folder linked in from outside the assets root", linked_bake, DATA, 0,
+     [f"IN USE   {DATA}/linked/Yard_Probe_0c0c.vtex_c", "PASS - 3 in use, 1 unused, 0 missing"],
+     ["Traceback", "MISSING"]),
+    # A check that walks with Path.rglob misses this scene where rglob skips links, as
+    # Python 3.13 and newer do with a symbolic link, and lists the bake it uses as unused.
+    ("a scene in a folder linked in from outside the assets root", linked_scene, DATA, 0,
+     [f"IN USE   {OLD}", "PASS - 3 in use, 0 unused, 0 missing"], ["UNUSED", "Traceback"]),
 ]
 
 
