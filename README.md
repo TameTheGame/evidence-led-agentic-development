@@ -149,8 +149,9 @@ Move this project to the latest ELAD release
 4. **Report.** One line per requirement: the ID, the rung reached, the result, and the
    commit. After that come the cards. A card is a short, numbered set of steps for
    something only you can judge. It says what pass and fail look like and how to reply.
-5. **Owner.** You reply `GREEN` or `RED`, and the agent records your answer in
-   `spec/ACCEPTANCE.md`.
+5. **Owner.** You reply in the card's own words, such as `GREEN` or `RED`, or `GO`,
+   `REVISE` or `NO-GO` on a decision, and the agent records your answer in
+   `spec/ACCEPTANCE.md`. Until you answer, the requirement stays unmet.
 
 ```text
 OUT-SPAWN-01  engine   pass   a1b2c3d
@@ -170,7 +171,7 @@ Each requirement is one testable sentence, with its rung and its check:
 - state: agreed
 - rung: engine
 - check: OUT_SPAWN_01_EverySpawnLandsOnSolidGround
-- touches: spec/outpost.layout.json, generator code
+- touches: spec/outpost.layout.json, Code/OutpostGenerator.cs
 ```
 
 Only the owner moves a requirement from `draft` to `agreed`. Results stay out of the spec.

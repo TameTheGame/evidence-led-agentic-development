@@ -245,8 +245,9 @@ A method that only grows has stopped evaluating itself.
    the first failure to find its cause before changing anything else.
 5. **Report.** For each ID: the rung reached, pass or fail, and the commit. Then come the
    cards the owner needs to run.
-6. **Owner.** The owner replies `GREEN` or `RED`, and the agent appends the line to
-   `ACCEPTANCE.md`.
+6. **Owner.** The owner answers with one of the card's replies, such as `GREEN` or `RED`,
+   or `GO`, `REVISE` or `NO-GO` for a decision, and the agent appends the line to
+   `ACCEPTANCE.md`. A card the owner hasn't answered leaves its requirement unmet.
 
 ## With Superpowers
 

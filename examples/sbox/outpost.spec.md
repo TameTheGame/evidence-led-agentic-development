@@ -38,33 +38,33 @@ Interiors, lighting mood, ambient audio, NPCs.
 - state: agreed
 - rung: static
 - check: lint-scene OUT-SCENE-01
-- touches: generated outpost scene
+- touches: spec/outpost.layout.json, Code/OutpostGenerator.cs
 - why: PlayerController adjusts an existing main camera but does not create one
 
 ### OUT-COLL-01 — Every walkable floor in the layout has collision
 - state: agreed
 - rung: engine
 - check: OUT_COLL_01_EveryFloorHasCollision
-- touches: spec/outpost.layout.json, generator code
+- touches: spec/outpost.layout.json, Code/OutpostGenerator.cs
 
 ### OUT-SPAWN-01 — Every spawn lands on solid ground with room to stand
 - state: agreed
 - rung: engine
 - check: OUT_SPAWN_01_EverySpawnLandsOnSolidGround
-- touches: spec/outpost.layout.json, generator code
+- touches: spec/outpost.layout.json, Code/OutpostGenerator.cs
 
 ### OUT-ROUTE-01 — A standing player fits along every listed route segment
 - state: agreed
 - rung: engine
 - check: OUT_ROUTE_01_RoutesAreClear
-- touches: spec/outpost.layout.json, generator code
+- touches: spec/outpost.layout.json, Code/OutpostGenerator.cs
 - why: listed segments are flat; slopes and stairs need a walk test instead
 
 ### OUT-SIGHT-01 — The tower top is visible from eye height at both spawns
 - state: agreed
 - rung: engine
 - check: OUT_SIGHT_01_TowerVisibleFromSpawns
-- touches: spec/outpost.layout.json, generator code
+- touches: spec/outpost.layout.json, Code/OutpostGenerator.cs
 
 ### OUT-SAVE-01 — The generated scene survives save, close, and reopen unchanged
 - state: agreed
@@ -86,6 +86,7 @@ Interiors, lighting mood, ambient audio, NPCs.
 ## Cards
 
 ### NET-1 (session)
+Build: <commit>, filled in when the card is sent.
 1. Host the map. Join from a second client.
 2. On the client, walk into the north wall, then through the gate.
 Pass: the wall blocks you and the gate lets you through, on both machines.
@@ -95,12 +96,14 @@ Reply: GREEN, or RED plus what you saw and on which machine.
 Limit: same-machine host and client is fine here; it is not clean-client proof.
 
 ### FEEL-1 (owner)
+Build: <commit>, filled in when the card is sent.
 1. Spawn at the north spawn. Walk to the gate, then to the tower.
 2. Judge: does it read as a frontier outpost, and is the path obvious?
 Pass: it reads as a frontier outpost, and you find the way without searching.
 Fail: it reads as something else, or you had to search for the way.
 Stop if: you can't spawn at the north spawn or reach the gate.
 Reply: GREEN, or RED plus what felt wrong.
+Limit: one person's judgment of one build; it says nothing about collision or online play.
 ```
 
 ---
