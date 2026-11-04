@@ -164,7 +164,9 @@ The core doesn't ship a lint; each project owns its own. A worked example is
 [`examples/sbox/tools/spec_lint.py`](../examples/sbox/tools/spec_lint.py). It covers every
 item in the list above and the owner gate, with fixtures, but not the hold. It looks check
 names up only for `agreed` requirements, in the folders passed with `--sources`. With
-`--owner-exit`, a change that needs the owner gets its own exit code.
+`--owner-exit`, a change that needs the owner, or a gate it had to skip, gets its own exit
+code, so a wrapper can stop on either. An older copy only prints a note when it skips the
+gate, so a wrapper around one should treat that note as a stop.
 
 With a lint like this, spec-driven work needs no per-task records. Git commits supply
 identity, and test output and `ACCEPTANCE.md` supply results.

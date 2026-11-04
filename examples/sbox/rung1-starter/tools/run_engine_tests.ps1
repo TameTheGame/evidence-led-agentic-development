@@ -255,6 +255,24 @@ function Invoke-TimeLimited([string]$File, [string[]]$Arguments, [int]$Seconds, 
     return $result
 }
 
+# The assembly and project paths in a project's generated .csproj files that don't resolve.
+# S&box writes them relative to the project, so they break when the project moves to another
+# depth, and dotnet then fails the build with CS0006 instead of saying why.
+function Find-StaleProjectPaths([string]$Folder) {
+    $stale = @()
+    foreach ($proj in @(Get-ChildItem $Folder -Recurse -Depth 1 -Filter *.csproj -File -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notmatch '\\(obj|bin)\\' })) {
+        $text = [IO.File]::ReadAllText($proj.FullName)
+        $paths = @([regex]::Matches($text, 'Include="([^"]+\.(?:dll|csproj))"') | ForEach-Object { $_.Groups[1].Value }) +
+            @([regex]::Matches($text, '<HintPath>([^<]+)</HintPath>') | ForEach-Object { $_.Groups[1].Value })
+        foreach ($path in $paths | Where-Object { $_ -notmatch '\$\(' -and -not [IO.Path]::IsPathRooted($_) }) {
+            if (-not (Test-Path -LiteralPath ([IO.Path]::GetFullPath([IO.Path]::Combine($proj.DirectoryName, $path))))) {
+                $stale += "$($proj.Name): $path"
+            }
+        }
+    }
+    return ,$stale
+}
+
 if ($SelfTest) {
     $script:cases = 0; $script:wrong = 0
     function Expect([string]$Name, [bool]$Ok, [string]$Detail) {
@@ -295,6 +313,15 @@ if ($SelfTest) {
         Check 'a test that passed but the run aborted' (Write-Trx 'aborted.trx' @('Passed', 'PassedButRunAborted')) $false 0 'FAIL'
         Check 'a test that timed out' (Write-Trx 'timeout.trx' @('Passed', 'Timeout')) $false 0 'FAIL'
         $why = Write-Trx 'message.trx' @() '<Results><UnitTestResult testName="Setup_SavedSceneLoads" outcome="NotExecuted"><Output><ErrorInfo><Message>Assert.Inconclusive failed. No saved scene.</Message></ErrorInfo></Output></UnitTestResult></Results>'
+        $moved = Join-Path $folder 'moved\UnitTests'
+        New-Item -ItemType Directory -Force $moved, (Join-Path $folder 'engine') | Out-Null
+        [IO.File]::WriteAllText((Join-Path $folder 'engine\Sandbox.Engine.dll'), '')
+        [IO.File]::WriteAllText((Join-Path $moved 'ok.unittest.csproj'), '<Project><ItemGroup><Reference Include="../../engine/Sandbox.Engine.dll"/></ItemGroup></Project>')
+        $found = Find-StaleProjectPaths (Join-Path $folder 'moved')
+        Expect 'project paths that resolve are left alone' ($found.Count -eq 0) "found $($found -join '; ')"
+        [IO.File]::WriteAllText((Join-Path $moved 'deep.unittest.csproj'), '<Project><ItemGroup><Reference Include="../engine/Sandbox.Engine.dll"/></ItemGroup></Project>')
+        $found = Find-StaleProjectPaths (Join-Path $folder 'moved')
+        Expect 'a project path one level short is found, as after a move' ($found.Count -eq 1 -and $found[0] -like 'deep.unittest.csproj:*') "found $($found -join '; ')"
         $read = Read-TrxOutcomes $why $since
         Expect "an inconclusive test's name and message are read" ($read.Tests.Count -eq 1 -and $read.Tests[0].Name -eq 'Setup_SavedSceneLoads' -and $read.Tests[0].Message -eq 'Assert.Inconclusive failed. No saved scene.') "read $(@($read.Tests | ForEach-Object { "$($_.Name): $($_.Message)" }) -join '; ')"
 
@@ -362,6 +389,10 @@ if (-not (Get-ChildItem $tests -Filter *.csproj -ErrorAction SilentlyContinue)) 
 }
 $projectDir = (Resolve-Path $Project).Path
 $tests = (Resolve-Path $tests).Path
+$stale = Find-StaleProjectPaths $projectDir
+if ($stale.Count) {
+    Stop-Setup "the generated project files name paths that aren't there: $($stale -join '; '). S&box writes them relative to the project, so they break when it moves, and the build would fail with CS0006. Open the project once in the S&box Editor so it writes them again."
+}
 
 # Steam can update the engine at any launch; keep the source agents read on the same release.
 $sync = Join-Path $PSScriptRoot 'sync_engine_source.ps1'

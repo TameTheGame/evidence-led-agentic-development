@@ -1249,7 +1249,10 @@ writes, store packages, and tags.
   hits: searches for a moved folder's old path missed real hits that way. Put
   `MSYS_NO_PATHCONV=1` before such a command, or run it from PowerShell, which passes such
   arguments unchanged. That variable also stops the command's real paths being converted,
-  so give them in Windows form, such as `C:/work`, not `/c/work` or `/tmp`.
+  so give them in Windows form, such as `C:/work`, not `/c/work` or `/tmp`. A Windows
+  program's own switches are hit too: in `cmd /c rmdir <folder>`, the `/c` arrived as `C:/`,
+  so `cmd` started its prompt, read no input, and exited 0 without running anything. Write
+  `cmd //c`, or set the variable, or run it from PowerShell.
   - Checked: Git for Windows' release notes; seen with Git for Windows 2.56.0. Proof:
     nothing yet.
 - **Test a Python tool with a cp1252 pipe and UTF-8 mode off.** Without UTF-8 mode, Python
@@ -1268,6 +1271,12 @@ writes, store packages, and tags.
   - Checked: Python's documentation; seen with Python 3.14 on Windows. Proof: the
     `test_spec_lint.py` case under a non-ASCII folder fails with the old lint when the
     runner sets `PYTHONUTF8=1`.
+- **To find a name in compiled or binary files, search their printable strings, not their
+  raw bytes.** Reading a binary file as Latin-1 and searching it for a short token finds it
+  by chance: a 3-letter token turned up in files that didn't use it. Pull out runs of 6 or
+  more printable characters, in ASCII and in UTF-16, as `strings` does, and search those,
+  for whole names.
+  - Checked: seen in a project's check. Proof: nothing yet.
 
 ## Faster ways of working
 

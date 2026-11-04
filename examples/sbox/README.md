@@ -582,10 +582,11 @@ that was also read at `26.10.27` or seen on a later build says so.
   excuse that exact line only for a resource whose check passed. On `26.10.27c` a client
   logs the line as a warning, and it can end in ` - from <path>`, naming the file that
   asked for the resource: a model or a sound event in the Editor, and on a client in a real
-  project's run, the scene the run loaded. The native engine writes the line, so the source
-  doesn't say when it adds the ending. Let the excuse allow that ending only with the path
-  you expect, such as the run's own scene, and still match the whole line from start to
-  end, so a line naming another file, or with more after it, still counts.
+  project's run, the scene the run loaded. On one build, the same resource's line came with
+  and without the ending. The native engine writes the line, so the source doesn't say when
+  it adds it. Let the excuse accept the line with no ending, or with that ending and only
+  the path you expect, such as the run's own scene, and still match the whole line from
+  start to end, so a line naming another file, or with more after it, still counts.
 
 A static check over every C# file the project tracks can hold four of these before any
 S&box run, since none is a compile error. It fails a `GameObjectSystem` that spawns a
@@ -1018,6 +1019,31 @@ both unless it says otherwise. Each says what was seen, and on which build.
   it looks at it this way. At `26.10.13` the code reads the same, with `ReachLength` at
   line 54 of `PlayerController.Input.cs`, `CurrentHeight` at line 126 and the duck in the
   air at lines 150-155.
+- **Space a sealing check's rays no wider than the player, and cast them above the feet's
+  reach.** A check that casts rays along a boundary to find gaps a player could leave
+  through misses any gap narrower than its spacing. The default player's body has a
+  `BodyRadius` of 16, so it is 32 in wide
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.cs`,
+  line 29), and rays more than 32 in apart can pass over a gap it fits through: a project's
+  check with rays far wider apart passed a boundary with a player-sized gap cut in it. The
+  rays must also reach above the highest the feet get. A jump lifts them about 53 in, and a
+  duck in the air lifts the body by the 36 in between standing and crouched height, so the
+  feet reach about 89 in (`PlayerController.Input.cs`, lines 11, 12 and 161-166, and
+  `PlayerController.cs`, line 30, with the scene's gravity of 850). Landed there, a player
+  steps up a lip of up to `StepUpHeight`, 18
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/Modes/Walk.cs`,
+  line 12), which it does only on the ground
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.Step.cs`,
+  lines 19-27). So cast up to at least 107 in above every floor a player can stand on near
+  the boundary. Read from the source, not measured.
+- **Reopen a project in the Editor after moving it to another depth.** S&box writes the
+  project's `.csproj` and `.slnx` files with paths to the engine relative to the project
+  (`26.10.27:engine/Sandbox.SolutionGenerator/Generator.cs`, lines 31-55, the same at
+  `26.10.13`). A checkout moved one folder deeper still names paths one `..` short, so a
+  rung-1 build failed with `CS0006`, a missing metadata file, until the Editor opened the
+  project again and rewrote them. A move to a shallower folder kept working, since extra
+  `..` steps stop at the drive's root. The rung-1 starter's runner now checks those paths
+  before a run, and stops with `NOT RUN` naming each one that isn't there.
 
 ## Lessons from importing old content
 

@@ -143,6 +143,20 @@
   pre-registered, blind-scored rule against the v1.07 text in 18 acting sessions. Both
   versions agreed under a scoped written hand-off and refused vague consent, but only the
   update recorded the hand-off in each requirement, in 3 of 3 runs against 0 of 3.
+- **The engine test runner stops on a moved project.** S&box writes a project's `.csproj`
+  files with engine paths relative to the project, so a checkout moved one folder deeper
+  failed its rung-1 build with `CS0006` until the Editor reopened it. `run_engine_tests.ps1`
+  now checks those paths first and stops with `NOT RUN`, naming each one that isn't there.
+  `-SelfTest` gains two cases, and the guide gains the lesson, read from the solution
+  generator's source.
+- **Five more S&box and Windows lessons.** The guide says to space a sealing check's rays
+  no wider than the player, 32 in, and cast them up to about 107 in above each floor, from
+  the jump, the duck in the air and the step-up, and that the missing-file line can come
+  with or without its ` - from <path>` ending on one build, so an excuse accepts both. The
+  import reference's Git Bash entry adds that `cmd /c` loses its `/c`, so `cmd` runs nothing
+  and exits 0, and a new entry says to search binary files' printable strings, not their raw
+  bytes. The spec format says a wrapper should stop on a skipped owner gate, which
+  `--owner-exit` now covers, and on an older lint's skip note.
 
 ## 1.07 — 2026-11-03
 

@@ -83,6 +83,10 @@ is that code, ready to copy.
      as not executed, so the script reads each test's outcome from the run's TRX file.
    - `-TimeoutSeconds` limits the run, 1800 by default. Past it, the script kills
      `dotnet test` and every process under it, and keeps the output and the engine log.
+   - When the project has moved since the Editor last opened it, the generated project
+     files name engine paths that aren't there, and the build would fail with `CS0006`.
+     The script stops first with `NOT RUN` and names each one; open the project once in the
+     Editor to fix them.
    - `powershell -File tools/run_engine_tests.ps1 -SelfTest` checks the results on planted
      TRX files and, on Windows, kills a planted hung process tree. It needs no S&box.
 7. **Tell agents.** Add lines to the project's `AGENTS.md`, such as: "Run engine tests with
