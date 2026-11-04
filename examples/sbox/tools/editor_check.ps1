@@ -285,8 +285,11 @@ New-Item -ItemType Directory -Force $Out | Out-Null
 # Runs sbox-cli and returns { Code; Out; Err }. Exit 0 = success, 2 = the tool reported an error,
 # 1 = no editor to connect to, or bad arguments.
 function Invoke-SboxCli([string[]]$Arguments) {
-    # Windows PowerShell 5.1 strips double quotes from native arguments.
-    if ($PSVersionTable.PSVersion.Major -lt 7) { $Arguments = $Arguments | ForEach-Object { $_ -replace '"', '\"' } }
+    # The legacy way of passing native arguments strips their double quotes: Windows
+    # PowerShell 5.1, PowerShell 7.0-7.2, which lack $PSNativeCommandArgumentPassing, and a
+    # later PowerShell with it set to Legacy.
+    $passing = Get-Variable PSNativeCommandArgumentPassing -ValueOnly -ErrorAction SilentlyContinue
+    if (-not $passing -or $passing -eq 'Legacy') { $Arguments = $Arguments | ForEach-Object { $_ -replace '"', '\"' } }
     $errFile = [IO.Path]::GetTempFileName()
     try {
         $ErrorActionPreference = 'Continue'
@@ -721,6 +724,18 @@ try {
                 [IO.File]::WriteAllBytes($f, $projectFiles[$f])
                 $notes.Add("the editor rewrote $(Split-Path $f -Leaf); the original is restored")
             }
+        }
+    } else {
+        # An editor that still has the project open would write over a restore, so leave the
+        # files, and say which ones the run changed.
+        $changed = @()
+        if ($null -ne $original -and (Test-Path $sceneFile) -and
+            [Convert]::ToBase64String([IO.File]::ReadAllBytes($sceneFile)) -ne [Convert]::ToBase64String($original)) { $changed += $sceneFile }
+        foreach ($f in $projectFiles.Keys) {
+            if ([Convert]::ToBase64String([IO.File]::ReadAllBytes($f)) -ne [Convert]::ToBase64String($projectFiles[$f])) { $changed += $f }
+        }
+        if ($changed) {
+            $notes.Add("an editor still had the project open, so these weren't restored: $(($changed | ForEach-Object { Split-Path $_ -Leaf }) -join ', '); close it and restore them from Git")
         }
     }
 }

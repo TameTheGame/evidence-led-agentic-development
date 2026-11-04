@@ -58,6 +58,18 @@
   `test-results` folder to the second before it waited for the lock, so two runs started in
   the same second used one folder, and the second overwrote the first's results, TRX file
   and engine log. It now names the folder once it holds the lock, to the millisecond.
+- **The compile check stops on any script path that matches nothing.** `compile_check.ps1`
+  stopped only when no `-Scripts` entry matched, so a mistyped second path still gave
+  `PASS` for the first script alone. It now stops with `NOT RUN` naming each entry that
+  matches no file. Seen on `26.10.27c` with the old check passing such a run.
+- **The editor check keeps its quotes in every PowerShell, and says what it left
+  unrestored.** `editor_check.ps1` escaped the quotes in its `sbox-cli` arguments only on
+  Windows PowerShell, but PowerShell 7.0-7.2, and later ones with
+  `$PSNativeCommandArgumentPassing` set to `Legacy`, strip them too, so a call sent
+  `{path:...}`. It now escapes them whenever native arguments pass the legacy way. When an
+  editor is still listed after the run, the check leaves the scene and `.sbproj` as they
+  are, and now says in a `Note:` which of them the run changed, where before it said
+  nothing.
 
 ## 1.07 — 2026-11-03
 

@@ -40,8 +40,13 @@ if (-not $managed -or -not (Test-Path (Join-Path $managed 'Sandbox.Engine.dll'))
     Stop-Setup 'set FACEPUNCH_ENGINE (or pass -Engine) to the S&box install folder; its bin\managed has the engine assemblies.'
 }
 if (-not (Get-Command dotnet -ErrorAction SilentlyContinue) -or -not (@(& dotnet --list-sdks 2>$null) -match '^10\.')) { Stop-Setup 'install the .NET 10 SDK: "dotnet --list-sdks" shows no 10.x SDK.' }
-$files = @($Scripts | ForEach-Object { Get-ChildItem $_ -File -ErrorAction SilentlyContinue })
-if (-not $files) { Stop-Setup "no script files match $($Scripts -join ', ')." }
+# Each entry must match a file, or a mistyped one would leave a PASS for the others alone.
+$files = @()
+foreach ($entry in $Scripts) {
+    $matched = @(Get-ChildItem $entry -File -ErrorAction SilentlyContinue)
+    if (-not $matched) { Stop-Setup "no script file matches $entry." }
+    $files += $matched
+}
 $extra = @()
 foreach ($folder in $Include) {
     if (-not (Test-Path $folder -PathType Container)) { Stop-Setup "no folder $folder to include." }
