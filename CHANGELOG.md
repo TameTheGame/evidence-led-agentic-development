@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- **S&box starts wait while another program uses the GPU.** A new
+  `examples/sbox/tools/wait_for_gpu.ps1` reads `nvidia-smi` and holds a start while any
+  GPU's use is above 30% or a process that isn't S&box holds 1 GB of video memory or more.
+  It checks again every 5 minutes and ends with `NOT RUN` after an hour; each threshold and
+  time is a parameter. Where Windows' driver model leaves a process's memory out of
+  `nvidia-smi`, it reads Windows' GPU counters, and it warns and goes ahead when there is
+  no `nvidia-smi`. It never touches another process. The engine test runner and the editor
+  check call it before each S&box start and stop with `NOT RUN` without it, and the guide's
+  new [Waiting for a free GPU](examples/sbox/README.md#waiting-for-a-free-gpu) section says
+  to run it before any other start. A process's figure larger than the GPU's memory in use,
+  or than the GPU, is reported and left out, since one NVIDIA overlay read as more than its
+  card. `-SelfTest` checks it on faked `nvidia-smi` output.
 - **The editor check puts back the scene's `_d`, fails a scene S&box rewrites, and catches
   an update mid-run.** A save writes a scene's binary data, such as its clutter, to
   `<scene>_d` beside it, and on `26.10.27c` a resave changed it. `editor_check.ps1` put

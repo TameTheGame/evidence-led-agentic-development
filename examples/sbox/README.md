@@ -27,6 +27,7 @@ An S&box project copies these, from the same ELAD release, and adapts them:
 | [`rung1-starter/UnitTests/`](rung1-starter/README.md#contents) | `UnitTests/` at the project root, next to the `.sbproj` | Then follow the starter's [Using it](rung1-starter/README.md#using-it) steps. |
 | [`rung1-starter/tools/`](rung1-starter/README.md#contents): `run_engine_tests.ps1` and `sync_engine_source.ps1` | `tools/` | The runner calls the sync script, so take both. |
 | [`tools/compile_check.ps1`](tools/compile_check.ps1) | `tools/` | |
+| [`tools/wait_for_gpu.ps1`](tools/wait_for_gpu.ps1) | `tools/` | The runner and the editor check call it before each S&box start, and stop with `NOT RUN` without it. See [Waiting for a free GPU](#waiting-for-a-free-gpu). |
 | [`tools/editor_check.ps1`](tools/editor_check.ps1) and [`tools/package_ids.cs`](tools/package_ids.cs) | `tools/`, side by side | The check looks for `package_ids.cs` beside itself. |
 | [`tools/spec_lint.py`](tools/spec_lint.py), [`tools/scene_refs.py`](tools/scene_refs.py), [`tools/check_metas.py`](tools/check_metas.py) | `tools/` | Each needs only Python 3 and Git. To keep its test, copy `test_<name>.py` with it, and for the spec lint, `fixtures/` too. |
 
@@ -144,6 +145,43 @@ during `dotnet build UnitTests`. The first run found that a script using `Log` f
 (`26.10.13:engine/Sandbox.Engine/Systems/Mcp/ScriptTools.cs`, approximate for `26.10.13a`).
 The check now does too, for scripts and for included code, as a project's own build does.
 
+## Waiting for a free GPU
+
+`tools/wait_for_gpu.ps1` holds an S&box start while another program is using the GPU, so
+S&box doesn't compete with it for video memory or GPU time. The engine test runner and the
+editor check call it before each start. Run it before any other start too, such as
+`sbox-cli --game` or a dedicated server:
+
+```powershell
+powershell -File tools/wait_for_gpu.ps1
+```
+
+- **What counts as busy.** It reads `nvidia-smi`. The GPU is busy when its use is above
+  `-MaxUtilization` percent, 30 by default, or when a process that isn't S&box holds
+  `-MaxOtherVramMB` MiB of video memory or more, 1024 by default. Those processes are the
+  ones `nvidia-smi` lists as using the GPU for compute, such as a CUDA workflow. A process
+  counts as S&box when its file name starts with `sbox`.
+- **How it waits.** While the GPU is busy it says why and checks again every
+  `-IntervalSeconds`, 300 by default. After `-TimeoutSeconds`, 3600 by default, it ends
+  with `NOT RUN` and exit 2; `-TimeoutSeconds 0` checks once. An agent's shell can stop a
+  command that runs this long, so run it where it can wait, such as in the background. It
+  only reads: it never stops, pauses or changes a process.
+- **Windows hides each process's video memory from `nvidia-smi`.** Under the WDDM driver
+  model, which a GPU that drives a display uses, `nvidia-smi` prints `[N/A]` for it
+  ([NVIDIA's forum](https://forums.developer.nvidia.com/t/unable-to-view-memory-usage-with-nvidia-smi-not-available-in-wddm-driver-model/244700)).
+  The script then reads the process's dedicated video memory from Windows' GPU Process
+  Memory counters, for the processes `nvidia-smi` lists and no others. A process whose
+  memory neither reports counts as busy, since it may hold any amount. A figure larger than
+  the memory the GPU has in use, or than the GPU has, can't be one process's own, so the
+  script reports it and doesn't hold on it. NVIDIA's overlay, which `nvidia-smi` lists as a
+  compute process, has read as 36163 MiB on a 32607 MiB card with 26203 MiB in use.
+- **Without `nvidia-smi` it goes ahead.** On a machine with no NVIDIA GPU, or when
+  `nvidia-smi` fails, it warns and exits 0.
+- **`-SelfTest` needs no GPU.** It checks the reading and the waiting on faked `nvidia-smi`
+  output, including planted faults: a GPU at 45% use, a CUDA process holding 2 GB, a GPU
+  that stays busy until the timeout, and a figure larger than the GPU's memory in use. Its
+  waits only count, so it takes seconds.
+
 ## The editor check
 
 S&box `26.10.13` added `sbox-cli`, which agents use to drive the Editor over a local named pipe.
@@ -159,6 +197,9 @@ powershell -File tools/editor_check.ps1 -Scene scenes/outpost.scene
 - **It owns its editors.** It opens the project in an editor that `sbox-cli` owns, so the
   editor closes if the script stops. It refuses to run while another editor has the project
   open.
+- **It waits for a free GPU.** Before each editor start it runs `wait_for_gpu.ps1` from
+  beside itself, and it stops with `NOT RUN` when the GPU stays busy or that script isn't
+  there; see [Waiting for a free GPU](#waiting-for-a-free-gpu).
 - **The project must leave its AI setting on.** An editor opens the pipe `sbox-cli` uses
   only when the project's `.sbproj` doesn't set `AI.EnableMcpCommunication` to `false`.
   With it off, the check stops with `NOT RUN` before it starts an editor, since `sbox-cli`

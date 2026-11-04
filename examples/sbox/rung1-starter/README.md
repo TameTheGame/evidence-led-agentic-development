@@ -19,7 +19,7 @@ is that code, ready to copy.
 | `UnitTests/EngineTestHelpers.cs` | A headless player, a bounded tick-until-grounded loop, the stuck check with its enclosure probe, and the saved-scene loader |
 | `UnitTests/StarterGeometry.cs` | Stand-in box geometry, built in the order a game scene needs: create the `MeshComponent` disabled, assign the mesh, then enable it. Replace it with your own generator. |
 | `UnitTests/StarterTests.cs` | Five setup checks, and one requirement written as project tests should be: named after its check, with a control case that must fail |
-| `tools/run_engine_tests.ps1` | Runs the tests under a time limit, reads each test's outcome, and saves the engine's own log with the results, because engine errors appear only there |
+| `tools/run_engine_tests.ps1` | Runs the tests under a time limit, reads each test's outcome, and saves the engine's own log with the results, because engine errors appear only there. Before it starts the engine, it waits while another program uses the GPU, with the example's [`tools/wait_for_gpu.ps1`](../tools/wait_for_gpu.ps1) beside it. |
 | `tools/sync_engine_source.ps1` | Moves a local clone of `Facepunch/sbox-public` to the release that is installed, so agents read the source of the engine they run. The runner calls it first. |
 
 ## Using it
@@ -28,7 +28,8 @@ is that code, ready to copy.
    `addon` projects, and only when the project already has a `UnitTests` folder, which the
    next step adds. A `content` (map) project needs a small companion code project.
 2. **Copy the starter in.** Copy `UnitTests\` into the project root, next to the `.sbproj`,
-   and copy both scripts in `tools\` into the project's `tools\`.
+   and copy both scripts in `tools\` into the project's `tools\`, with the example's
+   [`tools/wait_for_gpu.ps1`](../tools/wait_for_gpu.ps1) beside them.
 3. **Generate the test project.** Open the project in the S&box Editor, check the console
    for compile errors, and close it. S&box generates `UnitTests\<project>.unittest.csproj`.
 4. **Keep the AI block in the `.sbproj`.** Agents drive the Editor through `sbox-cli`, over

@@ -6,7 +6,8 @@ fixed camera captures it before and after.
 .DESCRIPTION
 Runs unattended through sbox-cli, which ships with S&box 26.10.13 and later
 (<engine>\bin\managed\sbox-cli.exe) and talks to an editor over a local named pipe. The script:
-  1. opens the project in an editor that sbox-cli owns, so the editor closes if the script dies;
+  1. opens the project in an editor that sbox-cli owns, so the editor closes if the script dies,
+     after wait_for_gpu.ps1, beside it, finds the GPU free of other work (below);
   2. opens the scene, saves it, checks that the save wrote the scene file as it was, byte for
      byte but for store package IDs (below), records the saved file's objects, and takes a
      screenshot from the fixed camera;
@@ -67,6 +68,10 @@ build again after its last session, and reports NOT RUN when the build changed. 
 sbox-cli unless Project Settings > AI > Enable MCP Communication is off. When the project's
 .sbproj turns it off, the check stops with NOT RUN before it starts an editor, since sbox-cli
 would only wait out its start-up timeout.
+
+Before each editor start, wait_for_gpu.ps1 holds the start while another program uses the GPU,
+such as a CUDA workflow, and the check stops with NOT RUN when the GPU stays busy or the script
+isn't beside it. Its help says what counts as busy.
 
 .EXAMPLE
 powershell -File tools/editor_check.ps1 -Scene scenes/outpost.scene
@@ -493,6 +498,8 @@ if (-not $Engine -or -not (Test-Path (Join-Path $Engine 'sbox-dev.exe'))) {
 }
 $cli = Join-Path $Engine 'bin\managed\sbox-cli.exe'
 if (-not (Test-Path $cli)) { Stop-Setup "no sbox-cli in $Engine\bin\managed; it ships with S&box 26.10.13 and later." }
+$gpuGate = Join-Path $PSScriptRoot 'wait_for_gpu.ps1'
+if (-not (Test-Path -LiteralPath $gpuGate -PathType Leaf)) { Stop-Setup "no wait_for_gpu.ps1 beside this script. Copy it from the example's tools folder; it holds each S&box start while another program uses the GPU." }
 $version = Get-Content (Join-Path $Engine '.version') -TotalCount 1 -ErrorAction SilentlyContinue
 # Without Steam the editor never starts, and sbox-cli gives up with little to go on.
 if (-not (Get-Process steam -ErrorAction SilentlyContinue)) {
@@ -738,6 +745,9 @@ function Close-StuckEditor($session) {
 # Opens the project in an editor owned by a sbox-cli process, and waits for a finished compile
 # if the project has code. Without code, editor_status reports LastCompileSucceeded as null.
 function Start-Editor {
+    # Wait while another program uses the GPU, so the editor doesn't compete with it.
+    & $gpuGate
+    if ($LASTEXITCODE -eq 2) { Stop-Setup 'the GPU stayed busy with other work; the GPU line above says why.' }
     $info = New-Object System.Diagnostics.ProcessStartInfo
     $info.FileName = $cli
     $info.Arguments = "--project `"$dir`" --idle-timeout 7200"

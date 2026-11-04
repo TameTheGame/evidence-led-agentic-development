@@ -9,13 +9,15 @@ the install folder, which every run overwrites. This script:
   1. checks the machine: Windows, a .NET 10 SDK, and an S&box install;
   2. if given a clone of Facepunch/sbox-public (SBOX_PUBLIC or -Source), moves it to the
      installed release with sync_engine_source.ps1, so agents read the source they run;
-  3. runs `dotnet test` on the project's UnitTests folder, holding a lock so that only one
+  3. waits while another program uses the GPU, such as a CUDA workflow, with
+     wait_for_gpu.ps1 beside it, and stops with NOT RUN when the GPU stays busy;
+  4. runs `dotnet test` on the project's UnitTests folder, holding a lock so that only one
      run at a time uses the engine log, and stops it at -TimeoutSeconds (30 minutes by
      default) by killing it and every process under it;
-  4. reads each test's outcome from the run's TRX file;
-  5. saves the test output, the TRX file, the engine log, and the engine version in
+  5. reads each test's outcome from the run's TRX file;
+  6. saves the test output, the TRX file, the engine log, and the engine version in
      test-results\<time>\;
-  6. prints the outcomes, the source check, and any error lines the engine logged, and a
+  7. prints the outcomes, the source check, and any error lines the engine logged, and a
      warning when the source isn't matched to the installed release.
 FACEPUNCH_ENGINE and SBOX_PUBLIC are read from the user's settings when the shell lacks them.
 
@@ -382,6 +384,8 @@ if (-not $Engine -or -not (Test-Path (Join-Path $Engine 'sbox-dev.exe'))) {
 }
 $dotnet = Get-Command dotnet -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
 if (-not $dotnet -or -not (@(& $dotnet.Path --list-sdks 2>$null) -match '^10\.')) { Stop-Setup 'install the .NET 10 SDK: "dotnet --list-sdks" shows no 10.x SDK.' }
+$gpuGate = Join-Path $PSScriptRoot 'wait_for_gpu.ps1'
+if (-not (Test-Path -LiteralPath $gpuGate -PathType Leaf)) { Stop-Setup "no wait_for_gpu.ps1 next to this script. Copy it from the example's tools folder; it holds each S&box start while another program uses the GPU." }
 if ($TimeoutSeconds -le 0) { Stop-Setup '-TimeoutSeconds must be more than 0.' }
 $tests = Join-Path $Project 'UnitTests'
 if (-not (Test-Path $tests -PathType Container)) {
@@ -406,6 +410,11 @@ $sourceCheck = try {
 
 $version = (Get-Content (Join-Path $Engine '.version') -TotalCount 1 -ErrorAction SilentlyContinue)
 $log = Join-Path $Engine 'logs\testhost.log'
+
+# Wait while another program uses the GPU, so the engine doesn't compete with it. This comes
+# before the lock, so a run waiting on the GPU doesn't hold up another run.
+& $gpuGate
+if ($LASTEXITCODE -eq 2) { Stop-Setup 'the GPU stayed busy with other work; the GPU line above says why.' }
 
 # Every run overwrites the same engine log, so runs must not overlap.
 $lock = New-Object System.Threading.Mutex($false, 'sbox-engine-tests-testhost-log')
