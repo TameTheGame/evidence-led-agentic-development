@@ -70,6 +70,28 @@
   editor is still listed after the run, the check leaves the scene and `.sbproj` as they
   are, and now says in a `Note:` which of them the run changed, where before it said
   nothing.
+- **Blind extracts no longer give the condition away.** With `-HideSkills`,
+  `blind_extracts.ps1` dropped the skill calls but kept the step numbers, so the gaps showed
+  which runs had the skills: in the S&box skill test's published responses, 8 of the 9
+  domain-skill runs show four gaps, and no run without it shows more than three. It now numbers the calls left 1, 2, 3 and points each step
+  reference at its new number, and replaces only the extract's own `# Run` line.
+  `analyze_transcripts.py` now cleans the final reply with the run's folder, which a quoted
+  path could name. No published extract was affected.
+- **The transcript analyzer counts only real runs, and says when it can't read.** A step
+  that named `spec_lint` or `run_engine_tests`, such as `cat tools/run_engine_tests.ps1`,
+  counted as a run, as in three live-test runs; now only a command that starts the script
+  does, and every other run in the published extracts still counts. A diff git can't give
+  reads `(diff unavailable: <why>)`, not `None.`; a transcript line that isn't JSON is
+  skipped and listed, not a traceback; untracked names with spaces or non-ASCII letters
+  come through whole; and a `--transcripts` folder with no transcripts is an error.
+  `test_analyze_transcripts.py` gains five cases, each of which the old tool fails.
+- **The skill-test runners stop on a setup they can't trust.** All three now need
+  PowerShell 7, which they use, resolve their path arguments before any session changes
+  folder, and stop when git fails while making a run's starting commit.
+  `run_skills_test.ps1` stops on a scenario with no prompt. `run_live_test.ps1` stops when
+  `SBOX_PUBLIC` is set for the user, since the engine test runner falls back to it, and
+  checks the engine paths each project file names after its rewrite, instead of the path it
+  meant to write.
 
 ## 1.07 — 2026-11-03
 

@@ -25,9 +25,19 @@ LINT_LINE = "FAIL  spec/yard.spec.md: YARD-01 sentence · ≥ 2 m → has no che
 ODD_EDIT = "spec/yard_Ω.spec.md"
 
 
-def transcript(failed_lint: bool = False, edit: str = "") -> list[dict]:
+def command(n: int, text: str, output: str, tool: str = "Bash") -> list[dict]:
+    return [{"type": "assistant", "message": {"content": [
+                {"type": "tool_use", "id": f"c{n}", "name": tool, "input": {"command": text}}]}},
+            {"type": "user", "message": {"content": [
+                {"type": "tool_result", "tool_use_id": f"c{n}", "content": output}]}}]
+
+
+def transcript(failed_lint: bool = False, edit: str = "", commands: list[list[dict]] = (),
+               final: str = "done") -> list[dict]:
     events: list[dict] = [{"type": "system", "subtype": "init", "model": "test-model",
                            "skills": ["choosing-rigor"]}]
+    for c in commands:
+        events += c
     if failed_lint:
         events += [
             {"type": "assistant", "message": {"content": [
@@ -44,7 +54,16 @@ def transcript(failed_lint: bool = False, edit: str = "") -> list[dict]:
             {"type": "user", "message": {"content": [
                 {"type": "tool_result", "tool_use_id": "t2", "content": "edited"}]}},
         ]
-    return events + [{"type": "result", "result": "done", "num_turns": 3}]
+    return events + [{"type": "result", "result": final, "num_turns": 3}]
+
+
+# Reading the scripts is not running them; each of these starts one.
+READS = [command(1, "cat tools/run_engine_tests.ps1", "param("),
+         command(2, "Get-Content tools\\spec_lint.py", "import re", "PowerShell")]
+RUNS = [command(1, "cd /c/work && powershell -NoProfile -File tools/run_engine_tests.ps1", "Tests: 3 passed"),
+        command(2, "& .\\tools\\run_engine_tests.ps1 -Filter Name~OUT", "Tests: 2 passed", "PowerShell"),
+        command(3, "py -3 tools\\spec_lint.py --sources UnitTests", "PASS - 4 requirements", "PowerShell")]
+RUN = "SF-2"  # a run id whose prefix is its condition, so it must not reach the extract's text
 
 
 def json_reads_back(out: str) -> bool:
@@ -56,27 +75,51 @@ def json_reads_back(out: str) -> bool:
 
 
 CASES = [
-    # (name, transcript, arguments, exit code, text that must appear, text that must not)
+    # (name, transcript, arguments, exit code, text that must appear, text that must not).
+    # {tmp} in an argument or a final reply is the case's folder; a transcript of None writes
+    # none; "--extracts" appends the run's extract to the output.
     ("a run with no lint and no edit", transcript(), [], 0,
      ["== run  model=test-model  turns=3", "spec_lint: none", "edits: none"], ["Traceback"]),
     ("a failed lint run prints its mark and its last line", transcript(failed_lint=True), [], 0,
-     [f"spec_lint: step 1 exit≠0: {LINT_LINE}"], ["Traceback", "\ufffd"]),
+     [f"spec_lint: step 1 exit≠0: {LINT_LINE}"], ["Traceback", "�"]),
     ("an edited file's name comes back as itself", transcript(edit=ODD_EDIT), [], 0,
-     [f"edits: {ODD_EDIT}"], ["Traceback", "\ufffd", "spec/yard_?"]),
+     [f"edits: {ODD_EDIT}"], ["Traceback", "�", "spec/yard_?"]),
     ("--json reads back with the same text", transcript(failed_lint=True), ["--json"], 0,
      ["\"lint_runs\""], ["Traceback"]),
+    ("reading a script is not a run", transcript(commands=READS), [], 0,
+     ["spec_lint: none", "engine runs: none"], ["Traceback"]),
+    ("each way of starting a script is a run", transcript(commands=RUNS), [], 0,
+     ["engine runs: step 1 ok: Tests: 3 passed; step 2 ok: Tests: 2 passed",
+      "spec_lint: step 3 ok: PASS - 4 requirements"], ["Traceback"]),
+    ("a transcript cut off mid-line is read up to the cut", transcript() + ["{\"type\": \"assi"], [], 0,
+     ["== run  model=test-model", "NOT JSON, skipped: transcript line(s) 3"], ["Traceback"]),
+    ("a folder with no transcripts is an error", None, [], 2, ["no <run>.jsonl transcripts"], ["Traceback"]),
+    ("a diff git can't give says why, and the final reply loses the run's folder",
+     transcript(final=f"Edited {{tmp}}/runs/{RUN}/spec/outpost.spec.md."),
+     ["--runs", "{tmp}/runs", "--extracts", "{tmp}/extracts"], 0,
+     ["(diff unavailable: git rev-list failed", "Edited ./spec/outpost.spec.md."],
+     ["Traceback", f"runs/{RUN}", "\nNone.\n"]),
 ]
 
 
-def run_case(events: list[dict], args: list[str]) -> tuple[int, str]:
+def run_case(events: list | None, args: list[str]) -> tuple[int, str]:
     with tempfile.TemporaryDirectory() as tmp:
-        folder = Path(tmp) / "transcripts"
+        root = Path(tmp).resolve()
+        folder = root / "transcripts"
         folder.mkdir()
-        lines = "\n".join(json.dumps(e) for e in events) + "\n"
-        (folder / "run.jsonl").write_text(lines, encoding="utf-8")
+        (root / "runs" / RUN).mkdir(parents=True)  # a run folder that isn't a git repository
+        name = RUN if "--runs" in args else "run"
+        if events is not None:
+            lines = "\n".join(e if isinstance(e, str) else json.dumps(e) for e in events) + "\n"
+            (folder / f"{name}.jsonl").write_text(lines.replace("{tmp}", root.as_posix()), encoding="utf-8")
+        args = [a.replace("{tmp}", str(root)) for a in args]
         done = subprocess.run([sys.executable, str(TOOL), "--transcripts", str(folder), *args],
                               capture_output=True, env={**os.environ, **PIPE})
-        return done.returncode, (done.stdout + done.stderr).decode("utf-8", errors="replace")
+        out = (done.stdout + done.stderr).decode("utf-8", errors="replace")
+        extract = root / "extracts" / f"{name}.md"
+        if "--extracts" in args and extract.exists():
+            out += "\n" + extract.read_text(encoding="utf-8").split("\n", 1)[1]  # past "# Run <id>"
+        return done.returncode, out
 
 
 def main() -> int:

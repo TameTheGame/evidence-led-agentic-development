@@ -63,9 +63,20 @@ foreach ($f in $order) {
     $lint = if ($cond -in $NoLint) { 'no' } else { 'yes' }
     $header = "Scenario: $scenario. Owner's message: `"$($messages[$scenario])`"`n`nspec_lint.py in this project: $lint.`n"
     if ($scenario -eq 'Control') { $header += "The starting spec had one planted typo: `"frontier`" written as `"fronteir`" in the Intent paragraph.`n" }
-    $body = [IO.File]::ReadAllText($f.FullName, $utf8) -replace '(?m)^# Run .*$', "# Response $label`n`n$header"
+    # Only the extract's own first line, not a "# Run" line that a quoted reply carries.
+    $body = [regex]::Replace([IO.File]::ReadAllText($f.FullName, $utf8), '\A# Run [^\r\n]*', "# Response $label`n`n$header")
     if ($HideSkills) {
         $body = [regex]::Replace($body, '(?m)^\d+\. `(Skill`|Read` `[^`\n]*\.claude/skills/)[^\n]*\n', '')
+        # Number the tool calls left 1, 2, 3, and point each step reference at its new number,
+        # since the gaps the dropped calls leave would show which runs had the skills.
+        $calls = [regex]::Match($body, '(?s)(?<=## Tool calls, in order\n).*?(?=\n## |\z)')
+        $renumber = @{ Next = 0; Map = @{} }
+        $list = [regex]::Replace($calls.Value, '(?m)^(\d+)\. ', {
+            param($m) $renumber.Next++; $renumber.Map[$m.Groups[1].Value] = $renumber.Next; "$($renumber.Next). " })
+        $rest = [regex]::Replace($body.Substring($calls.Index + $calls.Length),
+            '(?m)(^Step |output read at step )(\d+)\b', {
+            param($m) $n = $renumber.Map[$m.Groups[2].Value]; if ($n) { "$($m.Groups[1].Value)$n" } else { $m.Value } })
+        $body = $body.Substring(0, $calls.Index) + $list + $rest
         foreach ($s in $HideSkills) { $body = $body.Replace($s, '[skill]') }
     }
     [IO.File]::WriteAllText("$Scoring\responses\$label.md", [regex]::Replace($body, '(?m)[ \t]+$', ''), $utf8)

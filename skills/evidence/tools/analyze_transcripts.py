@@ -16,8 +16,12 @@
 Per run it records the skills listed at startup, Skill-tool invocations, direct reads of
 SKILL.md files, spec_lint and run_engine_tests runs with their output, file edits, tool calls
 refused by permissions (a non-zero exit is marked exit≠0, not denied), and the
-final reply. An engine run started in the background takes its output from the agent's
-later read of it. Dependency-free; Python 3.10 or newer; git is needed only for diffs.
+final reply. A run is a command that starts the tool, not one that only names it, such as
+`cat tools/spec_lint.py`. An engine run started in the background takes its output from the
+agent's later read of it. A transcript line that isn't JSON, as a killed run leaves, is
+skipped and listed. When git can't give a run's changes, the extract says why instead of
+"None.", and a --transcripts folder with no transcripts is an error. Dependency-free;
+Python 3.10 or newer; git is needed only for diffs.
 
 It writes its output as UTF-8 on any console or pipe, so read it as UTF-8. Its summary
 quotes text other programs wrote, such as a lint's last line, and marks a failed run
@@ -66,6 +70,46 @@ def scrub(text: str, run_root: Path | None) -> str:
     return text
 
 
+PYTHONS = ("py", "python", "python3")
+POWERSHELLS = ("powershell", "pwsh")
+
+
+def is_script(word: str, name: str) -> bool:
+    return bool(re.search(rf"(?:^|/){re.escape(name)}\.(?:py|ps1)$", word.strip("'\"").replace("\\", "/")))
+
+
+def runs_tool(command: str, name: str) -> bool:
+    """Whether a shell command runs tools/<name>.py or .ps1, not just names it, as `cat` or
+    `Get-Content` would: the script itself, or a Python or PowerShell started on it."""
+    for segment in re.split(r"&&|\|\||[;|\n]", command):
+        words = segment.split()
+        while words and re.match(r"^[A-Za-z_]\w*=", words[0]):  # FOO=1 before a command
+            words.pop(0)
+        while words and words[0].strip("'\"") in ("&", "."):  # PowerShell's call operators
+            words.pop(0)
+        if not words:
+            continue
+        if is_script(words[0], name):
+            return True
+        head = words[0].strip("'\"").replace("\\", "/").rsplit("/", 1)[-1].lower().removesuffix(".exe")
+        rest = words[1:]
+        if head in PYTHONS and any(is_script(w, name) for w in rest if not w.startswith("-")):
+            return True
+        if head in POWERSHELLS:
+            for i, word in enumerate(rest):
+                option = word.lower()
+                if option in ("-file", "-f") and i + 1 < len(rest) and is_script(rest[i + 1], name):
+                    return True
+                if option in ("-command", "-c") and runs_tool(" ".join(rest[i + 1:]).strip("'\""), name):
+                    return True
+            values = ("-executionpolicy", "-ep", "-windowstyle", "-workingdirectory", "-wd")
+            positional = [w for i, w in enumerate(rest)
+                          if not w.startswith("-") and (i == 0 or rest[i - 1].lower() not in values)]
+            if positional and is_script(positional[0], name):
+                return True
+    return False
+
+
 def tool_text(content) -> str:
     if isinstance(content, str):
         return content
@@ -76,14 +120,19 @@ def summarize(path: Path, runs_dir: Path | None, context: int = 0, new_files: bo
     run = path.stem
     root = (runs_dir / run) if runs_dir else None
     info = {"run": run, "model": None, "skills_listed": [], "skill_calls": [], "skill_reads": [],
-            "lint_runs": [], "engine_runs": [], "edits": [], "denied": [], "steps": [], "final": "", "turns": None}
+            "lint_runs": [], "engine_runs": [], "edits": [], "denied": [], "steps": [], "final": "",
+            "turns": None, "bad_lines": []}
     calls: dict[str, dict] = {}
     backgrounded: dict[str, dict] = {}
     first_edit = None
-    for line in path.read_text(encoding="utf-8").splitlines():
+    for number, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), start=1):
         if not line.startswith("{"):
             continue
-        event = json.loads(line)
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:  # a transcript cut off mid-line, as a killed run leaves
+            info["bad_lines"].append(number)
+            continue
         if event.get("type") == "system" and event.get("subtype") == "init":
             info["model"] = event.get("model")
             info["skills_listed"] = [s for s in SKILLS if s in (event.get("skills") or [])]
@@ -114,7 +163,7 @@ def summarize(path: Path, runs_dir: Path | None, context: int = 0, new_files: bo
                 step["status"] = ("denied" if refused else "exit≠0") if block.get("is_error") else "ok"
                 if step["tool"] in ("Bash", "PowerShell"):
                     for key, marker in (("lint_runs", "spec_lint"), ("engine_runs", "run_engine_tests")):
-                        if marker in step["target"]:
+                        if runs_tool(step["target"], marker):
                             output = sanitize(text, root)
                             info[key].append({"step": step["n"], "status": step["status"], "output": output.strip()})
                             background = re.search(r"running in background with ID: (\w+)", text)
@@ -127,20 +176,34 @@ def summarize(path: Path, runs_dir: Path | None, context: int = 0, new_files: bo
                     backgrounded[read.group(1)]["output"] = f"(ran in the background; output read at step {step['n']})\n{output}"
                 if step["status"] == "denied":
                     info["denied"].append(step["tool"])
-    info["changes"] = scrub(diff(root, context, new_files), root) if root is not None else ""
+    # The final reply can quote the run's own folder, whose name gives the condition away.
+    info["final"] = sanitize(info["final"], root)
+    info["changes"], info["changes_unavailable"] = None, "no --runs folder was given"
+    if root is not None:
+        changes, info["changes_unavailable"] = diff(root, context, new_files)
+        info["changes"] = scrub(changes, root) if changes is not None else None
     return info
 
 
-def diff(root: Path, context: int = 0, new_files: bool = False) -> str:
+def diff(root: Path, context: int = 0, new_files: bool = False) -> tuple[str | None, str]:
+    """The run's changes since its first commit, or (None, why) when git can't give them, so a
+    failed diff never reads as a run that changed nothing."""
+    def git(*args: str) -> bytes:
+        return subprocess.run(["git", "-c", "core.quotePath=false", *args], cwd=root,
+                              capture_output=True, check=True).stdout
     try:
-        first = subprocess.run(["git", "rev-list", "--max-parents=0", "HEAD"], cwd=root, capture_output=True,
-                               text=True, check=True).stdout.split()[0]
-        tracked = subprocess.run(["git", "diff", "--no-color", f"-U{context}", first, "--", "."], cwd=root,
-                                 capture_output=True, text=True, encoding="utf-8", check=True).stdout
-        untracked = subprocess.run(["git", "ls-files", "--others", "--exclude-standard"], cwd=root,
-                                   capture_output=True, text=True, check=True).stdout.split()
-    except (OSError, subprocess.CalledProcessError, IndexError):
-        return ""
+        first = git("rev-list", "--max-parents=0", "HEAD").decode("utf-8", "replace").split()[0]
+        tracked = git("diff", "--no-color", f"-U{context}", first, "--", ".").decode("utf-8", "replace")
+        untracked = [u for u in git("ls-files", "-z", "--others", "--exclude-standard")
+                     .decode("utf-8", "replace").split("\0") if u]
+    # The reason never names the run's folder, whose name gives the condition away.
+    except OSError as error:
+        return None, scrub(f"git couldn't run in the run's folder: {error.strerror or error}", root)
+    except subprocess.CalledProcessError as error:
+        why = (error.stderr or b"").decode("utf-8", "replace").strip().splitlines()
+        return None, scrub(f"git {error.cmd[3]} failed: {why[0] if why else f'exit {error.returncode}'}", root)
+    except IndexError:
+        return None, "the run's folder has no commit"
     lines = [l for l in tracked.splitlines() if not l.startswith(("index ", "diff --git"))]
     for u in untracked:
         try:
@@ -151,7 +214,7 @@ def diff(root: Path, context: int = 0, new_files: bool = False) -> str:
             lines.append(f"(new untracked file: {u})")
         else:
             lines += ["--- /dev/null", f"+++ b/{u} (new untracked file)"] + ["+" + l for l in body.splitlines()]
-    return "\n".join(lines)
+    return "\n".join(lines), ""
 
 
 def extract(info: dict) -> str:
@@ -161,14 +224,19 @@ def extract(info: dict) -> str:
         target = target if len(target) <= 160 else target[:157] + "..."
         flag = " (denied)" if step["status"] == "denied" else ""
         out.append(f"{step['n']}. `{step['tool']}` " + (f"`{target.replace('`', chr(39))}`" if target else "") + flag)
+    if info["bad_lines"]:
+        out += ["", f"(Transcript lines {', '.join(map(str, info['bad_lines']))} weren't JSON and were skipped.)"]
     for key, title in (("lint_runs", "spec_lint output"), ("engine_runs", "Engine test runs")):
         if info[key]:
             out += ["", f"## {title}", ""]
             for run in info[key]:
                 out += [f"Step {run['step']} ({run['status']}):", "", "```text", run["output"], "```", ""]
-    out += ["", "## Final reply", "", sanitize(info["final"], None).strip(), "", "## Changes since the starting commit", ""]
-    out += (["```diff", info["changes"], "```"] if info["changes"] else ["None."]) + [""]
-    return "\n".join(out)
+    out += ["", "## Final reply", "", info["final"].strip(), "", "## Changes since the starting commit", ""]
+    if info["changes"] is None:
+        out.append(f"(diff unavailable: {info['changes_unavailable']})")
+    else:
+        out += ["```diff", info["changes"], "```"] if info["changes"] else ["None."]
+    return "\n".join(out + [""])
 
 
 def main() -> None:
@@ -182,7 +250,10 @@ def main() -> None:
     parser.add_argument("--context", type=int, default=0)
     parser.add_argument("--new-files", action="store_true")
     args = parser.parse_args()
-    infos = [summarize(p, args.runs, args.context, args.new_files) for p in sorted(args.transcripts.glob("*.jsonl"))]
+    transcripts = sorted(args.transcripts.glob("*.jsonl")) if args.transcripts.is_dir() else []
+    if not transcripts:  # a mistyped folder must not read as a batch with nothing in it
+        parser.error(f"no <run>.jsonl transcripts in {args.transcripts}")
+    infos = [summarize(p, args.runs, args.context, args.new_files) for p in transcripts]
     if args.extracts:
         args.extracts.mkdir(parents=True, exist_ok=True)
         for info in infos:
@@ -205,6 +276,8 @@ def main() -> None:
         print(f"   spec_lint: {lints}")
         print(f"   engine runs: {engine}")
         print(f"   edits: {', '.join(i['edits']) or 'none'}   denied: {', '.join(i['denied']) or 'none'}")
+        if i["bad_lines"]:
+            print(f"   NOT JSON, skipped: transcript line(s) {', '.join(map(str, i['bad_lines']))}")
 
 
 if __name__ == "__main__":
