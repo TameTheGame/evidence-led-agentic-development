@@ -108,6 +108,25 @@
   used the starter's helper, and no run in either condition fixed a decal's random roll.
   `run_sbox_skill_test.ps1` now takes a plan's own fixture, prompts, starter files and skill
   version, a model, and `-BuildOnly`.
+- **The owner gate can't go quiet.** A project that ran the spec lint from its suite showed
+  the lint's output only on failure, and `NEEDS OWNER` never fails it, so every finding was
+  lost, and after a commit the gate compared `HEAD` with itself. `docs/SPEC_FORMAT.md` and
+  `spec_lint.py` now say to compare with the last commit the owner has seen, such as the
+  point the branch left the main branch, and to show the output either way, and
+  `--owner-exit N` gives a run that needs the owner, or skipped the gate, its own exit code.
+  The gate also reports a requirement newly retired, and a retired one removed, since only
+  the owner retires one. A spec the base lacks is compared as empty, and when the gate has no
+  base, the summary says it was skipped instead of "no agreed requirement changed". The lint
+  reports a machine check that doesn't name its ID, as the spec format asks, and the guide
+  says the lint looks check names up only for agreed requirements, which rungs are machine
+  and human, and that engine and editor checks go to their own rung's runner, not the
+  per-change suite. `test_spec_lint.py` gains seven cases, each of which the old lint fails.
+- **What closes a requirement, said plainly.** A requirement without `touches` now depends
+  on everything, so any change reopens it, and `touches` are paths or data keys, not prose,
+  as the samples now write them. A card defines its own replies, such as `GO`, `REVISE` and
+  `NO-GO` for a decision, only its passing reply meets the requirement, and an unanswered
+  card leaves it unmet. Result and `ACCEPTANCE.md` lines may carry the build they ran on.
+  The worked spec's cards gain the build line and FEEL-1's limit.
 
 ## 1.07 — 2026-11-03
 

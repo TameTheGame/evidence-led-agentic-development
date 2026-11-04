@@ -49,7 +49,7 @@ data: <optional path(s) to project-owned data files>
 - rung: static | engine | editor | session | owner
 - check: <test name, script name, or card ID>
 - target-rung: <optional cheaper rung this should move to when one exists>
-- touches: <optional paths or data keys this requirement depends on>
+- touches: <optional paths or data keys this requirement depends on; without it, any change reopens it>
 - why: <optional one line>
 ```
 
@@ -61,9 +61,9 @@ data: <optional path(s) to project-owned data files>
 | Sentence | One observable claim. If it says "and", consider splitting it. |
 | `state` | Agents may add or edit `draft` requirements. Only the owner moves a requirement to `agreed` or `retired`. This is the owner's decision boundary in one field. |
 | `rung` | The **cheapest** rung that can actually settle the claim *today*. |
-| `check` | Machine rungs: the test or script name, which must contain the ID (for example `OUT_SPAWN_01_...`). Human rungs: a card ID defined in the spec. |
+| `check` | Machine rungs: the test or script name, which must contain the ID (for example `OUT_SPAWN_01_...`), or a script name followed by the ID (`editor-check OUT-SAVE-01`). Human rungs: a card ID defined in the spec. `static`, `engine` and `editor` are machine rungs and `owner` is human. `session` is a machine rung when a script runs the session, and human when a person does, by a card. |
 | `target-rung` | Records evidence debt. Use it when a cheaper rung would work but isn't built yet. For example, `rung: session` with `target-rung: engine` until the engine test harness exists. |
-| `touches` | Lets a change reopen only the requirements it can affect. |
+| `touches` | Lets a change reopen only the requirements it can affect. Write paths, folders or data keys, such as `spec/outpost.layout.json` or `Code/OutpostGenerator.cs`, not prose, so a change can be matched against them. A requirement without `touches` depends on everything, so any change reopens it. |
 
 ## Splitting mixed claims
 
@@ -87,15 +87,21 @@ The spec says what must be true. It doesn't hold pass or fail state, which would
   non-zero if any line fails. Keep each result on its one line: when it quotes text another
   program wrote, such as an engine test's assertion message, turn that text's line breaks
   into spaces first. A runner or a reader that judges a result by its own line otherwise
-  finds its reason, or the word it looks for, on a later line.
-- **Human rungs** add one line to `spec/ACCEPTANCE.md`:
+  finds its reason, or the word it looks for, on a later line. A line may end with the
+  build it ran on, such as `OUT-SAVE-01 PASS · S&box 26.10.27c`, since an engine or runtime
+  update can change a result with no commit.
+- **Human rungs** add one line to `spec/ACCEPTANCE.md`, with the card's reply. The commit
+  may carry the build the owner checked, in brackets:
 
   ```text
   2026-10-09 · OUT-NET-01 · GREEN · a1b2c3d · Owner · remote client collided with the gate
+  2026-10-09 · OUT-FEEL-01 · GREEN · a1b2c3d (S&box 26.10.27c) · Owner · reads as an outpost
   ```
 
 A requirement is **met** when its check last passed at a commit and nothing in its
-`touches` has changed since.
+`touches` has changed since. Without `touches`, any later commit reopens it. A human-rung
+check passes only on the card's passing reply, such as `GREEN` or `GO`. A card the owner
+hasn't answered leaves its requirement unmet.
 
 ## A spec lint for projects
 
@@ -105,24 +111,32 @@ files:
 - IDs are unique and well-formed, and no retired ID has been reused;
 - `state` and `rung` use allowed values;
 - every `agreed` requirement has a `check`;
-- every machine-rung `check` name exists in the test sources; and
+- every machine-rung `check` names its requirement's ID;
+- every `agreed` requirement's machine-rung `check` name exists in the test sources; and
 - every human-rung `check` names a card defined in the spec.
 
-**Report a missing machine check; don't fail on it.** A check is written after the owner
-agrees its requirement, so a newly agreed requirement has no check yet. The other items
+**Report a missing machine check, or one that doesn't name its ID; don't fail on them.** A
+check is written after the owner agrees its requirement, so a newly agreed requirement has
+no check yet, and an older spec may hold checks named before this rule. The other items
 fail the lint.
 
 **A name in the test sources doesn't mean the check runs.** The lint finds the check, not
 whatever runs it. A check that the project's suite and CI leave out passes nothing and
 fails nothing, so a requirement or a record that cites it claims what nothing holds. In the
-commit that brings a citation or its check, add the check to the suite the project runs on
-each change, with a planted fault it fails.
+commit that brings a citation or its check, add the check to the runner for its rung, with a
+planted fault it fails: rung-0 checks to the suite every change runs, and engine and editor
+checks to the runner the machine that has the engine or editor uses.
 
-**An owner gate is worth adding.** It compares each `agreed` requirement with the last
-commit and reports any change to its sentence, state, rung, or check as needing the owner.
-It reports and never blocks, because the owner may already have agreed the change. Run it
-before each commit, or against the commit the task started from: once a change is
-committed, the last commit holds it, and the gate has nothing left to report.
+**An owner gate is worth adding.** It compares each requirement with a base commit and
+reports, as needing the owner, any change to an `agreed` requirement's sentence, state,
+rung, or check, and any requirement newly `agreed` or `retired`. A spec the base lacks is
+compared as empty. The gate reports and never blocks, because the owner may already have
+agreed the change. Compare with the last commit the owner has seen: before each commit, or
+against the commit the task started from, and in a suite or CI, against the point the
+branch left the main branch. Once a change is committed, the last commit holds it, and the
+gate has nothing left to report. Show the gate's output whether or not the lint fails, since
+a wrapper that shows output only on failure drops every finding, and say so plainly when
+the gate had no base to compare with.
 
 **So is a hold on files built from an input the owner adopted.** A project may build part
 of its spec, or of its rules, from an input the owner adopted, such as a plan. Pin the
@@ -146,8 +160,9 @@ undo the owner's answer while every check passes.
 
 The core doesn't ship a lint; each project owns its own. A worked example is
 [`examples/sbox/tools/spec_lint.py`](../examples/sbox/tools/spec_lint.py). It covers every
-item in the list above and the owner gate, with fixtures, but not the hold. It looks for
-check names in the folders passed with `--sources`.
+item in the list above and the owner gate, with fixtures, but not the hold. It looks check
+names up only for `agreed` requirements, in the folders passed with `--sources`. With
+`--owner-exit`, a change that needs the owner gets its own exit code.
 
 With a lint like this, spec-driven work needs no per-task records. Git commits supply
 identity, and test output and `ACCEPTANCE.md` supply results.

@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 """Rung-0 lint for a project's spec files. Example only: each project owns its own copy.
 
-    python tools/spec_lint.py [SPEC ...] [--base REF] [--sources PATH ...]
+    python tools/spec_lint.py [SPEC ...] [--base REF] [--sources PATH ...] [--owner-exit N]
 
 With no SPEC arguments it checks spec/*.spec.md under the current folder. --sources names
 the folders (or files) that hold the project's tests and check scripts; give it once per
 path.
+
+Exit code: 0 pass, 1 a format problem. With --owner-exit N, a run with no format problem
+exits N when a change needs the owner or the owner gate was skipped, so a suite that judges
+the lint by its exit code can tell those apart from a pass. Print the output whatever the
+exit code: NEEDS OWNER, NOT FOUND and NO ID lines don't fail the run.
 
 Format checks fail the run (exit code 1):
   - every "###" heading under "## Requirements" is shaped "### <ID> — <sentence>", since
@@ -26,14 +31,22 @@ prints "NOT FOUND: <ID>" for a name no source has. It doesn't block, because a c
 written after the owner agrees its requirement. Without --sources it skips the lookup and
 says so.
 
+ID check (reported, never blocks): a machine check, one that isn't a card, must name its
+requirement's ID, with "-" or "_", such as OUT_SPAWN_01_... or lint-layout OUT-DATA-01, so
+its result can be traced to it. The lint prints "NO ID: <ID>" for one that doesn't.
+
 Owner gate (reported, never blocks): each spec file is compared with the same file at a
-git base (default HEAD). It prints "NEEDS OWNER: <ID>" when:
+git base (default HEAD). A spec file the base doesn't have is compared as empty. It prints
+"NEEDS OWNER: <ID>" when:
   - an agreed requirement's sentence, rung, or check changed;
-  - an agreed requirement was removed or left the agreed state; or
-  - a requirement is agreed now but was not agreed at the base.
-Only the owner agrees, changes, or retires a requirement. Run it before each commit, or
-with --base <the commit the task started from>: once a change is committed, HEAD holds it
-and the gate reports nothing.
+  - an agreed requirement was removed or left the agreed state;
+  - a requirement is agreed now but was not agreed at the base;
+  - a requirement is retired now but was not retired at the base; or
+  - a retired requirement was removed.
+Only the owner agrees, changes, or retires a requirement. Pass --base the last commit the
+owner has seen, such as the commit the task started from, or in CI the point the branch
+left the main branch: once a change is committed, HEAD holds it and the gate reports
+nothing. When there's no base to compare with, the summary says the gate was skipped.
 
 It writes its output as UTF-8 on any console or pipe, so read it as UTF-8. On Windows,
 Python would otherwise give a pipe the ANSI code page, such as cp1252, and a character
@@ -187,19 +200,24 @@ def read_text(path: Path, texts: dict[Path, str]) -> str:
 
 
 def base_text(path: Path, base: str) -> tuple[str | None, str | None]:
-    """The file's content at the git base, or (None, reason) when unavailable."""
+    """The file's content at the git base, "" when the base predates the file, or
+    (None, reason) when there is no base to compare with."""
     try:
         # Decoded as Python decodes file names, since a text run would read Git's UTF-8 in
         # the ANSI code page on Windows and miss the repository under a non-ASCII folder.
         top = os.fsdecode(subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=path.parent,
                                          capture_output=True, check=True).stdout).strip()
         rel = path.resolve().relative_to(Path(top).resolve()).as_posix()
+        known = subprocess.run(["git", "rev-parse", "--verify", "--quiet", f"{base}^{{commit}}"],
+                               cwd=top, capture_output=True)
         shown = subprocess.run(["git", "show", f"{base}:{rel}"], cwd=top,
                                capture_output=True, text=True, encoding="utf-8")
     except (OSError, subprocess.CalledProcessError, ValueError) as error:
         return None, f"not in a git repository ({error.__class__.__name__})"
+    if known.returncode != 0:
+        return None, f"{base} is not a commit in this repository"
     if shown.returncode != 0:
-        return None, f"not present at {base}"
+        return "", None  # a spec new since the base: every agreed requirement in it is new
     return shown.stdout, None
 
 
@@ -208,6 +226,9 @@ def owner_gate(now: list[dict], before: list[dict]) -> list[str]:
     old = {r["id"]: r for r in before}
     new = {r["id"]: r for r in now}
     for rid, was in old.items():
+        if was["fields"].get("state") == "retired" and rid not in new:
+            findings.append(f"NEEDS OWNER: {rid} - retired requirement was removed, so nothing "
+                            "keeps its ID from being reused")
         if was["fields"].get("state") != "agreed":
             continue
         if rid not in new:
@@ -225,8 +246,25 @@ def owner_gate(now: list[dict], before: list[dict]) -> list[str]:
                 findings.append(f"NEEDS OWNER: {rid} - {key} changed: "
                                 f"\"{was['fields'].get(key)}\" -> \"{cur['fields'].get(key)}\"")
     for rid, cur in new.items():
-        if cur["fields"].get("state") == "agreed" and old.get(rid, {}).get("fields", {}).get("state") != "agreed":
+        state, was = cur["fields"].get("state"), old.get(rid, {}).get("fields", {}).get("state")
+        if state == "agreed" and was != "agreed":
             findings.append(f"NEEDS OWNER: {rid} - marked agreed, but it was not agreed at the base")
+        # Only the owner retires a requirement. One retired from agreed is reported above.
+        if state == "retired" and was not in ("retired", "agreed"):
+            findings.append(f"NEEDS OWNER: {rid} - marked retired, but it was not retired at the base")
+    return findings
+
+
+def missing_ids(requirements: list[dict]) -> list[str]:
+    """Machine checks that don't name their requirement, so a result can't be traced to it."""
+    findings = []
+    for req in requirements:
+        check = req["fields"].get("check", "")
+        if not check or CARD_CHECK.match(check):
+            continue
+        rid = req["id"].lower()
+        if rid not in check.lower() and rid.replace("-", "_") not in check.lower():
+            findings.append(f"NO ID: {req['id']} - check \"{check}\" doesn't name the requirement")
     return findings
 
 
@@ -234,6 +272,7 @@ def main(argv: list[str]) -> int:
     for stream in (sys.stdout, sys.stderr):  # UTF-8 on any pipe; see the docstring
         stream.reconfigure(encoding="utf-8", errors="replace")
     base = "HEAD"
+    owner_exit = 0
     paths: list[str] = []
     roots: list[Path] = []
     args = iter(argv)
@@ -242,6 +281,12 @@ def main(argv: list[str]) -> int:
             base = next(args, "HEAD")
         elif arg == "--sources":
             roots.append(Path(next(args, ".")))
+        elif arg == "--owner-exit":
+            code = next(args, "")
+            if not code.isdigit() or int(code) in (0, 1):
+                print("FAIL  --owner-exit needs an exit code other than 0 and 1, such as 3")
+                return 1
+            owner_exit = int(code)
         elif arg in ("-h", "--help"):
             print(__doc__)
             return 0
@@ -262,6 +307,7 @@ def main(argv: list[str]) -> int:
     if not roots:
         notes.append("note  check names not looked up: pass --sources for the test and script folders")
     total = 0
+    skipped = 0
     for path in files:
         if not path.is_file():
             problems.append(f"{path}: file not found")
@@ -274,8 +320,10 @@ def main(argv: list[str]) -> int:
         problems += format_problems(shown_path, now, cards, seen)
         if roots:
             findings += missing_checks(now, sources, texts)
+        findings += missing_ids(now)
         before_text, reason = base_text(path, base)
         if before_text is None:
+            skipped += 1
             notes.append(f"note  owner gate and retired-ID check skipped for {shown_path}: {reason}")
         else:
             before, _, _ = parse(before_text)
@@ -285,16 +333,23 @@ def main(argv: list[str]) -> int:
     for line in notes + [f"FAIL  {p}" for p in problems] + findings:
         print(line)
     owner = [f for f in findings if f.startswith("NEEDS OWNER")]
-    gate = f"{len(owner)} change(s) need the owner (reported, not blocking)" if owner \
-        else f"no agreed requirement changed since {base}"
-    absent = len(findings) - len(owner)
-    if absent:
-        gate += f"; {absent} check(s) not found (reported, not blocking)"
+    parts = []
+    if skipped:  # never "no agreed requirement changed" for a spec nothing compared
+        parts.append(f"owner gate skipped for {skipped} spec file(s)")
+    if owner:
+        parts.append(f"{len(owner)} change(s) need the owner (reported, not blocking)")
+    elif skipped < len(files):
+        parts.append(f"no agreed requirement changed since {base}" + (" in the others" if skipped else ""))
+    for mark, what in (("NOT FOUND", "check(s) not found"), ("NO ID", "check(s) don't name their requirement")):
+        count = sum(f.startswith(mark) for f in findings)
+        if count:
+            parts.append(f"{count} {what} (reported, not blocking)")
+    summary = "; ".join(parts)
     if problems:
-        print(f"FAIL - {len(problems)} format problem(s) in {total} requirements; {gate}.")
+        print(f"FAIL - {len(problems)} format problem(s) in {total} requirements; {summary}.")
         return 1
-    print(f"PASS - {total} requirements well formed; {gate}.")
-    return 0
+    print(f"PASS - {total} requirements well formed; {summary}.")
+    return owner_exit if owner_exit and (owner or skipped) else 0
 
 
 if __name__ == "__main__":

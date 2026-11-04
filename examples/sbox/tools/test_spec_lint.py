@@ -31,7 +31,8 @@ PIPE = {"PYTHONIOENCODING": "cp1252", "PYTHONUTF8": "0"}
 
 CASES = [
     # (variant, extra arguments, expected exit, text that must appear, text that must not appear,
-    # and the folder the repository sits in, if any)
+    # and options, if any: "folder" the repository sits in, "new" when the base commit lacks the
+    # spec, "no_git" when the project isn't a repository)
     ("base.spec.md", SOURCES, 0, ["PASS", "no agreed requirement changed"],
      ["NEEDS OWNER", "NOT FOUND", "FAIL", "note"]),
     ("base.spec.md", [], 0, ["PASS", "note  check names not looked up"], ["NOT FOUND", "FAIL"]),
@@ -47,7 +48,29 @@ CASES = [
     # The repository under a folder with a non-ASCII name. A lint that reads Git's path in the
     # ANSI code page, as a text run does on Windows, skips the owner gate here.
     ("agreed-sentence-changed.spec.md", SOURCES, 0, ["NEEDS OWNER: YARD-SIGHT-01", "PASS"],
-     ["owner gate and retired-ID check skipped", "FAIL"], "Übung ü"),
+     ["owner gate and retired-ID check skipped", "FAIL"], {"folder": "Übung ü"}),
+    # With --owner-exit, a change that needs the owner has its own exit code.
+    ("agreed-sentence-changed.spec.md", SOURCES + ["--owner-exit", "3"], 3,
+     ["NEEDS OWNER: YARD-SIGHT-01", "PASS"], ["FAIL"]),
+    ("base.spec.md", SOURCES + ["--owner-exit", "3"], 0, ["PASS"], ["NEEDS OWNER"]),
+    # Only the owner retires a requirement, and a retired one stays to keep its ID taken.
+    ("draft-retired.spec.md", SOURCES, 0,
+     ["NEEDS OWNER: YARD-FEEL-01 - marked retired", "NEEDS OWNER: YARD-GATE-01 - retired requirement was removed",
+      "2 change(s) need the owner"], ["FAIL", "no agreed requirement changed"]),
+    ("check-without-id.spec.md", SOURCES, 0,
+     ["NO ID: YARD-PATH-01", "1 check(s) don't name their requirement", "PASS"],
+     ["FAIL", "NEEDS OWNER", "NO ID: YARD-DATA-01", "NO ID: YARD-SIGHT-01"]),
+    # A spec the base lacks is compared as empty, so its agreed requirements are new.
+    ("base.spec.md", SOURCES, 0,
+     ["NEEDS OWNER: YARD-DATA-01 - marked agreed", "NEEDS OWNER: YARD-SIGHT-01 - marked agreed"],
+     ["skipped", "no agreed requirement changed", "FAIL"], {"new": True}),
+    # With nothing to compare against, the summary says so instead of "no agreed requirement
+    # changed".
+    ("agreed-sentence-changed.spec.md", SOURCES, 0,
+     ["owner gate skipped for 1 spec file(s)", "PASS"], ["no agreed requirement changed"], {"no_git": True}),
+    ("agreed-sentence-changed.spec.md", SOURCES + ["--base", "no-such-ref"], 0,
+     ["no-such-ref is not a commit", "owner gate skipped for 1 spec file(s)"],
+     ["no agreed requirement changed"]),
     ("bad-format.spec.md", SOURCES, 1,
      ["duplicate ID", "state \"approved\"", "rung \"vibes\"", "agreed requirement has no check",
       "spec/yard.spec.md:29: heading is not shaped"], []),
@@ -64,16 +87,18 @@ def git(repo: Path, *args: str) -> None:
                     *args], cwd=repo, check=True, capture_output=True)
 
 
-def run_case(variant: str, extra: list[str], folder: str = "") -> tuple[int, str]:
+def run_case(variant: str, extra: list[str], options: dict) -> tuple[int, str]:
     with tempfile.TemporaryDirectory() as tmp:
-        repo = Path(tmp) / folder
+        repo = Path(tmp) / options.get("folder", "")
         shutil.copytree(FIXTURES / "sources", repo, dirs_exist_ok=True)
         (repo / "spec").mkdir()
         target = repo / "spec" / "yard.spec.md"
-        shutil.copyfile(FIXTURES / "base.spec.md", target)
-        git(repo, "init", "-q")
-        git(repo, "add", ".")
-        git(repo, "commit", "-q", "-m", "Base spec")
+        if not options.get("new"):
+            shutil.copyfile(FIXTURES / "base.spec.md", target)
+        if not options.get("no_git"):
+            git(repo, "init", "-q")
+            git(repo, "add", ".")
+            git(repo, "commit", "-q", "-m", "Base spec")
         shutil.copyfile(FIXTURES / variant, target)
         result = subprocess.run([sys.executable, str(LINT), *extra], cwd=repo, capture_output=True,
                                 text=True, encoding="utf-8", errors="replace",
@@ -85,14 +110,15 @@ def main() -> int:
     for stream in (sys.stdout, sys.stderr):  # a failing case prints the lint's output
         stream.reconfigure(encoding="utf-8", errors="replace")
     failures = 0
-    for variant, extra, code, present, absent, *where in CASES:
-        folder = where[0] if where else ""
-        got_code, output = run_case(variant, extra, folder)
+    for variant, extra, code, present, absent, *rest in CASES:
+        options = rest[0] if rest else {}
+        got_code, output = run_case(variant, extra, options)
         missing = [t for t in present if t not in output]
         unwanted = [t for t in absent if t in output]
         ok = got_code == code and not missing and not unwanted
         failures += not ok
-        shown = f"{variant} {' '.join(extra)}".strip() + (f" in {folder}" if folder else "")
+        shown = f"{variant} {' '.join(extra)}".strip() + "".join(
+            f" in {v}" if k == "folder" else f" ({k})" for k, v in options.items())
         print(f"{'PASS' if ok else 'FAIL'}  {shown}: exit {got_code}")
         if not ok:
             print(f"      expected exit {code}; missing {missing}; unexpected {unwanted}")
