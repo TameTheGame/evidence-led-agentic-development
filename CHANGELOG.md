@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Read a saved scene's references by path and its numbers as float32.** A new lesson in
+  the S&box guide says why a check must not compare a saved scene's text. A reference saves
+  as a path alone or as an `{"Id", "Path"}` object, depending on whether S&box knows the
+  file's GUID, and on `26.11.03a` a project's own model saved as an object. A number's text
+  can change while its value doesn't: `26.11.03a` wrote `22.0855522` where `26.10.27c`
+  wrote `22.085552`, the same float32. Each broke a real check once. Read from the source
+  at `26.10.27`.
 - **S&box starts wait while another program uses the GPU.** A new
   `examples/sbox/tools/wait_for_gpu.ps1` reads `nvidia-smi` and holds a start while any
   GPU's use is above 30% or a process that isn't S&box holds 1 GB of video memory or more.

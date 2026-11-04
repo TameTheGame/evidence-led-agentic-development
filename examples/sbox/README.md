@@ -856,6 +856,22 @@ both unless it says otherwise. Each says what was seen, and on which build.
   the flag with nothing new installed: `buildid` and `TargetBuildID` were the same. Report
   a waiting update only when `TargetBuildID` is set and differs from `buildid`. Steam's
   manifest format isn't documented; this was seen.
+- **Read a saved scene's references by path and its numbers as float32, not as text.** A
+  check that compares what S&box saved with what it expects broke once on each of these on
+  `26.11.03a`.
+  - A resource reference is the path alone when S&box knows no GUID for the file, and an
+    `{"Id", "Path"}` object when it does
+    (`26.10.27:engine/Sandbox.Engine/Resources/Resource.Json.cs`, lines 188-199), so the
+    same file can save either way. On `26.11.03a` the editor saved a project's own model as
+    an object, and a check that expected the path alone failed. Take the path from either
+    form, compare it the way S&box writes paths, and leave the `Id` to a check about IDs.
+  - A number's text can change between builds while its value doesn't. A vector, rotation
+    or angles string holds nine significant digits (`G9`)
+    (`26.10.27:engine/Sandbox.System/Math/Vector3.Json.cs`, line 58; `Rotation.Json.cs` and
+    `Angles.Json.cs` do the same). On `26.11.03a` a value that `26.10.27c` saved as
+    `22.085552` came out as `22.0855522`, which is the same float32, `0x41B0AF36`. Parse
+    each number, round it to float32, and compare those, with any tolerance the claim needs
+    on top.
 - **Compare rotations read back from S&box as unit quaternions, with atan2, not acos.** A
   `Rotation` is a float32 quaternion (`26.10.27:engine/Sandbox.System/Math/Rotation.cs`,
   lines 16-53), and the ones S&box builds can be only nearly unit:
