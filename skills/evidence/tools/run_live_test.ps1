@@ -42,6 +42,7 @@ pwsh skills/evidence/tools/run_live_test.ps1 -Plan plan.json -Template C:\...\sc
 Then: py -3 skills/evidence/tools/analyze_transcripts.py --transcripts <Data>/transcripts --runs <Data>/runs --extracts <Data>/extracts --context 3 --new-files
 Then: pwsh skills/evidence/tools/run_live_test.ps1 -Plan plan.json -Template ... -Data ... -Phase reference
 #>
+#Requires -Version 7.0
 param(
     [Parameter(Mandatory)][string]$Plan,
     [Parameter(Mandatory)][string]$Template,
@@ -53,15 +54,25 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
+# Full paths, since each session runs from its own folder and would read a relative one from there.
+$Plan = (Resolve-Path $Plan).Path
 $Template = (Resolve-Path $Template).Path
+$Data = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Data)
+$Engine = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Engine)
 $base = Join-Path $Data 'runs'
 $utf8 = New-Object System.Text.UTF8Encoding($false)
+# Throws when git fails, so a run folder never starts without its starting commit.
+function Invoke-Git { & git @args; if ($LASTEXITCODE) { throw "git $($args -join ' ') failed with exit $LASTEXITCODE" } }
 function Put($path, $text) { [IO.File]::WriteAllText($path, (($text -replace "`r`n", "`n").TrimEnd() + "`n"), $utf8) }
 function CopyText($from, $to) { New-Item -ItemType Directory -Force (Split-Path $to) | Out-Null; Put $to ([IO.File]::ReadAllText($from, $utf8)) }
 
 $runs = (Get-Content -Raw $Plan | ConvertFrom-Json).runs
 # Sessions get no engine source clone, so the runner reports its source check as NOT CHECKED.
+# The runner and its sync script fall back to the user's SBOX_PUBLIC, so that must be unset too.
 Remove-Item Env:SBOX_PUBLIC -ErrorAction SilentlyContinue
+if ([Environment]::GetEnvironmentVariable('SBOX_PUBLIC', 'User')) {
+    throw 'SBOX_PUBLIC is set for the user, and the engine test runner falls back to it, so sessions would get an engine source clone and its sync could move it. Clear it for the test, or run on a machine without it.'
+}
 New-Item -ItemType Directory -Force "$Data\transcripts", $base | Out-Null
 
 if ($Phase -eq 'reference') {
@@ -124,8 +135,12 @@ foreach ($r in $runs) {
         $rel = [IO.Path]::GetRelativePath($proj.DirectoryName, $Engine).Replace('\', '/') + '/'
         $text = [IO.File]::ReadAllText($proj.FullName) -replace '(\.\./)+Steam/steamapps/common/sbox/', $rel
         [IO.File]::WriteAllText($proj.FullName, $text)
-        $dll = [IO.Path]::GetFullPath((Join-Path $proj.DirectoryName ($rel + 'bin/managed/Sandbox.Engine.dll')))
-        if (-not (Test-Path $dll)) { throw "$($proj.FullName) can't reach the engine at $dll" }
+        # Check the paths the file now names, not the one the rewrite meant to write: a template
+        # whose engine path the rewrite didn't match still names its old one.
+        foreach ($ref in [regex]::Matches($text, '[^"<>;]*Sandbox\.Engine\.dll').Value) {
+            $dll = [IO.Path]::GetFullPath($ref.Trim(), $proj.DirectoryName)
+            if (-not (Test-Path $dll)) { throw "$($proj.FullName) can't reach the engine at $dll" }
+        }
     }
 
     foreach ($f in Get-ChildItem "$starter\UnitTests" -Filter *.cs) { CopyText $f.FullName "$dir\UnitTests\$($f.Name)" }
@@ -155,12 +170,12 @@ foreach ($r in $runs) {
     CopyText "$repo\examples\sbox\tools\spec_lint.py" "$dir\tools\spec_lint.py"
     Put "$dir\CLAUDE.md" '@AGENTS.md'
     Put "$dir\AGENTS.md" $agents
-    git -C $dir init -q
-    git -C $dir config user.name 'Test Owner'
-    git -C $dir config user.email 'owner@example.invalid'
-    git -C $dir config core.autocrlf false
-    git -C $dir add -A
-    git -C $dir commit -q -m 'Starting state'
+    Invoke-Git -C $dir init -q
+    Invoke-Git -C $dir config user.name 'Test Owner'
+    Invoke-Git -C $dir config user.email 'owner@example.invalid'
+    Invoke-Git -C $dir config core.autocrlf false
+    Invoke-Git -C $dir add -A
+    Invoke-Git -C $dir commit -q -m 'Starting state'
 }
 "built $($runs.Count) projects in $base"
 if ($Phase -eq 'build') { return }

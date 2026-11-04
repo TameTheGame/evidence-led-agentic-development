@@ -21,6 +21,7 @@ Scenarios: F = fall-through report, W = walls without collision, T = write the s
 pwsh skills/evidence/tools/run_sbox_skill_test.ps1 -Plan plan.json -Base C:\scratch\sbox-skill-test
 Then: py -3 skills/evidence/tools/analyze_transcripts.py --transcripts <Base>/transcripts --runs <Base>/runs --extracts <Base>/extracts
 #>
+#Requires -Version 7.0
 param(
     [Parameter(Mandatory)][string]$Plan,
     [Parameter(Mandatory)][string]$Base,
@@ -28,8 +29,13 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
+# Full paths, since each session runs from its own folder and would read a relative one from there.
+$Plan = (Resolve-Path $Plan).Path
+$Base = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Base)
 $fixture = "$repo\skills\evidence\sbox-skill-test\fixture"
 $utf8 = New-Object System.Text.UTF8Encoding($false)
+# Throws when git fails, so a run folder never starts without its starting commit.
+function Invoke-Git { & git @args; if ($LASTEXITCODE) { throw "git $($args -join ' ') failed with exit $LASTEXITCODE" } }
 function Put($path, $text) { [IO.File]::WriteAllText($path, (($text -replace "`r`n", "`n").TrimEnd() + "`n"), $utf8) }
 
 $prompts = @{
@@ -70,12 +76,12 @@ foreach ($r in $runs) {
     Copy-Item "$repo\examples\sbox\tools\spec_lint.py" "$dir\tools\spec_lint.py"
     Put "$dir\CLAUDE.md" '@AGENTS.md'
     Put "$dir\AGENTS.md" $agents
-    git -C $dir init -q
-    git -C $dir config user.name 'Test Owner'
-    git -C $dir config user.email 'owner@example.invalid'
-    git -C $dir config core.autocrlf false
-    git -C $dir add -A
-    git -C $dir commit -q -m 'Starting state'
+    Invoke-Git -C $dir init -q
+    Invoke-Git -C $dir config user.name 'Test Owner'
+    Invoke-Git -C $dir config user.email 'owner@example.invalid'
+    Invoke-Git -C $dir config core.autocrlf false
+    Invoke-Git -C $dir add -A
+    Invoke-Git -C $dir commit -q -m 'Starting state'
 }
 "built $($runs.Count) projects in $Base\runs"
 

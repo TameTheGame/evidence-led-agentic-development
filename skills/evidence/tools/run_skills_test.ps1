@@ -18,6 +18,7 @@ Scenarios: A = east spawn, C = one-shot probe, K = typo control (a typo is plant
 pwsh skills/evidence/tools/run_skills_test.ps1 -Plan plan.json -Base C:\scratch\skills-test
 Then: py -3 skills/evidence/tools/analyze_transcripts.py --transcripts <Base>/transcripts --runs <Base>/runs --extracts <Base>/extracts
 #>
+#Requires -Version 7.0
 param(
     [Parameter(Mandatory)][string]$Plan,
     [Parameter(Mandatory)][string]$Base,
@@ -25,7 +26,12 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
+# Full paths, since each session runs from its own folder and would read a relative one from there.
+$Plan = (Resolve-Path $Plan).Path
+$Base = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Base)
 $utf8 = New-Object System.Text.UTF8Encoding($false)
+# Throws when git fails, so a run folder never starts without its starting commit.
+function Invoke-Git { & git @args; if ($LASTEXITCODE) { throw "git $($args -join ' ') failed with exit $LASTEXITCODE" } }
 function Put($path, $text) { [IO.File]::WriteAllText($path, (($text -replace "`r`n", "`n").TrimEnd() + "`n"), $utf8) }
 
 $prompts = @{
@@ -55,6 +61,7 @@ New-Item -ItemType Directory -Force "$Base\runs", "$Base\transcripts" | Out-Null
 foreach ($r in $runs) {
     $dir = "$Base\runs\$($r.id)"
     if (Test-Path $dir) { throw "$dir already exists" }
+    if (-not $prompts.ContainsKey($r.scenario)) { throw "unknown scenario $($r.scenario) in $($r.id)" }
     New-Item -ItemType Directory -Force "$dir\.claude\skills" | Out-Null
     Copy-Item -Recurse "$repo\skills\evidence\pressure-test\fixture\spec" "$dir\spec"
     foreach ($s in 'choosing-rigor', 'matching-evidence-to-claims', 'asking-the-owner') {
@@ -77,12 +84,12 @@ foreach ($r in $runs) {
         if ($planted -eq $text) { throw "typo not planted in $($r.id)" }
         [IO.File]::WriteAllText($spec, $planted, $utf8)
     }
-    git -C $dir init -q
-    git -C $dir config user.name 'Test Owner'
-    git -C $dir config user.email 'owner@example.invalid'
-    git -C $dir config core.autocrlf false
-    git -C $dir add -A
-    git -C $dir commit -q -m 'Starting state'
+    Invoke-Git -C $dir init -q
+    Invoke-Git -C $dir config user.name 'Test Owner'
+    Invoke-Git -C $dir config user.email 'owner@example.invalid'
+    Invoke-Git -C $dir config core.autocrlf false
+    Invoke-Git -C $dir add -A
+    Invoke-Git -C $dir commit -q -m 'Starting state'
 }
 "built $($runs.Count) projects in $Base\runs"
 
