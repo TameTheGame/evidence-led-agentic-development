@@ -22,6 +22,14 @@
   `skills/` also holds `evidence/`. The README and the guide drop lesson counts that had
   gone stale, and the guide and the roadmap no longer list a generated mesh saved into a
   scene as open, since the starter's saved mesh data run loaded one with its collision.
+- **The worked spec points at the starter, and its cards are whole.** `outpost.spec.md`'s
+  rung-1 sketch names the rung-1 starter for `TestSurfaces`, the stuck check and
+  `ProjectRoot`, loads its layout from the project root, and uses
+  `BodyStartsInsideGeometry`, since the spike's kit is a record, not code to copy. Its NET-1
+  and FEEL-1 cards gain the pass, fail and stop lines the asking-the-owner skill's card
+  has. `docs/SPEC_FORMAT.md` and `spec_lint.py`'s notes say to run the owner gate before
+  each commit, or against the commit the task started from, since after a commit it
+  compares with `HEAD` and reports nothing.
 
 ## 1.07 — 2026-11-03
 

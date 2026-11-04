@@ -88,13 +88,18 @@ Interiors, lighting mood, ambient audio, NPCs.
 ### NET-1 (session)
 1. Host the map. Join from a second client.
 2. On the client, walk into the north wall, then through the gate.
-3. Expect: the wall blocks you and the gate lets you through, on both machines.
-Reply: GREEN, or RED plus which machine and where.
-Note: same-machine host and client is fine here. It is not clean-client proof.
+Pass: the wall blocks you and the gate lets you through, on both machines.
+Fail: you pass through the wall, or the gate blocks you.
+Stop if: the client can't join.
+Reply: GREEN, or RED plus what you saw and on which machine.
+Limit: same-machine host and client is fine here; it is not clean-client proof.
 
 ### FEEL-1 (owner)
 1. Spawn at the north spawn. Walk to the gate, then to the tower.
 2. Judge: does it read as a frontier outpost, and is the path obvious?
+Pass: it reads as a frontier outpost, and you find the way without searching.
+Fail: it reads as something else, or you had to search for the way.
+Stop if: you can't spawn at the north spawn or reach the gate.
 Reply: GREEN, or RED plus what felt wrong.
 ```
 
@@ -137,7 +142,7 @@ public class TestInit
 	{
 		_app = new TestAppSystem(); // boots the engine headless; needs FACEPUNCH_ENGINE
 		_app.Init();
-		TestSurfaces.EnsureDefault(); // generated meshes need a default surface; see the spike kit
+		TestSurfaces.EnsureDefault(); // generated meshes need a default surface; see the rung-1 starter
 	}
 
 	[AssemblyCleanup]
@@ -150,13 +155,13 @@ public class OutpostTests
 	[TestMethod]
 	public void OUT_SPAWN_01_EverySpawnLandsOnSolidGround()
 	{
-		var layout = OutpostLayout.Load( "spec/outpost.layout.json" );
+		var layout = OutpostLayout.Load( Path.Combine( EngineTestHelpers.ProjectRoot(), "spec", "outpost.layout.json" ) );
 		var scene = new Scene();
 		using var scope = scene.Push();
 
 		OutpostGenerator.Build( scene, layout ); // PolygonMesh + MeshComponent, from data
 		// (in a game scene, create each MeshComponent disabled, set Mesh, then enable it;
-		// see engine-rung-spike/README.md)
+		// see the rung-1 starter's StarterGeometry)
 
 		foreach ( var spawn in layout.Spawns )
 		{
@@ -173,7 +178,7 @@ public class OutpostTests
 			Assert.IsTrue( pc.IsOnGround, $"{spawn.Id}: never reached ground" );
 
 			var pos = go.WorldPosition;
-			Assert.IsFalse( pc.TraceBody( pos, pos ).StartedSolid, $"{spawn.Id}: body starts inside geometry" );
+			Assert.IsFalse( EngineTestHelpers.BodyStartsInsideGeometry( pc ), $"{spawn.Id}: body starts inside geometry" );
 
 			go.Destroy();
 		}
@@ -196,9 +201,13 @@ The [engine-rung spike](engine-rung-spike/README.md) ran this pattern on S&box `
 It found two things this sketch needs:
 
 - **A default surface.** Building any `PolygonMesh` needs a default physics surface, which
-  only test scaffolding can provide. Copy the kit's `TestSurfaces`.
+  only test scaffolding can provide.
 - **A stronger stuck check.** `StartedSolid` alone misses a body wholly inside mesh
-  collision. Use the kit's `BodyStartsInsideGeometry` instead.
+  collision.
+
+The [rung-1 starter](rung1-starter/README.md) has the copyable code for both: its
+`TestSurfaces` and `EngineTestHelpers.BodyStartsInsideGeometry`, with `TestInit` and the
+`ProjectRoot` the sketch uses. The spike's own kit stays a record and isn't for copying.
 
 ## What results look like
 

@@ -120,7 +120,9 @@ each change, with a planted fault it fails.
 
 **An owner gate is worth adding.** It compares each `agreed` requirement with the last
 commit and reports any change to its sentence, state, rung, or check as needing the owner.
-It reports and never blocks, because the owner may already have agreed the change.
+It reports and never blocks, because the owner may already have agreed the change. Run it
+before each commit, or against the commit the task started from: once a change is
+committed, the last commit holds it, and the gate has nothing left to report.
 
 **So is a hold on files built from an input the owner adopted.** A project may build part
 of its spec, or of its rules, from an input the owner adopted, such as a plan. Pin the

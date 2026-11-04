@@ -29,7 +29,9 @@ git base (default HEAD). It prints "NEEDS OWNER: <ID>" when:
   - an agreed requirement's sentence, rung, or check changed;
   - an agreed requirement was removed or left the agreed state; or
   - a requirement is agreed now but was not agreed at the base.
-Only the owner agrees, changes, or retires a requirement.
+Only the owner agrees, changes, or retires a requirement. Run it before each commit, or
+with --base <the commit the task started from>: once a change is committed, HEAD holds it
+and the gate reports nothing.
 
 It writes its output as UTF-8 on any console or pipe, so read it as UTF-8. On Windows,
 Python would otherwise give a pipe the ANSI code page, such as cp1252, and a character
