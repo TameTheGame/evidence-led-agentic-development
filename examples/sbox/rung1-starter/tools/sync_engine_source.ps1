@@ -19,7 +19,7 @@ It changes nothing else in the clone: no branches, commits, or pushes. Run
 It always exits 0, so a session start or test run never stops on it. Read the line.
 
 .EXAMPLE
-powershell -File tools\sync_engine_source.ps1 -Source C:\src\sbox-public
+powershell -File tools/sync_engine_source.ps1 -Source C:/src/sbox-public
 #>
 param(
     [string]$Engine = $env:FACEPUNCH_ENGINE,

@@ -59,9 +59,9 @@ Communication is off. When the project's .sbproj turns it off, the check stops w
 before it starts an editor, since sbox-cli would only wait out its start-up timeout.
 
 .EXAMPLE
-powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
-powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene -Camera "0,-900,400" -Angles "20,90,0"
-powershell -File tools\editor_check.ps1 -SelfTest
+powershell -File tools/editor_check.ps1 -Scene scenes/outpost.scene
+powershell -File tools/editor_check.ps1 -Scene scenes/outpost.scene -Camera "0,-900,400" -Angles "20,90,0"
+powershell -File tools/editor_check.ps1 -SelfTest
 #>
 [CmdletBinding(DefaultParameterSetName = 'Check')]
 param(

@@ -94,7 +94,7 @@ until the Editor runs it. `tools/compile_check.ps1` wraps each script the way `r
 does and builds it against the installed engine's assemblies, without starting S&box:
 
 ```powershell
-powershell -File tools\compile_check.ps1 -Scripts tools\place_player.cs
+powershell -File tools/compile_check.ps1 -Scripts tools/place_player.cs
 ```
 
 - **It proves names, not behavior.** A pass means every type, member, and signature the
@@ -131,7 +131,7 @@ so the example's save-and-reopen requirement no longer needs an owner card.
 From the project root, with the project closed in every editor:
 
 ```powershell
-powershell -File tools\editor_check.ps1 -Scene scenes/outpost.scene
+powershell -File tools/editor_check.ps1 -Scene scenes/outpost.scene
 ```
 
 - **It owns its editors.** It opens the project in an editor that `sbox-cli` owns, so the

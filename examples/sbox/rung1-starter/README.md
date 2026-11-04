@@ -60,8 +60,12 @@ is that code, ready to copy.
 6. **Run the tests.** From the project root:
 
    ```powershell
-   powershell -File tools\run_engine_tests.ps1
+   powershell -File tools/run_engine_tests.ps1
    ```
+
+   The forward slashes work in PowerShell and in Git Bash, where a backslash in an unquoted
+   path is an escape and `tools\run_engine_tests.ps1` reaches PowerShell as
+   `toolsrun_engine_tests.ps1`.
 
    - The script saves results in `test-results\<time>\`, including `testhost.log` and the
      run's TRX file. Add `test-results/` to the project's `.gitignore`.
@@ -79,10 +83,10 @@ is that code, ready to copy.
      as not executed, so the script reads each test's outcome from the run's TRX file.
    - `-TimeoutSeconds` limits the run, 1800 by default. Past it, the script kills
      `dotnet test` and every process under it, and keeps the output and the engine log.
-   - `powershell -File tools\run_engine_tests.ps1 -SelfTest` checks the results on planted
+   - `powershell -File tools/run_engine_tests.ps1 -SelfTest` checks the results on planted
      TRX files and, on Windows, kills a planted hung process tree. It needs no S&box.
 7. **Tell agents.** Add a line to the project's `AGENTS.md`, such as: "Run engine tests with
-   `powershell -File tools\run_engine_tests.ps1`. Only `Result: PASS` is a pass. Read its
+   `powershell -File tools/run_engine_tests.ps1`. Only `Result: PASS` is a pass. Read its
    engine-log lines when a test fails without an exception."
 
 ## Matching the engine source

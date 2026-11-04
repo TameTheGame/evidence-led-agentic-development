@@ -9,6 +9,11 @@
   keeps the eye where it was. It adds that a static check that samples eye positions a step
   apart must fail a thing within `ReachLength` plus that step. Read from the source at
   `26.10.13` and `26.10.27`.
+- **The S&box example's commands work in Git Bash.** The guide, the rung-1 starter and the
+  scripts' own help wrote `powershell -File tools\<script>.ps1`, and in Git Bash a
+  backslash in an unquoted path is an escape, so PowerShell got `tools<script>.ps1`. They
+  now use forward slashes, which PowerShell reads the same, quote the `tools/*.cs` pattern
+  so Git Bash doesn't expand it, and the starter says why.
 
 ## 1.07 — 2026-11-03
 

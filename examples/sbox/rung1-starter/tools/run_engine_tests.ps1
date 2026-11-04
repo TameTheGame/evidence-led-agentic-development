@@ -38,9 +38,9 @@ looks for children only as it goes leaves some running.
 and on Windows kills a planted hung tree of two processes. It needs no S&box.
 
 .EXAMPLE
-powershell -File tools\run_engine_tests.ps1
-powershell -File tools\run_engine_tests.ps1 -Filter "Name~SPAWN"
-powershell -File tools\run_engine_tests.ps1 -SelfTest
+powershell -File tools/run_engine_tests.ps1
+powershell -File tools/run_engine_tests.ps1 -Filter "Name~SPAWN"
+powershell -File tools/run_engine_tests.ps1 -SelfTest
 #>
 param(
     [string]$Project = '.',

@@ -22,8 +22,8 @@ generates: dotnet build UnitTests.
 Exit code: 0 compiles, 1 compile errors, 2 not run.
 
 .EXAMPLE
-powershell -File tools\compile_check.ps1 -Scripts tools\place_player.cs
-powershell -File tools\compile_check.ps1 -Scripts tools\*.cs -Include Code
+powershell -File tools/compile_check.ps1 -Scripts tools/place_player.cs
+powershell -File tools/compile_check.ps1 -Scripts 'tools/*.cs' -Include Code
 #>
 param(
     [Parameter(Mandatory)][string[]]$Scripts,
