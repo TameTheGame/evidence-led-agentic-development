@@ -39,6 +39,11 @@
   Two citations given by file name only now carry the full tagged path, so the recheck's
   search finds them, and the Garry's Mod steps check for a file of the same name before
   writing one, and delete only the files they added.
+- **The spec lint fails a requirement heading it can't read.** A `###` heading under
+  `## Requirements` without the ` — ` between its ID and sentence was skipped, so that
+  requirement dropped out of the format checks, the check lookup and the owner gate with no
+  word. `spec_lint.py` now fails each such heading by its line. `test_spec_lint.py`'s
+  bad-format case gains one, which the old lint passes over.
 
 ## 1.07 — 2026-11-03
 

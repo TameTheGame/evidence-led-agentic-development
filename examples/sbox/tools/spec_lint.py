@@ -8,6 +8,8 @@ the folders (or files) that hold the project's tests and check scripts; give it 
 path.
 
 Format checks fail the run (exit code 1):
+  - every "###" heading under "## Requirements" is shaped "### <ID> — <sentence>", since
+    one that isn't would drop out of every other check;
   - every requirement ID is unique and shaped AREA-TOPIC-NN;
   - an ID retired at the git base is not reused;
   - state is draft, agreed, or retired, and rung is static, engine, editor, session,
@@ -53,6 +55,7 @@ STATES = ("draft", "agreed", "retired")
 RUNGS = ("static", "engine", "editor", "session", "owner")
 ID_SHAPE = re.compile(r"^[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)+-[0-9]{2,}$")
 HEADING = re.compile(r"^###\s+([A-Za-z0-9][A-Za-z0-9_-]*)\s+(?:—|–|--?)\s+(.+?)\s*$")
+REQUIREMENT_LEVEL = re.compile(r"^###(?!#)")
 CARD_HEADING = re.compile(r"^###\s+([A-Za-z0-9][A-Za-z0-9_-]*)(?:\s|$)")
 SECTION = re.compile(r"^##\s+(.+?)\s*$")
 FIELD = re.compile(r"^-\s+([a-z-]+):\s*(.*?)\s*$")
@@ -61,11 +64,13 @@ SKIP_DIRS = {".git", "bin", "obj", "node_modules", "__pycache__"}
 MAX_SOURCE_BYTES = 2_000_000
 
 
-def parse(text: str) -> tuple[list[dict], set[str]]:
-    """Requirements under '## Requirements', with line numbers and fields, and the card IDs
-    under '## Cards'."""
+def parse(text: str) -> tuple[list[dict], set[str], list[int]]:
+    """Requirements under '## Requirements', with line numbers and fields, the card IDs
+    under '## Cards', and the lines of '###' headings under '## Requirements' that aren't
+    shaped as a requirement, which would otherwise drop out of every check unseen."""
     requirements: list[dict] = []
     cards: set[str] = set()
+    unread: list[int] = []
     section = ""
     current: dict | None = None
     for number, line in enumerate(text.splitlines(), start=1):
@@ -88,12 +93,14 @@ def parse(text: str) -> tuple[list[dict], set[str]]:
             requirements.append(current)
             continue
         if line.startswith("#"):
+            if REQUIREMENT_LEVEL.match(line):
+                unread.append(number)
             current = None
             continue
         field = FIELD.match(line)
         if current is not None and field and field.group(1) not in current["fields"]:
             current["fields"][field.group(1)] = field.group(2)
-    return requirements, cards
+    return requirements, cards, unread
 
 
 def format_problems(path: str, requirements: list[dict], cards: set[str],
@@ -260,8 +267,10 @@ def main(argv: list[str]) -> int:
             problems.append(f"{path}: file not found")
             continue
         shown_path = path.as_posix()
-        now, cards = parse(path.read_text(encoding="utf-8"))
+        now, cards, unread = parse(path.read_text(encoding="utf-8"))
         total += len(now)
+        problems += [f"{shown_path}:{n}: heading is not shaped \"### <ID> — <sentence>\", so no "
+                     "check reads it as a requirement" for n in unread]
         problems += format_problems(shown_path, now, cards, seen)
         if roots:
             findings += missing_checks(now, sources, texts)
@@ -269,7 +278,7 @@ def main(argv: list[str]) -> int:
         if before_text is None:
             notes.append(f"note  owner gate and retired-ID check skipped for {shown_path}: {reason}")
         else:
-            before, _ = parse(before_text)
+            before, _, _ = parse(before_text)
             problems += retired_reused(shown_path, now, before, base)
             findings += owner_gate(now, before)
 

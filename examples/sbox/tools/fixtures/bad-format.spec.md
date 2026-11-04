@@ -26,6 +26,11 @@ A small fenced yard with one gate and two spawn points.
 - state: agreed
 - rung: vibes
 
+### YARD-GATE-02 The gate swings inward
+- state: agreed
+- rung: engine
+- check: YARD_GATE_02_SwingsInward
+
 ## Cards
 
 ### FEEL-1 (owner)
