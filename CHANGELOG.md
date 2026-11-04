@@ -54,6 +54,10 @@
   its test, so a change that broke `spec_lint.py`, `scene_refs.py`, `check_metas.py` or
   the transcript analyzer still passed. It now runs each of their tests on Ubuntu and
   Windows, one per step, since on Windows a step's shell judges only its last command.
+- **Two engine test runs never share a results folder.** `run_engine_tests.ps1` named its
+  `test-results` folder to the second before it waited for the lock, so two runs started in
+  the same second used one folder, and the second overwrote the first's results, TRX file
+  and engine log. It now names the folder once it holds the lock, to the millisecond.
 
 ## 1.07 — 2026-11-03
 

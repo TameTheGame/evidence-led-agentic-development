@@ -371,11 +371,7 @@ $sourceCheck = try {
 } catch { "NOT SYNCED - the check failed: $($_.Exception.Message)" }
 
 $version = (Get-Content (Join-Path $Engine '.version') -TotalCount 1 -ErrorAction SilentlyContinue)
-if (-not $Out) { $Out = Join-Path $Project ('test-results\' + (Get-Date -Format 'yyyyMMdd-HHmmss')) }
-New-Item -ItemType Directory -Force $Out | Out-Null
-$Out = (Resolve-Path $Out).Path
 $log = Join-Path $Engine 'logs\testhost.log'
-$trx = Join-Path $Out 'results.trx'
 
 # Every run overwrites the same engine log, so runs must not overlap.
 $lock = New-Object System.Threading.Mutex($false, 'sbox-engine-tests-testhost-log')
@@ -387,6 +383,12 @@ try {
 } catch [System.Threading.AbandonedMutexException] { }
 
 try {
+    # Named once the lock is held, to the millisecond, so two runs started in the same second
+    # don't share a folder and the second doesn't overwrite the first's results.
+    if (-not $Out) { $Out = Join-Path $Project ('test-results\' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff')) }
+    New-Item -ItemType Directory -Force $Out | Out-Null
+    $Out = (Resolve-Path $Out).Path
+    $trx = Join-Path $Out 'results.trx'
     $env:FACEPUNCH_ENGINE = $Engine
     $started = Get-Date
     $arguments = @('test', $tests, '--logger', 'console;verbosity=detailed', '--logger', 'trx;LogFileName=results.trx', '--results-directory', $Out)
