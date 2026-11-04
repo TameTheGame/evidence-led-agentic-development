@@ -30,6 +30,15 @@
   has. `docs/SPEC_FORMAT.md` and `spec_lint.py`'s notes say to run the owner gate before
   each commit, or against the commit the task started from, since after a commit it
   compares with `HEAD` and reports nothing.
+- **Five import reference entries agree with the guide.** The addon entries say that on
+  `26.10.13b` no addon of Sandbox could open, link the guide's section on S&box failing to
+  start a project, and give a bare addon its `Type` as well as its `ParentPackage`. The
+  `GameTask.Yield` entry takes its delays in short steps inside a loop with a limit, as the
+  camera lesson does. The water entry says to add a trigger `BoxCollider` before the
+  `WaterVolume`, since the installed one requires a `BoxCollider` and brought a solid one.
+  Two citations given by file name only now carry the full tagged path, so the recheck's
+  search finds them, and the Garry's Mod steps check for a file of the same name before
+  writing one, and delete only the files they added.
 
 ## 1.07 — 2026-11-03
 

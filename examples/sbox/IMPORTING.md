@@ -80,7 +80,9 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   - To match, bake that frame into the converted mesh, as the project did, or play the
     sequence, stopped, on a `SkinnedModelRenderer` with `UseAnimGraph` off
     (`26.10.13:engine/Sandbox.Engine/Scene/Components/Render/SkinnedModelRenderer.cs`,
-    lines 92-104 and 112; `SkinnedModelRenderer.Sequence.cs`, lines 59-70). The second way
+    lines 92-104 and 112;
+    `26.10.13:engine/Sandbox.Engine/Scene/Components/Render/SkinnedModelRenderer.Sequence.cs`,
+    lines 59-70). The second way
     is inferred and untested.
   - Also inferred: the start cycle of 0, since the engine allocates entities outside the
     SDK. `prop_static` is drawn by engine code outside the SDK, so this entry says nothing
@@ -699,6 +701,12 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
   (`26.10.13:engine/Sandbox.Engine/Scene/Components/Game/WaterVolume.cs`, lines 95-104).
   Neither plays a sound. Water without a trigger let the player sink to the bottom,
   silently. Give the player a `MoveModeSwim`, and play splash and wading sounds yourself.
+  - Add the collider yourself, as a `BoxCollider` with `IsTrigger` on, before the
+    `WaterVolume`. On `26.10.13a` the installed `WaterVolume` requires a `BoxCollider`, as
+    the entry on checking an engine type's members under
+    [Faster ways of working](#faster-ways-of-working) says, and the one it brought was
+    solid, as the Sandbox note below found. That it then uses your trigger instead of
+    bringing its own is inferred, not seen.
   - Source water is brushes with `CONTENTS_WATER`, 0x20, or `CONTENTS_SLIME`, 0x10
     (`source-sdk-2013@be57e3d:src/public/bspflags.h`, lines 30-31). The player plays
     `Player.Wade` going in and out (`src/game/shared/baseplayer_shared.cpp`, lines
@@ -877,7 +885,9 @@ Sound lost to key spelling is under [Map logic and entities](#map-logic-and-enti
   line 696; `src/game/server/doors.h`, line 71). So a button built overlapping a door
   works in Source but not in S&box. Give the player a component that answers the
   controller's `GetUsableComponent` event, which it asks before anything else
-  (`Pressing.cs`, line 231; `PlayerController.Events.cs`, line 36). Its sphere passes can
+  (`Pressing.cs`, line 231;
+  `26.10.13:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.Events.cs`,
+  line 36). Its sphere passes can
   still reach a button behind a thin wall, as
   [More world-build lessons](README.md#more-world-build-lessons) says.
   - Checked: source at `26.10.13` and `be57e3d`; seen on `26.10.13a`. Proof: a play-mode
@@ -980,7 +990,10 @@ writes, store packages, and tags.
   another read a value the game resets every frame four times after yields and saw it
   unchanged. `TaskSource.Frame` waits for the next frame's update (lines 584-588), but the
   static `GameTask` has no `Frame`. Wait with `GameTask.DelaySeconds` instead: with
-  0.2-second delays, the value was reset each time.
+  0.2-second delays, the value was reset each time. Take such delays in short steps inside
+  a loop with a limit that checks for the state it waits for, not as one fixed wait before
+  a reading, as the camera lesson in
+  [More world-build lessons](README.md#more-world-build-lessons) says.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: nothing yet.
 - **Inside a component, `Transform` is the component's own property.** `Component`
   has a `Transform` property of type `GameTransform`
@@ -1091,6 +1104,12 @@ writes, store packages, and tags.
     frame (read from its compiled code). A check that steers the player itself with
     `WishVelocity` has to switch that component off first; until then, ladder, lift, and
     use checks didn't move the player at all.
+  - The route depends on the parent package. On `26.10.13b` no addon of Sandbox could open:
+    the package came with no compiled code, and the Editor stopped at an error box until
+    someone clicked OK, as
+    [When S&box can't start a project](README.md#when-sbox-cant-start-a-project) says. On a
+    new build, open a bare addon first, as the entry on trying one under
+    [Faster ways of working](#faster-ways-of-working) says.
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: in play, `Game.Ident` is
     `facepunch.sandbox` and the project settings are Sandbox's, and every play-mode check
     passes with Sandbox's player (it climbs a ladder 49 units in 2 seconds).
@@ -1266,8 +1285,9 @@ writes, store packages, and tags.
     dedicated server that mounts a Workshop collection at startup can load a Workshop map
     with `+map`
     ([Workshop for Dedicated Servers](https://wiki.facepunch.com/gmod/Workshop_for_Dedicated_Servers)).
-  - Both write into the owner's game folder, so ask the owner first, and delete the
-    script and the copy afterwards.
+  - Both write into the owner's game folder, so ask the owner first. Before writing each
+    file, check that no file of that name is there, and pick another name if one is.
+    Afterwards, delete only the files you added.
   - Measure physics instead of tuning it by eye. Have the script shove an object and sample
     it every 0.1 seconds, give the S&box copy the same shove, and match the curves. The
     hinge, air drag, and mass entries above were tuned this way.
@@ -1293,8 +1313,10 @@ writes, store packages, and tags.
   - Checked: seen on `26.10.13a`. Proof: the run with the fix off, in which none of 72
     props was left hanging.
 - **When something of the parent game misbehaves in a map running inside it, try a bare
-  addon project first.** Make an `.sbproj` with `ParentPackage` and nothing else, and see
-  whether the fault is there too before tracing your own code. A weapon's swing that didn't
+  addon project first.** Make an addon `.sbproj`, with `Type` `"addon"` and `ParentPackage`
+  and nothing else, and see whether the fault is there too before tracing your own code. If
+  even the bare project won't open, the parent package is at fault, as on `26.10.13b`; see
+  [When S&box can't start a project](README.md#when-sbox-cant-start-a-project). A weapon's swing that didn't
   animate inside Facepunch's Sandbox was traced through weapon and view-model code for a
   long time before a bare project showed the same thing: it was Sandbox's own bug. Delete
   the bare project afterwards, as [Throwaway projects](README.md#throwaway-projects) says.
