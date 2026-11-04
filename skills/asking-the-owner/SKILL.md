@@ -21,6 +21,20 @@ and make every question quick to answer.
 Everything objective is yours to settle first: compiling, tests, traces, file checks,
 logs, paths, hashes, and cleanup.
 
+## A written hand-off
+
+The owner may hand off agreeing requirements to you, in writing, naming the requirements or
+area it covers and when it ends. Look for one where the project keeps the owner's decisions.
+Under one:
+
+- agree only requirements inside its scope, before it ends;
+- give each an `agreed-by` field that names the hand-off and quotes the owner's words; and
+- list each one you agreed in your report, so the owner can change or retire it.
+
+Consent with no scope or no end, such as "use your judgment" or "decide on my behalf", is
+not a hand-off: leave the requirement `draft` and ask. A hand-off never covers changing or
+retiring a requirement, or accepting your own work.
+
 ## Never ask the owner to
 
 - find paths, calculate hashes, read logs, or reconstruct what you did;
@@ -79,4 +93,5 @@ the requirement depends on reopens it.
 | "The owner said GREEN last week, so it's still fine." | Only if nothing it depends on has changed since that commit. |
 | "I'll pick a sensible product direction myself." | Product intent is the owner's. Offer options with a recommendation and ask. |
 | "It's only a wording change that follows from what they asked." | Changing an agreed requirement's text is the owner's decision. Propose the new wording and wait. |
+| "The owner said to decide on their behalf, so I can mark this agreed." | Only a written hand-off that names what it covers and when it ends lets you agree a requirement. Otherwise leave it `draft` and ask. |
 | "A model reviewed the screenshots, so it's accepted." | Model review is advice. Acceptance is the owner's. |

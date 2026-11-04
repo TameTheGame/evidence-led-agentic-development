@@ -23,7 +23,9 @@ A plan can also set, for a later test:
   - "starterTests": file names in examples/sbox/rung1-starter/UnitTests to copy into the
     project's UnitTests/; and
   - per run, "skillRef": a git ref to take sbox-engine-reference's SKILL.md from, such as a
-    release tag, in place of the working tree.
+    release tag, in place of the working tree;
+  - per run, "eladSkillRef": the same for the three ELAD skills; and
+  - per run, "fixture": that run's fixture folder, in place of the plan's.
 -BuildOnly builds the projects and stops, to check the starting state.
 
 .EXAMPLE
@@ -76,8 +78,9 @@ foreach ($r in $runs) {
     if (Test-Path $dir) { throw "$dir already exists" }
     if (-not $prompts.ContainsKey($r.scenario)) { throw "unknown scenario $($r.scenario) in $($r.id)" }
     New-Item -ItemType Directory -Force "$dir\.claude\skills", "$dir\tools" | Out-Null
-    foreach ($f in Get-ChildItem -Recurse -File $fixture) {
-        $dest = Join-Path $dir $f.FullName.Substring($fixture.Length + 1)
+    $runFixture = if ($r.fixture) { Join-Path $repo $r.fixture } else { $fixture }
+    foreach ($f in Get-ChildItem -Recurse -File $runFixture) {
+        $dest = Join-Path $dir $f.FullName.Substring($runFixture.Length + 1)
         New-Item -ItemType Directory -Force (Split-Path $dest) | Out-Null
         # A scene's _d file is engine-written binary data; copy it byte for byte.
         if ($f.Name -like '*_d') { Copy-Item $f.FullName $dest } else { Put $dest ([IO.File]::ReadAllText($f.FullName, $utf8)) }
@@ -88,6 +91,12 @@ foreach ($r in $runs) {
     }
     foreach ($s in 'choosing-rigor', 'matching-evidence-to-claims', 'asking-the-owner') {
         Copy-Item -Recurse "$repo\skills\$s" "$dir\.claude\skills\$s"
+        if ($r.eladSkillRef) {
+            [Console]::OutputEncoding = $utf8  # git writes UTF-8; read it as that, not the console's code page
+            $old = & git -C $repo show "$($r.eladSkillRef):skills/$s/SKILL.md"
+            if ($LASTEXITCODE) { throw "no $s at $($r.eladSkillRef) for $($r.id)" }
+            Put "$dir\.claude\skills\$s\SKILL.md" ($old -join "`n")
+        }
     }
     if ($r.domain) {
         Copy-Item -Recurse "$repo\examples\sbox\skills\sbox-engine-reference" "$dir\.claude\skills\sbox-engine-reference"

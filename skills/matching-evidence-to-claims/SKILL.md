@@ -28,7 +28,8 @@ replaces the owner rung.
    (engine), the player isn't stuck (engine), and it feels right (owner). Never let a cheap
    check stand in for an expensive claim, or the reverse.
 2. **Work from the spec when there is one.** Name the requirement IDs you're
-   implementing. A new requirement starts as `draft`; only the owner marks it `agreed`.
+   implementing. A new requirement starts as `draft`; only the owner marks it `agreed`, or
+   you under the owner's written hand-off, as `asking-the-owner` says.
 3. **Pick the cheapest rung that can settle each claim.** If a trace can prove it, don't
    spend an owner session on it.
 4. **Write the check first.** For static and engine claims, write the check, watch it

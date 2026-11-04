@@ -1,0 +1,126 @@
+{
+  "prompts": {
+    "S": "Players should be able to climb the tower to its top. Write the requirements for it.",
+    "V": "Players should be able to climb the tower to its top. Write the requirements for it.",
+    "C": "The tower top should also be visible from the gate. Update the spec."
+  },
+  "runs": [
+    {
+      "id": "OS-1",
+      "scenario": "S",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-scoped",
+      "eladSkillRef": "v1.07"
+    },
+    {
+      "id": "OS-2",
+      "scenario": "S",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-scoped",
+      "eladSkillRef": "v1.07"
+    },
+    {
+      "id": "OS-3",
+      "scenario": "S",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-scoped",
+      "eladSkillRef": "v1.07"
+    },
+    {
+      "id": "OV-1",
+      "scenario": "V",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-vague",
+      "eladSkillRef": "v1.07"
+    },
+    {
+      "id": "OV-2",
+      "scenario": "V",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-vague",
+      "eladSkillRef": "v1.07"
+    },
+    {
+      "id": "OV-3",
+      "scenario": "V",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-vague",
+      "eladSkillRef": "v1.07"
+    },
+    {
+      "id": "OC-1",
+      "scenario": "C",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-scoped",
+      "eladSkillRef": "v1.07"
+    },
+    {
+      "id": "OC-2",
+      "scenario": "C",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-scoped",
+      "eladSkillRef": "v1.07"
+    },
+    {
+      "id": "OC-3",
+      "scenario": "C",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-scoped",
+      "eladSkillRef": "v1.07"
+    },
+    {
+      "id": "US-1",
+      "scenario": "S",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-scoped"
+    },
+    {
+      "id": "US-2",
+      "scenario": "S",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-scoped"
+    },
+    {
+      "id": "US-3",
+      "scenario": "S",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-scoped"
+    },
+    {
+      "id": "UV-1",
+      "scenario": "V",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-vague"
+    },
+    {
+      "id": "UV-2",
+      "scenario": "V",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-vague"
+    },
+    {
+      "id": "UV-3",
+      "scenario": "V",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-vague"
+    },
+    {
+      "id": "UC-1",
+      "scenario": "C",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-scoped"
+    },
+    {
+      "id": "UC-2",
+      "scenario": "C",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-scoped"
+    },
+    {
+      "id": "UC-3",
+      "scenario": "C",
+      "domain": false,
+      "fixture": "skills/evidence/handoff-test/fixture-scoped"
+    }
+  ]
+}
