@@ -1233,6 +1233,22 @@ writes, store packages, and tags.
   so give them in Windows form, such as `C:/work`, not `/c/work` or `/tmp`.
   - Checked: Git for Windows' release notes; seen with Git for Windows 2.56.0. Proof:
     nothing yet.
+- **Test a Python tool with a cp1252 pipe and UTF-8 mode off.** Without UTF-8 mode, Python
+  on Windows writes to a pipe, and decodes a `subprocess` run with `text=True`, in the ANSI
+  code page, such as cp1252
+  ([Python UTF-8 Mode](https://docs.python.org/3/library/os.html#utf8-mode)). Setting
+  `PYTHONUTF8=1` turns that mode on for every Python a machine starts, and Python 3.15 turns
+  it on by default ([PEP 686](https://peps.python.org/pep-0686/)), so a code-page bug never
+  shows on such a machine, though it still hits Python 3.14 and earlier without the
+  setting. A lint that read Git's repository path as text skipped a check under a folder
+  named outside ASCII, and the test written to catch that passed against the old lint on a
+  machine that set `PYTHONUTF8=1`. So run the tool in its tests with
+  `PYTHONIOENCODING=cp1252` and `PYTHONUTF8=0`, as
+  [`tools/test_spec_lint.py`](tools/test_spec_lint.py) does, and give each text run an
+  `encoding`, or decode a path it prints with `os.fsdecode`.
+  - Checked: Python's documentation; seen with Python 3.14 on Windows. Proof: the
+    `test_spec_lint.py` case under a non-ASCII folder fails with the old lint when the
+    runner sets `PYTHONUTF8=1`.
 
 ## Faster ways of working
 

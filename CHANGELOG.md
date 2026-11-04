@@ -135,6 +135,11 @@
   hits. Put `MSYS_NO_PATHCONV=1` before such a command, with its real paths in Windows
   form, or run it from PowerShell. Seen with Git for Windows 2.56.0, where searches for a
   moved folder's old path missed real hits.
+- **Test a Python tool with UTF-8 mode off.** The import reference's Tools and scripting
+  section gains an entry: a machine that sets `PYTHONUTF8=1`, or runs Python 3.15, where
+  that is the default, decodes text runs and pipes as UTF-8, so a code-page bug that Python
+  3.14 and earlier hit on Windows doesn't show there. A tool's tests run it with `PYTHONIOENCODING=cp1252` and
+  `PYTHONUTF8=0`, as `test_spec_lint.py` now does.
 
 ## 1.06 — 2026-11-02
 
