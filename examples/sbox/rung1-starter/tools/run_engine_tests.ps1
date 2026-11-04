@@ -384,6 +384,9 @@ $dotnet = Get-Command dotnet -CommandType Application -ErrorAction SilentlyConti
 if (-not $dotnet -or -not (@(& $dotnet.Path --list-sdks 2>$null) -match '^10\.')) { Stop-Setup 'install the .NET 10 SDK: "dotnet --list-sdks" shows no 10.x SDK.' }
 if ($TimeoutSeconds -le 0) { Stop-Setup '-TimeoutSeconds must be more than 0.' }
 $tests = Join-Path $Project 'UnitTests'
+if (-not (Test-Path $tests -PathType Container)) {
+    Stop-Setup "no UnitTests folder in $Project. Copy the starter's UnitTests folder in, next to the .sbproj, then open the project once in the S&box Editor: it generates the test project only when that folder is there."
+}
 if (-not (Get-ChildItem $tests -Filter *.csproj -ErrorAction SilentlyContinue)) {
     Stop-Setup "no test project in $tests. Open the project once in the S&box Editor so it generates one."
 }

@@ -53,8 +53,9 @@ Editor folder, in it or in its libraries, such as a content map, never compiles:
 then reports no compile result, and the check doesn't wait for one.
 
 The project must be closed in every editor first, because the check closes and reopens it.
-Steam must be running, because S&box starts through it; the check doesn't start Steam, which
-can update S&box. Editors accept sbox-cli unless Project Settings > AI > Enable MCP
+Steam must be running, because S&box needs it; the check doesn't start Steam, which can
+update S&box. Its own start, through sbox-cli --project, runs sbox-dev.exe directly and
+installs no waiting update. Editors accept sbox-cli unless Project Settings > AI > Enable MCP
 Communication is off. When the project's .sbproj turns it off, the check stops with NOT RUN
 before it starts an editor, since sbox-cli would only wait out its start-up timeout.
 

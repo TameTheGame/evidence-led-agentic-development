@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- **Start-up facts: the test folder, Steam's update and `.json` files.** S&box makes no
+  `UnitTests` folder: it generates the test project only when the folder is already there.
+  The guide's spike notes and the rung-1 starter now say so, and `run_engine_tests.ps1` now
+  stops on a missing folder with `NOT RUN` and says to copy the starter's `UnitTests`
+  folder in before opening the project, where it said only to open the project. A start
+  through `sbox-cli` runs `sbox-dev.exe` or `sbox.exe` directly, and a `--project` start
+  didn't install Steam's waiting update. So the starter's note on running the source check
+  on a schedule says an update lands at the next launch through Steam, and the editor
+  check's Steam notes say its own start installs none. The `.meta` lesson adds that S&box
+  wrote no `.meta` for any `.json` file, though a project's own resource type can claim
+  that extension. Seen on `26.10.27c` and read from the source at `26.10.27`.
 - **Every eye means every height the eye can take.** The S&box guide's lesson on pressing
   through a wall now says which eyes to keep a usable thing out of reach of: at the
   defaults, from 28 in up when crouched to 64 standing, above the ground under each place

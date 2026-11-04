@@ -25,7 +25,8 @@ is that code, ready to copy.
 ## Using it
 
 1. **Use a code project.** S&box generates a test project only for `game`, `library`, and
-   `addon` projects. A `content` (map) project needs a small companion code project.
+   `addon` projects, and only when the project already has a `UnitTests` folder, which the
+   next step adds. A `content` (map) project needs a small companion code project.
 2. **Copy the starter in.** Copy `UnitTests\` into the project root, next to the `.sbproj`,
    and copy both scripts in `tools\` into the project's `tools\`.
 3. **Generate the test project.** Open the project in the S&box Editor, check the console
@@ -123,8 +124,11 @@ clone, fetching the tag first if the clone lacks it. It prints one line and alwa
   push. The checkout is a detached HEAD; `git switch master` returns to the latest source.
 - **Run it after anything that can update S&box,** such as a launch through Steam. A
   project can also run it at the start of each agent session.
-- **Run it on a schedule too.** Steam updates S&box only when S&box starts, so a session
-  that is already open doesn't see an update from a launch made by hand. An hourly Windows
+- **Run it on a schedule too.** Steam installs a waiting update only when it starts S&box
+  itself. `sbox-cli --project` and `--game` run `sbox-dev.exe` and `sbox.exe` directly
+  (`26.10.27:engine/Launcher/SboxCli/Program.cs`, lines 153-161), and on `26.10.27c` a
+  `--project` start left the update uninstalled. So an update lands at the next launch
+  through Steam, and a session that is already open doesn't see it. An hourly Windows
   scheduled task closes that gap.
 - **Have each agent session run it first,** so no agent has to remember to. In Claude Code,
   a `SessionStart` hook in the project's `.claude/settings.json` puts the line in the

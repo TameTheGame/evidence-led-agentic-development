@@ -72,8 +72,12 @@ The spike ran on S&box `26.10.02`. Source references are to `Facepunch/sbox-publ
 collision, traces, spawn landing, and stuck detection against generated geometry.
 
 1. **Tests need a code project.**
-   - S&box generates a `UnitTests` project only for `game`, `library`, and `addon`
-     projects (`Project.Solution.cs`).
+   - S&box generates a `UnitTests` project only for `game`, `library`, and `addon` projects
+     (`Project.Solution.cs`). It makes no `UnitTests` folder itself: it adds the test
+     project only when the folder is already there
+     (`26.10.27:engine/Sandbox.Engine/Systems/Project/Project/Project.Solution.cs`, lines
+     282-286), and on `26.10.27c` a project's first open made none. Copy the folder in
+     first.
    - A `content` map needs a small companion code project to host its rung-1 tests. That
      point comes from the source; the spike didn't create a content project.
 2. **Generated meshes need a default physics surface.**
@@ -211,8 +215,11 @@ powershell -File tools/editor_check.ps1 -Scene scenes/outpost.scene
 - **It keeps each editor's own account.** It saves the output of the `sbox-cli` process that
   owns each editor, and the editor log from `<engine>\logs\`, with the results. On a failure
   it prints the last lines of both, so a failed start says why.
-- **Steam must be running.** S&box starts through Steam. The check stops with `NOT RUN`
-  when Steam isn't running, and doesn't start it, because a Steam start can update S&box.
+- **Steam must be running.** S&box needs it. The check stops with `NOT RUN` when Steam
+  isn't running, and doesn't start it, because a Steam start can update S&box. Its own
+  start doesn't: `sbox-cli --project` runs `sbox-dev.exe` directly
+  (`26.10.27:engine/Launcher/SboxCli/Program.cs`, lines 153-161), and on `26.10.27c` such a
+  start left Steam's waiting update uninstalled.
 - **A failed start stops it in seconds.** When S&box can't start the project, it shows an
   error box and waits for a click; see [When S&box can't start a project](#when-sbox-cant-start-a-project).
   While the check waits for an editor, it looks for that box and for the failure in the
@@ -626,8 +633,11 @@ both unless it says otherwise. Each says what was seen, and on which build.
   `26.10.27c` notes and scripts kept beside sources, such as `.md` and `.py` files, got no
   `.meta` either. Nor did a `.json` record that a project's own script wrote beside a probe
   bake: S&box keeps a `.meta` only for a file it takes as an asset (`Asset.cs`, lines
-  168-189). Leave such a file out by its folder and name, not by its extension, so a real
-  asset of that type still needs its `.meta`.
+  168-189). On `26.10.27c` it wrote none for any `.json` file, but a project's own resource
+  type can claim the `json` extension
+  (`26.10.27:engine/Sandbox.Engine/Resources/GameResourceAttribute.cs`, lines 118-134), and
+  its files are then assets. Leave such a file out by its folder and name, not by its
+  extension, so a real asset of that type still needs its `.meta`.
 - **Allow for a store package's asset ID changing between editor sessions.** S&box writes
   no `.meta` for a file that a cloud package installed (`Asset.cs`, lines 107 and 173-176;
   still so at `26.10.27`), so no file in the project keeps its GUID, and the native
