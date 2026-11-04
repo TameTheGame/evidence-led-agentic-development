@@ -5,8 +5,8 @@ artifacts they govern are archived at the `v0.5` tag (see [Archive](../ARCHIVE.m
 
 ## ADR-0022 — An owner may hand off agreeing requirements, in writing
 
-**Status:** accepted by Josh, the owner, on 2026-11-04, for v1.08. The skills don't teach it
-yet: until a change to them passes its pressure test, they keep agreeing as the owner's.
+**Status:** accepted by Josh, the owner, on 2026-11-04, for v1.08. `asking-the-owner` teaches
+it, after passing the [hand-off test](../skills/evidence/HANDOFF_TEST.md).
 
 An outside review of a project that uses ELAD found that its owner had told the agent, in
 writing, to make an informed decision on the owner's behalf, and the agent had then marked a

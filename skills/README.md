@@ -98,6 +98,11 @@ never against private project data.
     a lesson should live, where 2 of 3 with the old text made a lessons file unasked.
   - Saved-scene loading showed no difference: every run used the starter's helper.
   - No run in either condition fixed a decal's random roll, which the skill doesn't cover.
+- **[Owner hand-off test](evidence/HANDOFF_TEST.md):** the written hand-off in
+  `asking-the-owner`, against the v1.07 skills, in 18 acting sessions.
+  - It passed its pre-registered rule. Both versions agreed under a scoped hand-off and
+    refused vague consent; only the update recorded the hand-off in each requirement, in 3
+    of 3 runs against 0 of 3.
 
 | # | Scenario given to the agent | Expected behavior |
 |---|---|---|

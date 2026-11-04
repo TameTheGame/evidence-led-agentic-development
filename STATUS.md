@@ -55,6 +55,10 @@ non-normative.
   pre-registered, blind-scored rule against the v1.07 text in 12 runs: with it, 3 of 3 runs
   asked the owner where a lesson should live, where 2 of 3 with the old text made a lessons
   file unasked. See [the test](skills/evidence/SKILL_UPDATE_TEST.md).
+- **The owner hand-off test** (v1.08). The skills' written hand-off passed its
+  pre-registered, blind-scored rule against the v1.07 text in 18 runs: both versions agreed
+  under a scoped hand-off and refused vague consent, and only the update recorded the hand-off
+  in each requirement. See [the test](skills/evidence/HANDOFF_TEST.md).
 - **Four reference-project experiments** against v0.3.0. They are historical; see
   [Empirical Status](docs/EMPIRICAL_STATUS.md).
 

@@ -195,6 +195,23 @@ starter's helpers. Both conditions had the skill.
 **Limits:** three runs per cell, one model, Windows only, a model scorer, partial blinding,
 and a synthetic scene that nothing compiled or ran.
 
+## The owner hand-off test (v1.08)
+
+The [hand-off test](../skills/evidence/HANDOFF_TEST.md) compared the skills' new written
+hand-off, from
+[ADR-0022](DECISIONS.md#adr-0022--an-owner-may-hand-off-agreeing-requirements-in-writing),
+with the v1.07 skills, in 18 sessions: a scoped hand-off, vague consent, and a request that
+touched an agreed requirement.
+
+- It passed its pre-registered rule.
+- Both versions agreed new requirements under the scoped hand-off, left them `draft` on
+  vague consent, and left the agreed requirement to the owner.
+- Only the update recorded the hand-off in each requirement it agreed: 3 of 3 runs, against
+  0 of 3.
+
+**Limits:** three runs per cell, one model, Windows only, a model scorer, and one plainly
+worded hand-off.
+
 ## Pressure tests of the skills (v0.6)
 
 Fresh agents received owner requests about a synthetic map project. They worked with the

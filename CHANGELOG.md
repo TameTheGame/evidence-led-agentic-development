@@ -134,8 +134,15 @@
   it covers and when it ends, and keeps the owner's words. Each requirement agreed under it
   carries a new `agreed-by` field, and the owner gate still reports it. Changing or retiring
   a requirement stays the owner's. The spec format, the evidence ladder, the authority page
-  and the README say so; the skills don't teach it yet, so they still leave agreeing to the
-  owner until their change passes a pressure test.
+  and the README say so.
+- **The skills teach the written hand-off.** `asking-the-owner` gains a section on it and a
+  red flag: under a hand-off, agree only what it covers before it ends, give each requirement
+  an `agreed-by` line quoting the owner, and list them in the report; consent with no scope
+  or end, such as "decide on my behalf", isn't one. `matching-evidence-to-claims` points to
+  it. **New evidence: `skills/evidence/HANDOFF_TEST.md`.** The change passed its
+  pre-registered, blind-scored rule against the v1.07 text in 18 acting sessions. Both
+  versions agreed under a scoped written hand-off and refused vague consent, but only the
+  update recorded the hand-off in each requirement, in 3 of 3 runs against 0 of 3.
 
 ## 1.07 — 2026-11-03
 

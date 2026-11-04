@@ -247,8 +247,8 @@ Every claim here rests on a recorded test, and each test is written up with its 
   loaded on its own and helped agents fix a bug planted for the test. With the starter
   tests, agents ran the engine tests and saw them fail before fixing anything. See the
   [domain-skill](skills/evidence/SBOX_SKILL_TEST.md), [live](skills/evidence/LIVE_TEST.md),
-  [refactor](skills/evidence/REFACTOR_TEST.md) and [skill update](skills/evidence/SKILL_UPDATE_TEST.md)
-  tests.
+  [refactor](skills/evidence/REFACTOR_TEST.md), [skill update](skills/evidence/SKILL_UPDATE_TEST.md)
+  and [hand-off](skills/evidence/HANDOFF_TEST.md) tests.
 - **Limits.**
   - The samples are small: three runs per setup, with one model and one agent tool, on
     Windows.
