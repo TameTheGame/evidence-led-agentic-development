@@ -978,15 +978,27 @@ both unless it says otherwise. Each says what was seen, and on which build.
   sorts its hits by distance (`26.10.27:engine/Sandbox.Engine/Scene/Scene/Scene.Trace.cs`,
   line 69), and the physics query under it is native, so the source doesn't say why a
   sphere pass reached the button first. Keep a usable thing more than `ReachLength`, 130 by
-  default (`PlayerController.Input.cs`, line 65), from every eye on a wall's other side. In
-  an engine test, press what a player would: turn the player's eyes to the thing, tick the
-  scene once, and press what `Hovered` holds (`Pressing.cs`, lines 8 and 23-37), which the
-  controller sets only while `UseLookControls` is on
+  default (`PlayerController.Input.cs`, line 65), from every eye on a wall's other side.
+  That means every height the eye can take, above the ground under each place the player
+  can stand. The eye sits `CurrentHeight` less `EyeDistanceFromTop` above the player's
+  position (`Modes/MoveMode.Camera.cs`, line 12): at the defaults, 28 in when crouched and
+  64 standing (`PlayerController.Input.cs`, lines 12 and 137; `PlayerController.cs`, line
+  30; `PlayerController.Camera.cs`, line 8). A duck in the air moves the body up by the
+  difference, so the eye stays put (`PlayerController.Input.cs`, lines 161-166). A jump
+  lifts the eye up to about 53 in more, at the default `JumpSpeed` of 300 and the scene's
+  default gravity of 850 (`PlayerController.Input.cs`, line 11;
+  `26.10.27:engine/Sandbox.Engine/Scene/Scene/Scene.cs`, line 156). These heights are read
+  from the source, not measured. A static check that samples eye positions a step apart
+  must fail a thing within `ReachLength` plus that step, so the sampling can't let one
+  pass. In an engine test, press what a player would: turn the player's eyes to the thing,
+  tick the scene once, and press what `Hovered` holds (`Pressing.cs`, lines 8 and 23-37),
+  which the controller sets only while `UseLookControls` is on
   (`PlayerController.DefaultControls.cs`, lines 46-50). So that this can't pass by hovering
   anything, plant a button past reach and one the player looks away from, which the player
   must not hover. A static check can fail an engine test that presses a usable thing before
   it looks at it this way. At `26.10.13` the code reads the same, with `ReachLength` at
-  line 54 of `PlayerController.Input.cs`.
+  line 54 of `PlayerController.Input.cs`, `CurrentHeight` at line 126 and the duck in the
+  air at lines 150-155.
 
 ## Lessons from importing old content
 

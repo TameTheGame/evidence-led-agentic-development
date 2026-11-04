@@ -2,7 +2,13 @@
 
 ## Unreleased
 
-No pending changes.
+- **Every eye means every height the eye can take.** The S&box guide's lesson on pressing
+  through a wall now says which eyes to keep a usable thing out of reach of: at the
+  defaults, from 28 in up when crouched to 64 standing, above the ground under each place
+  the player can stand, and up to about 53 in more at the top of a jump. A duck in the air
+  keeps the eye where it was. It adds that a static check that samples eye positions a step
+  apart must fail a thing within `ReachLength` plus that step. Read from the source at
+  `26.10.13` and `26.10.27`.
 
 ## 1.07 — 2026-11-03
 
