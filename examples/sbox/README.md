@@ -216,10 +216,14 @@ powershell -File tools/editor_check.ps1 -Scene scenes/outpost.scene
   owns each editor, and the editor log from `<engine>\logs\`, with the results. On a failure
   it prints the last lines of both, so a failed start says why.
 - **Steam must be running.** S&box needs it. The check stops with `NOT RUN` when Steam
-  isn't running, and doesn't start it, because a Steam start can update S&box. Its own
-  start doesn't: `sbox-cli --project` runs `sbox-dev.exe` directly
-  (`26.10.27:engine/Launcher/SboxCli/Program.cs`, lines 153-161), and on `26.10.27c` such a
-  start left Steam's waiting update uninstalled.
+  isn't running, and doesn't start it, because a Steam start can update S&box. Steam also
+  installs a waiting update once its download has finished and no S&box process is running,
+  with no launch through Steam. The check's own start doesn't install one:
+  `sbox-cli --project` runs `sbox-dev.exe` directly
+  (`26.10.27:engine/Launcher/SboxCli/Program.cs`, lines 153-161). On `26.10.27c` Steam
+  installed `26.11.03a` between two `sbox-cli` sessions. The check quits its first editor
+  before it starts the second, so an update can land between them; the `Engine:` line names
+  the release read at the start.
 - **A failed start stops it in seconds.** When S&box can't start the project, it shows an
   error box and waits for a click; see [When S&box can't start a project](#when-sbox-cant-start-a-project).
   While the check waits for an editor, it looks for that box and for the failure in the

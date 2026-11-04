@@ -122,14 +122,18 @@ clone, fetching the tag first if the clone lacks it. It prints one line and alwa
   match the engine that ran.
 - **It changes nothing else in the clone.** It leaves branches alone and doesn't commit or
   push. The checkout is a detached HEAD; `git switch master` returns to the latest source.
-- **Run it after anything that can update S&box,** such as a launch through Steam. A
-  project can also run it at the start of each agent session.
-- **Run it on a schedule too.** Steam installs a waiting update only when it starts S&box
-  itself. `sbox-cli --project` and `--game` run `sbox-dev.exe` and `sbox.exe` directly
-  (`26.10.27:engine/Launcher/SboxCli/Program.cs`, lines 153-161), and on `26.10.27c` a
-  `--project` start left the update uninstalled. So an update lands at the next launch
-  through Steam, and a session that is already open doesn't see it. An hourly Windows
-  scheduled task closes that gap.
+- **Run it after anything that can update S&box,** such as a launch through Steam, or a
+  time when no S&box process was running. A project can also run it at the start of each
+  agent session.
+- **Run it on a schedule too.** Steam installs a waiting update once its download has
+  finished and no S&box process is running, with no launch through Steam. A start through
+  `sbox-cli` doesn't install it: `--project` and `--game` run `sbox-dev.exe` and `sbox.exe`
+  directly (`26.10.27:engine/Launcher/SboxCli/Program.cs`, lines 153-161). On `26.10.27c` a
+  `--project` start left the update waiting, and Steam installed `26.11.03a` in a gap
+  between two `sbox-cli` sessions with no S&box process running, after about a dozen such
+  gaps that installed nothing. So an update can land between any two runs, and a session
+  that is already open doesn't see it. Read `.version` before each run, as the runner does,
+  and an hourly Windows scheduled task closes the gap between sessions.
 - **Have each agent session run it first,** so no agent has to remember to. In Claude Code,
   a `SessionStart` hook in the project's `.claude/settings.json` puts the line in the
   session's context:
