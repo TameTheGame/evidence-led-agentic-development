@@ -85,9 +85,12 @@ is that code, ready to copy.
      `dotnet test` and every process under it, and keeps the output and the engine log.
    - `powershell -File tools/run_engine_tests.ps1 -SelfTest` checks the results on planted
      TRX files and, on Windows, kills a planted hung process tree. It needs no S&box.
-7. **Tell agents.** Add a line to the project's `AGENTS.md`, such as: "Run engine tests with
+7. **Tell agents.** Add lines to the project's `AGENTS.md`, such as: "Run engine tests with
    `powershell -File tools/run_engine_tests.ps1`. Only `Result: PASS` is a pass. Read its
-   engine-log lines when a test fails without an exception."
+   engine-log lines when a test fails without an exception. The engine source is the
+   `sbox-public` clone in `SBOX_PUBLIC`. Record S&box lessons in `docs/LESSONS.md`." The
+   S&box skill looks to `AGENTS.md` for both, and records a lesson only in the file it
+   names.
 
 ## Matching the engine source
 

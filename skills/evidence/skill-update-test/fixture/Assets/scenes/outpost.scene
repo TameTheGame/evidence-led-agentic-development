@@ -1,0 +1,219 @@
+{
+  "__guid": "51a7e000-1000-4000-a100-9e3779b97f4a",
+  "GameObjects": [
+    {
+      "__guid": "51a7e001-1001-4001-a101-9e3779b97f4b",
+      "Flags": 0,
+      "Name": "ground",
+      "Position": "0,0,-32",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.MeshComponent",
+          "__guid": "51a7e065-1065-4065-a165-9e3779b97faf",
+          "__enabled": true,
+          "Collision": "Mesh",
+          "Mesh": {
+            "$blob": "51a7e0c9-10c9-40c9-a1c9-9e3779b98013"
+          }
+        }
+      ]
+    },
+    {
+      "__guid": "51a7e002-1002-4002-a102-9e3779b97f4c",
+      "Flags": 0,
+      "Name": "wall.north",
+      "Position": "-800,768,0",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.MeshComponent",
+          "__guid": "51a7e066-1066-4066-a166-9e3779b97fb0",
+          "__enabled": true,
+          "Collision": "Mesh",
+          "Mesh": {
+            "$blob": "51a7e0ca-10ca-40ca-a1ca-9e3779b98014"
+          }
+        }
+      ]
+    },
+    {
+      "__guid": "51a7e003-1003-4003-a103-9e3779b97f4d",
+      "Flags": 0,
+      "Name": "wall.east",
+      "Position": "768,-800,0",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.MeshComponent",
+          "__guid": "51a7e067-1067-4067-a167-9e3779b97fb1",
+          "__enabled": true,
+          "Collision": "Mesh",
+          "Mesh": {
+            "$blob": "51a7e0cb-10cb-40cb-a1cb-9e3779b98015"
+          }
+        }
+      ]
+    },
+    {
+      "__guid": "51a7e004-1004-4004-a104-9e3779b97f4e",
+      "Flags": 0,
+      "Name": "wall.west",
+      "Position": "-800,-800,0",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.MeshComponent",
+          "__guid": "51a7e068-1068-4068-a168-9e3779b97fb2",
+          "__enabled": true,
+          "Collision": "Mesh",
+          "Mesh": {
+            "$blob": "51a7e0cc-10cc-40cc-a1cc-9e3779b98016"
+          }
+        }
+      ]
+    },
+    {
+      "__guid": "51a7e005-1005-4005-a105-9e3779b97f4f",
+      "Flags": 0,
+      "Name": "wall.south.west",
+      "Position": "-800,-800,0",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.MeshComponent",
+          "__guid": "51a7e069-1069-4069-a169-9e3779b97fb3",
+          "__enabled": true,
+          "Collision": "Mesh",
+          "Mesh": {
+            "$blob": "51a7e0cd-10cd-40cd-a1cd-9e3779b98017"
+          }
+        }
+      ]
+    },
+    {
+      "__guid": "51a7e006-1006-4006-a106-9e3779b97f50",
+      "Flags": 0,
+      "Name": "wall.south.east",
+      "Position": "64,-800,0",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.MeshComponent",
+          "__guid": "51a7e06a-106a-406a-a16a-9e3779b97fb4",
+          "__enabled": true,
+          "Collision": "Mesh",
+          "Mesh": {
+            "$blob": "51a7e0ce-10ce-40ce-a1ce-9e3779b98018"
+          }
+        }
+      ]
+    },
+    {
+      "__guid": "51a7e007-1007-4007-a107-9e3779b97f51",
+      "Flags": 0,
+      "Name": "gate.apron",
+      "Position": "-96,-1024,-32",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.MeshComponent",
+          "__guid": "51a7e06b-106b-406b-a16b-9e3779b97fb5",
+          "__enabled": true,
+          "Collision": "Mesh",
+          "Mesh": {
+            "$blob": "51a7e0cf-10cf-40cf-a1cf-9e3779b98019"
+          }
+        }
+      ]
+    },
+    {
+      "__guid": "51a7e008-1008-4008-a108-9e3779b97f52",
+      "Flags": 0,
+      "Name": "tower",
+      "Position": "368,-32,0",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.MeshComponent",
+          "__guid": "51a7e06c-106c-406c-a16c-9e3779b97fb6",
+          "__enabled": true,
+          "Collision": "Mesh",
+          "Mesh": {
+            "$blob": "51a7e0d0-10d0-40d0-a1d0-9e3779b9801a"
+          }
+        }
+      ]
+    },
+    {
+      "__guid": "51a7e009-1009-4009-a109-9e3779b97f53",
+      "Flags": 0,
+      "Name": "spawn.north",
+      "Position": "0,600,8",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.SpawnPoint",
+          "__guid": "51a7e06d-106d-406d-a16d-9e3779b97fb7",
+          "__enabled": true
+        }
+      ]
+    },
+    {
+      "__guid": "51a7e00a-100a-400a-a10a-9e3779b97f54",
+      "Flags": 0,
+      "Name": "spawn.south",
+      "Position": "0,-600,8",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.SpawnPoint",
+          "__guid": "51a7e06e-106e-406e-a16e-9e3779b97fb8",
+          "__enabled": true
+        }
+      ]
+    },
+    {
+      "__guid": "51a7e00b-100b-400b-a10b-9e3779b97f55",
+      "Flags": 0,
+      "Name": "gate",
+      "Position": "0,-800,0",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Outpost.GateDecal",
+          "__guid": "51a7e06f-106f-406f-a16f-9e3779b97fb9",
+          "__enabled": true,
+          "Sign": "decals/outpost_sign.decal"
+        }
+      ]
+    },
+    {
+      "__guid": "51a7e00c-100c-400c-a10c-9e3779b97f56",
+      "Flags": 0,
+      "Name": "Camera",
+      "Position": "0,-1000,160",
+      "Enabled": true,
+      "Components": [
+        {
+          "__type": "Sandbox.CameraComponent",
+          "__guid": "51a7e070-1070-4070-a170-9e3779b97fba",
+          "__enabled": true,
+          "IsMainCamera": true,
+          "FieldOfView": 80
+        }
+      ]
+    }
+  ],
+  "SceneProperties": {
+    "FixedUpdateFrequency": 50,
+    "MaxFixedUpdates": 5,
+    "NetworkFrequency": 30,
+    "TimeScale": 1,
+    "UseFixedUpdate": true
+  },
+  "Title": "outpost",
+  "Description": "",
+  "__references": [],
+  "__version": 2
+}

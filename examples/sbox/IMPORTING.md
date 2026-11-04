@@ -1336,18 +1336,19 @@ writes, store packages, and tags.
 
 ## Adding an entry
 
-Any S&box thread that learns something while importing logs it as it goes, in its own
-project's lessons list, in this shape:
+Any S&box thread that learns something while importing logs it as it goes, in the lessons
+file its project's `AGENTS.md` names. It uses the
+[S&box skill](skills/sbox-engine-reference/SKILL.md#when-sbox-surprises-you)'s shape, with
+three more lines for this reference:
 
 ```text
-**<What to do, as one instruction>**
-- Kind: general (any S&box project would hit it) or project-only
-- Topic: one of this file's sections
-- Fails: what went wrong done the obvious way
+- Rule: what to do, as one instruction
+- What happened: what went wrong done the obvious way, and the S&box version and date
 - Why: the cause, with the line that shows it (`26.10.13:<path>`, lines N-M, or
   `source-sdk-2013@<commit>:<path>`), or "no source"
-- Seen on: the S&box version and the date
 - Proof: the check that shows the fix works, and what it reported, or "nothing yet"
+- Kind: general (any S&box project would hit it) or project-only
+- Topic: one of this file's sections
 - Evidence: source, seen, source and seen, or inferred
 ```
 

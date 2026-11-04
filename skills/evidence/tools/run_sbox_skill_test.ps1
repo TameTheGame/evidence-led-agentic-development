@@ -17,6 +17,15 @@ spec_lint is allowed, and any other command that needs approval is denied.
 Plan file (JSON): { "runs": [ { "id": "SF-1", "scenario": "F", "domain": true } ] }
 Scenarios: F = fall-through report, W = walls without collision, T = write the spawn test.
 
+A plan can also set, for a later test:
+  - "fixture": the fixture folder, relative to the repository, in place of the one above;
+  - "prompts": { "<scenario>": "<owner's message>" }, in place of the three above;
+  - "starterTests": file names in examples/sbox/rung1-starter/UnitTests to copy into the
+    project's UnitTests/; and
+  - per run, "skillRef": a git ref to take sbox-engine-reference's SKILL.md from, such as a
+    release tag, in place of the working tree.
+-BuildOnly builds the projects and stops, to check the starting state.
+
 .EXAMPLE
 pwsh skills/evidence/tools/run_sbox_skill_test.ps1 -Plan plan.json -Base C:\scratch\sbox-skill-test
 Then: py -3 skills/evidence/tools/analyze_transcripts.py --transcripts <Base>/transcripts --runs <Base>/runs --extracts <Base>/extracts
@@ -25,7 +34,9 @@ Then: py -3 skills/evidence/tools/analyze_transcripts.py --transcripts <Base>/tr
 param(
     [Parameter(Mandatory)][string]$Plan,
     [Parameter(Mandatory)][string]$Base,
-    [int]$Parallel = 8
+    [int]$Parallel = 8,
+    [string]$Model,
+    [switch]$BuildOnly
 )
 $ErrorActionPreference = 'Stop'
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
@@ -54,7 +65,10 @@ The engine tests in ``UnitTests/`` need S&box installed, so only the owner can r
 Neither the S&box install nor a clone of the engine source is available in this environment.
 "@
 
-$runs = (Get-Content -Raw $Plan | ConvertFrom-Json).runs
+$planData = Get-Content -Raw $Plan | ConvertFrom-Json
+$runs = $planData.runs
+if ($planData.fixture) { $fixture = Join-Path $repo $planData.fixture }
+if ($planData.prompts) { $prompts = @{}; foreach ($p in $planData.prompts.PSObject.Properties) { $prompts[$p.Name] = $p.Value } }
 New-Item -ItemType Directory -Force "$Base\runs", "$Base\transcripts" | Out-Null
 
 foreach ($r in $runs) {
@@ -65,13 +79,24 @@ foreach ($r in $runs) {
     foreach ($f in Get-ChildItem -Recurse -File $fixture) {
         $dest = Join-Path $dir $f.FullName.Substring($fixture.Length + 1)
         New-Item -ItemType Directory -Force (Split-Path $dest) | Out-Null
-        Put $dest ([IO.File]::ReadAllText($f.FullName, $utf8))
+        # A scene's _d file is engine-written binary data; copy it byte for byte.
+        if ($f.Name -like '*_d') { Copy-Item $f.FullName $dest } else { Put $dest ([IO.File]::ReadAllText($f.FullName, $utf8)) }
+    }
+    foreach ($t in @($planData.starterTests | Where-Object { $_ })) {
+        New-Item -ItemType Directory -Force "$dir\UnitTests" | Out-Null
+        Put "$dir\UnitTests\$t" ([IO.File]::ReadAllText("$repo\examples\sbox\rung1-starter\UnitTests\$t", $utf8))
     }
     foreach ($s in 'choosing-rigor', 'matching-evidence-to-claims', 'asking-the-owner') {
         Copy-Item -Recurse "$repo\skills\$s" "$dir\.claude\skills\$s"
     }
     if ($r.domain) {
         Copy-Item -Recurse "$repo\examples\sbox\skills\sbox-engine-reference" "$dir\.claude\skills\sbox-engine-reference"
+        if ($r.skillRef) {
+            [Console]::OutputEncoding = $utf8  # git writes UTF-8; read it as that, not the console's code page
+            $old = & git -C $repo show "$($r.skillRef):examples/sbox/skills/sbox-engine-reference/SKILL.md"
+            if ($LASTEXITCODE) { throw "no sbox-engine-reference at $($r.skillRef) for $($r.id)" }
+            Put "$dir\.claude\skills\sbox-engine-reference\SKILL.md" ($old -join "`n")
+        }
     }
     Copy-Item "$repo\examples\sbox\tools\spec_lint.py" "$dir\tools\spec_lint.py"
     Put "$dir\CLAUDE.md" '@AGENTS.md'
@@ -84,16 +109,19 @@ foreach ($r in $runs) {
     Invoke-Git -C $dir commit -q -m 'Starting state'
 }
 "built $($runs.Count) projects in $Base\runs"
+if ($BuildOnly) { return }
+$modelArgs = if ($Model) { @('--model', $Model) } else { @() }
 
 $runs | ForEach-Object -ThrottleLimit $Parallel -TimeoutSeconds 2400 -Parallel {
     $r = $_
     $base = $using:Base
+    $modelArgs = $using:modelArgs
     $prompt = ($using:prompts)[$r.scenario]
     [Console]::OutputEncoding = [Text.UTF8Encoding]::new()
     Set-Location "$base\runs\$($r.id)"
     $started = Get-Date
     # Project settings only, so the machine's user-level skills and CLAUDE.md stay out.
-    & claude -p $prompt --output-format stream-json --verbose --permission-mode acceptEdits `
+    & claude -p $prompt --output-format stream-json --verbose --permission-mode acceptEdits @modelArgs `
         --setting-sources project,local `
         --allowedTools Skill 'Bash(py -3 tools/spec_lint.py)' 'Bash(py -3 tools/spec_lint.py:*)' `
         'PowerShell(py -3 tools/spec_lint.py)' 'PowerShell(py -3 tools/spec_lint.py:*)' `

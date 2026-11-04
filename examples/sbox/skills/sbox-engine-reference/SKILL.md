@@ -15,8 +15,9 @@ description: Use when writing, testing, or debugging S&box (Facepunch, Source 2)
 
 - **Read the declaration before you use an API.** Check the exact declaration, its
   implementation, and its immediate collaborators in the project's local clone of
-  `Facepunch/sbox-public`; the project's `AGENTS.md` says where that clone is. Don't guess
-  from Unity, Unreal, or older S&box knowledge.
+  `Facepunch/sbox-public`. The `SBOX_PUBLIC` environment variable, or the project's
+  `AGENTS.md`, says where that clone is. With neither, say that you couldn't check the
+  source. Don't guess from Unity, Unreal, or older S&box knowledge.
 - **The installed build can differ from the source.** The installed engine records its
   version in `.version` in the install folder. Facepunch changes code weekly, so compare
   dates. Run `git log -- <file>` on the clone to see what changed after your build.
@@ -74,27 +75,34 @@ description: Use when writing, testing, or debugging S&box (Facepunch, Source 2)
   `FACEPUNCH_ENGINE` set to the install folder. Start the engine with `TestAppSystem` in
   `[AssemblyInitialize]` *(spike)*.
 - **Base content isn't mounted, so no `default` surface is loaded.** Register a stand-in
-  in test setup; see the spike kit's `TestSurfaces.cs`. That code uses engine internals
-  through reflection, is test-only scaffolding, and may break on an engine update
-  *(spike)*.
+  in test setup, as `UnitTests/TestSurfaces.cs` from ELAD's rung-1 starter does, which a
+  project copies in. That code uses engine internals through reflection, is test-only
+  scaffolding, and may break on an engine update *(spike)*.
 - **Read `logs\testhost.log` in the install folder.** Engine errors from a test run land
   there, not in the test output. It's overwritten every run, so copy it per run
   *(spike)*.
 - **To drive a player,** create a `PlayerController` with `UseInputControls = false` and
   `EnableFootstepSounds = false`, then call `scene.GameTick()` in a bounded loop
   *(source, spike)*.
-- **Loading a project scene:** `Scene.LoadFromFile` fails headlessly. Reading the
-  `.scene` file and passing it through `SceneFile.LoadFromJson` and `Scene.Load` works for
-  simple scenes *(spike: S8)*. Scenes that reference prefabs or models are still untested.
+- **Load a saved scene with the starter's `EngineTestHelpers.LoadSavedScene`.**
+  `Scene.LoadFromFile` fails headlessly *(spike: S8)*. A scene with editable meshes or
+  terrain keeps their data in a `<scene>_d` file beside it, which `SceneFile.LoadFromJson`
+  drops, so those meshes load empty and traces pass through them. `Scene.Load` with a
+  loading screen never finishes loading headlessly, so a player in it never moves. The
+  helper reads the `_d` file and loads without a loading screen *(starter: 26.10.13a)*.
+  Scenes that reference prefabs or models are still untested.
 
 ## When S&box surprises you
 
-Record a lesson in the project's engine-lessons file before moving on:
+Record a lesson before moving on, in the lessons file the project's `AGENTS.md` names. If
+it names none, give the lesson in your report and ask the owner where lessons live. Don't
+write it to a file the project doesn't have, or say it was recorded where it wasn't.
 
-- **What happened:** the observed behavior and the build it happened on.
-- **Root cause:** the source path and commit that explain it.
-- **Rule:** what to do next time.
-- **Evidence:** the test, log, or card that showed it.
+- **Rule:** what to do, as one instruction.
+- **What happened:** what went wrong done the obvious way, and the build it happened on.
+- **Why:** the source path and lines that explain it, at a named tag or commit, or "no
+  source".
+- **Proof:** the check that now catches it, or "nothing yet".
 
 ## Red flags
 

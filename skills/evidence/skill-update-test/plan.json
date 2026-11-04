@@ -1,0 +1,81 @@
+{
+  "fixture": "skills/evidence/skill-update-test/fixture",
+  "starterTests": [
+    "TestInit.cs",
+    "TestSurfaces.cs",
+    "EngineTestHelpers.cs",
+    "StarterGeometry.cs"
+  ],
+  "prompts": {
+    "L": "Write an engine test that loads our saved scene, Assets/scenes/outpost.scene, and checks that a player at the north spawn lands on its ground.",
+    "K": "In game, the sign over the gate shows at a different angle every time the map loads. Fix it so it stays put, and make sure we don't get caught by this again."
+  },
+  "runs": [
+    {
+      "id": "OL-1",
+      "scenario": "L",
+      "domain": true,
+      "skillRef": "v1.07"
+    },
+    {
+      "id": "OL-2",
+      "scenario": "L",
+      "domain": true,
+      "skillRef": "v1.07"
+    },
+    {
+      "id": "OL-3",
+      "scenario": "L",
+      "domain": true,
+      "skillRef": "v1.07"
+    },
+    {
+      "id": "OK-1",
+      "scenario": "K",
+      "domain": true,
+      "skillRef": "v1.07"
+    },
+    {
+      "id": "OK-2",
+      "scenario": "K",
+      "domain": true,
+      "skillRef": "v1.07"
+    },
+    {
+      "id": "OK-3",
+      "scenario": "K",
+      "domain": true,
+      "skillRef": "v1.07"
+    },
+    {
+      "id": "UL-1",
+      "scenario": "L",
+      "domain": true
+    },
+    {
+      "id": "UL-2",
+      "scenario": "L",
+      "domain": true
+    },
+    {
+      "id": "UL-3",
+      "scenario": "L",
+      "domain": true
+    },
+    {
+      "id": "UK-1",
+      "scenario": "K",
+      "domain": true
+    },
+    {
+      "id": "UK-2",
+      "scenario": "K",
+      "domain": true
+    },
+    {
+      "id": "UK-3",
+      "scenario": "K",
+      "domain": true
+    }
+  ]
+}

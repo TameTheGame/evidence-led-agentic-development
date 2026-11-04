@@ -1,0 +1,21 @@
+{
+  "bounds": { "min": [-1024, -1024, -64], "max": [1024, 1024, 512] },
+  "ground": { "min": [-800, -800, -32], "max": [800, 800, 0] },
+  "blocks": [
+    { "id": "wall.north", "min": [-800, 768, 0], "size": [1600, 32, 192] },
+    { "id": "wall.east", "min": [768, -800, 0], "size": [32, 1600, 192] },
+    { "id": "wall.west", "min": [-800, -800, 0], "size": [32, 1600, 192] },
+    { "id": "wall.south.west", "min": [-800, -800, 0], "size": [736, 32, 192] },
+    { "id": "wall.south.east", "min": [64, -800, 0], "size": [736, 32, 192] },
+    { "id": "gate.apron", "min": [-96, -1024, -32], "size": [192, 224, 32] },
+    { "id": "tower", "min": [368, -32, 0], "size": [64, 64, 480] }
+  ],
+  "spawns": [
+    { "id": "spawn.north", "position": [0, 600, 8] },
+    { "id": "spawn.south", "position": [0, -600, 8] }
+  ],
+  "landmarks": [ { "id": "tower", "top": [400, 0, 480] } ],
+  "routes": [
+    { "id": "gate-to-tower", "points": [[0, -900, 0], [0, 0, 0], [344, 0, 0]] }
+  ]
+}
