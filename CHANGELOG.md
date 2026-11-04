@@ -127,6 +127,15 @@
   `NO-GO` for a decision, only its passing reply meets the requirement, and an unanswered
   card leaves it unmet. Result and `ACCEPTANCE.md` lines may carry the build they ran on.
   The worked spec's cards gain the build line and FEEL-1's limit.
+- **An owner may hand off agreeing requirements, in writing.** The owner chose this in
+  [ADR-0022](docs/DECISIONS.md#adr-0022--an-owner-may-hand-off-agreeing-requirements-in-writing)
+  after an outside review found an agent agreeing requirements on an owner's written "decide
+  on my behalf", which ELAD's rules didn't cover. A hand-off names the requirements or area
+  it covers and when it ends, and keeps the owner's words. Each requirement agreed under it
+  carries a new `agreed-by` field, and the owner gate still reports it. Changing or retiring
+  a requirement stays the owner's. The spec format, the evidence ladder, the authority page
+  and the README say so; the skills don't teach it yet, so they still leave agreeing to the
+  owner until their change passes a pressure test.
 
 ## 1.07 — 2026-11-03
 

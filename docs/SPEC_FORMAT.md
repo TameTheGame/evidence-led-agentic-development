@@ -51,6 +51,7 @@ data: <optional path(s) to project-owned data files>
 - target-rung: <optional cheaper rung this should move to when one exists>
 - touches: <optional paths or data keys this requirement depends on; without it, any change reopens it>
 - why: <optional one line>
+- agreed-by: <only when agreed under the owner's written hand-off: the hand-off and the owner's words>
 ```
 
 ## Field rules
@@ -59,10 +60,11 @@ data: <optional path(s) to project-owned data files>
 |---|---|
 | ID | `AREA-TOPIC-NN`. Stable forever. Never reuse a retired ID. |
 | Sentence | One observable claim. If it says "and", consider splitting it. |
-| `state` | Agents may add or edit `draft` requirements. Only the owner moves a requirement to `agreed` or `retired`. This is the owner's decision boundary in one field. |
+| `state` | Agents may add or edit `draft` requirements. Only the owner moves a requirement to `agreed` or `retired`, except that an agent may agree one under the owner's written hand-off ([ADR-0022](DECISIONS.md#adr-0022--an-owner-may-hand-off-agreeing-requirements-in-writing)). This is the owner's decision boundary in one field. |
 | `rung` | The **cheapest** rung that can actually settle the claim *today*. |
 | `check` | Machine rungs: the test or script name, which must contain the ID (for example `OUT_SPAWN_01_...`), or a script name followed by the ID (`editor-check OUT-SAVE-01`). Human rungs: a card ID defined in the spec. `static`, `engine` and `editor` are machine rungs and `owner` is human. `session` is a machine rung when a script runs the session, and human when a person does, by a card. |
 | `target-rung` | Records evidence debt. Use it when a cheaper rung would work but isn't built yet. For example, `rung: session` with `target-rung: engine` until the engine test harness exists. |
+| `agreed-by` | Set only when an agent agreed the requirement under the owner's written hand-off, which names what it covers and when it ends: name the hand-off's record and quote the owner's words. The owner gate still reports the requirement as needing the owner. |
 | `touches` | Lets a change reopen only the requirements it can affect. Write paths, folders or data keys, such as `spec/outpost.layout.json` or `Code/OutpostGenerator.cs`, not prose, so a change can be matched against them. A requirement without `touches` depends on everything, so any change reopens it. |
 
 ## Splitting mixed claims

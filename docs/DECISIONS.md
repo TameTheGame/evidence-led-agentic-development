@@ -3,6 +3,46 @@
 ADR-0001 to ADR-0017 describe the v0.5 protocol design. They are kept as history; the
 artifacts they govern are archived at the `v0.5` tag (see [Archive](../ARCHIVE.md)).
 
+## ADR-0022 — An owner may hand off agreeing requirements, in writing
+
+**Status:** accepted by Josh, the owner, on 2026-11-04, for v1.08. The skills don't teach it
+yet: until a change to them passes its pressure test, they keep agreeing as the owner's.
+
+An outside review of a project that uses ELAD found that its owner had told the agent, in
+writing, to make an informed decision on the owner's behalf, and the agent had then marked a
+set of requirements agreed. ELAD said only the owner agrees a requirement, and said nothing
+about handing that off.
+
+**Decision.**
+
+- The owner may hand off agreeing requirements to the agent doing the work, only in
+  writing. The hand-off names:
+  - the requirements, or the area or spec, it covers;
+  - when it ends, by a date or an event; and
+  - it keeps the owner's own words.
+- The project records the hand-off in its decision record, with its date.
+- Each requirement an agent agrees under it carries an `agreed-by` field that names the
+  hand-off and quotes the owner's words.
+- The owner gate still reports each one as needing the owner, so the owner sees every
+  requirement agreed for them, and can change or retire any of them.
+- The hand-off covers agreeing only. Changing an agreed requirement and retiring one stay
+  the owner's, and so does every claim only the owner can accept, such as feel or product
+  fit: agreeing a requirement says what must be true, not that it is.
+
+**Alternatives.**
+
+- Only the owner ever agrees. It is simple, but it makes a written hand-off the owner gave
+  count for nothing, and an owner who wants to hand off would be left approving drafts they
+  haven't read.
+- A hand-off with no scope or end. It would become a blanket transfer of the owner's
+  decision boundary, which the [evidence ladder](EVIDENCE_LADDER.md#what-the-owner-keeps-and-what-can-be-automated)
+  rules out for any claim class.
+
+**Compatibility and rollback.** Nothing breaks: a project with no hand-off works as before,
+and a lint that doesn't know `agreed-by` reads it as an unknown field. Rolling back means a
+later decision that withdraws hand-offs; requirements already agreed under one stay agreed
+until the owner changes or retires them.
+
 ## ADR-0021 — Version numbers and releases after 1.0
 
 **Status:** accepted by Josh, the owner, on 2026-10-21 for v1.01; the rule for breaking

@@ -187,6 +187,13 @@ claims to a proven evaluator. That delegation should name:
 
 It is never a blanket transfer of product authority.
 
+**Handing off agreement.** The owner may also hand off agreeing requirements to the working
+agent, in writing, naming the requirements or area it covers and when it ends, and keeping
+the owner's words. Each requirement agreed under it records the hand-off in its
+`agreed-by` field, and the owner gate still reports it, so the owner sees each one.
+Changing or retiring a requirement stays the owner's. See [ADR-0022](DECISIONS.md#adr-0022--an-owner-may-hand-off-agreeing-requirements-in-writing). The skills don't
+teach this yet, so an agent following them leaves agreeing to the owner.
+
 ## Learn from the first causal failure
 
 ```text

@@ -100,7 +100,8 @@ the decisions that are yours.
 >    to undo. `AGENTS.md` decides what agents may do, and the skills never override it, so
 >    the owner approves this change.
 > 4. **Ask the owner to agree the requirements.** Show the draft and ask which to make
->    `agreed`. Only the owner can.
+>    `agreed`. Only the owner can, unless they hand that off in writing, as
+>    [ADR-0022](docs/DECISIONS.md#adr-0022--an-owner-may-hand-off-agreeing-requirements-in-writing) allows.
 >
 > If the skills don't load on their own, add the [skills snippet](skills/AGENTS_SNIPPET.md)
 > to `AGENTS.md`. It is a few lines saying which skill fits which moment.
@@ -174,7 +175,8 @@ Each requirement is one testable sentence, with its rung and its check:
 - touches: spec/outpost.layout.json, Code/OutpostGenerator.cs
 ```
 
-Only the owner moves a requirement from `draft` to `agreed`. Results stay out of the spec.
+Only the owner moves a requirement from `draft` to `agreed`, or an agent under the owner's
+written hand-off. Results stay out of the spec.
 Machine checks report through test output, and owner checks add one line to
 `spec/ACCEPTANCE.md`. A requirement counts as met when its check last passed at a known
 commit and nothing it depends on has changed since. The full format is in
