@@ -105,7 +105,10 @@ See ADR-0021 in [Decisions](DECISIONS.md).
    and run the check on a fresh clone.
 4. **Push.** Commit the release on `tamethegame/next-release` and push it. Wait for the
    hosted Ubuntu and Windows checks to pass for that exact commit, then fast-forward `main`
-   to it and push `main`.
+   to it with `git merge --ff-only` from a `main` checkout, and push `main`. Don't move a
+   checked-out `main` with `git update-ref`: it moves only the branch, so the index and
+   working tree stay at the old commit, the tree reads as changed by the reverse of the
+   release, and a commit made there would undo it.
 5. **Tag.** Create an annotated `vMAJOR.MINOR` tag at that commit and push it. The tag
    workflow confirms that the tag matches `VERSION` and that the release notes exist,
    reruns the check, and only then publishes the notes as the latest GitHub Release.

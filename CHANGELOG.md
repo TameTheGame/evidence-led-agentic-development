@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **The release steps say how to fast-forward `main`.** An agent that moved a checked-out
+  branch with `git update-ref` left its index and working tree at the old commit, and a
+  dirty-tree check caught it before anything was pushed. The
+  [release steps](docs/RELEASING.md#delivery-loop) now say to fast-forward `main` with
+  `git merge --ff-only`, and not to move a checked-out `main` with `git update-ref`.
 - **A tools entry on a PATH that went stale mid-run.** A `winget upgrade` of FFmpeg's
   portable package, partway through a check suite, removed the folder the suite's session
   had on its PATH, so its next FFmpeg check failed as if FFmpeg weren't installed. The
