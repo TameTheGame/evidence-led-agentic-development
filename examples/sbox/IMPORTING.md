@@ -1255,6 +1255,18 @@ writes, store packages, and tags.
   `cmd //c`, or set the variable, or run it from PowerShell.
   - Checked: Git for Windows' release notes; seen with Git for Windows 2.56.0. Proof:
     nothing yet.
+- **On Windows, expect a new file's path in the letter case Git already holds for its
+  folder.** A self-test planted a script under a folder the clone already tracked in lower
+  case, and spelled the folder with capitals. On Linux the commit filed the script under
+  the capitals; on Windows it filed it under the lower-case folder the index held, so a
+  check that expected the planted spelling passed on Linux and failed on Windows. On a file
+  system that ignores letter case, such as Windows', `git clone` and `git init` set
+  `core.ignoreCase` true, and Git then takes a name that differs only in letter case for
+  the one it knows and keeps the spelling it has
+  ([git-config](https://git-scm.com/docs/git-config), `core.ignoreCase`). Expect the path
+  as the commit filed it, from `git diff --name-only`, or plant the file under a folder the
+  index doesn't hold yet.
+  - Checked: Git's documentation; seen with Git for Windows. Proof: nothing yet.
 - **Test a Python tool with a cp1252 pipe and UTF-8 mode off.** Without UTF-8 mode, Python
   on Windows writes to a pipe, and decodes a `subprocess` run with `text=True`, in the ANSI
   code page, such as cp1252

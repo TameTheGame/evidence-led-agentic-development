@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **A tools entry on Git's letter case.** On Windows, Git filed a new file under the letter
+  case it already held for the file's folder, so a self-test that expected the spelling it
+  planted passed on Linux and failed on Windows. The import reference's
+  [tools section](examples/sbox/IMPORTING.md#tools-and-scripting) now says to expect the
+  path as the commit filed it.
 - **The engine test runner catches an S&box update mid-run, and both checks read Steam's
   build ID.** Steam installs a waiting update once its download has finished and no S&box
   process is running. The editor check read the build again after its last session, but
