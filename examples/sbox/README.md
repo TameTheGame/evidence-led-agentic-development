@@ -865,9 +865,14 @@ both unless it says otherwise. Each says what was seen, and on which build.
   (`26.10.27:engine/Sandbox.Engine/Systems/Project/ProjectConfig.cs`, line 95), and the
   Editor writes each at its default the first time it saves a scene or project file. On
   `26.10.27c`, checks that compare a run's own saves passed and left every scene and
-  `.sbproj` changed, and the next check refused to run on an unclean tree. In the update
-  review, put Git's bytes back before each check, and commit the Editor's saves with the
-  review once every check has passed.
+  `.sbproj` changed, and the next check refused to run on an unclean tree. `26.11.03a` did
+  the same with five new fields on a fog component, such as `DistanceMetric` and
+  `SecondaryColor`; that build has no source tag yet, so this was seen in a saved scene,
+  not read. In the update review, put Git's bytes back before each check, and commit the
+  Editor's saves with the review once every check has passed. The
+  [editor check](#the-editor-check) fails its first save on such a scene until that save is
+  committed. It keeps the save as `saved-first.scene`, so compare the two, commit S&box's
+  save when only the new fields differ, and run the check again.
 - **Tell a waiting S&box update by Steam's target build ID, not its update flag.** On
   `26.10.13a` a check that read the "update required" flag, 2, in the `StateFlags` of
   Steam's `appmanifest_590830.acf` reported a waiting update, and launching S&box cleared

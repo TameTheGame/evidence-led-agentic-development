@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **The re-save lesson adds `26.11.03a`.** That build wrote five new fog fields at their
+  defaults on a scene's first save, as `26.10.27` did with a light's. The lesson now says
+  that the editor check fails its first save on such a scene until that save is committed,
+  and to commit it when only the new fields differ.
 - **The editor check starts one more editor after a stalled start.** On `26.11.03a` two
   editors in one project's run stopped logging at `Compiling Tools` and never became ready,
   with no error box, and `sbox-cli` gave up on each. `editor_check.ps1` counted such a
