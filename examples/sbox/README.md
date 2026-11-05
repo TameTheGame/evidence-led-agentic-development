@@ -278,9 +278,12 @@ powershell -File tools/editor_check.ps1 -Scene scenes/outpost.scene
   (`26.10.27:engine/Launcher/SboxCli/Program.cs`, lines 153-161). On `26.10.27c` Steam
   installed `26.11.03a` between two `sbox-cli` sessions. The check quits its first editor
   before it starts the second, so an update can land between them. It reads S&box's build
-  from `.version` again after its last session, and reports `NOT RUN` when the build
-  changed. `-SelfTest` checks this on planted builds, including a planted fault:
-  `26.10.27c` before and `26.11.03a` after.
+  again after its last session, and reports `NOT RUN` when the build changed. The build is
+  the first line of `.version` with the `buildid` in Steam's `appmanifest_590830.acf`, so a
+  new Steam build under the same `.version` counts too, which hasn't been seen. `-SelfTest`
+  checks this on planted builds and a planted install, including two planted faults:
+  `26.10.27c` before and `26.11.03a` after, and a new Steam build under the same
+  `.version`.
 - **A failed start stops it in seconds.** When S&box can't start the project, it shows an
   error box and waits for a click; see [When S&box can't start a project](#when-sbox-cant-start-a-project).
   While the check waits for an editor, it looks for that box and for the failure in the

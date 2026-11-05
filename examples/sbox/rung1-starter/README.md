@@ -79,18 +79,23 @@ is that code, ready to copy.
      | `PASS` | 0 | At least one test ran, and every test passed. |
      | `FAIL` | 1 | A test failed, timed out or was aborted; the run hit its time limit; it wrote no TRX file, as after a build error; or `dotnet test` exited non-zero with no failed test. |
      | `INCONCLUSIVE` | 2 | Nothing failed, but a test didn't run, such as one that stopped with `Assert.Inconclusive`, or no test ran at all. |
-     | `NOT RUN` | 2 | The machine or project isn't set up. |
+     | `NOT RUN` | 2 | The machine or project isn't set up, or S&box's build changed during the run. |
 
      `dotnet test` itself exits 0 when tests stop inconclusive, because MSTest records them
      as not executed, so the script reads each test's outcome from the run's TRX file.
    - `-TimeoutSeconds` limits the run, 1800 by default. Past it, the script kills
      `dotnet test` and every process under it, and keeps the output and the engine log.
+   - It reads S&box's build, the first line of `.version` with Steam's `buildid`, before
+     the run and after it, and saves both in `build.txt`. When they differ it stops with
+     `NOT RUN`: Steam installs a waiting update once its download has finished and no S&box
+     process is running, and the script can't tell whether a test run counts as one.
    - When the project has moved since the Editor last opened it, the generated project
      files name engine paths that aren't there, and the build would fail with `CS0006`.
      The script stops first with `NOT RUN` and names each one; open the project once in the
      Editor to fix them.
    - `powershell -File tools/run_engine_tests.ps1 -SelfTest` checks the results on planted
-     TRX files and, on Windows, kills a planted hung process tree. It needs no S&box.
+     TRX files and the build reads on a planted install, and on Windows kills a planted
+     hung process tree. It needs no S&box.
 7. **Tell agents.** Add lines to the project's `AGENTS.md`, such as: "Run engine tests with
    `powershell -File tools/run_engine_tests.ps1`. Only `Result: PASS` is a pass. Read its
    engine-log lines when a test fails without an exception. The engine source is the
@@ -133,8 +138,8 @@ clone, fetching the tag first if the clone lacks it. It prints one line and alwa
   `--project` start left the update waiting, and Steam installed `26.11.03a` in a gap
   between two `sbox-cli` sessions with no S&box process running, after about a dozen such
   gaps that installed nothing. So an update can land between any two runs, and a session
-  that is already open doesn't see it. Read `.version` before each run, as the runner does,
-  and an hourly Windows scheduled task closes the gap between sessions.
+  that is already open doesn't see it. Read the build before and after each run, as the
+  runner does, and an hourly Windows scheduled task closes the gap between sessions.
 - **Have each agent session run it first,** so no agent has to remember to. In Claude Code,
   a `SessionStart` hook in the project's `.claude/settings.json` puts the line in the
   session's context:

@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- **The engine test runner catches an S&box update mid-run, and both checks read Steam's
+  build ID.** Steam installs a waiting update once its download has finished and no S&box
+  process is running. The editor check read the build again after its last session, but
+  `run_engine_tests.ps1` read it only before the run, and its help said it saved the
+  engine version, which it didn't. It now reads the build before its source check and after
+  the run, saves both in `build.txt`, and reports `NOT RUN` when they differ. Both scripts
+  now read the build as the first line of `.version` with the `buildid` in Steam's
+  `appmanifest_590830.acf`, so a new Steam build under the same `.version` counts too,
+  which hasn't been seen. `-SelfTest` checks the reads on a planted install, including a
+  planted fault: a new Steam build under the same `.version`.
 - **The re-save lesson adds `26.11.03a`.** That build wrote five new fog fields at their
   defaults on a scene's first save, as `26.10.27` did with a light's. The lesson now says
   that the editor check fails its first save on such a scene until that save is committed,

@@ -71,10 +71,10 @@ Steam must be running, because S&box needs it; the check doesn't start Steam, wh
 S&box. Steam also installs a waiting update once its download has finished and no S&box process
 is running, so one can land between the check's two sessions; its own start, through
 sbox-cli --project, runs sbox-dev.exe directly and installs none. So the check reads S&box's
-build again after its last session, and reports NOT RUN when the build changed. Editors accept
-sbox-cli unless Project Settings > AI > Enable MCP Communication is off. When the project's
-.sbproj turns it off, the check stops with NOT RUN before it starts an editor, since sbox-cli
-would only wait out its start-up timeout.
+build, the first line of .version with Steam's build ID, again after its last session, and
+reports NOT RUN when the build changed. Editors accept sbox-cli unless Project Settings > AI >
+Enable MCP Communication is off. When the project's .sbproj turns it off, the check stops with
+NOT RUN before it starts an editor, since sbox-cli would only wait out its start-up timeout.
 
 Before each editor start, wait_for_gpu.ps1 holds the start while another program uses the GPU,
 such as a CUDA workflow, and the check stops with NOT RUN when the GPU stays busy or the script
@@ -244,13 +244,28 @@ function Restore-Companions($Saved, [string]$Keep) {
     }
 }
 
+# S&box's build: the first line of the engine's .version, with Steam's build ID when Steam's
+# manifest for S&box, appmanifest_590830.acf, is two folders up, as Steam lays out an install.
+# $null when .version can't be read.
+function Get-SboxBuild([string]$Folder) {
+    $version = "$(Get-Content -LiteralPath (Join-Path $Folder '.version') -TotalCount 1 -ErrorAction SilentlyContinue)".Trim()
+    if (-not $version) { return $null }
+    $manifest = Join-Path (Join-Path (Join-Path $Folder '..') '..') 'appmanifest_590830.acf'
+    foreach ($line in @(Get-Content -LiteralPath $manifest -ErrorAction SilentlyContinue)) {
+        # buildid is the build installed; TargetBuildID is one Steam has waiting.
+        if ($line -match '^\s*"buildid"\s+"(\d+)"') { return "$version (Steam build $($Matches[1]))" }
+    }
+    return $version
+}
+
 # Why a run can't count when S&box's build changed under it, or $null when it didn't. Steam
 # installs a waiting update once its download has finished and no S&box process is running,
 # so one can land between the check's two sessions, and then the second runs another build
-# than the first. $Before and $After are the first line of the engine's .version before the
-# first session and after the last, or $null when it couldn't be read.
+# than the first. $Before and $After are what Get-SboxBuild read before the first session and
+# after the last.
 function Get-BuildChange($Before, $After) {
     if ("$Before" -ceq "$After") { return $null }
+    if (-not "$Before") { return "S&box's build couldn't be read before the run, and was $After after it" }
     if (-not "$After") { return "S&box's build couldn't be read after the run, and was $Before before it" }
     return "S&box went from $Before to $After during the run, so its two sessions may have run different builds"
 }
@@ -464,6 +479,34 @@ if ($SelfTest) {
     Expect-That 'planted fault: an update between the sessions' ($null -ne $why) "$why"
     $why = Get-BuildChange '26.10.27c' $null
     Expect-That "a build that can't be read after the run" ($null -ne $why) "$why"
+    $why = Get-BuildChange $null '26.11.03a'
+    Expect-That "a build that couldn't be read before the run" ($null -ne $why) "$why"
+    $steam = Join-Path ([IO.Path]::GetTempPath()) ('editor-check-build-' + [Guid]::NewGuid().ToString('N'))
+    try {
+        # An install laid out as Steam lays it out: the engine in steamapps\common\sbox, and
+        # Steam's manifest for S&box in steamapps. The manifest's TargetBuildID comes first, so a
+        # read that takes any key ending in buildid takes the waiting build.
+        $sbox = Join-Path (Join-Path (Join-Path $steam 'steamapps') 'common') 'sbox'
+        $manifest = Join-Path (Join-Path $steam 'steamapps') 'appmanifest_590830.acf'
+        New-Item -ItemType Directory -Force $sbox | Out-Null
+        function Write-Manifest([string]$Installed) {
+            [IO.File]::WriteAllText($manifest, "`"AppState`"`n{`n`t`"appid`"`t`t`"590830`"`n`t`"TargetBuildID`"`t`t`"26414528`"`n`t`"buildid`"`t`t`"$Installed`"`n}`n")
+        }
+        $built = Get-SboxBuild $sbox
+        Expect-That 'an install with no .version has no build' ($null -eq $built) "read '$built'"
+        [IO.File]::WriteAllText((Join-Path $sbox '.version'), "26.11.03a`r`nsecond line`r`n")
+        $built = Get-SboxBuild $sbox
+        Expect-That 'an install with no Steam manifest is read by its .version' ($built -ceq '26.11.03a') "read '$built'"
+        Write-Manifest '26418881'
+        $built = Get-SboxBuild $sbox
+        Expect-That "an install is read by its .version and Steam's installed build, not the waiting one" ($built -ceq '26.11.03a (Steam build 26418881)') "read '$built'"
+        Expect-That 'the same install read twice is the same build' ($null -eq (Get-BuildChange $built (Get-SboxBuild $sbox))) 'no change'
+        Write-Manifest '26420000'
+        $why = Get-BuildChange $built (Get-SboxBuild $sbox)
+        Expect-That 'planted fault: a new Steam build under the same .version' ($null -ne $why) "$why"
+    } finally {
+        Remove-Item -LiteralPath $steam -Recurse -Force -ErrorAction SilentlyContinue
+    }
     # Editor starts handed out in turn: a ready editor, or a line saying why a start wasn't. The
     # script block finds $state and $Starts in Run-Starts' scope when Get-ReadyEditor runs it.
     function Run-Starts([object[]]$Starts) {
@@ -537,6 +580,7 @@ if (-not (Test-Path $cli)) { Stop-Setup "no sbox-cli in $Engine\bin\managed; it 
 $gpuGate = Join-Path $PSScriptRoot 'wait_for_gpu.ps1'
 if (-not (Test-Path -LiteralPath $gpuGate -PathType Leaf)) { Stop-Setup "no wait_for_gpu.ps1 beside this script. Copy it from the example's tools folder; it holds each S&box start while another program uses the GPU." }
 $version = Get-Content (Join-Path $Engine '.version') -TotalCount 1 -ErrorAction SilentlyContinue
+$startBuild = Get-SboxBuild $Engine
 # Without Steam the editor never starts, and sbox-cli gives up with little to go on.
 if (-not (Get-Process steam -ErrorAction SilentlyContinue)) {
     Stop-Setup 'Steam is not running, and S&box needs it. Start Steam (for example: Start-Process steam://open/main), wait for it to sign in, and rerun.'
@@ -1076,7 +1120,7 @@ try {
 }
 
 $failed = @($checks.Values | Where-Object { $_ -like 'FAIL*' }).Count
-$build = Get-BuildChange $version (Get-Content (Join-Path $Engine '.version') -TotalCount 1 -ErrorAction SilentlyContinue)
+$build = Get-BuildChange $startBuild (Get-SboxBuild $Engine)
 Write-Host "Engine:     S&box $version ($Engine)"
 Write-Host "Scene:      $Scene in $dir"
 foreach ($k in $checks.Keys) { Write-Host ('{0,-11} {1}' -f "${k}:", $checks[$k]) }

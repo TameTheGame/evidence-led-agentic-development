@@ -15,8 +15,8 @@ the install folder, which every run overwrites. This script:
      run at a time uses the engine log, and stops it at -TimeoutSeconds (30 minutes by
      default) by killing it and every process under it;
   5. reads each test's outcome from the run's TRX file;
-  6. saves the test output, the TRX file, the engine log, and the engine version in
-     test-results\<time>\;
+  6. saves the test output, the TRX file, the engine log, and S&box's build before and after
+     the run in test-results\<time>\;
   7. prints the outcomes, the source check, and any error lines the engine logged, and a
      warning when the source isn't matched to the installed release.
 FACEPUNCH_ENGINE and SBOX_PUBLIC are read from the user's settings when the shell lacks them.
@@ -29,15 +29,23 @@ not executed, so the result comes from the TRX file instead:
                 non-zero with no failed test;
   INCONCLUSIVE  nothing failed, but a test didn't run, such as one that stopped with
                 Assert.Inconclusive, or no test ran at all. It is not a pass.
-Exit code: 0 pass, 1 fail, 2 inconclusive, or 2 when the machine or project isn't set up.
+Exit code: 0 pass, 1 fail, 2 inconclusive, or 2, NOT RUN, when the machine or project isn't set
+up or S&box's build changed during the run.
+
+S&box's build is the first line of the engine's .version, with Steam's build ID from
+appmanifest_590830.acf two folders up when Steam installed the engine. The script reads it before
+the source check and again after the run, and reports NOT RUN when it changed: Steam installs a
+waiting update once its download has finished and no S&box process is running, and the script
+can't tell whether a test run counts as one.
 
 At the time limit the script lists the process tree before it kills anything, then kills each
 process and repeats from every process it has found until none is left. A process killed first
 can take others down with it, and their children keep the dead parent's ID, so a kill that
 looks for children only as it goes leaves some running.
 
--SelfTest checks the verdicts on planted TRX files and the tree walk on planted process lists,
-and on Windows kills a planted hung tree of two processes. It needs no S&box.
+-SelfTest checks the verdicts on planted TRX files, the build reads on a planted install, and the
+tree walk on planted process lists, and on Windows kills a planted hung tree of two processes. It
+needs no S&box.
 
 .EXAMPLE
 powershell -File tools/run_engine_tests.ps1
@@ -93,6 +101,29 @@ function Get-Verdict($Outcomes, [bool]$TimedOut, $ExitCode) {
     if (-not $ran) { return Verdict 'INCONCLUSIVE' 2 'no test ran' }
     if ($Outcomes.Inconclusive) { return Verdict 'INCONCLUSIVE' 2 "$($Outcomes.Inconclusive) of $ran test(s) didn't run, so they prove nothing" }
     return Verdict 'PASS' 0 "all $ran test(s) passed"
+}
+
+# S&box's build: the first line of the engine's .version, with Steam's build ID when Steam's
+# manifest for S&box, appmanifest_590830.acf, is two folders up, as Steam lays out an install.
+# $null when .version can't be read.
+function Get-SboxBuild([string]$Folder) {
+    $version = "$(Get-Content -LiteralPath (Join-Path $Folder '.version') -TotalCount 1 -ErrorAction SilentlyContinue)".Trim()
+    if (-not $version) { return $null }
+    $manifest = Join-Path (Join-Path (Join-Path $Folder '..') '..') 'appmanifest_590830.acf'
+    foreach ($line in @(Get-Content -LiteralPath $manifest -ErrorAction SilentlyContinue)) {
+        # buildid is the build installed; TargetBuildID is one Steam has waiting.
+        if ($line -match '^\s*"buildid"\s+"(\d+)"') { return "$version (Steam build $($Matches[1]))" }
+    }
+    return $version
+}
+
+# Why a run can't count when S&box's build changed under it, or $null when it didn't. $Before
+# and $After are what Get-SboxBuild read before the source check and after the run.
+function Get-BuildChange($Before, $After) {
+    if ("$Before" -ceq "$After") { return $null }
+    if (-not "$Before") { return "S&box's build couldn't be read before the run, and was $After after it" }
+    if (-not "$After") { return "S&box's build couldn't be read after the run, and was $Before before it" }
+    return "S&box went from $Before to $After during the run, so the run may have used two builds"
 }
 
 # One argument for a Windows command line, quoted so that the program reads it back unchanged.
@@ -327,6 +358,34 @@ if ($SelfTest) {
         $read = Read-TrxOutcomes $why $since
         Expect "an inconclusive test's name and message are read" ($read.Tests.Count -eq 1 -and $read.Tests[0].Name -eq 'Setup_SavedSceneLoads' -and $read.Tests[0].Message -eq 'Assert.Inconclusive failed. No saved scene.') "read $(@($read.Tests | ForEach-Object { "$($_.Name): $($_.Message)" }) -join '; ')"
 
+        # An install laid out as Steam lays it out: the engine in steamapps\common\sbox, and
+        # Steam's manifest for S&box in steamapps. The manifest's TargetBuildID comes first, so a
+        # read that takes any key ending in buildid takes the waiting build.
+        $sbox = Join-Path (Join-Path (Join-Path $folder 'steamapps') 'common') 'sbox'
+        $manifest = Join-Path (Join-Path $folder 'steamapps') 'appmanifest_590830.acf'
+        New-Item -ItemType Directory -Force $sbox | Out-Null
+        function Write-Manifest([string]$Installed) {
+            [IO.File]::WriteAllText($manifest, "`"AppState`"`n{`n`t`"appid`"`t`t`"590830`"`n`t`"TargetBuildID`"`t`t`"26414528`"`n`t`"buildid`"`t`t`"$Installed`"`n}`n")
+        }
+        $built = Get-SboxBuild $sbox
+        Expect 'an install with no .version has no build' ($null -eq $built) "read '$built'"
+        [IO.File]::WriteAllText((Join-Path $sbox '.version'), "26.11.03a`r`nsecond line`r`n")
+        $built = Get-SboxBuild $sbox
+        Expect 'an install with no Steam manifest is read by its .version' ($built -ceq '26.11.03a') "read '$built'"
+        Write-Manifest '26418881'
+        $built = Get-SboxBuild $sbox
+        Expect "an install is read by its .version and Steam's installed build, not the waiting one" ($built -ceq '26.11.03a (Steam build 26418881)') "read '$built'"
+        Expect 'the same install read twice is the same build' ($null -eq (Get-BuildChange $built (Get-SboxBuild $sbox))) 'no change'
+        Write-Manifest '26420000'
+        $why = Get-BuildChange $built (Get-SboxBuild $sbox)
+        Expect 'planted fault: a new Steam build under the same .version' ($null -ne $why) "$why"
+        $why = Get-BuildChange '26.10.27c (Steam build 26297875)' $built
+        Expect 'planted fault: an update during the run' ($null -ne $why) "$why"
+        $why = Get-BuildChange $built $null
+        Expect "a build that can't be read after the run" ($null -ne $why) "$why"
+        $why = Get-BuildChange $null $built
+        Expect "a build that couldn't be read before the run" ($null -ne $why) "$why"
+
         foreach ($pair in @(@('plain', 'plain'), @('with space', '"with space"'), @('quote"inside', '"quote\"inside"'), @('C:\a b\', '"C:\a b\\"'), @('', '""'))) {
             Expect "an argument quoted: $($pair[0])" ((ConvertTo-Argument $pair[0]) -ceq $pair[1]) "got $(ConvertTo-Argument $pair[0])"
         }
@@ -401,6 +460,9 @@ if ($stale.Count) {
     Stop-Setup "the generated project files name paths that aren't there: $($stale -join '; '). S&box writes them relative to the project, so they break when it moves, and the build would fail with CS0006. Open the project once in the S&box Editor so it writes them again."
 }
 
+# Read before the source check, so a build that changes after it can't pass as the one checked.
+$startBuild = Get-SboxBuild $Engine
+
 # Steam can update the engine at any launch; keep the source agents read on the same release.
 $sync = Join-Path $PSScriptRoot 'sync_engine_source.ps1'
 $sourceCheck = try {
@@ -438,6 +500,11 @@ try {
     if ($Filter) { $arguments += @('--filter', $Filter) }
     $run = Invoke-TimeLimited $dotnet.Path $arguments $TimeoutSeconds (Join-Path $Out 'results.txt') $projectDir
     $output = @($run.Lines)
+    $endBuild = Get-SboxBuild $Engine
+    $unread = "couldn't be read"
+    [IO.File]::WriteAllLines((Join-Path $Out 'build.txt'), [string[]]@(
+        "before: $(if ($startBuild) { $startBuild } else { $unread })",
+        "after:  $(if ($endBuild) { $endBuild } else { $unread })"))
 
     $logLines = $null
     if ((Test-Path $log) -and (Get-Item $log).LastWriteTime -ge $started) {
@@ -449,6 +516,7 @@ try {
 }
 $outcomes = Read-TrxOutcomes $trx $started
 $verdict = Get-Verdict $outcomes $run.TimedOut $run.ExitCode
+$change = Get-BuildChange $startBuild $endBuild
 
 # Component errors: the engine catches exceptions thrown in component callbacks such as
 # OnEnabled and logs them as "OnEnabled on Sandbox.MeshComponent failed ...". Group them by
@@ -505,6 +573,11 @@ if ($null -eq $logLines) {
         if ($component[$m].Frame) { Write-Host "      $($component[$m].Frame)" }
     }
     Write-Host "            $other other error line(s); headless start-up logs some, such as missing shaders, even when every test passes"
+}
+if ($change) {
+    Write-Host "Result:     NOT RUN - $change; run the tests again"
+    Write-Host "Saved:      $Out"
+    exit 2
 }
 Write-Host "Result:     $($verdict.Status) - $($verdict.Why)$(if ($verdict.Status -eq 'INCONCLUSIVE') { ' (not a pass)' })"
 Write-Host "Saved:      $Out"
