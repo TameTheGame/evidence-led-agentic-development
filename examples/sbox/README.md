@@ -287,6 +287,13 @@ powershell -File tools/editor_check.ps1 -Scene scenes/outpost.scene
   editor log. On either, it saves the box's text to `error-box.txt`, closes the editor and
   the box with it, and stops with `NOT RUN` and the error's own words. If a call fails
   later while the editor shows a box, the check records the box the same way.
+- **A stalled start gets one more try.** When an editor shows no error but isn't ready when
+  `sbox-cli` stops or `-TimeoutSeconds` passes, the check closes it, notes why with the
+  last line its log reached, and starts one more. When that one isn't ready either, it
+  stops with `NOT RUN`; see
+  [When S&box can't start a project](#when-sbox-cant-start-a-project). Before, either start
+  was a `FAIL`. `-SelfTest` checks this on planted starts, including two planted faults:
+  one stalled start, then two in a row. It hasn't met a real stall yet.
 
 Verified on S&box `26.10.13`, in Windows PowerShell 5.1 and PowerShell 7. A scratch scene
 passed in about a minute. A control scene with a component that changes its own saved value
@@ -299,9 +306,10 @@ error(s)`. A new project made from the new-game template passed too.
 Also verified on `26.10.13a`, in both shells: a scratch scene passed in about a minute, and
 its results held both editors' `sbox-cli` output and editor logs. The Editor writes its log
 to `<engine>\logs\sbox-dev.log` and keeps earlier ones under dated names. With
-`-TimeoutSeconds 5`, the check failed with `the editor wasn't ready`, printed the last lines
-of both files, and left no S&box process. Steam stayed open throughout, so the `NOT RUN`
-branch for a closed Steam was read, not run.
+`-TimeoutSeconds 5`, the check failed with `the editor wasn't ready`, printed the last
+lines of both files, and left no S&box process. The check now starts one more editor after
+such a start and then stops with `NOT RUN`; only `-SelfTest` has checked that. Steam stayed
+open throughout, so the `NOT RUN` branch for a closed Steam was read, not run.
 
 On `26.10.27c`, in both shells, in a scratch project: a scene with no store package
 passed byte-identical. So did a scene with a model from a store package, installed with
@@ -363,10 +371,20 @@ and one agent's work stopped until the owner clicked OK.
   3. On either, save the box's text, close the editor, which takes the box with it, and
      report the error's own words. Retry only once the cause has changed. When it is a
      package from the cloud, the fix is Facepunch's.
+  4. A start can also stall with no box and no logged error. On `26.11.03a`, in one
+     project's run of 62 checks, two editors stopped logging at `Compiling Tools` about 10
+     seconds after they started and never opened the pipe, and `sbox-cli` gave up on each
+     after its start-up timeout, about 3 minutes; the GPU was idle when checked after. So
+     when a start doesn't become ready, close it and start one more. Count a second start
+     in a row that doesn't become ready as not run, not as a failure of what the check
+     checks, since nothing reached the project. A project whose own start hangs stops there
+     too, so read where both logs stopped. This was seen, not read in source: that build
+     has no source tag yet.
 
-  The [editor check](#the-editor-check) does all three, so a failed start costs it seconds,
-  not its whole timeout. A game or dedicated server started for a check goes through the
-  same `Bootstrap`, and logs to `sbox.log` or `sbox-server.log`, after its process name.
+  The [editor check](#the-editor-check) does all four, so a failed start costs it seconds,
+  not its whole timeout, and a stalled one costs it one more start. A game or dedicated
+  server started for a check goes through the same `Bootstrap`, and logs to `sbox.log` or
+  `sbox-server.log`, after its process name.
 
 Checked on S&box `26.10.13b`, in Windows PowerShell 5.1 and PowerShell 7, with two scratch
 projects that can't start. An addon whose `ParentPackage` doesn't exist shows "Bootstrap::Init

@@ -34,6 +34,13 @@ error-box.txt, closes the editor and the box with it, and stops with NOT RUN and
 words, so a failed start takes seconds, not the whole timeout. If a call fails later while the
 editor shows a box, the check records the box the same way.
 
+An editor can also stall partway through its start with no box and no logged error: on
+26.11.03a, two editors in one project's run stopped logging at "Compiling Tools" about 10 s in,
+and sbox-cli gave up waiting for them. When a start doesn't become ready, because sbox-cli stops
+or -TimeoutSeconds passes, the check closes that editor, notes why with the last line its log
+reached, and starts one more. When that one doesn't become ready either, it stops with NOT RUN,
+since no editor reached the project. -SelfTest checks this on planted starts.
+
 The editor skips a save when nothing changed, which would make step 4's comparison empty. So
 each save first adds a marker object and undoes it: the content is unchanged, but the editor
 writes the scene out again from what it loaded.
@@ -248,6 +255,20 @@ function Get-BuildChange($Before, $After) {
     return "S&box went from $Before to $After during the run, so its two sessions may have run different builds"
 }
 
+# Starts an editor through $Open, and once more when that start doesn't become ready, since an
+# editor can stall partway through its start with no error. $Open returns the ready editor, or a
+# line saying why its start didn't become ready. Returns Editor, the ready editor or $null when
+# neither start became ready, and Stalls, a line for each start that didn't.
+function Get-ReadyEditor($Open) {
+    $stalls = New-Object System.Collections.Generic.List[string]
+    while ($stalls.Count -lt 2) {
+        $got = & $Open
+        if ($got -isnot [string]) { return [pscustomobject]@{ Editor = $got; Stalls = $stalls.ToArray() } }
+        $stalls.Add($got)
+    }
+    return [pscustomobject]@{ Editor = $null; Stalls = $stalls.ToArray() }
+}
+
 # Each file Git lists as changed or untracked under $Dir, by full path, with its status and its
 # SHA-256, so a run can tell which files it left changed. $null when Git can't read the work
 # tree, such as when the project isn't in one.
@@ -443,6 +464,21 @@ if ($SelfTest) {
     Expect-That 'planted fault: an update between the sessions' ($null -ne $why) "$why"
     $why = Get-BuildChange '26.10.27c' $null
     Expect-That "a build that can't be read after the run" ($null -ne $why) "$why"
+    # Editor starts handed out in turn: a ready editor, or a line saying why a start wasn't. The
+    # script block finds $state and $Starts in Run-Starts' scope when Get-ReadyEditor runs it.
+    function Run-Starts([object[]]$Starts) {
+        $state = @{ Turn = 0 }
+        $got = Get-ReadyEditor { $at = [math]::Min($state.Turn, $Starts.Count - 1); $state.Turn++; $Starts[$at] }
+        return [pscustomobject]@{ Editor = $got.Editor; Stalls = @($got.Stalls); Starts = $state.Turn }
+    }
+    $up = @{ Owner = 'owner'; Status = 'ready' }
+    $stuck = "sbox-cli stopped after 183 s, before the editor was ready (exit 1); its log stopped at 'Compiling Tools'"
+    $run = Run-Starts @($up)
+    Expect-That 'an editor ready at once is started once' ($null -ne $run.Editor -and $run.Starts -eq 1 -and $run.Stalls.Count -eq 0) "$($run.Starts) start(s), $($run.Stalls.Count) stall(s)"
+    $run = Run-Starts @($stuck, $up)
+    Expect-That 'planted fault: a stalled start, then one more that is used' ($null -ne $run.Editor -and $run.Starts -eq 2 -and $run.Stalls.Count -eq 1) "$($run.Starts) start(s), $($run.Stalls.Count) stall(s)"
+    $run = Run-Starts @($stuck, $stuck, $up)
+    Expect-That 'planted fault: two stalled starts give no editor, and no third start' ($null -eq $run.Editor -and $run.Starts -eq 2 -and $run.Stalls.Count -eq 2) "$($run.Starts) start(s), $($run.Stalls.Count) stall(s)"
     # Get-TreeState on a scratch Git repository, with the project in a folder of its own whose
     # name has a space, and a file name that isn't ASCII.
     if (Get-Command git -ErrorAction SilentlyContinue) {
@@ -742,9 +778,23 @@ function Close-StuckEditor($session) {
     Save-SessionLogs
 }
 
+# Closes an editor that didn't become ready, and returns why, with the last line its log reached.
+function Close-Unready($session, [int]$Number, [string]$Why) {
+    # Find the editor first, so it is closed too if it outlives its sbox-cli.
+    $null = Get-EditorProcess $session
+    Close-StuckEditor $session
+    $last = $null
+    if (Test-Path -LiteralPath $session.Log) {
+        $last = @(Get-Content -LiteralPath $session.Log -Tail 1 -Encoding UTF8)[0]
+    }
+    $reached = if ("$last".Trim()) { "its log stopped at '$("$last".Trim())'" } else { 'its log has nothing from this start' }
+    return "$Why; $reached; see sbox-cli-$Number.txt and sbox-dev-$Number.log"
+}
+
 # Opens the project in an editor owned by a sbox-cli process, and waits for a finished compile
 # if the project has code. Without code, editor_status reports LastCompileSucceeded as null.
-function Start-Editor {
+# Returns the ready editor, or a line saying why this start didn't become ready.
+function Open-Editor {
     # Wait while another program uses the GPU, so the editor doesn't compete with it.
     & $gpuGate
     if ($LASTEXITCODE -eq 2) { Stop-Setup 'the GPU stayed busy with other work; the GPU line above says why.' }
@@ -764,13 +814,19 @@ function Start-Editor {
     $session = $sessions[$sessions.Count - 1]
     $owner.BeginOutputReadLine(); $owner.BeginErrorReadLine()
     $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
-    while ((Get-Date) -lt $deadline) {
+    while ($true) {
+        # Read before the error check, so a start that logged its error and then ended is
+        # reported by its error.
+        $exited = $owner.HasExited
         $failure = Get-StartupError $session
         if ($failure) {
             Close-StuckEditor $session
             Stop-Setup "S&box couldn't start the project; $failure`nThe check closed the editor and its error box. Full text: $(Join-Path $Out 'error-box.txt'). Editor log: $($session.Log)"
         }
-        if ($owner.HasExited) { throw "sbox-cli stopped before the editor was ready (exit $($owner.ExitCode)); see sbox-cli-$n.txt" }
+        if ($exited) {
+            return (Close-Unready $session $n "sbox-cli stopped after $([int]((Get-Date) - $started).TotalSeconds) s, before the editor was ready (exit $($owner.ExitCode))")
+        }
+        if ((Get-Date) -ge $deadline) { return (Close-Unready $session $n "the editor wasn't ready after $TimeoutSeconds s") }
         $r = Invoke-SboxCli @('--connect', $dir, '--call', 'editor_status')
         if ($r.Code -eq 0) {
             $status = $r.Out | ConvertFrom-Json
@@ -780,7 +836,18 @@ function Start-Editor {
         }
         Start-Sleep -Seconds 3
     }
-    throw "the editor wasn't ready after $TimeoutSeconds s; see sbox-cli-$n.txt and sbox-dev-$n.log"
+}
+
+# Opens the project in an editor that is ready for calls, and starts one more when the first
+# doesn't become ready (Get-ReadyEditor). Two in a row stop the check with NOT RUN, since no
+# editor reached the project.
+function Start-Editor {
+    $ready = Get-ReadyEditor { Open-Editor }
+    if (-not $ready.Editor) {
+        Stop-Setup "two editor starts in a row didn't become ready, so no editor reached the project: $($ready.Stalls -join '; then ')"
+    }
+    foreach ($stall in @($ready.Stalls)) { $notes.Add("an editor start didn't become ready, so the check started one more: $stall") }
+    return $ready.Editor
 }
 
 # Saves each stopped editor's sbox-cli output, and the editor log it wrote, once.

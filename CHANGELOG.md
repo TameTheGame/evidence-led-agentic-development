@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **The editor check starts one more editor after a stalled start.** On `26.11.03a` two
+  editors in one project's run stopped logging at `Compiling Tools` and never became ready,
+  with no error box, and `sbox-cli` gave up on each. `editor_check.ps1` counted such a
+  start as a `FAIL`. It now closes an editor that isn't ready when `sbox-cli` stops or its
+  time runs out, notes why with the last line its log reached, and starts one more; when
+  that one isn't ready either, it stops with `NOT RUN`. The guide's
+  [start-up section](examples/sbox/README.md#when-sbox-cant-start-a-project) adds the rule
+  as its fourth step. `-SelfTest` checks it on planted starts.
 - **Read a saved scene's references by path and its numbers as float32.** A new lesson in
   the S&box guide says why a check must not compare a saved scene's text. A reference saves
   as a path alone or as an `{"Id", "Path"}` object, depending on whether S&box knows the
