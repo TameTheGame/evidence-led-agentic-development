@@ -1267,6 +1267,22 @@ writes, store packages, and tags.
   as the commit filed it, from `git diff --name-only`, or plant the file under a folder the
   index doesn't hold yet.
   - Checked: Git's documentation; seen with Git for Windows. Proof: nothing yet.
+- **On Windows, read PATH again from the registry before calling a tool missing.** Each
+  process has its own environment block, inherited from its parent by default, and a change
+  to PATH in the registry reaches only programs that pick it up, such as the shell, and
+  what they start afterwards
+  ([Environment Variables](https://learn.microsoft.com/en-us/windows/win32/procthread/environment-variables)).
+  Partway through a check suite, a `winget upgrade` of FFmpeg's portable package, started
+  by something else on the machine, removed the old version's folder, took that folder's
+  `bin` out of PATH in the registry, and made links to the new version in
+  `%LOCALAPPDATA%\Microsoft\WinGet\Links`. The suite's session still had the removed folder
+  in its PATH, so its next FFmpeg check found no `ffmpeg` and failed as if FFmpeg weren't
+  installed. After a restart, `ffmpeg` resolved to the new version. So when a check finds
+  no tool on its PATH, look again on the machine's and the user's PATH as the registry
+  holds them (`[Environment]::GetEnvironmentVariable('Path', 'Machine')`, then `'User'`),
+  use what that finds, and say the session's PATH is stale.
+  - Checked: Microsoft's documentation on environment variables; seen with winget upgrading
+    FFmpeg from 9.0 to 9.0.2. Proof: nothing yet.
 - **Test a Python tool with a cp1252 pipe and UTF-8 mode off.** Without UTF-8 mode, Python
   on Windows writes to a pipe, and decodes a `subprocess` run with `text=True`, in the ANSI
   code page, such as cp1252

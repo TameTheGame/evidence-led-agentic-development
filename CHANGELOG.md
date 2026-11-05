@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **A tools entry on a PATH that went stale mid-run.** A `winget upgrade` of FFmpeg's
+  portable package, partway through a check suite, removed the folder the suite's session
+  had on its PATH, so its next FFmpeg check failed as if FFmpeg weren't installed. The
+  import reference's [tools section](examples/sbox/IMPORTING.md#tools-and-scripting) now
+  says to read PATH again from the registry before calling a tool missing.
 - **A tools entry on Git's letter case.** On Windows, Git filed a new file under the letter
   case it already held for the file's folder, so a self-test that expected the spelling it
   planted passed on Linux and failed on Windows. The import reference's
