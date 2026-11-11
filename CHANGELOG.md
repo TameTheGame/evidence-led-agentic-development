@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **A guide lesson: `Components.Get<T>()` skips a component on a switched-off object.** It
+  finds only components whose `Active` is true, and `Active` is false under a switched-off
+  parent, so code that reuses components on objects that may be switched off gets null and
+  can add a duplicate on a rebuild. The lesson says to pass `includeDisabled: true`. Read
+  from the source at `26.10.27`, not run.
 - **The release steps say how to fast-forward `main`.** An agent that moved a checked-out
   branch with `git update-ref` left its index and working tree at the old commit, and a
   dirty-tree check caught it before anything was pushed. The

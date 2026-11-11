@@ -1157,6 +1157,22 @@ both unless it says otherwise. Each says what was seen, and on which build.
   project again and rewrote them. A move to a shallower folder kept working, since extra
   `..` steps stop at the drive's root. The rung-1 starter's runner now checks those paths
   before a run, and stops with `NOT RUN` naming each one that isn't there.
+- **`Components.Get<T>()` skips a component on a switched-off object, so look with
+  `includeDisabled: true` before adding one.** `Get<T>( bool includeDisabled = false )`
+  adds `FindMode.Enabled` unless told otherwise
+  (`26.10.27:engine/Sandbox.Engine/Scene/GameObject/ComponentList.cs`, lines 654-658), and
+  that search drops each component whose `Active` is false (lines 320-342, the same test at
+  line 341). `Active` is true only when the component is enabled and its GameObject is
+  active (`26.10.27:engine/Sandbox.Engine/Scene/Components/Component.cs`, lines 117-120 and
+  303-307), and a GameObject is active only when it and every ancestor are enabled
+  (`26.10.27:engine/Sandbox.Engine/Scene/GameObject/GameObject.cs`, line 357). So a
+  component under a switched-off parent counts as missing even when its own box is ticked.
+  Code that reads components on objects that may be switched off gets null, and code that
+  does `Get<T>()` and then `Add<T>()` to reuse what a rebuild left behind adds a second
+  component beside the first. Pass `includeDisabled: true`, or `FindMode.EverythingInSelf`,
+  which includes disabled components (`ComponentList.cs`, line 64). `GetOrCreate<T>()`
+  already defaults to `EverythingInSelf` (lines 665-671), so it finds the disabled one.
+  Worked from the source, not run.
 
 ## Lessons from importing old content
 
