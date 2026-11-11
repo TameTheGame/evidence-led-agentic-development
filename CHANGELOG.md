@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **A collision entry on ladders: the body needs `solid`, the volume `trigger`.** The stock
+  player controller's body carries no collision tags, and `ladder`'s default rule is
+  `Ignore`, which beats `trigger`'s default, so a ladder volume tagged with `ladder` alone
+  or with `ladder` and `trigger` is never touched. The stock `trigger` and `solid` pair is
+  `Trigger`, so the import reference's
+  [collision section](examples/sbox/IMPORTING.md#collision) now says to tag the body
+  `solid` and the volume `trigger`. Read from the source at `26.10.27`, not run.
 - **A guide lesson: `Components.Get<T>()` skips a component on a switched-off object.** It
   finds only components whose `Active` is true, and `Active` is false under a switched-off
   parent, so code that reuses components on objects that may be switched off gets null and

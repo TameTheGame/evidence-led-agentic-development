@@ -223,6 +223,29 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   `Collision` rebuilds the model with the new collision (lines 35-47 and 197-200).
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: a play-mode test that the
     gun's two barrels are drawn.
+- **Tag the player's body `solid` and a ladder's volume `ladder` and `trigger`, or the
+  player never meets the ladder.** `MoveModeLadder` climbs a volume its body touches that
+  carries the `ladder` tag
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/Modes/Ladder.cs`,
+  lines 42-45 and 117-140). A touch needs a collision rule of `Trigger` between the body's
+  tags and the volume's, and the stock controller's body has none: its `BodyCollisionTags`
+  is null in the Player Controller prefab
+  (`26.10.27:game/core/templates/gameobject/Player Controller.prefab`, line 33) and goes
+  onto the body's object as it is
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Game/PlayerController/PlayerController.Elements.cs`,
+  line 22). With no tags on one side no pair can match, so the rule comes from each tag's
+  default, the least colliding of them, and the order of the results makes `Ignore` beat
+  `Trigger`
+  (`26.10.27:engine/Sandbox.Engine/Systems/Project/ProjectSettings/CollisionRules.cs`,
+  lines 19-40 and 252-282). `ladder`'s default is `Ignore`, so a volume tagged `ladder`
+  alone, or `ladder` and `trigger`, is never touched (lines 310-327). A pair with an
+  explicit rule is used in place of the defaults, and the stock pairs include `trigger`
+  with `solid` as `Trigger`, so give the body's `BodyCollisionTags` `solid` and tag the
+  volume `trigger` as well as `ladder`. A project's own collision settings replace the
+  stock pairs and defaults, so check they still carry that pair.
+  - Checked: source at `26.10.27`, not run. Proof: nothing yet; a play-mode test that a
+    player climbs the volume, and fails to with the `solid` tag or the `trigger` tag
+    removed.
 - **Shut the doors before a check that counts traces that hit nothing.** World mesh
   collision is one-sided: a trace that starts behind a face, or slips past a door into the
   wall round it, goes straight through solid walls. A check of whether rooms were open to
