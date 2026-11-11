@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+No pending changes.
+
+## 1.08 — 2026-11-11
+
+A batch of method, skill and S&box example updates. The owner may hand off agreeing
+requirements in writing (ADR-0022), and `asking-the-owner` and `matching-evidence-to-claims`
+teach it. The spec lint's owner gate gains its own exit code and reports what it used to
+miss, and the spec format says what closes a requirement. `sbox-engine-reference` points at
+the rung-1 starter. S&box starts wait for a free GPU, the editor check puts back every file a
+save writes, and two outside reviews' fixes and a set of S&box lessons land. Three skills
+changed, each after a blind pressure test.
+
 - **A collision entry on ladders: the body needs `solid`, the volume `trigger`.** The stock
   player controller's body carries no collision tags, and `ladder`'s default rule is
   `Ignore`, which beats `trigger`'s default, so a ladder volume tagged with `ladder` alone
