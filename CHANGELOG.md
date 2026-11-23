@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **Guide lessons on RPC callers and button presses.** A host RPC runs for any client
+  unless its flags give `HostOnly` or `OwnerOnly`, and a `Button` can't be pressed while it
+  animates, which includes the time after it turns off. Read from the source at `26.10.27`;
+  the missed press was seen on `26.11.03a`.
 - **Guide lessons for headless engine tests: required components and navigation links.** A
   component made in a test gets its `[RequireComponent]` properties only when the type
   library holds its assembly, so a test sets them by hand. A loaded scene needs two ticks

@@ -1205,6 +1205,29 @@ both unless it says otherwise. Each says what was seen, and on which build.
   which includes disabled components (`ComponentList.cs`, line 64). `GetOrCreate<T>()`
   already defaults to `EverythingInSelf` (lines 665-671), so it finds the disabled one.
   Worked from the source, not run.
+- **Give every RPC the callers it takes.** An RPC's mode says where it runs, and its flags
+  say who may call it. `[Rpc.Host]` runs on the host, but S&box sends it from whoever
+  calls it and checks only the attribute's flags, so unless they include
+  `NetFlags.HostOnly` or `NetFlags.OwnerOnly`, any client's call runs on the host
+  (`26.10.27:engine/Sandbox.Engine/Scene/Networking/Rpc.InstanceRpc.cs`, lines 21-40 and
+  92-118; the flags are in
+  `26.10.27:engine/Sandbox.Engine/Systems/Networking/System/NetworkEnums.cs`, lines 33 and
+  38). So a host RPC written to mean "the host does this" lets any player run it: a
+  mechanism's break or open call can be forced by a client, and the game's rules can't
+  decide who may. Give every RPC `HostOnly` or `OwnerOnly`, or list it by name, with its
+  reason, as one any player may call. A source rule can hold this: fail an `[Rpc.Host]`,
+  `[Rpc.Broadcast]` or `[Rpc.Owner]` whose own parentheses give none of the flags. Read
+  from the source; a client's refused call hasn't been seen in play.
+- **Press a button again only once it is off and has stopped animating.** A `Button` can
+  be pressed only while its `IsAnimating` is false
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Map/Button.cs`, lines 107 and
+  151-154). It sets `IsAnimating` when it turns on and when it turns off (lines 181-186
+  and 205-209) and clears it once its `AnimationTime` has passed (lines 313-335), whether
+  or not it moves. So a press right after a button turned itself off, at the end of its
+  reset time, finds nothing to press: the player controller's look-at passes the button
+  over. On `26.11.03a` a check's second press found nothing, though the first, from the
+  same spot, had found the button. Wait until the button is off and `IsAnimating` is false
+  before pressing it again, and count a press only when the look-at found the button.
 
 ## Lessons from importing old content
 
