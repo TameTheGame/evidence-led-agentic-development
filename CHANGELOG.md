@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **An import reference entry: name each raw image a decal holds in the project's
+  `Resources` setting.** A host tells a joining client only about compiled files, `.scss`,
+  `.ttf` and what `Resources` names, so a `.png` that no line names shows in the editor and
+  not on a joined client, which logs it as not found. Read from the source at `26.10.27`;
+  seen on `26.11.10a`.
 - **An import reference entry on light volumes: one per closed room, and each costs every
   pixel outside it.** Once any volume is active, ambient light comes from the volumes
   alone, so a closed room with none of its own takes its neighbour's probes; and the shader

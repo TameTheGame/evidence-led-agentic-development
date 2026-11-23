@@ -559,6 +559,23 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
     their camera's live view, drawn only while a player was near one; a frame-rate probe
     near the screens read 23 to 24 frames a second before the lamps were left out, and 90,
     the cap, after.
+- **Name each raw image a resource holds in the project's `Resources` setting, or a joined
+  player never gets it.** A decal definition holds its texture by the image it was made
+  from, such as a `.png`, and S&box loads such a path through its image loader, from the
+  file system of whoever loads it
+  (`26.10.27:engine/Sandbox.Engine/Resources/Textures/Texture.Load.cs`, lines 155 and
+  197-203). A host tells a joining client about the compiled files (names ending `_c`),
+  the `.scss` and `.ttf` files, and what the project's `Resources` setting names
+  (`26.10.27:engine/Sandbox.GameInstance/GameInstanceDll.Network.cs`, lines 279, 287-303,
+  305-316 and 405-407), and publishing counts the same lines. A raw image that no
+  `Resources` line names is none of those, so the editor, which has the file, shows the
+  decal, and a client joined to its host logs `Image.Load: <path> not found` and draws
+  none. List each such image in `Resources` in the `.sbproj`, with a wildcard where a
+  folder of them shares a pattern, such as `maps/*/signs/*.png`. Don't excuse a client's
+  missing-resource line for a decal until a read on the client shows its texture loaded.
+  - Checked: source at `26.10.27`; seen on `26.11.10a`: a client joined to an editor host
+    read seven decals with no colour texture, and all seven loaded once the images were
+    named. Proof: a session check that reads each decal's texture on the joined client.
 
 ## Lighting
 
