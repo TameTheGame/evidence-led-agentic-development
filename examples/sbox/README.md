@@ -848,7 +848,39 @@ both unless it says otherwise. Each says what was seen, and on which build.
   line 85), so reach it by reflection. Find the library's DLL from the test build's
   `.deps.json`, not from what the build's output folder holds, since a library that was
   dropped can leave its old DLL there. That the component then loads as itself is from the
-  source, not yet run.
+  source, not yet run. In the tests, find a library's types by name, with
+  `Game.TypeLibrary.GetType( "<full name>", true )`
+  (`26.10.27:engine/Sandbox.Reflection/TypeLibrary/TypeLibrary.cs`, line 469), and make one
+  with `Components.Create( type )`. A test file that names the library's namespace in code
+  stops the whole test build when the library is left out of it. A run that leaves the
+  library out, to show that the tests notice, then ends in a compile error (CS0246 on
+  `26.11.10a`) and no test runs, so it can't tell a failing test from a missing library.
+- **In an engine test, set a component's `[RequireComponent]` properties yourself.** S&box
+  fills a property marked `[RequireComponent]` when the component starts, in the editor and
+  in game: it asks the type library for the component's type and reads the marked
+  properties from that description
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/Component.Required.cs`, lines 10-38;
+  `26.10.27:engine/Sandbox.Engine/Utility/ReflectionQueryCache.cs`, lines 166-180). When
+  the type library doesn't hold the component's assembly, as in a test host that was
+  given none, the lookup logs "TypeLibrary could not find" the type, returns no
+  properties, and every property stays null. The component then starts and does nothing
+  where it needs the required one. On `26.11.10a` a movement mode that reads its player
+  controller through such a property ran its fixed update with the controller null, and
+  never found a ladder that the stock mode found in the same walk. When such a component
+  does nothing in its first headless run, read its required properties and count its
+  update calls before guessing at a fix, and set the properties by hand in the test.
+  Seen on `26.11.10a`; the source is read at `26.10.27`.
+- **Tick a loaded scene twice before reading a path that crosses a `NavMeshLink`.** A
+  `NavMeshLink` joins the navigation mesh from its enable callback, and only while it is
+  active (`26.10.27:engine/Sandbox.Engine/Scene/Components/Navigation/NavMeshLink.cs`,
+  lines 161-166 and 174-179), and a component's enable callback goes out through a
+  callback batch (`26.10.27:engine/Sandbox.Engine/Scene/Components/Component.cs`, lines
+  183-191 and 303-325). The source read doesn't show when a headless scene's load runs
+  that batch. On `26.11.03a` a scene with a link at each end of a ladder gave two
+  `Partial` paths, each ending under the ladder's top, until the test ticked the scene
+  twice before it generated the mesh; with the two ticks both paths were complete. So start
+  such a scene with two `GameTick`s before generating the mesh, whatever else the test
+  does. This is the runs' evidence, not the source's.
 - **Read a store package's licence from its `AssetLicense`, and take a missing one as no
   licence.** `Package.AssetLicense` names the licence covering a package's assets, such as
   `CC0` or `CC_BY`, and is null when the package declares none

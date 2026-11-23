@@ -2,7 +2,13 @@
 
 ## Unreleased
 
-No pending changes.
+- **Guide lessons for headless engine tests: required components and navigation links.** A
+  component made in a test gets its `[RequireComponent]` properties only when the type
+  library holds its assembly, so a test sets them by hand. A loaded scene needs two ticks
+  before a path across a `NavMeshLink` is read. And tests find a code library's types by
+  name, since a file that names the library's namespace stops the whole test build when the
+  library is left out. The first and last are read from the source at `26.10.27`; the ticks
+  are from runs on `26.11.03a`.
 
 ## 1.08 — 2026-11-11
 
