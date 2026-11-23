@@ -1228,6 +1228,30 @@ both unless it says otherwise. Each says what was seen, and on which build.
   over. On `26.11.03a` a check's second press found nothing, though the first, from the
   same spot, had found the button. Wait until the button is off and `IsAnimating` is false
   before pressing it again, and count a press only when the look-at found the button.
+- **A console variable a check sets is saved: put it back in a `finally`, and read it as
+  the console prints it.** S&box saves a console variable each time it is set
+  (`26.10.27:engine/Sandbox.Engine/Systems/Console/ConVarSystem.cs`, lines 226-237), so a
+  value a check sets lasts past the editor or game it was set in. Set it inside a `try`,
+  set it back in the `finally`, and read it back. Each saved variable in S&box's config
+  folder (`config/convar/`) also carries a `Timeout` that S&box wrote again on every run
+  that saved variables, so the files' bytes changed though no setting had: compare the
+  saved settings by each one's `Value`, not by a hash of the file. The console prints a
+  bool variable as `True` or `False`, whatever it was set with, and a number can come
+  back in another form, such as `1024` for `1024.0`: compare bools as 1 and 0 and numbers
+  as numbers, or a correct set reads as failed. The printing and the `Timeout` were seen
+  on `26.11.10a`, not read in the source.
+- **Lift every frame cap before a frame-time reading: `perf_cpu` names the tightest cap
+  set, reached or not.** The `perf_cpu` call reports a `CappedBy` source whenever the cap's
+  rate is over 0 (`26.10.27:engine/Sandbox.Engine/Systems/DevTools/PerfTools.cs`, lines
+  107-110), and the cap is the tightest of `fps_max`, `fps_max_menu` while the main menu
+  shows, `fps_max_inactive` while the window is out of focus, and the refresh rate under
+  vsync (`26.10.27:engine/Sandbox.Engine/Core/FrameRateLimit.cs`, lines 10-19). It names
+  the limit in force, not the one the frames reached. On `26.11.10a` a probe with the game
+  window out of focus read `fps_max_inactive`, and lifting that one would have left
+  `fps_max` next. Run a reading with vsync off (the `-novsync` switch,
+  `26.10.27:engine/Sandbox.Engine/Core/Windowing/GameWindow.VideoMode.cs`, line 51) and
+  `fps_max` and `fps_max_inactive` at 0, set through the console and read back, put the
+  user's values back after, and refuse a reading whose `CappedBy` isn't "nothing".
 
 ## Lessons from importing old content
 

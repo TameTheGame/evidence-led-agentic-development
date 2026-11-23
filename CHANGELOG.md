@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Guide lessons on console variables and frame caps.** S&box saves a console variable
+  each time it is set, so a check puts it back in a `finally`, compares saved settings by
+  `Value` and reads a bool as `True` or `False`. `perf_cpu` names the tightest cap set,
+  reached or not, so a frame reading lifts `fps_max`, `fps_max_inactive` and vsync first.
+  Read from the source at `26.10.27`; the printing and the saved `Timeout` were seen on
+  `26.11.10a`.
 - **Guide lessons on RPC callers and button presses.** A host RPC runs for any client
   unless its flags give `HostOnly` or `OwnerOnly`, and a `Button` can't be pressed while it
   animates, which includes the time after it turns off. Read from the source at `26.10.27`;
