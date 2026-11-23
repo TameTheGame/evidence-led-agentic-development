@@ -688,6 +688,30 @@ SDK for Garry's Mod behavior, the match is inferred unless the entry says it was
   line 354).
   - Checked: source at `26.10.13`; seen on `26.10.13a`. Proof: screenshots with the lamps
     off and on.
+- **Give each closed room its own light volume, and add one only where nothing else will
+  do: each costs every pixel outside it.** Once any `IndirectLightVolume` is active in a
+  scene, ambient diffuse light comes from the volumes alone
+  (`26.10.27:game/core/shaders/common/classes/AmbientLight.hlsl`, lines 20-34;
+  `26.10.27:game/core/shaders/common/DDGI/DDGI.hlsl`, lines 233-236). S&box sorts the
+  active volumes by the volume of their boxes, smallest first
+  (`26.10.27:engine/Sandbox.Engine/Scene/Components/IndirectLighting/DDGIVolumeSystem.cs`,
+  lines 65-69), and for each pixel the shader tests them in that order until one holds
+  the pixel at full weight (`DDGI.hlsl`, lines 377-398). Two results follow.
+  - A closed room with no volume of its own takes the probes of the volume around it. Five
+    windowless rooms in a scene whose only other volume was a coarse one over the open
+    ground, probes 26 m apart, came out evenly flat grey from wall to wall, lit as if by
+    the sky through their walls, and their lamps left only a faint patch on the floor.
+    Give each closed room a volume of its own.
+  - A pixel that only the largest volume holds tests every other active volume first,
+    wherever it stands and however small they are. So the cost grows with the number of
+    volumes, not with their size or their probes. In one scene, six more volumes added
+    0.3 to 0.7 ms of GPU time at 4K on one machine, over three camera views, in a
+    mirrored block of readings. Count a new volume against the frame limit, and to fix a
+    look change a volume that is already there first: its box, density or view bias adds
+    no box test (from the source, not measured).
+  - Checked: source at `26.10.27`; seen on `26.11.03a` (the grey rooms) and measured on
+    `26.11.10a` on one machine (the cost). Proof: pictures of the same rooms with and
+    without the volumes, and mirrored frame-time readings of the two scenes.
 
 ## Sound and water
 

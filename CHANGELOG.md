@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **An import reference entry on light volumes: one per closed room, and each costs every
+  pixel outside it.** Once any volume is active, ambient light comes from the volumes
+  alone, so a closed room with none of its own takes its neighbour's probes; and the shader
+  tests each active volume in turn for a pixel the largest one holds, so the cost grows
+  with their number. Read from the source at `26.10.27`; the cost was measured on one
+  machine on `26.11.10a`.
 - **Guide lessons on console variables and frame caps.** S&box saves a console variable
   each time it is set, so a check puts it back in a `finally`, compares saved settings by
   `Value` and reads a bool as `True` or `False`. `perf_cpu` names the tightest cap set,
